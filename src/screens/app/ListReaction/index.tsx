@@ -16,6 +16,9 @@ import {
   icon4,
   icon5,
   icon6,
+  understand,
+  bow,
+  congrats,
 } from '@images';
 import FastImage from 'react-native-fast-image';
 import {useSelector, useDispatch} from 'react-redux';
@@ -78,6 +81,12 @@ const ListReaction = (props: any) => {
         return styles.imageIcon;
       case 6:
         return styles.imageIconLike;
+      case 7:
+        return styles.imageIconUnderstand;
+      case 8:
+        return styles.imageIconBow;
+      case 9:
+        return styles.imageIconCongrats;
     }
   }, []);
 

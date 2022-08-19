@@ -14,6 +14,9 @@ import {
   icon4,
   icon5,
   icon6,
+  understand,
+  bow,
+  congrats,
 } from '@images';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 
@@ -33,6 +36,12 @@ const Reaction = React.memo((props: any) => {
         return icon5;
       case 6:
         return icon6;
+      case 7:
+        return understand;
+      case 8:
+        return bow;
+      case 9:
+        return congrats;
     }
   }, []);
 

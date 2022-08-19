@@ -51,6 +51,18 @@ const styles = StyleSheet.create({
     width: moderateScale(20),
     height: moderateScale(23),
   },
+  imageIconUnderstand: {
+    width: moderateScale(20),
+    height: moderateScale(23),
+  },
+  imageIconBow: {
+    width: moderateScale(20),
+    height: moderateScale(23),
+  },
+  imageIconCongrats: {
+    width: moderateScale(20),
+    height: moderateScale(23),
+  },
 });
 
 export {styles};
