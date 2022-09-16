@@ -53,6 +53,7 @@ export const useFunction = (props: any) => {
     (state: any) => state.chat?.id_messageSearch,
   );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
+  const GetUnreadMessageCount = useSelector((state: any) => state.chat?.GetUnreadMessageCount);
 
   const dispatch = useDispatch();
   const {route} = props;
