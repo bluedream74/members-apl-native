@@ -82,7 +82,6 @@ const ListChat = () => {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      console.log('hosotanidebug1112222');
       // プッシュ通知件数をインクリメント
       PushNotificationIOS.getApplicationIconBadgeNumber(number => {
         PushNotificationIOS.setApplicationIconBadgeNumber(unreadMessageCount);
