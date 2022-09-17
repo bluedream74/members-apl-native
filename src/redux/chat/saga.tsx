@@ -274,12 +274,10 @@ function* getDetailMessageSeen(action: any) {
   } catch (error: any) {}
 }
 
-export function* getUnreadMessageCountSaga(action: any) {
+export function* getUnreadMessageCountSaga() {
   try {
-    const result: ResponseGenerator = yield getUnreadMessageCountApi(
-      action?.payload,
-    );
-    yield put(getUnreadMessageCountSuccess(result?.data?.rooms));
+    const result: ResponseGenerator = yield getUnreadMessageCountApi();
+    yield put(getUnreadMessageCountSuccess(result?.data));
   } catch (error) {
   } finally {
     GlobalService.hideLoading();

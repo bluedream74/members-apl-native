@@ -232,7 +232,7 @@ export const getUnreadMessageCount: any = async (params: any) => {
   return response;
 };
 
-export const getUnreadMessageCountApi: any = async (id: any) => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}/${id}`);
+export const getUnreadMessageCountApi: any = async () => {
+  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}`);
   return response;
 };

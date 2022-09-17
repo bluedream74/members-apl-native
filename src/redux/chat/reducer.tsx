@@ -137,7 +137,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         GetUnreadMessageCount: action.payload,
       };
     case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS:
-      let count = action.payload.count;
+      let count = action.payload;
       return {
         ...state,
         unReadMessageCount: count,
