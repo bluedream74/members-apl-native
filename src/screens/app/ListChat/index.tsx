@@ -49,7 +49,11 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  const unreadMessageCount = useSelector((state: any) => state.chat?.unReadMessageCount);
+  let unreadMessageCount = useSelector((state: any) =>
+    state.chat?.unReadMessageCount === null
+      ? 0
+      : state.chat?.unReadMessageCount,
+  );
 
   useFocusEffect(
     useCallback(() => {
