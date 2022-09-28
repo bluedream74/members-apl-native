@@ -64,6 +64,21 @@ const ListChat = () => {
       dispatch(getUnreadMessageCount({}));
     }, []),
   );
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      console.log('hosotanidebug111222');
+      console.log(unreadMessageCount);
+      // プッシュ通知件数をインクリメント
+      PushNotificationIOS.getApplicationIconBadgeNumber(number => {
+        if (
+          unreadMessageCount !== null &&
+          typeof unreadMessageCount !== 'undefined'
+        ) {
+          PushNotificationIOS.setApplicationIconBadgeNumber(unreadMessageCount);
+        }
+      });
+    }
+  }, [unreadMessageCount]);
 
   useEffect(() => {
     setIsLoadMore(false);
@@ -83,15 +98,6 @@ const ListChat = () => {
     );
     return () => backHandler.remove();
   }, []);
-
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      // プッシュ通知件数をインクリメント
-      PushNotificationIOS.getApplicationIconBadgeNumber(number => {
-        PushNotificationIOS.setApplicationIconBadgeNumber(unreadMessageCount);
-      });
-    }
-  }, [unreadMessageCount]);
 
   useEffect(() => {
     try {
