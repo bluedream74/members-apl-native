@@ -69,36 +69,39 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
-  const renderActionsRight = useCallback((props: any) => {
-    return (
-      <>
-        {props.text?.length > 0 ? (
-          <Actions
-            {...props}
-            containerStyle={styles.buttonRight}
-            onPressActionButton={() => {
-              const messages = [
-                {
-                  text: props.text,
-                  user: {_id: props.user?._id},
-                  createdAt: new Date(Date.now()),
-                },
-              ];
-              sendMessage(messages);
-            }}
-            icon={() => <Image source={iconSend} />}
-          />
-        ) : (
-          <Actions
-            {...props}
-            containerStyle={styles.buttonRight}
-            onPressActionButton={() => sendLabel(1)}
-            icon={() => <Image source={iconLike} />}
-          />
-        )}
-      </>
-    );
-  }, []);
+  const renderActionsRight = useCallback(
+    (props: any) => {
+      return (
+        <>
+          {props.text?.length > 0 ? (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => {
+                const messages = [
+                  {
+                    text: props.text,
+                    user: {_id: props.user?._id},
+                    createdAt: new Date(Date.now()),
+                  },
+                ];
+                sendMessage(messages);
+              }}
+              icon={() => <Image source={iconSend} />}
+            />
+          ) : (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => sendLabel(1)}
+              icon={() => <Image source={iconLike} />}
+            />
+          )}
+        </>
+      );
+    },
+    [messageReply, message_edit],
+  );
 
   const renderMessage = useCallback(
     (props: any) => {
@@ -177,6 +180,8 @@ const DetailChat = (props: any) => {
         }
         onRightSecond={searchMessage}
       />
+      <Text>aaa{messageReply?.id}bbb</Text>
+      <Text>ccc{message_edit?.id}ddd</Text>
       {message_pinned?.id && (
         <ModalPin
           updateGimMessage={(id: any, value: any) =>
