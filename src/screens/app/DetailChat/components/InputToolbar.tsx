@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Platform, View, Text} from 'react-native';
 import {InputToolbar, Actions, Composer, Send} from 'react-native-gifted-chat';
-import {iconSend, iconEmoji} from '@images';
+import {iconEmoji} from '@images';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {colors} from '@stylesCommon';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
@@ -12,19 +12,11 @@ export const renderSend = (props: any) => {
       {...props}
       // disabled={!props.text.trim()}
       containerStyle={styles.sendBtn}>
-      {props.text?.length > 0 ? (
-        <Image
-          source={iconSend}
-          style={styles.iconStyle}
-          resizeMode="contain"
-        />
-      ) : (
-        <Image
-          source={iconEmoji}
-          style={styles.iconEmojiStyle}
-          resizeMode="contain"
-        />
-      )}
+      <Image
+        source={iconEmoji}
+        style={styles.iconEmojiStyle}
+        resizeMode="contain"
+      />
     </Send>
   );
 };

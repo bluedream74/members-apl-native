@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import {iconSearch, iconUpload, iconLike, iconDetail} from '@images';
+import {iconSearch, iconUpload, iconLike, iconDetail, iconSend} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -71,12 +71,32 @@ const DetailChat = (props: any) => {
 
   const renderActionsRight = useCallback((props: any) => {
     return (
-      <Actions
-        {...props}
-        containerStyle={styles.buttonRight}
-        onPressActionButton={() => sendLabel(1)}
-        icon={() => <Image source={iconLike} />}
-      />
+      <>
+        {props.text?.length > 0 ? (
+          <Actions
+            {...props}
+            containerStyle={styles.buttonRight}
+            onPressActionButton={() => {
+              const messages = [
+                {
+                  text: props.text,
+                  user: {_id: props.user?._id},
+                  createdAt: new Date(Date.now()),
+                },
+              ];
+              sendMessage(messages);
+            }}
+            icon={() => <Image source={iconSend} />}
+          />
+        ) : (
+          <Actions
+            {...props}
+            containerStyle={styles.buttonRight}
+            onPressActionButton={() => sendLabel(1)}
+            icon={() => <Image source={iconLike} />}
+          />
+        )}
+      </>
     );
   }, []);
 
@@ -169,12 +189,8 @@ const DetailChat = (props: any) => {
         ref={giftedChatRef}
         onInputTextChanged={value => setText(value)}
         messages={getConvertedMessages(listChat)}
-        onSend={(messages: any) => {
-          if (messages[0]?.text?.length === 0) {
-            showModalStamp();
-          } else {
-            sendMessage(messages);
-          }
+        onSend={() => {
+          showModalStamp();
         }}
         alwaysShowSend={true}
         renderMessage={renderMessage}
