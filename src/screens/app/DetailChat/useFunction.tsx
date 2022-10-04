@@ -31,7 +31,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Keyboard, Alert} from 'react-native';
+import { Platform, Keyboard, Alert, Text } from "react-native";
 import {showMessage} from 'react-native-flash-message';
 
 export const useFunction = (props: any) => {
@@ -62,10 +62,13 @@ export const useFunction = (props: any) => {
   const [page, setPage] = useState<any>(1);
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
-  const [text, setText] = useState('');
+  const [text, setText] = useState('defo11111');
+  const [text1, setText1] = useState('defo');
+  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
 
   useEffect(() => {
     if (idMessageSearchListChat) {
@@ -185,6 +188,7 @@ export const useFunction = (props: any) => {
 
   useEffect(() => {
     if (!message_edit) {
+      console.log('hosotanidebug999');
       setText('');
     }
   }, [message_edit]);
@@ -359,7 +363,8 @@ export const useFunction = (props: any) => {
   }, []);
 
   const editMessage = useCallback((data: any) => {
-    setText(data?.text);
+    // setText(data?.text);
+    formatText(data?.text + ' ', false);
     dispatch(saveMessageEdit(data));
   }, []);
 
@@ -624,6 +629,94 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
+  console.log('hosotanidebug888999');
+  console.log(text);
+  const formatText = (inputText: string, fromTagFlg: boolean) => {
+    if (inputText.length === 0) {
+      setFormattedText([]);
+      return;
+    }
+    const words = inputText.split(' ');
+    console.log('hosotanidebug333');
+    console.log(inputText);
+    console.log(words);
+    const formattedText1: (string | JSX.Element)[] = [];
+    words.forEach((word, index) => {
+      console.log(word);
+      console.log(word.startsWith('@'));
+      const isLastWord = index === words.length - 1;
+      if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
+        console.log('hosotanidebugfff');
+        const nonmention = (
+          <Text key={word + index} style={{color: 'black'}}>
+            {word}
+          </Text>
+        );
+        return isLastWord
+          ? formattedText1.push(nonmention)
+          : formattedText1.push(nonmention, ' ');
+      } else {
+        console.log('hosotanidebugfffgggg');
+        console.log('hosotanidebug333aaa');
+        console.log(isLastWord);
+        const mention = (
+          <Text key={word + index} style={{backgroundColor: 'blue', alignSelf: 'flex-start',color: 'red'}}>
+            {word}
+          </Text>
+        );
+        if (word === '@') {
+          console.log('hosotanidebugfffgggghhhh');
+          formattedText1.push(mention);
+        } else {
+          console.log('hosotanidebugfffggggiiii');
+          if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
+            console.log('hosotanidebugfffggggjjjj');
+            isLastWord
+              ? formattedText1.push(mention)
+              : formattedText1.push(mention, ' ');
+          } else {
+            console.log('hosotanidebugfffggggkkkk');
+            isLastWord
+              ? formattedText1.push(mention, ' ')
+              : formattedText1.push(mention, ' ');
+          }
+        }
+      }
+    });
+    console.log('hosotanidebug3334444');
+    console.log(formattedText1);
+    // this.setState({formattedText: formattedText});
+    setFormattedText(formattedText1);
+    // setText('');
+    // if (props) {
+    //   renderComposer(props);
+    // }
+  };
+  const getText = (formattedtext: (string | JSX.Element)[]) => {
+    let context: string = '';
+    formattedtext.forEach((element, index) => {
+      let word = '';
+      if (typeof element === 'string') {
+        word = element;
+      } else {
+        word = element.props.children;
+      }
+      console.log('hosotanidebughhh');
+      console.log(word);
+      console.log(word.slice(-1));
+      if (word !== '@') {
+        if (word.slice(-1) === '@') {
+          console.log('hosotanidebughhhiii');
+          console.log(word);
+          console.log(word.slice(0, -1));
+          context = context + word.slice(0, -1) + ' ';
+        } else {
+          context = context + word;
+        }
+      }
+    });
+    return context;
+  };
 
   return {
     chatUser,
@@ -657,6 +750,7 @@ export const useFunction = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
+    text1,
     // setTextInput,
     showHideModalTagName,
     setShowTag,
@@ -666,5 +760,11 @@ export const useFunction = (props: any) => {
     bookmarkMessage,
     setIds,
     ids,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    setMentionedUsers,
+    formatText,
+    getText,
   };
 };

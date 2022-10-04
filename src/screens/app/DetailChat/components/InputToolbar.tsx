@@ -1,10 +1,12 @@
-import React from 'react';
-import {Image, StyleSheet, Platform, View, Text} from 'react-native';
+import React, { useEffect, useRef, useState } from "react";
+import {Image, StyleSheet, Platform, View, Text, TextInput} from 'react-native';
 import {InputToolbar, Actions, Composer, Send} from 'react-native-gifted-chat';
 import {iconEmoji} from '@images';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {colors} from '@stylesCommon';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
+import { useFunction } from "../useFunction";
+
 
 export const renderSend = (props: any) => {
   return (
@@ -33,14 +35,55 @@ export const renderInputToolbar = (props: any) => {
   );
 };
 
-export const renderComposer = (props: any) => (
-  <Composer
-    {...props}
-    textInputStyle={styles.inputMessage}
-    placeholder="メッセージ."
-    multiline={true}
-  />
-);
+// export const renderComposer = (props: any) => (
+//   <Composer
+//     {...props}
+//     textInputStyle={styles.inputMessage}
+//     placeholder="メッセージ."
+//     multiline={true}
+//   />
+// );
+
+
+export const renderComposer = (props: any) => {
+  if (props && props.textInputProps) {
+    console.log('rendercomposer');
+    return (
+      <View style={styles.composerContainer}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            {...props}
+            placeholder={'メッセージ.'}
+            style={styles.inputMessage}
+            // onChangeText={(text) => console.log(text)}
+            multiline={true}
+            onKeyPress={props.textInputProps.onKeyPress}
+            // onKeyPress={({nativeEvent}) => {
+            //   console.log(nativeEvent);
+            //   if (nativeEvent.key === 'Backspace') {
+            //     console.log('hosotanidebug888');
+            //     return false;
+            //   }
+            //   props.textInputProps.onKeyPress(nativeEvent);
+            // }}
+            value={props.text}
+            // value={'aaahosotani'}
+            onChangeText={(value: any) => {
+              console.log('hosotanidebug999');
+              props.onInputTextChanged(value);
+            }}>
+            {props.formattedText}
+            {/*<Text style={{color: 'red'}}>*/}
+            {/*  @hosotani*/}
+            {/*</Text>*/}
+            {/*aaaa*/}
+          </TextInput>
+        </View>
+      </View>
+    );
+  }
+  return null;
+};
 
 const styles = StyleSheet.create({
   sendBtn: {
@@ -66,18 +109,58 @@ const styles = StyleSheet.create({
     color: '#222B45',
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(8),
-    paddingLeft: scale(10),
+    paddingLeft: scale(0),
     paddingTop: Platform.OS === 'ios' ? verticalScale(12) : undefined,
     marginRight: scale(10),
+    marginLeft: scale(10),
     minHeight: verticalScale(39),
     paddingRight: scale(43),
     borderWidth: 1,
     borderColor: '#989898',
+    width: '94%',
   },
   iconEmojiStyle: {
     width: 29,
     height: 29,
     alignSelf: 'center',
     flex: 1,
+  },
+
+  sendIconStyle: {
+    height: 30,
+    width: 30,
+  },
+  composerContainer: {
+    width: '80%',
+    height: 55,
+    flexDirection: 'row',
+    paddingTop: 5,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f2f2f2',
+    marginLeft: scale(10),
+  },
+  textInput: {
+    fontSize: 14,
+    letterSpacing: 1,
+    height: 50,
+    minWidth: 250,
+    maxWidth: 250,
+    borderWidth: 0,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  sendWrapperStyle: {
+    width: '15%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -19,6 +19,7 @@ import {ModalReply} from './components/ModalReply';
 import {ModalEdit} from './components/ModalEdit';
 import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
+import reactElementToJSXString from 'react-element-to-jsx-string';
 
 const DetailChat = (props: any) => {
   const {
@@ -49,6 +50,7 @@ const DetailChat = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
+    text1,
     setShowTag,
     showTagModal,
     listUser,
@@ -56,7 +58,16 @@ const DetailChat = (props: any) => {
     bookmarkMessage,
     ids,
     setIds,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    setMentionedUsers,
+    formatText,
+    getText,
   } = useFunction(props);
+
+  console.log('hosotanidebug888');
+  console.log(text);
 
   const renderActions = useCallback((props: any) => {
     return (
@@ -69,23 +80,62 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
+  // const renderActionsRight = useCallback(
+  //   (props: any) => {
+  //     return (
+  //       <>
+  //         {props.text?.length > 0 ? (
+  //           <Actions
+  //             {...props}
+  //             containerStyle={styles.buttonRight}
+  //             onPressActionButton={() => {
+  //               const messages = [
+  //                 {
+  //                   text: props.text,
+  //                   user: {_id: props.user?._id},
+  //                   createdAt: new Date(Date.now()),
+  //                 },
+  //               ];
+  //               sendMessage(messages);
+  //             }}
+  //             icon={() => <Image source={iconSend} />}
+  //           />
+  //         ) : (
+  //           <Actions
+  //             {...props}
+  //             containerStyle={styles.buttonRight}
+  //             onPressActionButton={() => sendLabel(1)}
+  //             icon={() => <Image source={iconLike} />}
+  //           />
+  //         )}
+  //       </>
+  //     );
+  //   },
+  //   [messageReply, message_edit],
+  // );
+
   const renderActionsRight = useCallback(
     (props: any) => {
+      console.log('hosotanidebugxxxx');
+      console.log(props.formattedText);
       return (
         <>
-          {props.text?.length > 0 ? (
+          {props.formattedText?.length > 0 ? (
             <Actions
               {...props}
               containerStyle={styles.buttonRight}
               onPressActionButton={() => {
                 const messages = [
                   {
-                    text: props.text,
+                    text: getText(props.formattedText),
                     user: {_id: props.user?._id},
                     createdAt: new Date(Date.now()),
                   },
                 ];
+                console.log('hosotanidebugnnn');
+                console.log(messages);
                 sendMessage(messages);
+                setFormattedText([]);
               }}
               icon={() => <Image source={iconSend} />}
             />
@@ -117,9 +167,11 @@ const DetailChat = (props: any) => {
               updateGimMessage(id, 1);
             }}
             replyMsg={(data: any) => {
+              console.log('hosotanidebug000');
               replyMessage(data);
             }}
             editMsg={(data: any) => {
+              console.log('hosotanidebug000111');
               editMessage(data);
             }}
             bookmarkMsg={(data: any) => {
@@ -180,6 +232,9 @@ const DetailChat = (props: any) => {
         }
         onRightSecond={searchMessage}
       />
+      <Text>xxx{text}yyy</Text>
+      <Text>xxx{text1}yyy</Text>
+      <Text>fff{formattedText}fff</Text>
       <Text>aaa{messageReply?.id}bbb</Text>
       <Text>ccc{message_edit?.id}ddd</Text>
       {message_pinned?.id && (
@@ -191,8 +246,34 @@ const DetailChat = (props: any) => {
       )}
       <GiftedChat
         text={text}
+        formattedText={formattedText}
         ref={giftedChatRef}
-        onInputTextChanged={value => setText(value)}
+        onInputTextChanged={inputText => formatText(inputText, false)}
+        // onInputTextChanged={inputText => {
+        //   const words = inputText.split(' ');
+        //   console.log('hosotanidebug333');
+        //   const formattedText1: (string | JSX.Element)[] = [];
+        //   words.forEach((word, index) => {
+        //     const isLastWord = index === words.length - 1;
+        //     if (!word.startsWith('@')) {
+        //       return isLastWord
+        //         ? formattedText1.push(word)
+        //         : formattedText1.push(word, ' ');
+        //     }
+        //     const mention = (
+        //       <Text key={word + index} style={{color: 'red'}}>
+        //         {word}
+        //       </Text>
+        //     );
+        //     isLastWord
+        //       ? formattedText1.push(mention)
+        //       : formattedText1.push(mention, ' ');
+        //   });
+        //   console.log(formattedText1);
+        //   // this.setState({formattedText: formattedText});
+        //   setFormattedText(formattedText1);
+        //   setText('');
+        // }}
         messages={getConvertedMessages(listChat)}
         onSend={() => {
           showModalStamp();
@@ -247,10 +328,26 @@ const DetailChat = (props: any) => {
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any) => {
-                        setText(`${text}${value}`);
+                      choseUser={(value: any, id: any, props: any) => {
+                        // setText(`${text}${value}`);
+                        // setText(`${text}${value}`);
                         setIds(ids?.concat([id]));
                         setShowTag(false);
+                        // formattedText.push(value);
+                        // setFormattedText(formattedText);
+                        console.log('hosotanidebugaaa');
+                        console.log(formattedText);
+                        console.log(value);
+                        //ここが間違ってるここから！！ちょっと直したけど動作確認まだ
+                        // console.log(giftedChatRef?.current?.props.formattedText[0].props.children + value);
+                        if (value) {
+                          mentionedUsers.push('@' + value);
+                          formatText(
+                            getText(formattedText) + '' + '@' + value,
+                            true,
+                          );
+                          // giftedChatRef?.current?.props.textInput.blur();
+                        }
                       }}
                     />
                   )}

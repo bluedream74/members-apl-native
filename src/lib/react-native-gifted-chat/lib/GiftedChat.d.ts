@@ -120,6 +120,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messages: never[];
         messagesContainerStyle: undefined;
         text: undefined;
+        formattedText: (string | JSX.Element)[];
         placeholder: string;
         disableComposer: boolean;
         messageIdGenerator: () => string;
