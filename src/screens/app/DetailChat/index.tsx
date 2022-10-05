@@ -66,9 +66,6 @@ const DetailChat = (props: any) => {
     getText,
   } = useFunction(props);
 
-  console.log('hosotanidebug888');
-  console.log(text);
-
   const renderActions = useCallback((props: any) => {
     return (
       <Actions
@@ -80,44 +77,8 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
-  // const renderActionsRight = useCallback(
-  //   (props: any) => {
-  //     return (
-  //       <>
-  //         {props.text?.length > 0 ? (
-  //           <Actions
-  //             {...props}
-  //             containerStyle={styles.buttonRight}
-  //             onPressActionButton={() => {
-  //               const messages = [
-  //                 {
-  //                   text: props.text,
-  //                   user: {_id: props.user?._id},
-  //                   createdAt: new Date(Date.now()),
-  //                 },
-  //               ];
-  //               sendMessage(messages);
-  //             }}
-  //             icon={() => <Image source={iconSend} />}
-  //           />
-  //         ) : (
-  //           <Actions
-  //             {...props}
-  //             containerStyle={styles.buttonRight}
-  //             onPressActionButton={() => sendLabel(1)}
-  //             icon={() => <Image source={iconLike} />}
-  //           />
-  //         )}
-  //       </>
-  //     );
-  //   },
-  //   [messageReply, message_edit],
-  // );
-
   const renderActionsRight = useCallback(
     (props: any) => {
-      console.log('hosotanidebugxxxx');
-      console.log(props.formattedText);
       return (
         <>
           {props.formattedText?.length > 0 ? (
@@ -132,8 +93,6 @@ const DetailChat = (props: any) => {
                     createdAt: new Date(Date.now()),
                   },
                 ];
-                console.log('hosotanidebugnnn');
-                console.log(messages);
                 sendMessage(messages);
                 setFormattedText([]);
               }}
@@ -167,11 +126,9 @@ const DetailChat = (props: any) => {
               updateGimMessage(id, 1);
             }}
             replyMsg={(data: any) => {
-              console.log('hosotanidebug000');
               replyMessage(data);
             }}
             editMsg={(data: any) => {
-              console.log('hosotanidebug000111');
               editMessage(data);
             }}
             bookmarkMsg={(data: any) => {
@@ -249,31 +206,6 @@ const DetailChat = (props: any) => {
         formattedText={formattedText}
         ref={giftedChatRef}
         onInputTextChanged={inputText => formatText(inputText, false)}
-        // onInputTextChanged={inputText => {
-        //   const words = inputText.split(' ');
-        //   console.log('hosotanidebug333');
-        //   const formattedText1: (string | JSX.Element)[] = [];
-        //   words.forEach((word, index) => {
-        //     const isLastWord = index === words.length - 1;
-        //     if (!word.startsWith('@')) {
-        //       return isLastWord
-        //         ? formattedText1.push(word)
-        //         : formattedText1.push(word, ' ');
-        //     }
-        //     const mention = (
-        //       <Text key={word + index} style={{color: 'red'}}>
-        //         {word}
-        //       </Text>
-        //     );
-        //     isLastWord
-        //       ? formattedText1.push(mention)
-        //       : formattedText1.push(mention, ' ');
-        //   });
-        //   console.log(formattedText1);
-        //   // this.setState({formattedText: formattedText});
-        //   setFormattedText(formattedText1);
-        //   setText('');
-        // }}
         messages={getConvertedMessages(listChat)}
         onSend={() => {
           showModalStamp();
@@ -329,15 +261,8 @@ const DetailChat = (props: any) => {
                     <ModalTagName
                       idRoomChat={idRoomChat}
                       choseUser={(value: any, id: any, props: any) => {
-                        // setText(`${text}${value}`);
-                        // setText(`${text}${value}`);
                         setIds(ids?.concat([id]));
                         setShowTag(false);
-                        // formattedText.push(value);
-                        // setFormattedText(formattedText);
-                        console.log('hosotanidebugaaa');
-                        console.log(formattedText);
-                        console.log(value);
                         //ここが間違ってるここから！！ちょっと直したけど動作確認まだ
                         // console.log(giftedChatRef?.current?.props.formattedText[0].props.children + value);
                         if (value) {

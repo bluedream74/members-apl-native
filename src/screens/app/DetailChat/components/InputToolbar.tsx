@@ -35,16 +35,6 @@ export const renderInputToolbar = (props: any) => {
   );
 };
 
-// export const renderComposer = (props: any) => (
-//   <Composer
-//     {...props}
-//     textInputStyle={styles.inputMessage}
-//     placeholder="メッセージ."
-//     multiline={true}
-//   />
-// );
-
-
 export const renderComposer = (props: any) => {
   if (props && props.textInputProps) {
     console.log('rendercomposer');
@@ -55,28 +45,13 @@ export const renderComposer = (props: any) => {
             {...props}
             placeholder={'メッセージ.'}
             style={styles.inputMessage}
-            // onChangeText={(text) => console.log(text)}
             multiline={true}
             onKeyPress={props.textInputProps.onKeyPress}
-            // onKeyPress={({nativeEvent}) => {
-            //   console.log(nativeEvent);
-            //   if (nativeEvent.key === 'Backspace') {
-            //     console.log('hosotanidebug888');
-            //     return false;
-            //   }
-            //   props.textInputProps.onKeyPress(nativeEvent);
-            // }}
             value={props.text}
-            // value={'aaahosotani'}
             onChangeText={(value: any) => {
-              console.log('hosotanidebug999');
               props.onInputTextChanged(value);
             }}>
             {props.formattedText}
-            {/*<Text style={{color: 'red'}}>*/}
-            {/*  @hosotani*/}
-            {/*</Text>*/}
-            {/*aaaa*/}
           </TextInput>
         </View>
       </View>
