@@ -189,11 +189,6 @@ const DetailChat = (props: any) => {
         }
         onRightSecond={searchMessage}
       />
-      <Text>xxx{text}yyy</Text>
-      <Text>xxx{text1}yyy</Text>
-      <Text>fff{formattedText}fff</Text>
-      <Text>aaa{messageReply?.id}bbb</Text>
-      <Text>ccc{message_edit?.id}ddd</Text>
       {message_pinned?.id && (
         <ModalPin
           updateGimMessage={(id: any, value: any) =>
