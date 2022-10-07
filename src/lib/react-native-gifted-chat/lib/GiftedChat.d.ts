@@ -122,7 +122,6 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messagesContainerStyle: undefined;
         text: undefined;
         formattedText: undefined;
-        formattedText: (string | JSX.Element)[];
         placeholder: string;
         disableComposer: boolean;
         messageIdGenerator: () => string;
@@ -229,7 +228,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         renderInputToolbar: PropTypes.Requireable<(...args: any[]) => any>;
         renderComposer: PropTypes.Requireable<(...args: any[]) => any>;
         renderActions: PropTypes.Requireable<(...args: any[]) => any>;
-        u: PropTypes.Requireable<(...args: any[]) => any>;
+        renderActionsRight: PropTypes.Requireable<(...args: any[]) => any>;
         renderSend: PropTypes.Requireable<(...args: any[]) => any>;
         renderAccessory: PropTypes.Requireable<(...args: any[]) => any>;
         onPressActionButton: PropTypes.Requireable<(...args: any[]) => any>;
