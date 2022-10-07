@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
 import {iconSearch, iconUpload, iconLike, iconDetail, iconSend} from '@images';
@@ -12,14 +12,12 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {convertString} from '@util';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
 import {ModalEdit} from './components/ModalEdit';
 import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
-import reactElementToJSXString from 'react-element-to-jsx-string';
 
 const DetailChat = (props: any) => {
   const {
@@ -50,18 +48,15 @@ const DetailChat = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
-    text1,
     setShowTag,
     showTagModal,
     listUser,
-    setText,
     bookmarkMessage,
     ids,
     setIds,
     formattedText,
     setFormattedText,
     mentionedUsers,
-    setMentionedUsers,
     formatText,
     getText,
   } = useFunction(props);

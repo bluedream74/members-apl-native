@@ -25,6 +25,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
     isTyping?: boolean;
     messagesContainerStyle?: StyleProp<ViewStyle>;
     text?: string;
+    formattedText?: string;
     alignTop?: boolean;
     wrapInSafeArea?: boolean;
     scrollToBottom?: boolean;
@@ -120,6 +121,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messages: never[];
         messagesContainerStyle: undefined;
         text: undefined;
+        formattedText: undefined;
         formattedText: (string | JSX.Element)[];
         placeholder: string;
         disableComposer: boolean;
@@ -184,6 +186,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messages: PropTypes.Requireable<(object | null | undefined)[]>;
         messagesContainerStyle: PropTypes.Requireable<number | boolean | object>;
         text: PropTypes.Requireable<string>;
+        formattedText: PropTypes.Requireable<string>;
         initialText: PropTypes.Requireable<string>;
         placeholder: PropTypes.Requireable<string>;
         disableComposer: PropTypes.Requireable<boolean>;
@@ -226,7 +229,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         renderInputToolbar: PropTypes.Requireable<(...args: any[]) => any>;
         renderComposer: PropTypes.Requireable<(...args: any[]) => any>;
         renderActions: PropTypes.Requireable<(...args: any[]) => any>;
-        renderActionsRight: PropTypes.Requireable<(...args: any[]) => any>;
+        u: PropTypes.Requireable<(...args: any[]) => any>;
         renderSend: PropTypes.Requireable<(...args: any[]) => any>;
         renderAccessory: PropTypes.Requireable<(...args: any[]) => any>;
         onPressActionButton: PropTypes.Requireable<(...args: any[]) => any>;

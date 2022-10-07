@@ -1,5 +1,3 @@
-import {defaultAvatar} from '@images';
-import moment from 'moment';
 import React, {useMemo, useEffect, useState, useCallback, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -11,7 +9,6 @@ import {
   saveMessageEdit,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  isGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -31,7 +28,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import { Platform, Keyboard, Alert, Text } from "react-native";
+import {Platform, Text } from "react-native";
 import {showMessage} from 'react-native-flash-message';
 
 export const useFunction = (props: any) => {
@@ -62,8 +59,7 @@ export const useFunction = (props: any) => {
   const [page, setPage] = useState<any>(1);
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
-  const [text, setText] = useState('defo11111');
-  const [text1, setText1] = useState('defo');
+  const [text, setText] = useState('');
   const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
@@ -721,8 +717,6 @@ export const useFunction = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
-    text1,
-    // setTextInput,
     showHideModalTagName,
     setShowTag,
     showTagModal,
