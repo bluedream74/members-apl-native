@@ -155,6 +155,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   txtBold: {fontWeight: 'bold', fontSize: moderateScale(13)},
+  txtBoldAndBackGroundColor: {
+    fontWeight: 'bold',
+    fontSize: moderateScale(13),
+    backgroundColor: '#bbbbbb',
+  },
   bottomMenu: {
     marginTop: verticalScale(-100),
   },

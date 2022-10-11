@@ -59,6 +59,7 @@ const DetailChat = (props: any) => {
     mentionedUsers,
     formatText,
     getText,
+    me,
   } = useFunction(props);
 
   const renderActions = useCallback((props: any) => {
@@ -136,6 +137,7 @@ const DetailChat = (props: any) => {
               navigatiteToListReaction(idMsg);
             }}
             listUser={listUser}
+            me={me}
           />
         </>
       );
@@ -253,15 +255,12 @@ const DetailChat = (props: any) => {
                       choseUser={(value: any, id: any, props: any) => {
                         setIds(ids?.concat([id]));
                         setShowTag(false);
-                        //ここが間違ってるここから！！ちょっと直したけど動作確認まだ
-                        // console.log(giftedChatRef?.current?.props.formattedText[0].props.children + value);
                         if (value) {
                           mentionedUsers.push('@' + value);
                           formatText(
                             getText(formattedText) + '' + '@' + value,
                             true,
                           );
-                          // giftedChatRef?.current?.props.textInput.blur();
                         }
                       }}
                     />

@@ -28,7 +28,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Text } from "react-native";
+import {Platform, Text} from "react-native";
 import {showMessage} from 'react-native-flash-message';
 
 export const useFunction = (props: any) => {
@@ -37,6 +37,7 @@ export const useFunction = (props: any) => {
 
   const giftedChatRef = useRef<any>(null);
   const navigation = useNavigation<any>();
+  const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
   const pagging = useSelector((state: any) => state.chat?.pagingDetail);
@@ -644,7 +645,14 @@ export const useFunction = (props: any) => {
           : formattedText1.push(nonmention, ' ');
       } else {
         const mention = (
-          <Text key={word + index} style={{backgroundColor: '#d6f5f5', alignSelf: 'flex-start', color: 'black'}}>
+          <Text
+            key={word + index}
+            style={{
+              backgroundColor: '#aaaaaa',
+              alignSelf: 'flex-start',
+              color: 'black',
+              fontWeight: 'bold',
+            }}>
             {word}
           </Text>
         );
@@ -731,5 +739,6 @@ export const useFunction = (props: any) => {
     setMentionedUsers,
     formatText,
     getText,
+    me
   };
 };

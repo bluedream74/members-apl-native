@@ -37,7 +37,6 @@ export const renderInputToolbar = (props: any) => {
 
 export const renderComposer = (props: any) => {
   if (props && props.textInputProps) {
-    console.log('rendercomposer');
     return (
       <View style={styles.composerContainer}>
         <View style={styles.inputContainer}>

@@ -25,7 +25,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
     isTyping?: boolean;
     messagesContainerStyle?: StyleProp<ViewStyle>;
     text?: string;
-    formattedText?: string;
+    formattedText?: (string | JSX.Element)[];
     alignTop?: boolean;
     wrapInSafeArea?: boolean;
     scrollToBottom?: boolean;

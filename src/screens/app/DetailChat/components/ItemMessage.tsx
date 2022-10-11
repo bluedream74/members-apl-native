@@ -49,6 +49,7 @@ const ItemMessage = React.memo((props: any) => {
     listUser,
     onAddMember,
     idRoomChat,
+    me,
   } = props;
   const {
     user,
@@ -154,10 +155,7 @@ const ItemMessage = React.memo((props: any) => {
   const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
     let textBold: any = [];
     joinedUsers.forEach((joinedUser: any) => {
-      let mentionText = `@${joinedUser?.last_name.replace(
-        ' ',
-        '',
-      )}${joinedUser?.first_name?.replace(' ', '')}`;
+      let mentionText = `@${joinedUser?.last_name.replace(' ', '',)}${joinedUser?.first_name?.replace(' ', '')}`;
       if (text?.includes(mentionText)) {
         textBold = textBold?.concat(mentionText);
       }
@@ -189,6 +187,68 @@ const ItemMessage = React.memo((props: any) => {
   const onReject = useCallback(() => {
     onAddMember(2);
   }, []);
+
+  const formatText = (inputText: string) => {
+    if (inputText.length === 0) {
+      return;
+    }
+    const words = inputText.split(' ');
+    const formattedText: (string | JSX.Element)[] = [];
+    words.forEach((word, index) => {
+      const isLastWord = index === words.length - 1;
+      if (!word.startsWith('@')) {
+        const nonmention = (
+          <Text key={word + index} style={{color: 'black'}}>
+            {word}
+          </Text>
+        );
+        return isLastWord
+          ? formattedText.push(nonmention)
+          : formattedText.push(nonmention, ' ');
+      } else {
+        let myName = `@${me?.last_name.replace(' ', '',)}${me?.first_name?.replace(' ', '')}`;
+        let mention;
+        if (word.includes(myName)) {
+          mention = (
+            <View
+              style={{
+                padding: 5,
+                backgroundColor: '#aaaaaa',
+                borderRadius: 5,
+              }}>
+              <Text
+                key={word + index}
+                style={{
+                  alignSelf: 'flex-start',
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}>
+                {word}
+              </Text>
+            </View>
+          );
+        } else {
+          mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: 'black',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+        }
+
+
+        isLastWord
+          ? formattedText.push(mention)
+          : formattedText.push(mention, ' ');
+      }
+    });
+    return formattedText;
+  };
 
   return (
     <>
@@ -343,23 +403,29 @@ const ItemMessage = React.memo((props: any) => {
                           {attachment_files?.length > 0 ? (
                             <MsgFile data={attachment_files} />
                           ) : null}
-                          <Autolink
-                            text={text?.split('<br>').join('\n')}
-                            email
-                            url
-                            renderText={text => (
-                              <HighlightText
-                                highlightStyle={styles.txtBold}
-                                //@ts-ignore
-                                searchWords={convertMentionToLink(
-                                  text,
-                                  listUser,
-                                )}
-                                textToHighlight={convertString(text)}
-                                style={styles.txtMessage}
-                              />
-                            )}
-                          />
+                          {user?._id == user_id ? (
+                            <Autolink
+                              text={text?.split('<br>').join('\n')}
+                              email
+                              url
+                              renderText={text => (
+                                <HighlightText
+                                  highlightStyle={styles.txtBold}
+                                  //@ts-ignore
+                                  searchWords={convertMentionToLink(text, listUser)}
+                                  textToHighlight={convertString(text)}
+                                  style={styles.txtMessage}
+                                />
+                              )}
+                            />
+                          ) : (
+                            <Autolink
+                              text={text?.split('<br>').join('\n')}
+                              email
+                              url
+                              renderText={text => formatText(text)}
+                            />
+                          )}
                         </LinearGradient>
                       )}
                     </>
