@@ -32,7 +32,7 @@ import {ViewTask} from './ViewTask';
 import {ViewInvite} from './ViewInvite';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
-const color = ['#E8E8E8', '#D4D4D4'];
+const color = ['#ffe8e8', '#ffe8e8'];
 const width = Dimensions.get('window').width;
 
 const ItemMessage = React.memo((props: any) => {
