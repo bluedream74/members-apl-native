@@ -648,9 +648,8 @@ export const useFunction = (props: any) => {
           <Text
             key={word + index}
             style={{
-              backgroundColor: '#aaaaaa',
               alignSelf: 'flex-start',
-              color: 'black',
+              color: '#3366CC',
               fontWeight: 'bold',
             }}>
             {word}

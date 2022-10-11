@@ -208,19 +208,15 @@ const ItemMessage = React.memo((props: any) => {
       } else {
         let myName = `@${me?.last_name.replace(' ', '',)}${me?.first_name?.replace(' ', '')}`;
         let mention;
+        // 自分宛のメンションの場合
         if (word.includes(myName)) {
           mention = (
-            <View
-              style={{
-                padding: 5,
-                backgroundColor: '#aaaaaa',
-                borderRadius: 5,
-              }}>
+            <View>
               <Text
                 key={word + index}
                 style={{
                   alignSelf: 'flex-start',
-                  color: 'black',
+                  color: '#3366CC',
                   fontWeight: 'bold',
                 }}>
                 {word}
@@ -228,12 +224,13 @@ const ItemMessage = React.memo((props: any) => {
             </View>
           );
         } else {
+          // 他人宛のメンションの場合
           mention = (
             <Text
               key={word + index}
               style={{
                 alignSelf: 'flex-start',
-                color: 'black',
+                color: '#3366CC',
                 fontWeight: 'bold',
               }}>
               {word}
