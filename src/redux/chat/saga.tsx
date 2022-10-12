@@ -10,7 +10,8 @@ import {
   saveIdMessageSearch,
   updateMessageSeen,
   getDetailMessageSocketSeenSuccess,
-} from './action';
+  getUnreadMessageCountSuccess,
+} from "./action";
 
 import {typeChat} from './type';
 import {
@@ -19,6 +20,7 @@ import {
   getMessageFromSocket,
   getResultSearchMessage,
   registerLastMessage,
+  getUnreadMessageCountApi,
   GlobalService,
 } from '@services';
 
@@ -272,6 +274,16 @@ function* getDetailMessageSeen(action: any) {
   } catch (error: any) {}
 }
 
+export function* getUnreadMessageCountSaga() {
+  try {
+    const result: ResponseGenerator = yield getUnreadMessageCountApi();
+    yield put(getUnreadMessageCountSuccess(result?.data));
+  } catch (error) {
+  } finally {
+    GlobalService.hideLoading();
+  }
+}
+
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
   yield takeEvery(typeChat.GET_DETAIL_LIST_CHAT, getDetailChatSaga);
@@ -293,5 +305,9 @@ export function* chatSaga() {
   yield takeEvery(
     typeChat.GET_DETAIL_MESSAGE_SOCKET_SEEN,
     getDetailMessageSeen,
+  );
+  yield takeEvery(
+    typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
+    getUnreadMessageCountSaga,
   );
 }
