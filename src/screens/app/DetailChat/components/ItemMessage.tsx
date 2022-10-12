@@ -201,7 +201,11 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 12 ? (
         <View style={styles.viewCenter}>
           <Text style={styles.txtCenter} numberOfLines={2}>
-            {msg_type !== 9 ? text : `${guest?.name}さんが参加しました。`}
+            {msg_type === 9
+              ? `${guest?.name}さんが参加しました。`
+              : msg_type === 5
+              ? `${user?.name}さんが参加しました。`
+              : text}
           </Text>
         </View>
       ) : (
