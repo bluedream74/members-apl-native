@@ -154,7 +154,12 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
     textAlign: 'center',
   },
-  txtBold: {fontWeight: 'bold', fontSize: moderateScale(16)},
+  txtBold: {fontWeight: 'bold', fontSize: moderateScale(13)},
+  txtBoldAndBackGroundColor: {
+    fontWeight: 'bold',
+    fontSize: moderateScale(13),
+    backgroundColor: '#bbbbbb',
+  },
   bottomMenu: {
     marginTop: verticalScale(-100),
   },

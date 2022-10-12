@@ -1,8 +1,8 @@
 import React, {useCallback} from 'react';
-import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import {iconSearch, iconUpload, iconLike, iconDetail} from '@images';
+import {iconSearch, iconUpload, iconLike, iconDetail, iconSend} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -12,7 +12,6 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {convertString} from '@util';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
@@ -52,10 +51,15 @@ const DetailChat = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
-    setText,
     bookmarkMessage,
     ids,
     setIds,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    formatText,
+    getText,
+    me,
   } = useFunction(props);
 
   const renderActions = useCallback((props: any) => {
@@ -69,16 +73,40 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
-  const renderActionsRight = useCallback((props: any) => {
-    return (
-      <Actions
-        {...props}
-        containerStyle={styles.buttonRight}
-        onPressActionButton={() => sendLabel(1)}
-        icon={() => <Image source={iconLike} />}
-      />
-    );
-  }, []);
+  const renderActionsRight = useCallback(
+    (props: any) => {
+      return (
+        <>
+          {props.formattedText?.length > 0 ? (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => {
+                const messages = [
+                  {
+                    text: getText(props.formattedText),
+                    user: {_id: props.user?._id},
+                    createdAt: new Date(Date.now()),
+                  },
+                ];
+                sendMessage(messages);
+                setFormattedText([]);
+              }}
+              icon={() => <Image source={iconSend} />}
+            />
+          ) : (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => sendLabel(1)}
+              icon={() => <Image source={iconLike} />}
+            />
+          )}
+        </>
+      );
+    },
+    [messageReply, message_edit],
+  );
 
   const renderMessage = useCallback(
     (props: any) => {
@@ -109,6 +137,7 @@ const DetailChat = (props: any) => {
               navigatiteToListReaction(idMsg);
             }}
             listUser={listUser}
+            me={me}
           />
         </>
       );
@@ -166,15 +195,12 @@ const DetailChat = (props: any) => {
       )}
       <GiftedChat
         text={text}
+        formattedText={formattedText}
         ref={giftedChatRef}
-        onInputTextChanged={value => setText(value)}
+        onInputTextChanged={inputText => formatText(inputText, false)}
         messages={getConvertedMessages(listChat)}
-        onSend={(messages: any) => {
-          if (messages[0]?.text?.length === 0) {
-            showModalStamp();
-          } else {
-            sendMessage(messages);
-          }
+        onSend={() => {
+          showModalStamp();
         }}
         alwaysShowSend={true}
         renderMessage={renderMessage}
@@ -226,10 +252,16 @@ const DetailChat = (props: any) => {
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any) => {
-                        setText(`${text}${value}`);
+                      choseUser={(value: any, id: any, props: any) => {
                         setIds(ids?.concat([id]));
                         setShowTag(false);
+                        if (value) {
+                          mentionedUsers.push('@' + value);
+                          formatText(
+                            getText(formattedText) + '' + '@' + value,
+                            true,
+                          );
+                        }
                       }}
                     />
                   )}

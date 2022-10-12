@@ -25,6 +25,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
     isTyping?: boolean;
     messagesContainerStyle?: StyleProp<ViewStyle>;
     text?: string;
+    formattedText?: (string | JSX.Element)[];
     alignTop?: boolean;
     wrapInSafeArea?: boolean;
     scrollToBottom?: boolean;
@@ -120,6 +121,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messages: never[];
         messagesContainerStyle: undefined;
         text: undefined;
+        formattedText: undefined;
         placeholder: string;
         disableComposer: boolean;
         messageIdGenerator: () => string;
@@ -183,6 +185,7 @@ declare class GiftedChat<TMessage extends IMessage = IMessage> extends React.Com
         messages: PropTypes.Requireable<(object | null | undefined)[]>;
         messagesContainerStyle: PropTypes.Requireable<number | boolean | object>;
         text: PropTypes.Requireable<string>;
+        formattedText: PropTypes.Requireable<string>;
         initialText: PropTypes.Requireable<string>;
         placeholder: PropTypes.Requireable<string>;
         disableComposer: PropTypes.Requireable<boolean>;
