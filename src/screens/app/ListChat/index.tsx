@@ -8,7 +8,6 @@ import {
   RefreshControl,
   BackHandler,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -24,7 +23,6 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
-  getUnreadMessageCount,
 } from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -32,7 +30,6 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const ListChat = () => {
   const refInput = useRef<any>(null);
@@ -49,11 +46,6 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  let unreadMessageCount = useSelector((state: any) =>
-    state.chat?.unReadMessageCount === null
-      ? 0
-      : state.chat?.unReadMessageCount,
-  );
 
   useFocusEffect(
     useCallback(() => {
@@ -61,22 +53,8 @@ const ListChat = () => {
       dispatch(saveMessageReply(null));
       dispatch(resetDataChat());
       dispatch(getRoomList({key: key, company_id: idCompany, page: 1}));
-      dispatch(getUnreadMessageCount({}));
     }, []),
   );
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      // プッシュ通知件数をインクリメント
-      PushNotificationIOS.getApplicationIconBadgeNumber(number => {
-        if (
-          unreadMessageCount !== null &&
-          typeof unreadMessageCount !== 'undefined'
-        ) {
-          PushNotificationIOS.setApplicationIconBadgeNumber(unreadMessageCount);
-        }
-      });
-    }
-  }, [unreadMessageCount]);
 
   useEffect(() => {
     setIsLoadMore(false);

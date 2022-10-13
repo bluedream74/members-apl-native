@@ -33,7 +33,6 @@ const LIST_IMAGE_INROOM = 'user/chat/room';
 const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
 const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
-const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page} = params;
@@ -221,18 +220,5 @@ export const getListLinkInRoom: any = async (id: any, page: any) => {
 
 export const addUserMessage: any = async (body: any) => {
   const response = api.post(ADD_USER_FROM_MESSAGE, body);
-  return response;
-};
-
-export const getUnreadMessageCount: any = async (params: any) => {
-  const {id_room, id_message} = params;
-  const response = api.get(
-    `${GET_RESULT_SEARCH_MESSAGE}/${id_room}/messages-after-from-id?message_from_id=${id_message}`,
-  );
-  return response;
-};
-
-export const getUnreadMessageCountApi: any = async () => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}`);
   return response;
 };
