@@ -1,3 +1,5 @@
+import {defaultAvatar} from '@images';
+import moment from 'moment';
 import React, {useMemo, useEffect, useState, useCallback, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -9,6 +11,7 @@ import {
   saveMessageEdit,
   editMessageAction,
   fetchResultMessageActionListRoom,
+  isGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -28,7 +31,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Text} from "react-native";
+import {Platform, Keyboard, Alert} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 
 export const useFunction = (props: any) => {
@@ -37,7 +40,6 @@ export const useFunction = (props: any) => {
 
   const giftedChatRef = useRef<any>(null);
   const navigation = useNavigation<any>();
-  const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
   const pagging = useSelector((state: any) => state.chat?.pagingDetail);
@@ -61,11 +63,9 @@ export const useFunction = (props: any) => {
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
-  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
-  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
 
   useEffect(() => {
     if (idMessageSearchListChat) {
@@ -359,8 +359,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const editMessage = useCallback((data: any) => {
-    // setText(data?.text);
-    formatText(data?.text + ' ', false);
+    setText(data?.text);
     dispatch(saveMessageEdit(data));
   }, []);
 
@@ -625,72 +624,6 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
-  const formatText = (inputText: string, fromTagFlg: boolean) => {
-    if (inputText.length === 0) {
-      setFormattedText([]);
-      return;
-    }
-    const words = inputText.split(' ');
-    const formattedText1: (string | JSX.Element)[] = [];
-    words.forEach((word, index) => {
-      const isLastWord = index === words.length - 1;
-      if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
-        const nonmention = (
-          <Text key={word + index} style={{color: 'black'}}>
-            {word}
-          </Text>
-        );
-        return isLastWord
-          ? formattedText1.push(nonmention)
-          : formattedText1.push(nonmention, ' ');
-      } else {
-        const mention = (
-          <Text
-            key={word + index}
-            style={{
-              alignSelf: 'flex-start',
-              color: '#3366CC',
-              fontWeight: 'bold',
-            }}>
-            {word}
-          </Text>
-        );
-        if (word === '@') {
-          formattedText1.push(mention);
-        } else {
-          if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
-            isLastWord
-              ? formattedText1.push(mention)
-              : formattedText1.push(mention, ' ');
-          } else {
-            isLastWord
-              ? formattedText1.push(mention, ' ')
-              : formattedText1.push(mention, ' ');
-          }
-        }
-      }
-    });
-    setFormattedText(formattedText1);
-  };
-  const getText = (formattedtext: (string | JSX.Element)[]) => {
-    let context: string = '';
-    formattedtext.forEach((element, index) => {
-      let word = '';
-      if (typeof element === 'string') {
-        word = element;
-      } else {
-        word = element.props.children;
-      }
-      if (word !== '@') {
-        if (word.slice(-1) === '@') {
-          context = context + word.slice(0, -1) + ' ';
-        } else {
-          context = context + word;
-        }
-      }
-    });
-    return context;
-  };
 
   return {
     chatUser,
@@ -724,6 +657,7 @@ export const useFunction = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
+    // setTextInput,
     showHideModalTagName,
     setShowTag,
     showTagModal,
@@ -732,12 +666,5 @@ export const useFunction = (props: any) => {
     bookmarkMessage,
     setIds,
     ids,
-    formattedText,
-    setFormattedText,
-    mentionedUsers,
-    setMentionedUsers,
-    formatText,
-    getText,
-    me
   };
 };
