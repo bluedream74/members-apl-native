@@ -118,13 +118,3 @@ export const isGetInfoRoom = (payload: any) => ({
   type: typeChat.IS_GET_INFO_ROOM,
   payload,
 });
-
-export const getUnreadMessageCount = (payload: any) => ({
-  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
-  payload,
-});
-
-export const getUnreadMessageCountSuccess = (payload: any) => ({
-  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS,
-  payload,
-});
