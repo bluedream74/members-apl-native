@@ -24,6 +24,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       return {
         ...state,
         detailChat:
+          //Load more list message detail
           page === 1
             ? convertArrUnique(action.payload.room_messages.data, 'id')
             : convertArrUnique(
@@ -78,6 +79,11 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         messageReply: action.payload,
       };
+    case typeChat.SAVE_MESSAGE_QUOTE:
+      return {
+        ...state,
+        messageQuote: action.payload,
+      };
     case typeChat.SAVE_MESSAGE_EDIT:
       return {
         ...state,
@@ -102,6 +108,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         id_messageSearch: action.payload,
       };
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SEEN_SUCCESS:
+      //Logic xử lý phần đã xem message
       const arrayListChat = [...state.detailChat];
       let dataNew = arrayListChat?.filter(
         (item: any) => item?.id === action?.payload?.id,
@@ -125,6 +132,18 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       return {
         ...state,
         detailChat: dataNew?.concat(dataSeen),
+      };
+    case typeChat.DETAIL_ROOM_SOCKET_SUCCESS:
+      const dataList = [...state?.roomList];
+      const indexListRoom = dataList.findIndex(
+        (element: any) => element?.id == action.payload?.id,
+      );
+      if (indexListRoom > -1) {
+        dataList[indexListRoom] = action.payload;
+      }
+      return {
+        ...state,
+        roomList: dataList,
       };
     case typeChat.IS_GET_INFO_ROOM:
       return {

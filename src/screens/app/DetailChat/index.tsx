@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
 import {iconSearch, iconUpload, iconLike, iconDetail} from '@images';
@@ -12,15 +12,16 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {convertString} from '@util';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
+import {ModalQuote} from './components/ModalQuote';
 import {ModalEdit} from './components/ModalEdit';
 import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
 
 const DetailChat = (props: any) => {
+  // custom hook logic
   const {
     idRoomChat,
     chatUser,
@@ -56,8 +57,15 @@ const DetailChat = (props: any) => {
     bookmarkMessage,
     ids,
     setIds,
+    setIndex,
+    newIndexArray,
+    quoteMessage,
+    messageQuote,
+    listUserSelect,
+    setListUserSelect
   } = useFunction(props);
 
+  //Render ra UI chọn ảnh, video, file
   const renderActions = useCallback((props: any) => {
     return (
       <Actions
@@ -69,6 +77,7 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
+  //Render ra UI stamp
   const renderActionsRight = useCallback((props: any) => {
     return (
       <Actions
@@ -80,6 +89,7 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
+  //Render ra UI của message
   const renderMessage = useCallback(
     (props: any) => {
       return (
@@ -105,17 +115,22 @@ const DetailChat = (props: any) => {
             onReaction={(data: any, idMsg: any) => {
               reactionMessage(data, idMsg);
             }}
+            quoteMsg={(data: any) => {
+              quoteMessage(data);
+            }}
             navigatiteToListReaction={(idMsg: any) => {
               navigatiteToListReaction(idMsg);
             }}
             listUser={listUser}
+            newIndexArray={newIndexArray}
           />
         </>
       );
     },
-    [listUser],
+    [listUser, newIndexArray],
   );
 
+  //Check phạm vi để gọi hàm loadmore
   const isCloseToTop = useCallback(
     ({layoutMeasurement, contentOffset, contentSize}: any) => {
       const paddingToTop = Platform.OS === 'ios' ? -20 : 10;
@@ -127,10 +142,22 @@ const DetailChat = (props: any) => {
     [],
   );
 
+  //Check vị trí scroll màn hình đang ở index số mấy
+  const onViewRef = React.useRef((viewableItems: any) => {
+    const index = viewableItems?.viewableItems?.length - 1;
+    setIndex(viewableItems?.viewableItems[index]?.index);
+  });
+
+  //Config view xem trong tài liệu của RN
+  const viewConfigRef = React.useRef({
+    viewAreaCoveragePercentThreshold: 0,
+  });
+
   return (
     <View style={styles.container}>
       <Header
         back
+        //Check title header nếu đây là chat 1-1 hay chat nhóm
         title={
           dataDetail?.name && dataDetail?.name?.length > 0
             ? dataDetail?.name
@@ -157,6 +184,7 @@ const DetailChat = (props: any) => {
         }
         onRightSecond={searchMessage}
       />
+      {/* UI pin message */}
       {message_pinned?.id && (
         <ModalPin
           updateGimMessage={(id: any, value: any) =>
@@ -164,6 +192,7 @@ const DetailChat = (props: any) => {
           }
         />
       )}
+      {/* UI list chat message */}
       <GiftedChat
         text={text}
         ref={giftedChatRef}
@@ -185,14 +214,22 @@ const DetailChat = (props: any) => {
         renderFooter={() => <View style={styles.viewBottom} />}
         renderActions={renderActions}
         renderActionsRight={renderActionsRight}
+        //Các props của flatlist nhúng vào gifted chat
         listViewProps={{
           scrollEventThrottle: 400,
+          //Xử lý loadmore tin nhắn
           onScroll: ({nativeEvent}: any) => {
             if (isCloseToTop(nativeEvent)) {
               onLoadMore();
             } else if (nativeEvent?.contentOffset?.y === 0) {
             }
           },
+
+          //Xử lý tracking xem đang scroll ở vị trí tin nhắn số bao nhiêu
+          viewabilityConfig: viewConfigRef.current,
+          onViewableItemsChanged: onViewRef.current,
+
+          //Xử lý khi vào màn detail chat sẽ nhảy đến message được chỉ định
           onScrollToIndexFailed: (info: any) => {
             if (info?.index >= 0) {
               const wait = new Promise(resolve => setTimeout(resolve, 500));
@@ -207,6 +244,7 @@ const DetailChat = (props: any) => {
             }
           },
         }}
+        //Các props của textInput nhúng vào gifted chat
         textInputProps={{
           onKeyPress: ({nativeEvent}: any) => {
             if (nativeEvent?.key?.trim() === '@') {
@@ -216,25 +254,41 @@ const DetailChat = (props: any) => {
             }
           },
         }}
+        //Chú ý đây là phần xử lý các UI nằm bên trên của input chat (có custom trong thư viện)
         renderAccessory={
           messageReply ||
           message_edit ||
+          messageQuote ||
           modalStamp === true ||
           showTagModal === true
             ? () => (
                 <>
+                  {/* UI modal tag name */}
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any) => {
-                        setText(`${text}${value}`);
-                        setIds(ids?.concat([id]));
-                        setShowTag(false);
+                      choseUser={(value: any, id: any, item: any) => {
+                        // logic khi tag name là tin nhắn tag có tên người và đồng thời gửi thêm 1 mảng id người dùng được tag
+                        if (id < 0) {
+                          // check nếu đây là id của khách lẻ thì không gửi mảng id lên
+                          setText(`${text}${value}`);
+                          setShowTag(false);
+                        } else {
+                          setText(`${text}${value}`);
+                          setIds(ids?.concat([id]));
+                          setListUserSelect(listUserSelect?.concat([{...item}]))
+                          setShowTag(false);
+                        }
                       }}
                     />
                   )}
+                  {/* UI reply message */}
                   {messageReply && <ModalReply />}
+                  {/* UI Edit message */}
                   {message_edit && <ModalEdit />}
+                  {/* UI message quote */}
+                  {messageQuote && <ModalQuote />}
+                  {/* UI chọn stamp */}
                   {modalStamp && (
                     <ModalStamp
                       onChose={(value: any) => {
@@ -249,6 +303,7 @@ const DetailChat = (props: any) => {
         bottomOffset={0}
         messagesContainerStyle={styles.containerMessage}
       />
+      {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile
         visible={pickFile}
         onCancel={cancelModal}

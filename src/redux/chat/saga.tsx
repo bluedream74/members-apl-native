@@ -10,6 +10,7 @@ import {
   saveIdMessageSearch,
   updateMessageSeen,
   getDetailMessageSocketSeenSuccess,
+  getDetailRoomSocketSuccess,
 } from './action';
 
 import {typeChat} from './type';
@@ -20,6 +21,7 @@ import {
   getResultSearchMessage,
   registerLastMessage,
   GlobalService,
+  detailRoomchat,
 } from '@services';
 
 import {NavigationUtils} from '@navigation';
@@ -76,9 +78,11 @@ export function* getDetailMessageSaga(action: any) {
       id_message: action.payload?.id_message,
     };
     yield put(updateMessageSeen(data));
+    //Check xoá tin nhắn
     if (result?.data?.message?.del_flag == 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
+      //Chỉnh sửa tin nhắn
       if (result?.data?.message?.medthod === 1) {
         yield put(
           editMessageAction({
@@ -87,6 +91,7 @@ export function* getDetailMessageSaga(action: any) {
           }),
         );
       } else {
+        //Chỉnh sửa tin nhắn
         if (action.payload?.message_type === 3) {
           yield put(
             editMessageAction({
@@ -95,15 +100,44 @@ export function* getDetailMessageSaga(action: any) {
             }),
           );
         }
+        //Check nếu còn trong phòng mà bị remove sẽ bị kích ra ngoài
         if (
           result?.data?.message?.msg_type === 10 &&
           state?.auth?.userInfo?.id === result?.data?.message?.from_id
         ) {
           NavigationUtils.navigate(ROUTE_NAME.LISTCHAT_SCREEN);
         } else {
+          //Hành động nối tin nhắn vào mảng
           yield put(getDetailMessageSocketSuccess([result?.data?.message]));
         }
       }
+    }
+  } catch (error) {
+  } finally {
+  }
+}
+
+export function* editMessageReaction(action: any) {
+  const state = store.getState();
+  try {
+    const body = {
+      message_id: action.payload?.id_message,
+    };
+    const result: ResponseGenerator = yield getMessageFromSocket(body);
+    const data = {
+      id_room: state?.chat?.id_roomChat,
+      id_message: action.payload?.id_message,
+    };
+    yield put(updateMessageSeen(data));
+    if (result?.data?.message?.del_flag == 1) {
+      yield put(deleteMessage(result?.data?.message?.id));
+    } else {
+      yield put(
+        editMessageAction({
+          id: result?.data?.message?.id,
+          data: result?.data?.message,
+        }),
+      );
     }
   } catch (error) {
   } finally {
@@ -131,6 +165,7 @@ export function* getDetailMessageSagaCurrent(action: any) {
 }
 
 export function* fetchResultMessage(action: any) {
+  //Hàm xử lý cho việc tìm kiếm message
   try {
     const body = {
       id_room: action.payload.id_room,
@@ -272,6 +307,13 @@ function* getDetailMessageSeen(action: any) {
   } catch (error: any) {}
 }
 
+function* getDetailRoomSocket(action: any) {
+  try {
+    const result: ResponseGenerator = yield detailRoomchat(action?.payload);
+    yield put(getDetailRoomSocketSuccess(result?.data?.room));
+  } catch (error: any) {}
+}
+
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
   yield takeEvery(typeChat.GET_DETAIL_LIST_CHAT, getDetailChatSaga);
@@ -294,4 +336,6 @@ export function* chatSaga() {
     typeChat.GET_DETAIL_MESSAGE_SOCKET_SEEN,
     getDetailMessageSeen,
   );
+  yield takeEvery(typeChat.EDIT_MESSAGE_REACTION, editMessageReaction);
+  yield takeEvery(typeChat.DETAIL_ROOM_SOCKET, getDetailRoomSocket);
 }

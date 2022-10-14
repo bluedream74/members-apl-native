@@ -9,6 +9,7 @@ import {
   getDetailMessageSocketSuccess,
   saveMessageReply,
   saveMessageEdit,
+  saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
   isGetInfoRoom,
@@ -25,6 +26,7 @@ import {
   sendLabelApi,
   getListUser,
   addBookmark,
+  callApiChatBot,
 } from '@services';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -33,6 +35,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import {Platform, Keyboard, Alert} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
+import {convertArrUnique} from '@util';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -49,6 +52,7 @@ export const useFunction = (props: any) => {
   );
   const message_edit = useSelector((state: any) => state.chat?.messageEdit);
   const messageReply = useSelector((state: any) => state.chat?.messageReply);
+  const messageQuote = useSelector((state: any) => state.chat?.messageQuote);
   const idMessageSearch = useSelector(
     (state: any) => state.chat?.id_messageSearch,
   );
@@ -66,8 +70,12 @@ export const useFunction = (props: any) => {
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
+  const [newIndexArray, setIndex] = useState<any>(null);
+  const [listUserRoot, setListUserRoot] = useState([]);
+  const [listUserSelect, setListUserSelect] = useState<any>([]);
 
   useEffect(() => {
+    //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
     if (idMessageSearchListChat) {
       setTimeout(() => {
         const body = {
@@ -95,6 +103,7 @@ export const useFunction = (props: any) => {
   );
 
   useEffect(() => {
+    //Logic khi có id message tìm kiếm thì tiến hành scroll đển tin nhắn đó
     if (idMessageSearch) {
       setPage(pagging?.current_page);
       navigateToMessage(idMessageSearch);
@@ -106,6 +115,7 @@ export const useFunction = (props: any) => {
   }, [idRoomChat]);
 
   const convertDataMessage = useCallback((message: any, index: any) => {
+    //Hàm xử lý lại dữ liệu message khi nhận từ api trả về
     return {
       _id: message?.id,
       text: message?.message,
@@ -130,6 +140,7 @@ export const useFunction = (props: any) => {
       task: message?.task,
       guest: message?.guest,
       task_link: message?.task_link,
+      message_quote: message?.message_quote,
     };
   }, []);
 
@@ -178,10 +189,10 @@ export const useFunction = (props: any) => {
   );
 
   useEffect(() => {
-    if (message_edit || messageReply) {
+    if (message_edit || messageReply || messageQuote) {
       setShowModalStamp(false);
     }
-  }, [message_edit, messageReply]);
+  }, [message_edit, messageReply, messageQuote]);
 
   useEffect(() => {
     if (!message_edit) {
@@ -290,6 +301,36 @@ export const useFunction = (props: any) => {
             editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
           );
         } catch (error: any) {}
+      } else if (messageQuote) {
+        try {
+          const data = new FormData();
+          data.append('room_id', idRoomChat);
+          data.append('from_id', user_id);
+          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message_quote', messageQuote?.text);
+          ids?.forEach((item: any) => {
+            data.append('ids[]', item);
+          });
+          const res = await sendMessageApi(data);
+          socket.emit('message_ind', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            task_id: null,
+            to_info: null,
+            level: res?.data?.data?.msg_level,
+            message_id: res?.data?.data?.id,
+            message_type: res?.data?.data?.msg_type,
+            method: res?.data?.data?.method,
+            attachment_files: res?.data?.attachmentFiles,
+            stamp_no: res?.data?.data?.stamp_no,
+            relation_message_id: res?.data?.data?.reply_to_message_id,
+            text: res?.data?.data?.message,
+            text2: messageQuote?.text,
+            time: res?.data?.data?.created_at,
+          });
+          dispatch(saveMessageQuote(null));
+          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+        } catch (error: any) {}
       } else {
         try {
           const data = new FormData();
@@ -317,15 +358,21 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
           });
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+          // callApiChatBotRequest(
+          //   res?.data?.data?.message,
+          //   res?.data?.data?.id,
+          //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+          // );
         } catch (error: any) {}
       }
+      // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
       });
       setIds([]);
     },
-    [messageReply, message_edit, ids],
+    [messageReply, message_edit, ids, messageQuote],
   );
 
   const updateGimMessage = useCallback(
@@ -356,6 +403,10 @@ export const useFunction = (props: any) => {
 
   const removeReplyMessage = useCallback(() => {
     dispatch(saveMessageReply(null));
+  }, []);
+
+  const removeQuoteMessage = useCallback(() => {
+    dispatch(saveMessageQuote(null));
   }, []);
 
   const editMessage = useCallback((data: any) => {
@@ -397,10 +448,15 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     if (message_edit) {
       dispatch(saveMessageReply(null));
+      dispatch(saveMessageQuote(null));
     } else if (messageReply) {
       dispatch(saveMessageEdit(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageQuote) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageReply(null));
     }
-  }, [message_edit, messageReply]);
+  }, [message_edit, messageReply, messageQuote]);
 
   const navigatiteToListReaction = useCallback(idMsg => {
     navigation.navigate(ROUTE_NAME.LIST_REACTION, {
@@ -586,6 +642,7 @@ export const useFunction = (props: any) => {
     if (modalStamp === true) {
       removeReplyMessage();
       removeEditMessage();
+      removeQuoteMessage();
     }
   }, [modalStamp]);
 
@@ -599,7 +656,16 @@ export const useFunction = (props: any) => {
   const getUserListChat = useCallback(async () => {
     try {
       const result = await getListUser({room_id: idRoomChat});
-      setListUser(result?.data?.users?.data);
+      const guest = result?.data?.guests?.map((item: any) => {
+        return {
+          ...item,
+          id: Number(item?.id) * -1,
+          last_name: item?.name,
+          first_name: '',
+        };
+      });
+      setListUser(result?.data?.users?.data?.concat(guest));
+      setListUserRoot(result?.data?.users?.data);
     } catch {
       (error: any) => {};
     }
@@ -624,6 +690,37 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
+
+  const quoteMessage = useCallback((data: any) => {
+    dispatch(saveMessageQuote(data));
+  }, []);
+
+  const callApiChatBotRequest = async (
+    message: any,
+    messageId: any,
+    useName: any,
+  ) => {
+    try {
+      let sendInfo: any = [];
+      const numberOfMember = listUserRoot.length;
+      if (numberOfMember < 2) {
+        return null;
+      } else if (numberOfMember === 2) {
+        sendInfo = listUserRoot;
+      } else if (numberOfMember > 2) {
+        sendInfo = listUserSelect;
+      }
+      let formData = new FormData();
+      formData.append('from_user_name', useName);
+      formData.append(
+        'mention_members',
+        JSON.stringify(convertArrUnique(sendInfo, 'id')),
+      );
+      formData.append('message', message);
+      formData.append('message_id', messageId);
+      const res = await callApiChatBot(formData);
+    } catch (error) {}
+  };
 
   return {
     chatUser,
@@ -666,5 +763,11 @@ export const useFunction = (props: any) => {
     bookmarkMessage,
     setIds,
     ids,
+    newIndexArray,
+    setIndex,
+    quoteMessage,
+    messageQuote,
+    listUserSelect,
+    setListUserSelect,
   };
 };

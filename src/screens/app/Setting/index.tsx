@@ -21,9 +21,10 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {verticalScale} from 'react-native-size-matters';
 import {updateImageProfile} from '@services';
 import {showMessage} from 'react-native-flash-message';
-import {AppSocket} from '@util';
+import {AppSocket, AppNotification} from '@util';
 
 const Setting = () => {
+  const {removeBadge} = AppNotification;
   const {endConnect} = AppSocket;
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state?.auth?.userInfo);
@@ -40,6 +41,7 @@ const Setting = () => {
     endConnect();
     onCancelModal();
     dispatch(logOut());
+    removeBadge();
   }, [modal]);
 
   const uploadImageApi = async () => {

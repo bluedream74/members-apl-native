@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors, stylesCommon} from '@stylesCommon';
 import {getStatusBarHeight, ifIphoneX} from 'react-native-iphone-x-helper';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
-import {iconBack, iconDetail, iconSearch, logoImage} from '@images';
+import {iconBack, logoImage} from '@images';
 import {HITSLOP} from '@util';
 import {useNavigation} from '@react-navigation/native';
 
@@ -35,7 +35,7 @@ const Header = React.memo((props: HeaderProps) => {
     iconRightFirst,
     iconRightSecond,
     styleIconRightSeccond,
-    styleIconRightFirst
+    styleIconRightFirst,
   } = props;
 
   const onPressBack = useCallback(() => {
@@ -82,7 +82,10 @@ const Header = React.memo((props: HeaderProps) => {
               hitSlop={{...HITSLOP, right: 10}}
               style={styles.buttonRightSecond}
               onPress={onRightSecond}>
-              <Image source={iconRightSecond} style={[styles.colorIcon, styleIconRightSeccond]} />
+              <Image
+                source={iconRightSecond}
+                style={[styles.colorIcon, styleIconRightSeccond]}
+              />
             </TouchableOpacity>
           )}
           {onRightFirst && (
@@ -90,7 +93,10 @@ const Header = React.memo((props: HeaderProps) => {
               hitSlop={{...HITSLOP, left: 0}}
               onPress={onRightFirst}
               activeOpacity={1}>
-              <Image source={iconRightFirst} style={[styles.colorIcon, styleIconRightFirst]} />
+              <Image
+                source={iconRightFirst}
+                style={[styles.colorIcon, styleIconRightFirst]}
+              />
             </TouchableOpacity>
           )}
         </View>

@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "apk": "cd android & ./gradlew assembleRelease",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@notifee/react-native": "^5.5.0",
     "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-clipboard/clipboard": "^1.10.0",
     "@react-native-community/cameraroll": "1.4.0",
@@ -28,6 +30,7 @@
     "dayjs": "^1.11.3",
     "fbjs": "^3.0.4",
     "formik": "^2.2.9",
+    "html-entities": "^2.3.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "react": "17.0.2",

@@ -19,6 +19,7 @@ import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 
 const Reaction = React.memo((props: any) => {
   const {reaction} = props;
+  //Các image reaction được đánh tên và trọng số trùng với id VD: icon1 => tương ứng với id là 1
   const renderSource = useCallback(value => {
     switch (value) {
       case 1:

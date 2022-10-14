@@ -12,90 +12,34 @@ import {
   chatStamp3,
   chatStamp4,
   iconLike,
+  iconQuote
 } from '@images';
 import FastImage from 'react-native-fast-image';
 import {colors, stylesCommon} from '@stylesCommon';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {saveMessageReply} from '@redux';
+import {saveMessageQuote} from '@redux';
 import {convertString} from '@util';
 import {decode} from 'html-entities';
 
-const ModalReply = React.memo(() => {
+const ModalQuote = React.memo(() => {
   const dispatch = useDispatch();
-  const messageReply = useSelector((state: any) => state.chat?.messageReply);
+  const messageQuote = useSelector((state: any) => state.chat?.messageQuote);
 
   const removeReplyMessage = useCallback(() => {
-    dispatch(saveMessageReply(null));
+    dispatch(saveMessageQuote(null));
   }, []);
-
-  const renderImgaeFile = useCallback((typeFile: any) => {
-    switch (typeFile) {
-      case '2':
-        return iconPdf;
-      case '5':
-        return iconDoc;
-      case '3':
-        return iconXls;
-      default:
-        return iconFile;
-    }
-  }, []);
-
-  const renderStamp = useCallback(() => {
-    switch (messageReply?.stamp_no) {
-      case 1:
-        return iconLike;
-      case 2:
-        return chatStamp2;
-      case 3:
-        return chatStamp3;
-      case 4:
-        return chatStamp4;
-    }
-  }, [messageReply?.stamp_no]);
 
   return (
     <View style={styles.viewRepMessage}>
       <View style={styles.viewIconRepMessage}>
-        <Image source={menuReply} style={styles.iconReply} />
+        <Image source={iconQuote} style={styles.iconReply} />
       </View>
       <View style={styles.viewTxtRepMessage}>
-        <Text style={styles.name}>返信メッセージ</Text>
-        {messageReply?.text ? (
+        <Text style={styles.name}>引用メッセージ</Text>
+        {messageQuote?.text ? (
           <Text style={styles.content}>
-            {convertString(decode(messageReply?.text.split('<br>').join('\n')))}
+            {convertString(decode(messageQuote?.text.split('<br>').join('\n')))}
           </Text>
-        ) : null}
-        {messageReply?.attachment_files?.length > 0 ? (
-          <View style={styles.viewRow}>
-            {messageReply?.attachment_files?.map((item: any) => (
-              <View key={item?.id}>
-                {item?.type == 4 ? (
-                  <FastImage
-                    source={{
-                      uri: item?.path,
-                      priority: FastImage.priority.high,
-                      cache: FastImage.cacheControl.immutable,
-                    }}
-                    style={styles.imageSmall}
-                  />
-                ) : (
-                  <Image
-                    source={renderImgaeFile(item?.type)}
-                    style={styles.imageFile}
-                  />
-                )}
-              </View>
-            ))}
-          </View>
-        ) : null}
-        {messageReply?.stamp_no ? (
-          <Image
-            source={renderStamp()}
-            style={
-              messageReply?.stamp_no == 1 ? styles.imageLike : styles.imageStamp
-            }
-          />
         ) : null}
       </View>
       <TouchableOpacity
@@ -181,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {ModalReply};
+export {ModalQuote};

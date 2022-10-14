@@ -33,6 +33,7 @@ const LIST_IMAGE_INROOM = 'user/chat/room';
 const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
 const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
+const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page} = params;
@@ -58,6 +59,11 @@ export const createRoom: any = async (body: any) => {
 
 export const removeUser: any = async (body: any) => {
   const response = api.post(REMOVE_USER, body);
+  return response;
+};
+
+export const removeGuest: any = async (body: any) => {
+  const response = api.post(REMOVE_GUEST, body);
   return response;
 };
 
@@ -222,3 +228,5 @@ export const addUserMessage: any = async (body: any) => {
   const response = api.post(ADD_USER_FROM_MESSAGE, body);
   return response;
 };
+
+export const callApiChatBot: any = async (body: any) => {};
