@@ -34,6 +34,7 @@ const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
 const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
 const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
+const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page} = params;
@@ -230,3 +231,15 @@ export const addUserMessage: any = async (body: any) => {
 };
 
 export const callApiChatBot: any = async (body: any) => {};
+export const getUnreadMessageCount: any = async (params: any) => {
+  const {id_room, id_message} = params;
+  const response = api.get(
+    `${GET_RESULT_SEARCH_MESSAGE}/${id_room}/messages-after-from-id?message_from_id=${id_message}`,
+  );
+  return response;
+};
+
+export const getUnreadMessageCountApi: any = async () => {
+  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}`);
+  return response;
+};
