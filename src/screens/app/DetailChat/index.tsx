@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {View, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import {iconSearch, iconUpload, iconLike, iconDetail} from '@images';
+import {iconSearch, iconUpload, iconLike, iconDetail, iconSend} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -53,7 +53,6 @@ const DetailChat = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
-    setText,
     bookmarkMessage,
     ids,
     setIds,
@@ -62,7 +61,13 @@ const DetailChat = (props: any) => {
     quoteMessage,
     messageQuote,
     listUserSelect,
-    setListUserSelect
+    setListUserSelect,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    formatText,
+    getText,
+    me
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -77,17 +82,40 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
-  //Render ra UI stamp
-  const renderActionsRight = useCallback((props: any) => {
-    return (
-      <Actions
-        {...props}
-        containerStyle={styles.buttonRight}
-        onPressActionButton={() => sendLabel(1)}
-        icon={() => <Image source={iconLike} />}
-      />
-    );
-  }, []);
+  const renderActionsRight = useCallback(
+    (props: any) => {
+      return (
+        <>
+          {props.formattedText?.length > 0 ? (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => {
+                const messages = [
+                  {
+                    text: getText(props.formattedText),
+                    user: {_id: props.user?._id},
+                    createdAt: new Date(Date.now()),
+                  },
+                ];
+                sendMessage(messages);
+                setFormattedText([]);
+              }}
+              icon={() => <Image source={iconSend} />}
+            />
+          ) : (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => sendLabel(1)}
+              icon={() => <Image source={iconLike} />}
+            />
+          )}
+        </>
+      );
+    },
+    [messageReply, message_edit],
+  );
 
   //Render ra UI của message
   const renderMessage = useCallback(
@@ -123,6 +151,7 @@ const DetailChat = (props: any) => {
             }}
             listUser={listUser}
             newIndexArray={newIndexArray}
+            me={me}
           />
         </>
       );
@@ -195,15 +224,12 @@ const DetailChat = (props: any) => {
       {/* UI list chat message */}
       <GiftedChat
         text={text}
+        formattedText={formattedText}
         ref={giftedChatRef}
-        onInputTextChanged={value => setText(value)}
+        onInputTextChanged={inputText => formatText(inputText, false)}
         messages={getConvertedMessages(listChat)}
-        onSend={(messages: any) => {
-          if (messages[0]?.text?.length === 0) {
-            showModalStamp();
-          } else {
-            sendMessage(messages);
-          }
+        onSend={() => {
+          showModalStamp();
         }}
         alwaysShowSend={true}
         renderMessage={renderMessage}
@@ -267,17 +293,15 @@ const DetailChat = (props: any) => {
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any, item: any) => {
-                        // logic khi tag name là tin nhắn tag có tên người và đồng thời gửi thêm 1 mảng id người dùng được tag
-                        if (id < 0) {
-                          // check nếu đây là id của khách lẻ thì không gửi mảng id lên
-                          setText(`${text}${value}`);
-                          setShowTag(false);
-                        } else {
-                          setText(`${text}${value}`);
-                          setIds(ids?.concat([id]));
-                          setListUserSelect(listUserSelect?.concat([{...item}]))
-                          setShowTag(false);
+                      choseUser={(value: any, id: any, props: any) => {
+                        setIds(ids?.concat([id]));
+                        setShowTag(false);
+                        if (value) {
+                          mentionedUsers.push('@' + value);
+                          formatText(
+                            getText(formattedText) + '' + '@' + value,
+                            true,
+                          );
                         }
                       }}
                     />
