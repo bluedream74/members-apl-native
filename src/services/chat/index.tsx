@@ -239,7 +239,7 @@ export const getUnreadMessageCount: any = async (params: any) => {
   return response;
 };
 
-export const getUnreadMessageCountApi: any = async () => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}`);
+export const getUnreadMessageCountApi: any = async (user_id: any) => {
+  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
   return response;
 };

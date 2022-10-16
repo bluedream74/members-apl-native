@@ -318,7 +318,9 @@ function* getDetailRoomSocket(action: any) {
 }
 export function* getUnreadMessageCountSaga() {
   try {
-    const result: ResponseGenerator = yield getUnreadMessageCountApi();
+    const state = store.getState();
+    const user_id = state?.auth?.userInfo.id;
+    const result: ResponseGenerator = yield getUnreadMessageCountApi(user_id);
     yield put(getUnreadMessageCountSuccess(result?.data));
   } catch (error) {
   } finally {
