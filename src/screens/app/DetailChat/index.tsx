@@ -226,7 +226,9 @@ const DetailChat = (props: any) => {
         text={text}
         formattedText={formattedText}
         ref={giftedChatRef}
-        onInputTextChanged={inputText => formatText(inputText, false)}
+        onInputTextChanged={inputText => {
+          formatText(inputText, false);
+        }}
         messages={getConvertedMessages(listChat)}
         onSend={() => {
           showModalStamp();

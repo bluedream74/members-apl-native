@@ -30,7 +30,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Text} from "react-native";
+import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 
@@ -65,7 +65,9 @@ export const useFunction = (props: any) => {
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
-  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
+  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
+    [],
+  );
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
@@ -676,6 +678,21 @@ export const useFunction = (props: any) => {
     getUserListChat();
   }, [showTagModal]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (
+        formattedText.length === 0 ||
+        formattedText[0]?.props?.children === '' ||
+        formattedText[0]?.props?.children === '@' ||
+        formattedText[0]?.props?.children.startsWith('@')
+      ) {
+      } else {
+        formattedText.shift();
+        setFormattedText([...formattedText]);
+      }
+    }, 10);
+  }, [formattedText]);
+
   const bookmarkMessage = useCallback((data: any) => {
     try {
       GlobalService.showLoading();
@@ -702,7 +719,12 @@ export const useFunction = (props: any) => {
       const isLastWord = index === words.length - 1;
       if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
         const nonmention = (
-          <Text key={word + index} style={{color: 'black'}}>
+          <Text
+            key={word + index}
+            style={{
+              alignSelf: 'flex-start',
+              color: 'black',
+            }}>
             {word}
           </Text>
         );
@@ -736,7 +758,24 @@ export const useFunction = (props: any) => {
         }
       }
     });
+    if (checkDeletedMension(formattedText1)) {
+      formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
+    }
     setFormattedText(formattedText1);
+  };
+  const checkDeletedMension = (formattedText1: any[]) => {
+    let result = false;
+    formattedText1.forEach((element, index) => {
+      if (
+        element?.props?.children?.startsWith('@') &&
+        element?.props?.children?.length > 1 &&
+        element?.props?.children?.length <
+          formattedText[index]?.props?.children.length
+      ) {
+        result = true;
+      }
+    });
+    return result;
   };
   const getText = (formattedtext: (string | JSX.Element)[]) => {
     let context: string = '';
@@ -841,6 +880,6 @@ export const useFunction = (props: any) => {
     setMentionedUsers,
     formatText,
     getText,
-    me
+    me,
   };
 };

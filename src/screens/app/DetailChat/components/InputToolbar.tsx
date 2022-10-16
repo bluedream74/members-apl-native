@@ -5,8 +5,6 @@ import {iconEmoji} from '@images';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {colors} from '@stylesCommon';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
-import { useFunction } from "../useFunction";
-
 
 export const renderSend = (props: any) => {
   return (
@@ -80,7 +78,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   inputMessage: {
-    color: '#222B45',
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(8),
     paddingLeft: scale(10),
