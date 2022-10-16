@@ -67,7 +67,7 @@ const DetailChat = (props: any) => {
     mentionedUsers,
     formatText,
     getText,
-    me
+    me,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file

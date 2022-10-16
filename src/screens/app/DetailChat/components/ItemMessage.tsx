@@ -440,9 +440,11 @@ const ItemMessage = React.memo((props: any) => {
                           {attachment_files?.length > 0 ? (
                             <MsgFile data={attachment_files} />
                           ) : null}
+                          {/* Xử lý message hightlight khi message có link, tagName, hightlight... */}
                           {user?._id == user_id ? (
                             <Autolink
-                              text={text?.split('<br>').join('\n')}
+                              //Convert message có kí tự <br> nhận từ web (kí tự xuống dòng)
+                              text={decode(text?.split('<br>').join('\n'))}
                               email
                               url
                               renderText={text => (
@@ -457,7 +459,7 @@ const ItemMessage = React.memo((props: any) => {
                             />
                           ) : (
                             <Autolink
-                              text={text?.split('<br>').join('\n')}
+                              text={decode(text?.split('<br>').join('\n'))}
                               email
                               url
                               renderText={text => formatText(text)}
