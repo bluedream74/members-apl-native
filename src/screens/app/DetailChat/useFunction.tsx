@@ -680,13 +680,7 @@ export const useFunction = (props: any) => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (
-        formattedText.length === 0 ||
-        formattedText[0]?.props?.children === '' ||
-        formattedText[0]?.props?.children === '@' ||
-        formattedText[0]?.props?.children.startsWith('@')
-      ) {
-      } else {
+      if (formattedText[0]?.props?.children === '') {
         formattedText.shift();
         setFormattedText([...formattedText]);
       }
