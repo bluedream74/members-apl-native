@@ -5,16 +5,16 @@ import {store} from '../redux/store';
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
 
-const api = axios.create();
+const apiChatBot = axios.create();
 
 //adamo api url
-// const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
+//export const BASEURL = 'https://member-chat-api.adamo.tech/';
 //member chat staging api url
-// const BASEURL = 'https://stage.mem-bers.jp/mobile';
+// export const BASEURL = 'https://stage.mem-bers.jp/';
 //member chat live api url
-const BASEURL = 'https://mem-bers.jp/mobile';
+export const BASEURL = 'https://mem-bers.jp/';
 
-api.interceptors.request.use(
+apiChatBot.interceptors.request.use(
   async (config: any) => {
     config.baseURL = BASEURL;
     const state = store.getState();
@@ -35,7 +35,7 @@ api.interceptors.request.use(
   error => Promise.reject(error),
 );
 
-api.interceptors.response.use(
+apiChatBot.interceptors.response.use(
   //response success
   function (response: any) {
     //Hàm log trả về response (Có thể bật và tắt trong file logger)
@@ -66,4 +66,4 @@ api.interceptors.response.use(
   },
 );
 
-export default api;
+export default apiChatBot;

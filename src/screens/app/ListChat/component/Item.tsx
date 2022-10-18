@@ -21,6 +21,8 @@ import {pinFlag, GlobalService} from '@services';
 import {saveIdRoomChat, getRoomList} from '@redux';
 import {showMessage} from 'react-native-flash-message';
 import {useSelector, useDispatch} from 'react-redux';
+import {decode} from 'html-entities';
+import notifee, {EventType} from '@notifee/react-native';
 
 const Item = React.memo((props: any) => {
   const idCompany = useSelector((state: any) => state.chat.idCompany);
@@ -35,12 +37,26 @@ const Item = React.memo((props: any) => {
     }
   }, [item?.pin_flag]);
 
-  const navigateDetail = async () => {
-    await dispatch(saveIdRoomChat(item?.id));
-    navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
-      idRoomChat: item?.id,
-      idMessageSearchListChat: null,
-    });
+  const navigateDetail = () => {
+    try {
+      notifee.getBadgeCount().then(async (count: any) => {
+        if (count > 0) {
+          const countMessage = count - Number(item?.message_unread);
+          await notifee.setBadgeCount(countMessage);
+          await dispatch(saveIdRoomChat(item?.id));
+          navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
+            idRoomChat: item?.id,
+            idMessageSearchListChat: null,
+          });
+        } else {
+          await dispatch(saveIdRoomChat(item?.id));
+          navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
+            idRoomChat: item?.id,
+            idMessageSearchListChat: null,
+          });
+        }
+      });
+    } catch (error) {}
   };
 
   const renderImgaeFile = useCallback((typeFile: any) => {
@@ -70,10 +86,13 @@ const Item = React.memo((props: any) => {
     }
   };
 
+  // note: one_one_check là 1 trường check xem có phải chat 1-1 không được trả về từ api
+
   return (
     <TouchableOpacity style={styles.container} onPress={navigateDetail}>
       <View style={styles.viewContent}>
         <View style={styles.viewImage}>
+          {/* Check có phải chat 1-1 hay không */}
           {item?.one_one_check?.length > 0 ? (
             <View style={styles.image}>
               <FastImage
@@ -119,10 +138,25 @@ const Item = React.memo((props: any) => {
         </View>
         <View style={styles.viewTxt}>
           <>
-            <Text style={styles.txtContent} numberOfLines={1}>
+            <Text
+              style={[
+                styles.txtContent,
+                {
+                  fontWeight: item?.message_unread > 0 ? 'bold' : '600',
+                  color:
+                    item?.message_unread > 0 ? '#000000' : colors.backgroundTab,
+                },
+              ]}
+              numberOfLines={1}>
               {item?.name && item?.name?.length > 0
                 ? item?.name
-                : `${item?.one_one_check[0]?.last_name} ${item?.one_one_check[0]?.first_name}`}
+                : `${
+                    item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
+                  } ${
+                    item?.one_one_check
+                      ? item?.one_one_check[0]?.first_name
+                      : ''
+                  }`}
             </Text>
             {item?.lastMessageJoin?.attachment_files?.length > 0 ? (
               <View style={styles.viewRow}>
@@ -153,7 +187,12 @@ const Item = React.memo((props: any) => {
                 {item?.lastMessageJoin?.msg_type == 9
                   ? `${item?.lastMessageJoin?.guest?.name}さんが参加しました`
                   : convertString(
-                      item?.lastMessageJoin?.message?.split('<br>').join('\n'),
+                      //Check logic xuống dòng khi thông tin được sửa từ trên app
+                      decode(
+                        item?.lastMessageJoin?.message
+                          ?.split('<br>')
+                          .join('\n'),
+                      ),
                     )}
               </Text>
             ) : null}
@@ -166,7 +205,18 @@ const Item = React.memo((props: any) => {
               style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
             />
           </TouchableOpacity>
-          <Image source={iconNext} />
+          {item?.message_unread > 0 ? (
+            <View style={styles.viewUnread}>
+              <Text style={styles.txtMessageUnread} numberOfLines={1}>
+                {item?.message_unread}
+              </Text>
+              {item?.message_mention_unread === true ? (
+                <View style={styles.viewActiveTag} />
+              ) : null}
+            </View>
+          ) : (
+            <Image source={iconNext} />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -209,7 +259,7 @@ const styles = StyleSheet.create({
     marginTop: scale(5),
   },
   txtContent: {
-    ...stylesCommon.fontWeight600,
+    // ...stylesCommon.fontWeight600,
     fontSize: moderateScale(14),
     marginTop: verticalScale(3),
     color: colors.backgroundTab,
@@ -254,6 +304,29 @@ const styles = StyleSheet.create({
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),
+  },
+  viewUnread: {
+    width: moderateScale(25),
+    height: moderateScale(25),
+    borderRadius: moderateScale(25 / 2),
+    backgroundColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: scale(8),
+  },
+  txtMessageUnread: {
+    fontSize: moderateScale(10),
+    ...stylesCommon.fontWeight600,
+    color: '#FFFFFF',
+  },
+  viewActiveTag: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    position: 'absolute',
+    backgroundColor: colors.primary,
+    top: -2,
+    right: -2,
   },
 });
 

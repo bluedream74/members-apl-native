@@ -2,16 +2,12 @@ import React, {useCallback, useState} from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {styles} from './styles';
 import {logo, iconBack} from '@images';
-import LinearGradient from 'react-native-linear-gradient';
-import {colors} from '@stylesCommon';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {validateForm} from '@util';
 import {useDispatch} from 'react-redux';
-import {demoActionChange, login} from '@redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useNavigation} from '@react-navigation/native';
-import {ROUTE_NAME} from '@routeName';
 import {GlobalService, forgotPassword} from '@services';
 import {showMessage} from 'react-native-flash-message';
 import {HITSLOP} from '@util';
@@ -20,7 +16,6 @@ import {AppButton, AppInput} from '@component';
 
 const ForgotPassword = () => {
   const navigation = useNavigation<any>();
-  const dispatch = useDispatch();
   const [success, setSuccess] = useState<boolean>(false);
   const formInitialValues = {
     login: '',

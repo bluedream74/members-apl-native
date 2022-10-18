@@ -14,6 +14,7 @@ import {
 } from '@images';
 import FastImage from 'react-native-fast-image';
 import {convertString} from '@util';
+import {decode} from 'html-entities';
 
 const Item = React.memo((props: any) => {
   const {item, onClickItem, onDeleteItem} = props;
@@ -57,7 +58,7 @@ const Item = React.memo((props: any) => {
             </Text>
             {item?.message ? (
               <Text style={styles.txtTitle} numberOfLines={2}>
-                {convertString(item?.message?.split('<br>').join('\n'))}{' '}
+                {convertString(decode(item?.message?.split('<br>').join('\n')))}{' '}
               </Text>
             ) : null}
             {item?.stamp_no ? (

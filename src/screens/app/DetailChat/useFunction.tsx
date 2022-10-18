@@ -1,5 +1,3 @@
-import {defaultAvatar} from '@images';
-import moment from 'moment';
 import React, {useMemo, useEffect, useState, useCallback, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -9,9 +7,9 @@ import {
   getDetailMessageSocketSuccess,
   saveMessageReply,
   saveMessageEdit,
+  saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  isGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -25,14 +23,16 @@ import {
   sendLabelApi,
   getListUser,
   addBookmark,
+  callApiChatBot,
 } from '@services';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Keyboard, Alert} from 'react-native';
+import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
+import {convertArrUnique} from '@util';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -40,6 +40,7 @@ export const useFunction = (props: any) => {
 
   const giftedChatRef = useRef<any>(null);
   const navigation = useNavigation<any>();
+  const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
   const pagging = useSelector((state: any) => state.chat?.pagingDetail);
@@ -49,6 +50,7 @@ export const useFunction = (props: any) => {
   );
   const message_edit = useSelector((state: any) => state.chat?.messageEdit);
   const messageReply = useSelector((state: any) => state.chat?.messageReply);
+  const messageQuote = useSelector((state: any) => state.chat?.messageQuote);
   const idMessageSearch = useSelector(
     (state: any) => state.chat?.id_messageSearch,
   );
@@ -63,11 +65,19 @@ export const useFunction = (props: any) => {
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
+  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
+    [],
+  );
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
+  const [newIndexArray, setIndex] = useState<any>(null);
+  const [listUserRoot, setListUserRoot] = useState([]);
+  const [listUserSelect, setListUserSelect] = useState<any>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
 
   useEffect(() => {
+    //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
     if (idMessageSearchListChat) {
       setTimeout(() => {
         const body = {
@@ -95,6 +105,7 @@ export const useFunction = (props: any) => {
   );
 
   useEffect(() => {
+    //Logic khi có id message tìm kiếm thì tiến hành scroll đển tin nhắn đó
     if (idMessageSearch) {
       setPage(pagging?.current_page);
       navigateToMessage(idMessageSearch);
@@ -106,6 +117,7 @@ export const useFunction = (props: any) => {
   }, [idRoomChat]);
 
   const convertDataMessage = useCallback((message: any, index: any) => {
+    //Hàm xử lý lại dữ liệu message khi nhận từ api trả về
     return {
       _id: message?.id,
       text: message?.message,
@@ -130,6 +142,7 @@ export const useFunction = (props: any) => {
       task: message?.task,
       guest: message?.guest,
       task_link: message?.task_link,
+      message_quote: message?.message_quote,
     };
   }, []);
 
@@ -178,10 +191,10 @@ export const useFunction = (props: any) => {
   );
 
   useEffect(() => {
-    if (message_edit || messageReply) {
+    if (message_edit || messageReply || messageQuote) {
       setShowModalStamp(false);
     }
-  }, [message_edit, messageReply]);
+  }, [message_edit, messageReply, messageQuote]);
 
   useEffect(() => {
     if (!message_edit) {
@@ -290,6 +303,36 @@ export const useFunction = (props: any) => {
             editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
           );
         } catch (error: any) {}
+      } else if (messageQuote) {
+        try {
+          const data = new FormData();
+          data.append('room_id', idRoomChat);
+          data.append('from_id', user_id);
+          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message_quote', messageQuote?.text);
+          ids?.forEach((item: any) => {
+            data.append('ids[]', item);
+          });
+          const res = await sendMessageApi(data);
+          socket.emit('message_ind', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            task_id: null,
+            to_info: null,
+            level: res?.data?.data?.msg_level,
+            message_id: res?.data?.data?.id,
+            message_type: res?.data?.data?.msg_type,
+            method: res?.data?.data?.method,
+            attachment_files: res?.data?.attachmentFiles,
+            stamp_no: res?.data?.data?.stamp_no,
+            relation_message_id: res?.data?.data?.reply_to_message_id,
+            text: res?.data?.data?.message,
+            text2: messageQuote?.text,
+            time: res?.data?.data?.created_at,
+          });
+          dispatch(saveMessageQuote(null));
+          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+        } catch (error: any) {}
       } else {
         try {
           const data = new FormData();
@@ -317,15 +360,21 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
           });
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+          // callApiChatBotRequest(
+          //   res?.data?.data?.message,
+          //   res?.data?.data?.id,
+          //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+          // );
         } catch (error: any) {}
       }
+      // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
       });
       setIds([]);
     },
-    [messageReply, message_edit, ids],
+    [messageReply, message_edit, ids, messageQuote],
   );
 
   const updateGimMessage = useCallback(
@@ -358,8 +407,13 @@ export const useFunction = (props: any) => {
     dispatch(saveMessageReply(null));
   }, []);
 
+  const removeQuoteMessage = useCallback(() => {
+    dispatch(saveMessageQuote(null));
+  }, []);
+
   const editMessage = useCallback((data: any) => {
-    setText(data?.text);
+    // setText(data?.text);
+    formatText(data?.text + ' ', false);
     dispatch(saveMessageEdit(data));
   }, []);
 
@@ -397,10 +451,15 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     if (message_edit) {
       dispatch(saveMessageReply(null));
+      dispatch(saveMessageQuote(null));
     } else if (messageReply) {
       dispatch(saveMessageEdit(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageQuote) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageReply(null));
     }
-  }, [message_edit, messageReply]);
+  }, [message_edit, messageReply, messageQuote]);
 
   const navigatiteToListReaction = useCallback(idMsg => {
     navigation.navigate(ROUTE_NAME.LIST_REACTION, {
@@ -586,6 +645,7 @@ export const useFunction = (props: any) => {
     if (modalStamp === true) {
       removeReplyMessage();
       removeEditMessage();
+      removeQuoteMessage();
     }
   }, [modalStamp]);
 
@@ -599,7 +659,16 @@ export const useFunction = (props: any) => {
   const getUserListChat = useCallback(async () => {
     try {
       const result = await getListUser({room_id: idRoomChat});
-      setListUser(result?.data?.users?.data);
+      const guest = result?.data?.guests?.map((item: any) => {
+        return {
+          ...item,
+          id: Number(item?.id) * -1,
+          last_name: item?.name,
+          first_name: '',
+        };
+      });
+      setListUser(result?.data?.users?.data?.concat(guest));
+      setListUserRoot(result?.data?.users?.data);
     } catch {
       (error: any) => {};
     }
@@ -608,6 +677,21 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     getUserListChat();
   }, [showTagModal]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (
+        formattedText.length === 0 ||
+        formattedText[0]?.props?.children === '' ||
+        formattedText[0]?.props?.children === '@' ||
+        formattedText[0]?.props?.children.startsWith('@')
+      ) {
+      } else {
+        formattedText.shift();
+        setFormattedText([...formattedText]);
+      }
+    }, 10);
+  }, [formattedText]);
 
   const bookmarkMessage = useCallback((data: any) => {
     try {
@@ -624,6 +708,125 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
+  const formatText = (inputText: string, fromTagFlg: boolean) => {
+    if (inputText.length === 0) {
+      setFormattedText([]);
+      return;
+    }
+    const words = inputText.split(' ');
+    const formattedText1: (string | JSX.Element)[] = [];
+    words.forEach((word, index) => {
+      const isLastWord = index === words.length - 1;
+      if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
+        const nonmention = (
+          <Text
+            key={word + index}
+            style={{
+              alignSelf: 'flex-start',
+              color: 'black',
+            }}>
+            {word}
+          </Text>
+        );
+        return isLastWord
+          ? formattedText1.push(nonmention)
+          : formattedText1.push(nonmention, ' ');
+      } else {
+        const mention = (
+          <Text
+            key={word + index}
+            style={{
+              alignSelf: 'flex-start',
+              color: '#3366CC',
+              fontWeight: 'bold',
+            }}>
+            {word}
+          </Text>
+        );
+        if (word === '@') {
+          formattedText1.push(mention);
+        } else {
+          if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
+            isLastWord
+              ? formattedText1.push(mention)
+              : formattedText1.push(mention, ' ');
+          } else {
+            isLastWord
+              ? formattedText1.push(mention, ' ')
+              : formattedText1.push(mention, ' ');
+          }
+        }
+      }
+    });
+    if (checkDeletedMension(formattedText1)) {
+      formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
+    }
+    setFormattedText(formattedText1);
+  };
+  const checkDeletedMension = (formattedText1: any[]) => {
+    let result = false;
+    formattedText1.forEach((element, index) => {
+      if (
+        element?.props?.children?.startsWith('@') &&
+        element?.props?.children?.length > 1 &&
+        element?.props?.children?.length <
+          formattedText[index]?.props?.children.length
+      ) {
+        result = true;
+      }
+    });
+    return result;
+  };
+  const getText = (formattedtext: (string | JSX.Element)[]) => {
+    let context: string = '';
+    formattedtext.forEach((element, index) => {
+      let word = '';
+      if (typeof element === 'string') {
+        word = element;
+      } else {
+        word = element.props.children;
+      }
+      if (word !== '@') {
+        if (word.slice(-1) === '@') {
+          context = context + word.slice(0, -1) + ' ';
+        } else {
+          context = context + word;
+        }
+      }
+    });
+    return context;
+  };
+
+  const quoteMessage = useCallback((data: any) => {
+    dispatch(saveMessageQuote(data));
+  }, []);
+
+  const callApiChatBotRequest = async (
+    message: any,
+    messageId: any,
+    useName: any,
+  ) => {
+    try {
+      let sendInfo: any = [];
+      const numberOfMember = listUserRoot.length;
+      if (numberOfMember < 2) {
+        return null;
+      } else if (numberOfMember === 2) {
+        sendInfo = listUserRoot;
+      } else if (numberOfMember > 2) {
+        sendInfo = listUserSelect;
+      }
+      let formData = new FormData();
+      formData.append('from_user_name', useName);
+      formData.append(
+        'mention_members',
+        JSON.stringify(convertArrUnique(sendInfo, 'id')),
+      );
+      formData.append('message', message);
+      formData.append('message_id', messageId);
+      const res = await callApiChatBot(formData);
+    } catch (error) {}
+  };
 
   return {
     chatUser,
@@ -657,7 +860,6 @@ export const useFunction = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
-    // setTextInput,
     showHideModalTagName,
     setShowTag,
     showTagModal,
@@ -666,5 +868,18 @@ export const useFunction = (props: any) => {
     bookmarkMessage,
     setIds,
     ids,
+    newIndexArray,
+    setIndex,
+    quoteMessage,
+    messageQuote,
+    listUserSelect,
+    setListUserSelect,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    setMentionedUsers,
+    formatText,
+    getText,
+    me,
   };
 };

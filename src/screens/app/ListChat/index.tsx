@@ -6,8 +6,8 @@ import {
   FlatList,
   TextInput,
   RefreshControl,
-  BackHandler,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -23,6 +23,7 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
+  getUnreadMessageCount,
 } from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -30,9 +31,12 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
+import notifee, {EventType} from '@notifee/react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const ListChat = () => {
   const refInput = useRef<any>(null);
+  //Khởi tạo Firebase noti
   let {initFB} = AppNotification;
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
@@ -46,6 +50,11 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
+  let unreadMessageCount = useSelector((state: any) =>
+    state.chat?.unReadMessageCount === null
+      ? 0
+      : state.chat?.unReadMessageCount,
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -56,23 +65,29 @@ const ListChat = () => {
     }, []),
   );
 
+  //Logic tính tổng các tin nhắn chưa đọc
+  var countMessage = listRoom?.reduce(function (total: any, course: any) {
+    return total + course.message_unread;
+  }, 0);
+
   useEffect(() => {
     setIsLoadMore(false);
   }, [listRoom]);
+
+  //Đây là hàm logic lắng nghe tổng các tin nhắn chưa đọc, nếu có kết quả thì set lại badge noti
+  useEffect(() => {
+    if (countMessage > 0) {
+      notifee.setBadgeCount(countMessage);
+    } else {
+      notifee.setBadgeCount(0);
+    }
+  }, [countMessage]);
 
   useEffect(() => {
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
     }
-    const backAction = () => {
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
   }, []);
 
   useEffect(() => {
@@ -165,6 +180,7 @@ const ListChat = () => {
           showObtion={true}
           onShowOption={onShowOption}
         />
+        {/* Popup điều hướng khi chọn search tin nhắn hoặc tên phòng */}
         <View style={styles.viewOption}>
           <Menu
             style={styles.containerMenu}

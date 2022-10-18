@@ -1,15 +1,15 @@
 import React, {useState, useCallback} from 'react';
 import {View, Text, TouchableOpacity, FlatList} from 'react-native';
 import {styles} from './styles';
-import {Header, AppInput, ModalConfirm, ModalRemoveUser} from '@component';
-import {iconAddUser, iconAddListChat} from '@images';
+import {Header, ModalRemoveUser} from '@component';
+import {iconAddUser} from '@images';
 import {Item} from './components/Item';
 import {useFocusEffect} from '@react-navigation/native';
 import {AppSocket} from '@util';
 
 import {getRoomList, getDetailMessageSocketSuccess} from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
-import {getListUser, GlobalService, removeUser} from '@services';
+import {getListUser, GlobalService, removeUser, removeGuest} from '@services';
 
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -24,7 +24,7 @@ const ListUser = (props: any) => {
   const navigation = useNavigation<any>();
   const [listUser, setListUser] = useState([]);
   const [nameUser, setNameUser] = useState<any>(null);
-  const [idUser, setIdUser] = useState(null);
+  const [idUser, setIdUser] = useState<any>(null);
   const [modal, setModal] = useState<boolean>(false);
 
   const renderItem = ({item}: any) => (
@@ -32,7 +32,11 @@ const ListUser = (props: any) => {
       item={item}
       deleteUser={(value: any) => {
         setIdUser(value?.id);
-        setNameUser(`${value?.last_name}${value?.first_name}`);
+        setNameUser(
+          value?.id < 0
+            ? `${value?.name}`
+            : `${value?.last_name}${value?.first_name}`,
+        );
         onCancelModal();
       }}
     />
@@ -81,6 +85,49 @@ const ListUser = (props: any) => {
     }
   };
 
+  const deleGuest = async () => {
+    try {
+      GlobalService.showLoading();
+      const body = {
+        room_id: idRoomChat,
+        guest_id: Number(idUser) * -1,
+      };
+      const result = await removeGuest(body);
+      socket.emit('message_ind', {
+        user_id: user_id,
+        room_id: idRoomChat,
+        task_id: null,
+        to_info: null,
+        level: result?.data?.data?.msg_level,
+        message_id: result?.data?.data?.id,
+        message_type: result?.data?.data?.msg_type,
+        method: result?.data?.data?.method,
+        // attachment_files: res?.data?.attachmentFiles,
+        stamp_no: result?.data?.data?.stamp_no,
+        relation_message_id: result?.data?.data?.reply_to_message_id,
+        text: result?.data?.data?.message,
+        text2: null,
+        time: result?.data?.data?.created_at,
+      });
+      socket.emit('ChatGroup_update_ind', {
+        user_id: user_id,
+        room_id: idRoomChat,
+        member_info: {
+          type: 1,
+          ids: [user_id],
+        },
+        method: 12,
+        room_name: null,
+        task_id: null,
+      });
+      dispatch(getDetailMessageSocketSuccess([result?.data?.data]));
+      getListUserOfRoom();
+      GlobalService.hideLoading();
+    } catch (error) {
+      GlobalService.hideLoading();
+    }
+  };
+
   const onCreate = useCallback(() => {
     navigation.navigate(ROUTE_NAME.CREATE_ROOM_CHAT, {
       typeScreen: 'ADD_NEW_USER',
@@ -90,8 +137,14 @@ const ListUser = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
-      setListUser(result?.data?.users?.data);
+      const result = await getListUser({room_id: idRoomChat, all: true});
+      const guest = result?.data?.guests?.map((item: any) => {
+        return {
+          ...item,
+          id: Number(item?.id) * -1,
+        };
+      });
+      setListUser(result?.data?.users?.data?.concat(guest));
     } catch (error) {}
   };
 
@@ -107,7 +160,11 @@ const ListUser = (props: any) => {
 
   const onConfirm = useCallback(() => {
     onCancelModal();
-    deleteUser();
+    if (idUser < 0) {
+      deleGuest();
+    } else {
+      deleteUser();
+    }
   }, [modal, idUser]);
 
   return (

@@ -2,21 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {styles} from './style';
 import {Header} from '@component';
-import {
-  like,
-  happy,
-  heart,
-  great,
-  smile,
-  sad,
-  defaultAvatar,
-  icon1,
-  icon2,
-  icon3,
-  icon4,
-  icon5,
-  icon6,
-} from '@images';
+import {defaultAvatar, icon1, icon2, icon3, icon4, icon5, icon6} from '@images';
 import FastImage from 'react-native-fast-image';
 import {useSelector, useDispatch} from 'react-redux';
 import {getListReactionApi, GlobalService, removeReactionApi} from '@services';

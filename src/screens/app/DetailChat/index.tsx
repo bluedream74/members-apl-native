@@ -1,8 +1,8 @@
 import React, {useCallback} from 'react';
-import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import {iconSearch, iconUpload, iconLike, iconDetail} from '@images';
+import {iconSearch, iconUpload, iconLike, iconDetail, iconSend} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -12,15 +12,16 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {convertString} from '@util';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
+import {ModalQuote} from './components/ModalQuote';
 import {ModalEdit} from './components/ModalEdit';
 import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
 
 const DetailChat = (props: any) => {
+  // custom hook logic
   const {
     idRoomChat,
     chatUser,
@@ -52,12 +53,24 @@ const DetailChat = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
-    setText,
     bookmarkMessage,
     ids,
     setIds,
+    setIndex,
+    newIndexArray,
+    quoteMessage,
+    messageQuote,
+    listUserSelect,
+    setListUserSelect,
+    formattedText,
+    setFormattedText,
+    mentionedUsers,
+    formatText,
+    getText,
+    me,
   } = useFunction(props);
 
+  //Render ra UI chọn ảnh, video, file
   const renderActions = useCallback((props: any) => {
     return (
       <Actions
@@ -69,17 +82,42 @@ const DetailChat = (props: any) => {
     );
   }, []);
 
-  const renderActionsRight = useCallback((props: any) => {
-    return (
-      <Actions
-        {...props}
-        containerStyle={styles.buttonRight}
-        onPressActionButton={() => sendLabel(1)}
-        icon={() => <Image source={iconLike} />}
-      />
-    );
-  }, []);
+  const renderActionsRight = useCallback(
+    (props: any) => {
+      return (
+        <>
+          {props.formattedText?.length > 0 ? (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => {
+                const messages = [
+                  {
+                    text: getText(props.formattedText),
+                    user: {_id: props.user?._id},
+                    createdAt: new Date(Date.now()),
+                  },
+                ];
+                sendMessage(messages);
+                setFormattedText([]);
+              }}
+              icon={() => <Image source={iconSend} />}
+            />
+          ) : (
+            <Actions
+              {...props}
+              containerStyle={styles.buttonRight}
+              onPressActionButton={() => sendLabel(1)}
+              icon={() => <Image source={iconLike} />}
+            />
+          )}
+        </>
+      );
+    },
+    [messageReply, message_edit],
+  );
 
+  //Render ra UI của message
   const renderMessage = useCallback(
     (props: any) => {
       return (
@@ -105,17 +143,23 @@ const DetailChat = (props: any) => {
             onReaction={(data: any, idMsg: any) => {
               reactionMessage(data, idMsg);
             }}
+            quoteMsg={(data: any) => {
+              quoteMessage(data);
+            }}
             navigatiteToListReaction={(idMsg: any) => {
               navigatiteToListReaction(idMsg);
             }}
             listUser={listUser}
+            newIndexArray={newIndexArray}
+            me={me}
           />
         </>
       );
     },
-    [listUser],
+    [listUser, newIndexArray],
   );
 
+  //Check phạm vi để gọi hàm loadmore
   const isCloseToTop = useCallback(
     ({layoutMeasurement, contentOffset, contentSize}: any) => {
       const paddingToTop = Platform.OS === 'ios' ? -20 : 10;
@@ -127,10 +171,22 @@ const DetailChat = (props: any) => {
     [],
   );
 
+  //Check vị trí scroll màn hình đang ở index số mấy
+  const onViewRef = React.useRef((viewableItems: any) => {
+    const index = viewableItems?.viewableItems?.length - 1;
+    setIndex(viewableItems?.viewableItems[index]?.index);
+  });
+
+  //Config view xem trong tài liệu của RN
+  const viewConfigRef = React.useRef({
+    viewAreaCoveragePercentThreshold: 0,
+  });
+
   return (
     <View style={styles.container}>
       <Header
         back
+        //Check title header nếu đây là chat 1-1 hay chat nhóm
         title={
           dataDetail?.name && dataDetail?.name?.length > 0
             ? dataDetail?.name
@@ -157,6 +213,7 @@ const DetailChat = (props: any) => {
         }
         onRightSecond={searchMessage}
       />
+      {/* UI pin message */}
       {message_pinned?.id && (
         <ModalPin
           updateGimMessage={(id: any, value: any) =>
@@ -164,17 +221,17 @@ const DetailChat = (props: any) => {
           }
         />
       )}
+      {/* UI list chat message */}
       <GiftedChat
         text={text}
+        formattedText={formattedText}
         ref={giftedChatRef}
-        onInputTextChanged={value => setText(value)}
+        onInputTextChanged={inputText => {
+          formatText(inputText, false);
+        }}
         messages={getConvertedMessages(listChat)}
-        onSend={(messages: any) => {
-          if (messages[0]?.text?.length === 0) {
-            showModalStamp();
-          } else {
-            sendMessage(messages);
-          }
+        onSend={() => {
+          showModalStamp();
         }}
         alwaysShowSend={true}
         renderMessage={renderMessage}
@@ -185,14 +242,22 @@ const DetailChat = (props: any) => {
         renderFooter={() => <View style={styles.viewBottom} />}
         renderActions={renderActions}
         renderActionsRight={renderActionsRight}
+        //Các props của flatlist nhúng vào gifted chat
         listViewProps={{
           scrollEventThrottle: 400,
+          //Xử lý loadmore tin nhắn
           onScroll: ({nativeEvent}: any) => {
             if (isCloseToTop(nativeEvent)) {
               onLoadMore();
             } else if (nativeEvent?.contentOffset?.y === 0) {
             }
           },
+
+          //Xử lý tracking xem đang scroll ở vị trí tin nhắn số bao nhiêu
+          viewabilityConfig: viewConfigRef.current,
+          onViewableItemsChanged: onViewRef.current,
+
+          //Xử lý khi vào màn detail chat sẽ nhảy đến message được chỉ định
           onScrollToIndexFailed: (info: any) => {
             if (info?.index >= 0) {
               const wait = new Promise(resolve => setTimeout(resolve, 500));
@@ -207,6 +272,7 @@ const DetailChat = (props: any) => {
             }
           },
         }}
+        //Các props của textInput nhúng vào gifted chat
         textInputProps={{
           onKeyPress: ({nativeEvent}: any) => {
             if (nativeEvent?.key?.trim() === '@') {
@@ -216,25 +282,39 @@ const DetailChat = (props: any) => {
             }
           },
         }}
+        //Chú ý đây là phần xử lý các UI nằm bên trên của input chat (có custom trong thư viện)
         renderAccessory={
           messageReply ||
           message_edit ||
+          messageQuote ||
           modalStamp === true ||
           showTagModal === true
             ? () => (
                 <>
+                  {/* UI modal tag name */}
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any) => {
-                        setText(`${text}${value}`);
+                      choseUser={(value: any, id: any, props: any) => {
                         setIds(ids?.concat([id]));
                         setShowTag(false);
+                        if (value) {
+                          mentionedUsers.push('@' + value);
+                          formatText(
+                            getText(formattedText) + '' + '@' + value,
+                            true,
+                          );
+                        }
                       }}
                     />
                   )}
+                  {/* UI reply message */}
                   {messageReply && <ModalReply />}
+                  {/* UI Edit message */}
                   {message_edit && <ModalEdit />}
+                  {/* UI message quote */}
+                  {messageQuote && <ModalQuote />}
+                  {/* UI chọn stamp */}
                   {modalStamp && (
                     <ModalStamp
                       onChose={(value: any) => {
@@ -249,6 +329,7 @@ const DetailChat = (props: any) => {
         bottomOffset={0}
         messagesContainerStyle={styles.containerMessage}
       />
+      {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile
         visible={pickFile}
         onCancel={cancelModal}

@@ -6,7 +6,12 @@ import {iconSearch} from '@images';
 import {debounce} from 'lodash';
 import {useSelector} from 'react-redux';
 import {Item} from './component/Item';
-import {getDetailChatApi, listBookmark, deleteBookmark} from '@services';
+import {
+  getDetailChatApi,
+  listBookmark,
+  deleteBookmark,
+  GlobalService,
+} from '@services';
 import {useDispatch} from 'react-redux';
 import {fetchResultMessageAction} from '@redux';
 import {useNavigation} from '@react-navigation/native';
@@ -26,6 +31,7 @@ const Bookmark = (props: any) => {
 
   const callApiSearch = async (params: any) => {
     try {
+      GlobalService.showLoading();
       const res = await listBookmark(params);
       setTotal(res?.data?.bookmark_messages?.paging?.total);
       setLastPage(res?.data?.bookmark_messages?.paging?.last_page);
@@ -34,7 +40,10 @@ const Bookmark = (props: any) => {
           ? res?.data?.bookmark_messages?.data
           : listMessage.concat(res?.data?.bookmark_messages?.data),
       );
-    } catch (error: any) {}
+      GlobalService.hideLoading();
+    } catch (error: any) {
+      GlobalService.hideLoading();
+    }
   };
 
   useFocusEffect(

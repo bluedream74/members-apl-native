@@ -1,11 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, Image, TouchableOpacity, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {verticalScale, moderateScale, scale} from 'react-native-size-matters';
 import {chatStamp2, chatStamp3, chatStamp4} from '@images';
 
 const ModalStamp = React.memo((props: any) => {
   const {onChose} = props;
-  
+  //Các image Stamp được đánh tên và trọng số trùng với id VD: chatStamp2 => tương ứng với id là 2
   const Data = [
     {
       id: 2,

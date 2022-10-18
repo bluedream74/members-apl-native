@@ -22,7 +22,11 @@ import {Reaction} from './Reaction';
 import {ROUTE_NAME} from '@routeName';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from './stylesItem';
-import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import {
+  scale,
+  verticalScale,
+  moderateVerticalScale,
+} from 'react-native-size-matters';
 import {MsgFile} from './MsgFile';
 import {isSameDay, validateLink, convertString} from '@util';
 import HighlightText from '@sanar/react-native-highlight-text';
@@ -30,9 +34,10 @@ import {ViewUserSeen} from './viewUserSeen';
 import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
 import {ViewInvite} from './ViewInvite';
+import {decode} from 'html-entities';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
-const color = ['#E8E8E8', '#D4D4D4'];
+const color = ['#FDF5E6', '#FDF5E6'];
 const width = Dimensions.get('window').width;
 
 const ItemMessage = React.memo((props: any) => {
@@ -49,6 +54,9 @@ const ItemMessage = React.memo((props: any) => {
     listUser,
     onAddMember,
     idRoomChat,
+    newIndexArray,
+    quoteMsg,
+    me,
   } = props;
   const {
     user,
@@ -67,6 +75,8 @@ const ItemMessage = React.memo((props: any) => {
     task,
     guest,
     task_link,
+    message_quote,
+    index,
   } = props.currentMessage;
 
   const [visible, setVisible] = useState(false);
@@ -79,6 +89,7 @@ const ItemMessage = React.memo((props: any) => {
     navigatiteToListReaction(_id);
   }, []);
 
+  //Đây là hàm xử lý khi ấn vào menu reaction
   const onActionMenu = useCallback(
     value => {
       onShowMenu();
@@ -130,6 +141,14 @@ const ItemMessage = React.memo((props: any) => {
         case 12:
           bookmarkMsg(_id);
           break;
+        case 13:
+          const dataQuote = {
+            id: _id,
+            user: user,
+            text: text,
+          };
+          quoteMsg(dataQuote);
+          break;
       }
     },
     [visible],
@@ -154,10 +173,7 @@ const ItemMessage = React.memo((props: any) => {
   const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
     let textBold: any = [];
     joinedUsers.forEach((joinedUser: any) => {
-      let mentionText = `@${joinedUser?.last_name.replace(
-        ' ',
-        '',
-      )}${joinedUser?.first_name?.replace(' ', '')}`;
+      let mentionText = `@${joinedUser?.last_name.replace(' ', '',)}${joinedUser?.first_name?.replace(' ', '')}`;
       if (text?.includes(mentionText)) {
         textBold = textBold?.concat(mentionText);
       }
@@ -190,6 +206,65 @@ const ItemMessage = React.memo((props: any) => {
     onAddMember(2);
   }, []);
 
+  const formatText = (inputText: string) => {
+    if (inputText.length === 0) {
+      return;
+    }
+    const words = inputText.split(' ');
+    const formattedText: (string | JSX.Element)[] = [];
+    words.forEach((word, index) => {
+      const isLastWord = index === words.length - 1;
+      if (!word.startsWith('@')) {
+        const nonmention = (
+          <Text key={word + index} style={{color: 'black'}}>
+            {word}
+          </Text>
+        );
+        return isLastWord
+          ? formattedText.push(nonmention)
+          : formattedText.push(nonmention, ' ');
+      } else {
+        let myName = `@${me?.last_name.replace(' ', '',)}${me?.first_name?.replace(' ', '')}`;
+        let mention;
+        // 自分宛のメンションの場合
+        if (word.includes(myName)) {
+          mention = (
+            <View>
+              <Text
+                key={word + index}
+                style={{
+                  alignSelf: 'flex-start',
+                  color: '#3366CC',
+                  fontWeight: 'bold',
+                }}>
+                {word}
+              </Text>
+            </View>
+          );
+        } else {
+          // 他人宛のメンションの場合
+          mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: '#3366CC',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+        }
+
+
+        isLastWord
+          ? formattedText.push(mention)
+          : formattedText.push(mention, ' ');
+      }
+    });
+    return formattedText;
+  };
+
   return (
     <>
       {msg_type == 11 ||
@@ -201,7 +276,11 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 12 ? (
         <View style={styles.viewCenter}>
           <Text style={styles.txtCenter} numberOfLines={2}>
-            {msg_type !== 9 ? text : `${guest?.name}さんが参加しました。`}
+            {msg_type === 9
+              ? `${guest?.name}さんが参加しました。`
+              : msg_type === 5
+              ? `${user?.name}さんが参加しました。`
+              : text}
           </Text>
         </View>
       ) : (
@@ -244,14 +323,16 @@ const ItemMessage = React.memo((props: any) => {
                   </>
                 ) : (
                   <View style={styles.viewAvatar}>
-                    <FastImage
-                      style={styles.image}
-                      source={{
-                        uri: user?.avatar,
-                        priority: FastImage.priority.high,
-                        cache: FastImage.cacheControl.immutable,
-                      }}
-                    />
+                    {msg_type == 6 || msg_type == 8 ? null : (
+                      <FastImage
+                        style={styles.image}
+                        source={{
+                          uri: user?.avatar,
+                          priority: FastImage.priority.high,
+                          cache: FastImage.cacheControl.immutable,
+                        }}
+                      />
+                    )}
                     <View style={{flex: 1}} />
                   </View>
                 )}
@@ -279,18 +360,34 @@ const ItemMessage = React.memo((props: any) => {
                           style={styles.containerChat}>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
-                          reply_to_message_stamp?.stamp_icon ? (
+                          reply_to_message_stamp?.stamp_icon ||
+                          message_quote ? (
                             <View style={styles.viewReply}>
                               <View style={styles.viewColumn} />
                               <View>
                                 <Text style={styles.txtTitleReply}>
-                                  返信メッセージ
+                                  {message_quote
+                                    ? '引用メッセージ'
+                                    : '返信メッセージ'}
                                 </Text>
                                 {reply_to_message_text ? (
                                   <Text
                                     style={styles.txtContentReply}
                                     numberOfLines={1}>
-                                    {reply_to_message_text}
+                                    {decode(
+                                      reply_to_message_text
+                                        ?.split('<br>')
+                                        .join('\n'),
+                                    )}
+                                  </Text>
+                                ) : null}
+                                {message_quote ? (
+                                  <Text
+                                    style={styles.txtContentReply}
+                                    numberOfLines={1}>
+                                    {decode(
+                                      message_quote?.split('<br>').join('\n'),
+                                    )}
                                   </Text>
                                 ) : null}
                                 {reply_to_message_files?.length > 0 ? (
@@ -343,23 +440,31 @@ const ItemMessage = React.memo((props: any) => {
                           {attachment_files?.length > 0 ? (
                             <MsgFile data={attachment_files} />
                           ) : null}
-                          <Autolink
-                            text={text?.split('<br>').join('\n')}
-                            email
-                            url
-                            renderText={text => (
-                              <HighlightText
-                                highlightStyle={styles.txtBold}
-                                //@ts-ignore
-                                searchWords={convertMentionToLink(
-                                  text,
-                                  listUser,
-                                )}
-                                textToHighlight={convertString(text)}
-                                style={styles.txtMessage}
-                              />
-                            )}
-                          />
+                          {/* Xử lý message hightlight khi message có link, tagName, hightlight... */}
+                          {user?._id == user_id ? (
+                            <Autolink
+                              //Convert message có kí tự <br> nhận từ web (kí tự xuống dòng)
+                              text={decode(text?.split('<br>').join('\n'))}
+                              email
+                              url
+                              renderText={text => (
+                                <HighlightText
+                                  highlightStyle={styles.txtBold}
+                                  //@ts-ignore
+                                  searchWords={convertMentionToLink(text, listUser)}
+                                  textToHighlight={convertString(text)}
+                                  style={styles.txtMessage}
+                                />
+                              )}
+                            />
+                          ) : (
+                            <Autolink
+                              text={decode(text?.split('<br>').join('\n'))}
+                              email
+                              url
+                              renderText={text => formatText(text)}
+                            />
+                          )}
                         </LinearGradient>
                       )}
                     </>
@@ -390,8 +495,17 @@ const ItemMessage = React.memo((props: any) => {
                 </TouchableOpacity>
               )}
             </>
+
             <Menu
-              style={styles.containerMenu}
+              style={{
+                //Logic check ẩnh và hiện menu khi tin nhắn ở sát phần trên của màn hình
+                marginTop:
+                  index === newIndexArray ||
+                  index === newIndexArray - 1 ||
+                  index === newIndexArray - 2
+                    ? moderateVerticalScale(0)
+                    : moderateVerticalScale(-125),
+              }}
               visible={visible}
               onRequestClose={onShowMenu}
               key={1}>
@@ -404,14 +518,17 @@ const ItemMessage = React.memo((props: any) => {
 
             {users_seen?.length > 0 ? (
               <TouchableOpacity
-                style={
-                  user?._id == user_id
-                    ? styles.viewSeenCurrent
-                    : styles.viewSeen
-                }
+                style={styles.viewSeen}
                 onPress={onClickDetailSeen}>
                 {users_seen?.map((item: any, index: any) => {
-                  return <ViewUserSeen item={item} index={index} key={index} />;
+                  return (
+                    <ViewUserSeen
+                      item={item}
+                      index={index}
+                      key={index}
+                      data={users_seen}
+                    />
+                  );
                 })}
               </TouchableOpacity>
             ) : null}

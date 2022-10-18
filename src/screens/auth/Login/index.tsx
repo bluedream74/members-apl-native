@@ -1,5 +1,5 @@
 import React, {useCallback, useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {styles} from './styles';
 import {logo} from '@images';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,17 +22,6 @@ const Login = () => {
     login: '',
     password: '',
   };
-  useEffect(() => {
-    const backAction = () => {
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
 
   const validationSchema = yup.object().shape({
     login: validateForm().login,

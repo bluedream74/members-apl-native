@@ -13,6 +13,7 @@ export function isSameDay(currentMessage: any, diffMessage: any) {
   return currentCreatedAt.isSame(diffCreatedAt, 'day');
 }
 
+//Logic check và loại bỏ các phần tử mảng trùng lặp
 export function convertArrUnique(arr: any, comp: any) {
   const unique = arr
     .map((e: any) => e[comp])

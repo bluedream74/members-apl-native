@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  BackHandler,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput, AppButton} from '@component';
@@ -34,16 +33,8 @@ const SelectCompany = () => {
   };
 
   useEffect(() => {
-    const backAction = () => {
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
     getListCompanyApi();
     dispatch(getUserInfo(user?.id));
-    return () => backHandler.remove();
   }, []);
 
   const debounceText = useCallback(

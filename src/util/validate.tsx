@@ -1,4 +1,4 @@
-// import moment from 'moment';
+//Đây là nơi chứa tất cả các validate của formik
 import * as yup from 'yup';
 export const validateForm = () => {
   return {

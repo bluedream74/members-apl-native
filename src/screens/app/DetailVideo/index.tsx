@@ -88,12 +88,14 @@ const DetailVideo = (props: any) => {
   };
 
   const onDowload = async () => {
+    //Đây là logic của phần dowload video
     await setPaused(true);
     await setPlayerState(PLAYER_STATES.PAUSED);
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
       return;
     }
     GlobalService.showLoading();
+    //Convert đường dẫn của android (fix bug android)
     const destinationPath = RNFetchBlob.fs.dirs.DocumentDir + '/' + 'MyApp';
     const fileName = Date.now();
     const fileExtention = url.split('.').pop();
@@ -104,6 +106,7 @@ const DetailVideo = (props: any) => {
     })
       .fetch('GET', encodeURI(url))
       .then(res => {
+        //Save video vào thư mục trong điện thoại
         CameraRoll.saveToCameraRoll(res?.path(), 'video')
           .then(() => {
             GlobalService.hideLoading();

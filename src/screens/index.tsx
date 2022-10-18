@@ -25,6 +25,7 @@ import {Bookmark} from './app/Bookmark';
 import {NetworkErr} from './app/NetworkErr';
 import {ListFileInRoom} from './app/ListFileInRoom';
 
+//Nhóm các màn hình vào 1 file index
 const screens = {
   //auth
   Splash,

@@ -17,6 +17,8 @@ import {searchMessageListRoom} from '@services';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {useSelector} from 'react-redux';
+import {Menu} from 'react-native-material-menu';
+import {MenuOption} from './MenuOption';
 
 const width = Dimensions.get('window').width;
 
@@ -30,6 +32,7 @@ const ModalSearchMessage = React.memo((prop: any) => {
   const [total, setTotal] = useState(null);
   const [lastPage, setLastPage] = useState(null);
   const [page, setPage] = useState(1);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   useEffect(() => {
     if (visible === false) {
@@ -50,7 +53,7 @@ const ModalSearchMessage = React.memo((prop: any) => {
       idCompany: idCompany,
     };
     callApiSearch(params);
-  }, [keySearch]);
+  }, [keySearch, visible]);
 
   const onClickItem = (value: any) => {
     onClose();
@@ -121,6 +124,10 @@ const ModalSearchMessage = React.memo((prop: any) => {
     }
   }, [page, lastPage]);
 
+  const onShowOption = useCallback(() => {
+    setShowMenu(!showMenu);
+  }, [showMenu]);
+
   return (
     <Modal
       transparent={true}
@@ -138,7 +145,24 @@ const ModalSearchMessage = React.memo((prop: any) => {
             styleInput={styles.input}
             icon={iconSearch}
             styleIcon={styles.icon}
+            showObtion={true}
+            onShowOption={onShowOption}
           />
+          <View style={styles.viewOption}>
+            <Menu
+              style={styles.containerMenu}
+              visible={showMenu}
+              onRequestClose={onShowOption}
+              key={1}>
+              <MenuOption
+                onSearchRoom={() => {
+                  setShowMenu(false);
+                  onClose();
+                }}
+                onSearchMessage={() => {}}
+              />
+            </Menu>
+          </View>
           {total ? (
             <View style={styles.viewRow}>
               <Text style={styles.txtTitleTotal}>結果: </Text>
@@ -213,6 +237,21 @@ const styles = StyleSheet.create({
     color: colors.primary,
     ...stylesCommon.fontWeight500,
     fontSize: moderateScale(14),
+  },
+  containerMenu: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  viewOption: {
+    width: '100%',
+    alignItems: 'flex-end',
   },
 });
 
