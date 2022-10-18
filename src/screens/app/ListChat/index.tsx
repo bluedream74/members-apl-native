@@ -7,6 +7,7 @@ import {
   TextInput,
   RefreshControl,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -22,6 +23,7 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
+  getUnreadMessageCount,
 } from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -30,6 +32,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const ListChat = () => {
   const refInput = useRef<any>(null);
@@ -47,6 +50,11 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
+  let unreadMessageCount = useSelector((state: any) =>
+    state.chat?.unReadMessageCount === null
+      ? 0
+      : state.chat?.unReadMessageCount,
+  );
 
   useFocusEffect(
     useCallback(() => {
