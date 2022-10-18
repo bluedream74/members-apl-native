@@ -62,22 +62,8 @@ const ListChat = () => {
       dispatch(saveMessageReply(null));
       dispatch(resetDataChat());
       dispatch(getRoomList({key: key, company_id: idCompany, page: 1}));
-      dispatch(getUnreadMessageCount({}));
     }, []),
   );
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      // プッシュ通知件数をインクリメント
-      PushNotificationIOS.getApplicationIconBadgeNumber(number => {
-        if (
-          unreadMessageCount !== null &&
-          typeof unreadMessageCount !== 'undefined'
-        ) {
-          PushNotificationIOS.setApplicationIconBadgeNumber(unreadMessageCount);
-        }
-      });
-    }
-  }, [unreadMessageCount]);
 
   //Logic tính tổng các tin nhắn chưa đọc
   var countMessage = listRoom?.reduce(function (total: any, course: any) {
