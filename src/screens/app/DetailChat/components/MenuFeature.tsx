@@ -19,6 +19,9 @@ import {
   icon4,
   icon5,
   icon6,
+  understand,
+  bow,
+  congrats,
   iconBookmark,
   iconPin,
   iconQuote,
@@ -137,6 +140,30 @@ const MenuFeature = React.memo((props: any) => {
       style: {
         width: scale(18),
         height: scale(21),
+      },
+    },
+    {
+      id: 7,
+      sourceImage: understand,
+      style: {
+        width: scale(22),
+        height: scale(25),
+      },
+    },
+    {
+      id: 8,
+      sourceImage: bow,
+      style: {
+        width: scale(22),
+        height: scale(25),
+      },
+    },
+    {
+      id: 9,
+      sourceImage: congrats,
+      style: {
+        width: scale(22),
+        height: scale(25),
       },
     },
   ];
