@@ -24,6 +24,7 @@ import {
   congrats,
   iconBookmark,
   iconPin,
+  iconQuote,
 } from '@images';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
@@ -37,8 +38,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuCopy,
       name: 'コピー',
       style: {
-        width: scale(18),
-        height: scale(22),
+        width: scale(14),
+        height: scale(18),
       },
       isShow: msg_type == 1 ? false : true,
     },
@@ -47,8 +48,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuEdit,
       name: '編集',
       style: {
-        width: scale(22),
-        height: scale(22),
+        width: scale(18),
+        height: scale(18),
       },
       isShow:
         userId == user_id && msg_type !== 1 && msg_type !== 2 ? true : false,
@@ -58,8 +59,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: scale(22),
-        height: scale(22),
+        width: scale(18),
+        height: scale(18),
       },
       isShow: true,
     },
@@ -68,8 +69,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPinChat,
       name: 'ブックマーク',
       style: {
-        width: scale(21),
-        height: scale(21),
+        width: scale(17),
+        height: scale(17),
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -79,8 +80,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuDelete,
       name: '削除',
       style: {
-        width: scale(22),
-        height: scale(22),
+        width: scale(18),
+        height: scale(18),
       },
       isShow: userId == user_id ? true : false,
     },
@@ -89,11 +90,22 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: scale(22),
-        height: scale(22),
+        width: scale(18),
+        height: scale(18),
         tintColor: '#FFFFFF',
       },
       isShow: msg_type !== 1 ? true : false,
+    },
+    {
+      id: 13,
+      sourceImage: iconQuote,
+      name: '引用',
+      style: {
+        width: scale(18),
+        height: scale(18),
+        tintColor: '#FFFFFF',
+      },
+      isShow: true,
     },
   ];
 
@@ -102,8 +114,8 @@ const MenuFeature = React.memo((props: any) => {
       id: 1,
       sourceImage: icon1,
       style: {
-        width: scale(25),
-        height: scale(22),
+        width: scale(21),
+        height: scale(18),
       },
     },
     {
@@ -126,8 +138,8 @@ const MenuFeature = React.memo((props: any) => {
       id: 6,
       sourceImage: icon6,
       style: {
-        width: scale(22),
-        height: scale(25),
+        width: scale(18),
+        height: scale(21),
       },
     },
     {
@@ -235,8 +247,8 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
   },
   imageEmoji: {
-    width: scale(25),
-    height: scale(25),
+    width: scale(21),
+    height: scale(21),
   },
 });
 

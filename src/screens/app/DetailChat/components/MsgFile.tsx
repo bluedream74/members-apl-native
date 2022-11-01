@@ -56,6 +56,7 @@ const MsgFile = React.memo((props: any) => {
     path: null,
   });
   const openFile = (url: any) => {
+    //Check link video và link web
     if (!LINK_URL_VIDEO?.test(url)) {
       setDataModalFile({
         show: true,
@@ -78,11 +79,13 @@ const MsgFile = React.memo((props: any) => {
   }, [modalImage]);
 
   const onDowloadImage = useCallback(async () => {
+    //Đây là logic của phần dowload image
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
       return;
     } else {
       await viewImage();
       GlobalService.showLoading();
+      //Chỉnh sửa đường dẫn (fix bug của bên android)
       const destinationPath = RNFetchBlob.fs.dirs.DocumentDir + '/' + 'MyApp';
       const url = encodeURI(urlModalImage[0]?.uri);
       const fileName = Date.now();
@@ -94,6 +97,7 @@ const MsgFile = React.memo((props: any) => {
       })
         .fetch('GET', url)
         .then(res => {
+          //Save ảnh vào thư mục của điện thoại
           CameraRoll.saveToCameraRoll(res?.path(), 'photo')
             .then(() => {
               GlobalService.hideLoading();

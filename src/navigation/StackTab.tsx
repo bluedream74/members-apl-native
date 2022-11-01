@@ -8,8 +8,10 @@ import {Tabbar} from '@component';
 const Tab = createBottomTabNavigator();
 
 const StackTab = () => {
+  //Render ra bottomTab
   return (
     <Tab.Navigator
+      //Custom bottomTab
       tabBar={props => <Tabbar {...props} />}
       screenOptions={{
         headerShown: false,

@@ -14,6 +14,7 @@ const colors = {
   active: '#8BC227',
 };
 
+//Font chữ được sử dụng trong app
 const stylesCommon = StyleSheet.create({
   viewContainer: {
     flex: 1,

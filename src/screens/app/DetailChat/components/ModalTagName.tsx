@@ -27,8 +27,14 @@ const ModalTagName = React.memo((props: any) => {
 
   const getListUserApi = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
-      setListUser(result?.data?.users?.data);
+      const result = await getListUser({room_id: idRoomChat, all: true});
+      const guest = result?.data?.guests?.map((item: any) => {
+        return {
+          ...item,
+          id: Number(item?.id) * -1,
+        };
+      });
+      setListUser(result?.data?.users?.data?.concat(guest));
       setLoading(false);
     } catch {
       (error: any) => {
@@ -38,10 +44,10 @@ const ModalTagName = React.memo((props: any) => {
   };
 
   const onChoseUser = (item: any) => {
-    // const valueName = `${item?.last_name}${item?.first_name}%%${item?.id}!!`;
-    const valueName = `${item?.last_name}${item?.first_name}`;
+    const valueName =
+      item?.id < 0 ? `${item?.name}` : `${item?.last_name}${item?.first_name}`;
     const id = item?.id;
-    choseUser(valueName?.replace(' ', ''), id);
+    choseUser(valueName?.replace(' ', ''), id, item);
   };
 
   const renderItem = ({item}: any) => (
@@ -58,10 +64,16 @@ const ModalTagName = React.memo((props: any) => {
         }
         style={styles.image}
       />
-      <Text style={styles.txtTitle} numberOfLines={2}>
-        {item?.first_name}
-        {item?.last_name}
-      </Text>
+      {item?.id < 0 ? (
+        <Text style={styles.txtTitle} numberOfLines={2}>
+          {item?.name}
+        </Text>
+      ) : (
+        <Text style={styles.txtTitle} numberOfLines={2}>
+          {item?.first_name}
+          {item?.last_name}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 

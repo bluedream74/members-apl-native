@@ -13,6 +13,7 @@ import {
 import FastImage from 'react-native-fast-image';
 import {colors, stylesCommon} from '@stylesCommon';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {decode} from 'html-entities';
 
 const ModalPin = React.memo((props: any) => {
   const {updateGimMessage} = props;
@@ -39,7 +40,7 @@ const ModalPin = React.memo((props: any) => {
         <Text style={styles.txtTitle}>固定されたメッセージ</Text>
         {message_pinned?.message && (
           <Text style={styles.txtContent} numberOfLines={2}>
-            {message_pinned?.message}
+            {decode(message_pinned?.message?.split('<br>').join('\n'))}
           </Text>
         )}
         <View style={styles.viewRow}>

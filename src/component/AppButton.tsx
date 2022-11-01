@@ -16,6 +16,7 @@ const AppButton = React.memo((props: buttonType) => {
   const {title, styleButton, styleTitle, onPress, disabled} = props;
 
   const onPressButton = useCallback(
+    //Disble double click
     debounce(() => {
       if (onPress) {
         onPress();

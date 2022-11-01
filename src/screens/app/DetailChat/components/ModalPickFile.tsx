@@ -48,7 +48,7 @@ const ModalPickFile = React.memo((prop: any) => {
             styleTitle={styles.txtTitle}
           />
           <AppButton
-            title="ファイルを選ぶ"
+            title="ファイルを選択してください"
             onPress={choseFile}
             styleButton={[styles.button, {borderBottomWidth: 0}]}
             styleTitle={styles.txtTitle}
