@@ -406,7 +406,9 @@ export const useFunction = (props: any) => {
   const removeReplyMessage = useCallback(() => {
     dispatch(saveMessageReply(null));
   }, []);
-
+  const quoteMessage = useCallback((data: any) => {
+    dispatch(saveMessageQuote(data));
+  }, []);
   const removeQuoteMessage = useCallback(() => {
     dispatch(saveMessageQuote(null));
   }, []);
@@ -790,10 +792,6 @@ export const useFunction = (props: any) => {
     });
     return context;
   };
-
-  const quoteMessage = useCallback((data: any) => {
-    dispatch(saveMessageQuote(data));
-  }, []);
 
   const callApiChatBotRequest = async (
     message: any,
