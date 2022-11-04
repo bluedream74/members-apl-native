@@ -44,7 +44,7 @@ export const renderComposer = (props: any) => {
             style={styles.inputMessage}
             multiline={true}
             onKeyPress={props.textInputProps.onKeyPress}
-            value={props.text}
+            value={null}
             onChangeText={(value: any) => {
               props.onInputTextChanged(value);
             }}>

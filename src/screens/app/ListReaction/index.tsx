@@ -2,7 +2,25 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {styles} from './style';
 import {Header} from '@component';
-import {defaultAvatar, icon1, icon2, icon3, icon4, icon5, icon6} from '@images';
+import {
+  like,
+  happy,
+  heart,
+  great,
+  smile,
+  sad,
+  defaultAvatar,
+  icon1,
+  icon2,
+  icon3,
+  icon4,
+  icon5,
+  icon6,
+  understand,
+  bow,
+  congrats,
+} from '@images';
+
 import FastImage from 'react-native-fast-image';
 import {useSelector, useDispatch} from 'react-redux';
 import {getListReactionApi, GlobalService, removeReactionApi} from '@services';
@@ -64,6 +82,12 @@ const ListReaction = (props: any) => {
         return styles.imageIcon;
       case 6:
         return styles.imageIconLike;
+      case 7:
+        return styles.imageIconUnderstand;
+      case 8:
+        return styles.imageIconBow;
+      case 9:
+        return styles.imageIconCongrats;
     }
   }, []);
 
