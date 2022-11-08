@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(13),
     backgroundColor: colors.backgroundTab,
     borderRadius: moderateScale(8),
-    width: '95%',
   },
   viewFeature: {
     flexDirection: 'row',
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(5),
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-    fontSize: verticalScale(10),
+    fontSize: verticalScale(9),
   },
   line: {
     height: verticalScale(1),
