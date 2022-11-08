@@ -505,6 +505,7 @@ const ItemMessage = React.memo((props: any) => {
                   index === newIndexArray - 2
                     ? moderateVerticalScale(0)
                     : moderateVerticalScale(-125),
+                marginLeft: 30,
               }}
               visible={visible}
               onRequestClose={onShowMenu}
