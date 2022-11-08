@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     height: scale(20),
   },
   itemFeature: {
-    marginHorizontal: scale(2),
+    marginHorizontal: scale(6),
     justifyContent: 'center',
     alignItems: 'center',
   },
