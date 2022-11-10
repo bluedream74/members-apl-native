@@ -68,6 +68,7 @@ const DetailChat = (props: any) => {
     formatText,
     getText,
     me,
+    navigateToMessage,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -152,6 +153,9 @@ const DetailChat = (props: any) => {
             listUser={listUser}
             newIndexArray={newIndexArray}
             me={me}
+            moveToMessage={(id: any) => {
+              navigateToMessage(id);
+            }}
           />
         </>
       );

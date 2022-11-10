@@ -132,6 +132,7 @@ export const useFunction = (props: any) => {
       reaction: message?.reactions,
       msg_type: message?.msg_type,
       reply_to_message_text: message?.reply_to_message_text,
+      reply_to_message_id: message?.reply_to_message_id,
       attachment_files: message?.attachment_files,
       reply_to_message_files: message?.reply_to_message_files,
       reply_to_message_stamp: message?.reply_to_message_stamp,
@@ -873,5 +874,6 @@ export const useFunction = (props: any) => {
     formatText,
     getText,
     me,
+    navigateToMessage,
   };
 };
