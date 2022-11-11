@@ -78,6 +78,7 @@ const ItemMessage = React.memo((props: any) => {
     guest,
     task_link,
     message_quote,
+    quote_message_id,
     index,
   } = props.currentMessage;
 
@@ -399,13 +400,19 @@ const ItemMessage = React.memo((props: any) => {
                                   </TouchableOpacity>
                                 ) : null}
                                 {message_quote ? (
-                                  <Text
-                                    style={styles.txtContentReply}
-                                    numberOfLines={1}>
-                                    {decode(
-                                      message_quote?.split('<br>').join('\n'),
-                                    )}
-                                  </Text>
+                                  <TouchableOpacity
+                                    style={styles.chat}
+                                    onPress={() =>
+                                      onJumpToOriginal(quote_message_id)
+                                    }>
+                                    <Text
+                                      style={styles.txtContentReply}
+                                      numberOfLines={1}>
+                                      {decode(
+                                        message_quote?.split('<br>').join('\n'),
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
 
                                 {reply_to_message_files?.length > 0 ? (

@@ -144,6 +144,7 @@ export const useFunction = (props: any) => {
       guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
+      quote_message_id: message?.quote_message_id,
     };
   }, []);
 
@@ -311,6 +312,7 @@ export const useFunction = (props: any) => {
           data.append('from_id', user_id);
           data.append('message', mes[0]?.text?.split('\n').join('<br>'));
           data.append('message_quote', messageQuote?.text);
+          data.append('quote_message_id', messageQuote?.id);
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
           });
