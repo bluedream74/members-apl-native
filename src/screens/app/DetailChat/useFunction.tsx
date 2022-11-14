@@ -132,6 +132,7 @@ export const useFunction = (props: any) => {
       reaction: message?.reactions,
       msg_type: message?.msg_type,
       reply_to_message_text: message?.reply_to_message_text,
+      reply_to_message_id: message?.reply_to_message_id,
       attachment_files: message?.attachment_files,
       reply_to_message_files: message?.reply_to_message_files,
       reply_to_message_stamp: message?.reply_to_message_stamp,
@@ -143,6 +144,7 @@ export const useFunction = (props: any) => {
       guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
+      quote_message_id: message?.quote_message_id,
     };
   }, []);
 
@@ -310,6 +312,7 @@ export const useFunction = (props: any) => {
           data.append('from_id', user_id);
           data.append('message', mes[0]?.text?.split('\n').join('<br>'));
           data.append('message_quote', messageQuote?.text);
+          data.append('quote_message_id', messageQuote?.id);
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
           });
@@ -873,5 +876,6 @@ export const useFunction = (props: any) => {
     formatText,
     getText,
     me,
+    navigateToMessage,
   };
 };

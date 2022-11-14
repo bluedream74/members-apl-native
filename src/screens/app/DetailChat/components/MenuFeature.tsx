@@ -131,10 +131,6 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: icon4,
     },
     {
-      id: 5,
-      sourceImage: icon5,
-    },
-    {
       id: 6,
       sourceImage: icon6,
       style: {
@@ -231,7 +227,7 @@ const styles = StyleSheet.create({
     height: scale(20),
   },
   itemFeature: {
-    marginHorizontal: scale(4),
+    marginHorizontal: scale(6),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -239,7 +235,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(5),
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-    fontSize: verticalScale(12),
+    fontSize: verticalScale(9),
   },
   line: {
     height: verticalScale(1),
