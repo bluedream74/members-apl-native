@@ -470,8 +470,6 @@ const ItemMessage = React.memo((props: any) => {
                             style={styles.chat}
                             onPress={onShowMenu}
                             disabled={msg_type == 6}>
-                            <Text>hhh{index}</Text>
-                            <Text>hhh{_id}</Text>
                             {user?._id == user_id ? (
                               <Autolink
                                 //Convert message có kí tự <br> nhận từ web (kí tự xuống dòng)
