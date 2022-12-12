@@ -102,7 +102,7 @@ const ItemMessage = React.memo((props: any) => {
       onShowMenu();
       switch (value) {
         case 7:
-          Clipboard.setString(text);
+          Clipboard.setString(text.replace(/<br>/g, "\n"));
           showMessage({
             message: 'コピー',
             backgroundColor: colors.backgroundTab,
