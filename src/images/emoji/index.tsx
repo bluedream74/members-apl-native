@@ -10,6 +10,9 @@ const icon3 = require('./icon3.png');
 const icon4 = require('./icon4.png');
 const icon5 = require('./icon5.png');
 const icon6 = require('./icon6.png');
+const understand = require('./Understand.png');
+const bow = require('./Bow.png');
+const congrats = require('./Congrats.png');
 
 export {
   like,
@@ -24,4 +27,7 @@ export {
   icon4,
   icon5,
   icon6,
+  understand,
+  bow,
+  congrats,
 };
