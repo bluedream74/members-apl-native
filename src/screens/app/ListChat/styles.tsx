@@ -1,6 +1,11 @@
 import {StyleSheet} from 'react-native';
 import {stylesCommon, colors} from '@stylesCommon';
-import {scale, moderateScale, verticalScale} from 'react-native-size-matters';
+import {
+  scale,
+  moderateScale,
+  verticalScale,
+  moderateVerticalScale,
+} from 'react-native-size-matters';
 
 const styles = StyleSheet.create({
   container: {
@@ -50,10 +55,31 @@ const styles = StyleSheet.create({
   viewOption: {
     alignItems: 'flex-end',
   },
-  viewLoadmore:{
+  viewLoadmore: {
     alignItems: 'center',
-    marginBottom: verticalScale(8)
-  }
+    marginBottom: verticalScale(8),
+  },
+  viewFilter: {
+    width: '100%',
+    paddingVertical: moderateScale(10),
+    paddingHorizontal: moderateScale(16),
+    backgroundColor: '#F8F8F8',
+    flexDirection: 'row',
+    marginBottom: moderateVerticalScale(8),
+    borderRadius: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  viewCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  txtTitle: {
+    ...stylesCommon.fontWeight600,
+    fontSize: moderateScale(14),
+    marginLeft: verticalScale(19),
+    color: colors.backgroundTab,
+  },
 });
 
 export {styles};

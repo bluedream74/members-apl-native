@@ -7,11 +7,11 @@ import {
   TextInput,
   RefreshControl,
   ActivityIndicator,
-  Platform,
+  Image,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
-import {iconSearch, iconAddListChat} from '@images';
+import {iconSearch, iconAddListChat, iconFilterChat, iconNext} from '@images';
 import {Item} from './component/Item';
 import {useFocusEffect} from '@react-navigation/native';
 import {debounce} from 'lodash';
@@ -23,7 +23,7 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
-  getUnreadMessageCount,
+  showHideModalFilterListChat,
 } from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -32,7 +32,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import {FilterListChat} from '../FilterListChat';
 
 const ListChat = () => {
   const refInput = useRef<any>(null);
@@ -42,6 +42,9 @@ const ListChat = () => {
   const navigation = useNavigation<any>();
   const listRoom = useSelector((state: any) => state.chat.roomList);
   const paging = useSelector((state: any) => state.chat.pagingListRoom);
+  const showModalFilter = useSelector(
+    (state: any) => state.chat.modalFilterChat,
+  );
 
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const user = useSelector((state: any) => state.auth.userInfo);
@@ -50,11 +53,7 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  let unreadMessageCount = useSelector((state: any) =>
-    state.chat?.unReadMessageCount === null
-      ? 0
-      : state.chat?.unReadMessageCount,
-  );
+  const [filterChat, setFilterChat] = useState<boolean>(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -87,6 +86,7 @@ const ListChat = () => {
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
+      dispatch(showHideModalFilterListChat(false))
     }
   }, []);
 
@@ -193,6 +193,17 @@ const ListChat = () => {
             />
           </Menu>
         </View>
+        <TouchableOpacity
+          style={styles.viewFilter}
+          onPress={() => {
+            dispatch(showHideModalFilterListChat(true));
+          }}>
+          <View style={styles.viewCenter}>
+            <Image source={iconFilterChat} />
+            <Text style={styles.txtTitle}>すべてのチャット</Text>
+          </View>
+          <Image source={iconNext} style={{transform: [{rotate: '90deg'}]}} />
+        </TouchableOpacity>
         <FlatList
           data={listRoom}
           renderItem={renderItem}
@@ -215,6 +226,12 @@ const ListChat = () => {
           }
         />
       </View>
+      <FilterListChat
+        visible={showModalFilter}
+        closeModal={() => {
+          dispatch(showHideModalFilterListChat(false));
+        }}
+      />
       <ModalSearchMessage
         visible={showSearchMessage}
         onClose={onCloseModal}

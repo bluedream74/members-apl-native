@@ -1,5 +1,7 @@
-import React, {useMemo, useEffect, useState, useCallback, useRef} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { defaultAvatar } from '@images';
+import moment from 'moment';
+import React, { useMemo, useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getDetailListChat,
   deleteMessage,
@@ -10,6 +12,7 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
+  isGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -25,22 +28,21 @@ import {
   addBookmark,
   callApiChatBot,
 } from '@services';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {ROUTE_NAME} from '@routeName';
-import {AppSocket} from '@util';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { ROUTE_NAME } from '@routeName';
+import { AppSocket } from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
-import {Platform, Text} from 'react-native';
-import {showMessage} from 'react-native-flash-message';
-import {convertArrUnique} from '@util';
+import { Platform, Keyboard, Alert } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
+import { convertArrUnique } from '@util';
 
 export const useFunction = (props: any) => {
-  const {getSocket} = AppSocket;
+  const { getSocket } = AppSocket;
   const socket = getSocket();
 
   const giftedChatRef = useRef<any>(null);
   const navigation = useNavigation<any>();
-  const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
   const pagging = useSelector((state: any) => state.chat?.pagingDetail);
@@ -55,26 +57,24 @@ export const useFunction = (props: any) => {
     (state: any) => state.chat?.id_messageSearch,
   );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
+  const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
   const dispatch = useDispatch();
-  const {route} = props;
-  const {idRoomChat, idMessageSearchListChat} = route?.params;
+  const { route } = props;
+  const { idRoomChat, idMessageSearchListChat } = route?.params;
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<any>(1);
   const [pickFile, setPickFile] = useState(false);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
-  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
-    [],
-  );
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
   const [newIndexArray, setIndex] = useState<any>(null);
   const [listUserRoot, setListUserRoot] = useState([]);
   const [listUserSelect, setListUserSelect] = useState<any>([]);
-  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
+  const [showRedLine, setShowRedLine] = useState<boolean>(true);
 
   useEffect(() => {
     //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
@@ -113,7 +113,7 @@ export const useFunction = (props: any) => {
   }, [idMessageSearch]);
 
   const navigateToDetail = useCallback(() => {
-    navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, {idRoomChat: idRoomChat});
+    navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, { idRoomChat: idRoomChat });
   }, [idRoomChat]);
 
   const convertDataMessage = useCallback((message: any, index: any) => {
@@ -132,7 +132,6 @@ export const useFunction = (props: any) => {
       reaction: message?.reactions,
       msg_type: message?.msg_type,
       reply_to_message_text: message?.reply_to_message_text,
-      reply_to_message_id: message?.reply_to_message_id,
       attachment_files: message?.attachment_files,
       reply_to_message_files: message?.reply_to_message_files,
       reply_to_message_stamp: message?.reply_to_message_stamp,
@@ -144,7 +143,7 @@ export const useFunction = (props: any) => {
       guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
-      quote_message_id: message?.quote_message_id,
+      updated_at: message?.updated_at,
     };
   }, []);
 
@@ -177,7 +176,7 @@ export const useFunction = (props: any) => {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
       dispatch(isGetInfoRoom(false));
-    } catch {}
+    } catch { }
   };
 
   useEffect(() => {
@@ -211,6 +210,7 @@ export const useFunction = (props: any) => {
   const deleteMsg = useCallback(
     async (id: any) => {
       try {
+        setShowRedLine(false)
         GlobalService.showLoading();
         const res = await deleteMessageApi(id, idRoomChat);
         socket.emit('message_ind', {
@@ -246,6 +246,7 @@ export const useFunction = (props: any) => {
     async mes => {
       setShowTag(false);
       setShowModalStamp(false);
+      setShowRedLine(false)
       if (messageReply) {
         try {
           const data = new FormData();
@@ -275,7 +276,7 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageReply(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+        } catch (error: any) { }
       } else if (message_edit) {
         try {
           const param = {
@@ -302,9 +303,9 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageEdit(null));
           dispatch(
-            editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+            editMessageAction({ id: res?.data?.data.id, data: res?.data?.data }),
           );
-        } catch (error: any) {}
+        } catch (error: any) { }
       } else if (messageQuote) {
         try {
           const data = new FormData();
@@ -312,7 +313,6 @@ export const useFunction = (props: any) => {
           data.append('from_id', user_id);
           data.append('message', mes[0]?.text?.split('\n').join('<br>'));
           data.append('message_quote', messageQuote?.text);
-          data.append('quote_message_id', messageQuote?.id);
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
           });
@@ -335,7 +335,7 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+        } catch (error: any) { }
       } else {
         try {
           const data = new FormData();
@@ -368,7 +368,7 @@ export const useFunction = (props: any) => {
           //   res?.data?.data?.id,
           //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
           // );
-        } catch (error: any) {}
+        } catch (error: any) { }
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
@@ -389,7 +389,7 @@ export const useFunction = (props: any) => {
         } else {
           getListChat();
         }
-      } catch (error: any) {}
+      } catch (error: any) { }
     },
     [message_pinned?.id],
   );
@@ -409,16 +409,13 @@ export const useFunction = (props: any) => {
   const removeReplyMessage = useCallback(() => {
     dispatch(saveMessageReply(null));
   }, []);
-  const quoteMessage = useCallback((data: any) => {
-    dispatch(saveMessageQuote(data));
-  }, []);
+
   const removeQuoteMessage = useCallback(() => {
     dispatch(saveMessageQuote(null));
   }, []);
 
   const editMessage = useCallback((data: any) => {
-    // setText(data?.text);
-    formatText(data?.text + ' ', false);
+    setText(data?.text);
     dispatch(saveMessageEdit(data));
   }, []);
 
@@ -427,6 +424,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const reactionMessage = useCallback(async (data, id) => {
+    setShowRedLine(false)
     const body = {
       message_id: id,
       reaction_no: data,
@@ -449,7 +447,7 @@ export const useFunction = (props: any) => {
       time: res?.data?.data?.created_at,
     });
     dispatch(
-      editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+      editMessageAction({ id: res?.data?.data.id, data: res?.data?.data }),
     );
   }, []);
 
@@ -478,6 +476,7 @@ export const useFunction = (props: any) => {
   }, [pickFile]);
 
   const chosePhoto = () => {
+    setShowRedLine(false)
     ImagePicker.openPicker({
       multiple: true,
     }).then(async images => {
@@ -506,11 +505,10 @@ export const useFunction = (props: any) => {
                 size: item?.size,
                 type:
                   Platform.OS === 'ios'
-                    ? `image/${
-                        isHEIC
-                          ? item?.path?.split('.')[0] + '.JPG'
-                          : item?.path?.split('.').pop()
-                      }}`
+                    ? `image/${isHEIC
+                      ? item?.path?.split('.')[0] + '.JPG'
+                      : item?.path?.split('.').pop()
+                    }}`
                     : item?.mime,
                 height: item?.height,
               });
@@ -550,6 +548,7 @@ export const useFunction = (props: any) => {
   };
 
   const choseFile = () => {
+    setShowRedLine(false)
     DocumentPicker.pickMultiple({
       presentationStyle: 'fullScreen',
       copyTo: 'cachesDirectory',
@@ -605,6 +604,7 @@ export const useFunction = (props: any) => {
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
     setShowModalStamp(false);
+    setShowRedLine(false)
     try {
       const data = new FormData();
       data.append('room_id', idRoomChat);
@@ -635,11 +635,11 @@ export const useFunction = (props: any) => {
         animated: true,
         index: 0,
       });
-    } catch (error: any) {}
+    } catch (error: any) { }
   };
 
   const searchMessage = useCallback(() => {
-    navigation.navigate(ROUTE_NAME.SEARCH_MESSAGE, {idRoomChat: idRoomChat});
+    navigation.navigate(ROUTE_NAME.SEARCH_MESSAGE, { idRoomChat: idRoomChat });
   }, [idRoomChat]);
 
   const showModalStamp = useCallback(() => {
@@ -663,7 +663,7 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({ room_id: idRoomChat });
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
@@ -675,22 +675,13 @@ export const useFunction = (props: any) => {
       setListUser(result?.data?.users?.data?.concat(guest));
       setListUserRoot(result?.data?.users?.data);
     } catch {
-      (error: any) => {};
+      (error: any) => { };
     }
   }, [idRoomChat]);
 
   useEffect(() => {
     getUserListChat();
   }, [showTagModal]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (formattedText[0]?.props?.children === '') {
-        formattedText.shift();
-        setFormattedText([...formattedText]);
-      }
-    }, 10);
-  }, [formattedText]);
 
   const bookmarkMessage = useCallback((data: any) => {
     try {
@@ -707,94 +698,10 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
-  const formatText = (inputText: string, fromTagFlg: boolean) => {
-    if (inputText.length === 0) {
-      setFormattedText([]);
-      return;
-    }
-    const words = inputText.split(' ');
-    const formattedText1: (string | JSX.Element)[] = [];
-    words.forEach((word, index) => {
-      const isLastWord = index === words.length - 1;
-      if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
-        const nonmention = (
-          <Text
-            key={word + index}
-            style={{
-              alignSelf: 'flex-start',
-              color: 'black',
-            }}>
-            {word}
-          </Text>
-        );
-        return isLastWord
-          ? formattedText1.push(nonmention)
-          : formattedText1.push(nonmention, ' ');
-      } else {
-        const mention = (
-          <Text
-            key={word + index}
-            style={{
-              alignSelf: 'flex-start',
-              color: '#3366CC',
-              fontWeight: 'bold',
-            }}>
-            {word}
-          </Text>
-        );
-        if (word === '@') {
-          formattedText1.push(mention);
-        } else {
-          if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
-            isLastWord
-              ? formattedText1.push(mention)
-              : formattedText1.push(mention, ' ');
-          } else {
-            isLastWord
-              ? formattedText1.push(mention, ' ')
-              : formattedText1.push(mention, ' ');
-          }
-        }
-      }
-    });
-    if (checkDeletedMension(formattedText1)) {
-      formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
-    }
-    setFormattedText(formattedText1);
-  };
-  const checkDeletedMension = (formattedText1: any[]) => {
-    let result = false;
-    formattedText1.forEach((element, index) => {
-      if (
-        element?.props?.children?.startsWith('@') &&
-        element?.props?.children?.length > 1 &&
-        element?.props?.children?.length <
-          formattedText[index]?.props?.children.length
-      ) {
-        result = true;
-      }
-    });
-    return result;
-  };
-  const getText = (formattedtext: (string | JSX.Element)[]) => {
-    let context: string = '';
-    formattedtext.forEach((element, index) => {
-      let word = '';
-      if (typeof element === 'string') {
-        word = element;
-      } else {
-        word = element.props.children;
-      }
-      if (word !== '@') {
-        if (word.slice(-1) === '@') {
-          context = context + word.slice(0, -1) + ' ';
-        } else {
-          context = context + word;
-        }
-      }
-    });
-    return context;
-  };
+
+  const quoteMessage = useCallback((data: any) => {
+    dispatch(saveMessageQuote(data));
+  }, []);
 
   const callApiChatBotRequest = async (
     message: any,
@@ -820,7 +727,7 @@ export const useFunction = (props: any) => {
       formData.append('message', message);
       formData.append('message_id', messageId);
       const res = await callApiChatBot(formData);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return {
@@ -855,6 +762,7 @@ export const useFunction = (props: any) => {
     modalStamp,
     giftedChatRef,
     text,
+    // setTextInput,
     showHideModalTagName,
     setShowTag,
     showTagModal,
@@ -869,13 +777,7 @@ export const useFunction = (props: any) => {
     messageQuote,
     listUserSelect,
     setListUserSelect,
-    formattedText,
-    setFormattedText,
-    mentionedUsers,
-    setMentionedUsers,
-    formatText,
-    getText,
-    me,
-    navigateToMessage,
+    showRedLine,
+    redLineId
   };
 };

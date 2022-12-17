@@ -156,12 +156,8 @@ export const getDetailRoomSocketSuccess = (payload: any) => ({
   type: typeChat.DETAIL_ROOM_SOCKET_SUCCESS,
   payload,
 });
-export const getUnreadMessageCount = (payload: any) => ({
-  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
-  payload,
-});
 
-export const getUnreadMessageCountSuccess = (payload: any) => ({
-  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS,
+export const showHideModalFilterListChat = (payload: any) => ({
+  type: typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT,
   payload,
 });

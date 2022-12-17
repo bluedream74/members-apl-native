@@ -33,6 +33,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
               ),
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
+        redLineId: action.payload.redline,
       };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
@@ -150,16 +151,10 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         isGetInfoRoom: action.payload,
       };
-    case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL:
+    case typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT:
       return {
         ...state,
-        GetUnreadMessageCount: action.payload,
-      };
-    case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS:
-      let count = action.payload;
-      return {
-        ...state,
-        unReadMessageCount: count,
+        modalFilterChat: action.payload,
       };
     default:
       return state;

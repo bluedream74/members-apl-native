@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,8 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import {styles} from './styles';
-import {Header, ModalConfirm, ModalLink} from '@component';
+import { styles } from './styles';
+import { Header, ModalConfirm, ModalLink } from '@component';
 import {
   defaultAvatar,
   iconCamera,
@@ -21,30 +21,32 @@ import {
   iconPin,
   iconUpload,
   iconDocument,
+  iconDeleteRoom
 } from '@images';
-import {ViewItem} from './components/ViewItem';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {ROUTE_NAME} from '@routeName';
-import {detailRoomchat, pinFlag, leaveRoomChat, GlobalService} from '@services';
-import {showMessage} from 'react-native-flash-message';
+import { ViewItem } from './components/ViewItem';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { ROUTE_NAME } from '@routeName';
+import { detailRoomchat, pinFlag, leaveRoomChat, GlobalService } from '@services';
+import { showMessage } from 'react-native-flash-message';
 import ImagePicker from 'react-native-image-crop-picker';
-import {verticalScale} from 'react-native-size-matters';
-import {updateImageRoomChat, deleteImageRoomChat, getListUser} from '@services';
-import {colors} from '@stylesCommon';
+import { verticalScale } from 'react-native-size-matters';
+import { updateImageRoomChat, deleteImageRoomChat, getListUser, deleteRoom } from '@services';
+import { colors } from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
-import {AppSocket} from '@util';
-import {useSelector} from 'react-redux';
+import { AppSocket } from '@util';
+import { useSelector } from 'react-redux';
 
 const InfoRoomChat = (props: any) => {
-  const {route} = props;
-  const {idRoomChat} = route?.params;
+  const { route } = props;
+  const { idRoomChat } = route?.params;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const navigation = useNavigation<any>();
-  const {getSocket} = AppSocket;
+  const { getSocket } = AppSocket;
   const socket = getSocket();
   const [dataDetail, setData] = useState<any>(null);
   const [activePin, setActivePin] = useState<any>(false);
   const [modal, setModal] = useState<boolean>(false);
+  const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [modalLink, setModalLink] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
   const [listUser, setListUser] = useState([]);
@@ -87,7 +89,7 @@ const InfoRoomChat = (props: any) => {
       // });
       getDetail();
       setImage(null);
-    } catch (error) {}
+    } catch (error) { }
   }, [image, idRoomChat]);
 
   useEffect(() => {
@@ -100,12 +102,16 @@ const InfoRoomChat = (props: any) => {
     try {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
-    } catch {}
+    } catch { }
   };
 
   const onCancelModal = useCallback(() => {
     setModal(!modal);
   }, [modal]);
+
+  const onCancelModalDelete = useCallback(() => {
+    setModalDelete(!modalDelete)
+  }, [modalDelete])
 
   const onCancelModalLink = useCallback(() => {
     setModalLink(!modalLink);
@@ -113,9 +119,9 @@ const InfoRoomChat = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({ room_id: idRoomChat });
       setListUser(result?.data?.users?.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useFocusEffect(
@@ -144,19 +150,27 @@ const InfoRoomChat = (props: any) => {
         type: 'success',
       });
       getDetail();
-    } catch {}
+    } catch { }
   };
 
   const onLeave = useCallback(async () => {
-    onCancelModal();
     try {
+      onCancelModal();
       const body = {
         room_id: idRoomChat,
       };
       const response = await leaveRoomChat(body);
       navigation.pop(2);
-    } catch {}
-  }, [idRoomChat]);
+    } catch { }
+  }, [idRoomChat, modal]);
+
+  const onDelete = useCallback(async () => {
+    try {
+      onCancelModalDelete();
+      const response = await deleteRoom(idRoomChat)
+      navigation.pop(2);
+    } catch { }
+  }, [idRoomChat, modalDelete]);
 
   const upLoadImage = () => {
     ImagePicker.openPicker({
@@ -167,7 +181,7 @@ const InfoRoomChat = (props: any) => {
       .then(async (image: any) => {
         setImage(image);
       })
-      .catch(err => {});
+      .catch(err => { });
   };
 
   const deleteAvatar = async () => {
@@ -201,15 +215,13 @@ const InfoRoomChat = (props: any) => {
         title={
           dataDetail?.name && dataDetail?.name?.length > 0
             ? dataDetail?.name
-            : `${
-                dataDetail?.one_one_check[0]
-                  ? dataDetail?.one_one_check[0]?.last_name
-                  : ''
-              } ${
-                dataDetail?.one_one_check[0]
-                  ? dataDetail?.one_one_check[0]?.first_name
-                  : ''
-              }`
+            : `${dataDetail?.one_one_check[0]
+              ? dataDetail?.one_one_check[0]?.last_name
+              : ''
+            } ${dataDetail?.one_one_check[0]
+              ? dataDetail?.one_one_check[0]?.first_name
+              : ''
+            }`
         }
         back
         imageCenter
@@ -344,11 +356,18 @@ const InfoRoomChat = (props: any) => {
                 sourceImage={iconLogout}
                 content="グループを退出"
                 isLogout
-                hideBorder
                 hideNext
                 onClick={onCancelModal}
               />
             )}
+            {dataDetail?.is_admin == 1 && listUser?.length > 1 ? <ViewItem
+              sourceImage={iconDelete}
+              content="グループを削除"
+              hideNext
+              isLogout
+              hideBorder
+              onClick={onCancelModalDelete}
+            /> : null}
           </ScrollView>
         ) : (
           <View style={styles.marginTop}>
@@ -368,8 +387,14 @@ const InfoRoomChat = (props: any) => {
         titleHeader="チャット招待リンク"
         idRoomChat={idRoomChat}
       />
+      <ModalConfirm
+        visible={modalDelete}
+        onCancel={onCancelModalDelete}
+        titleHeader="このグループを削除しますか?"
+        onConfirm={onDelete}
+      />
     </View>
   );
 };
 
-export {InfoRoomChat};
+export { InfoRoomChat };

@@ -31,6 +31,9 @@ const Item = React.memo((props: any) => {
   const {item, index} = props;
   const [pin, setStatusPin] = useState<any>(null);
 
+  let count_user =
+    item?.name?.length > 0 ? (item?.name.match(/,/g) || []).length : 0;
+
   useEffect(() => {
     if (item?.pin_flag) {
       setStatusPin(Number(item?.pin_flag));
@@ -138,26 +141,35 @@ const Item = React.memo((props: any) => {
         </View>
         <View style={styles.viewTxt}>
           <>
-            <Text
-              style={[
-                styles.txtContent,
-                {
-                  fontWeight: item?.message_unread > 0 ? 'bold' : '600',
-                  color:
-                    item?.message_unread > 0 ? '#000000' : colors.backgroundTab,
-                },
-              ]}
-              numberOfLines={1}>
-              {item?.name && item?.name?.length > 0
-                ? item?.name
-                : `${
-                    item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
-                  } ${
-                    item?.one_one_check
-                      ? item?.one_one_check[0]?.first_name
-                      : ''
-                  }`}
-            </Text>
+            <View style={styles.viewRowTitle}>
+              <Text
+                style={[
+                  styles.txtContent,
+                  {
+                    fontWeight: item?.message_unread > 0 ? 'bold' : '600',
+                    color:
+                      item?.message_unread > 0
+                        ? '#000000'
+                        : colors.backgroundTab,
+                  },
+                ]}
+                numberOfLines={1}>
+                {item?.name && item?.name?.length > 0
+                  ? item?.name
+                  : `${
+                      item?.one_one_check
+                        ? item?.one_one_check[0]?.last_name
+                        : ''
+                    } ${
+                      item?.one_one_check
+                        ? item?.one_one_check[0]?.first_name
+                        : ''
+                    }`}
+              </Text>
+              {item?.name && item?.name?.length > 0 ? (
+                <Text> {count_user > 0 ? `(${count_user + 1})` : ''}</Text>
+              ) : null}
+            </View>
             {item?.lastMessageJoin?.attachment_files?.length > 0 ? (
               <View style={styles.viewRow}>
                 {item?.lastMessageJoin?.attachment_files?.map((item: any) => (
@@ -294,6 +306,11 @@ const styles = StyleSheet.create({
   viewRow: {
     flexDirection: 'row',
     marginTop: verticalScale(10),
+  },
+  viewRowTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: '95%',
   },
   imageSmall: {
     width: moderateScale(30),

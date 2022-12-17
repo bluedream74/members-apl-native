@@ -1,33 +1,49 @@
-import React, {useState, useCallback} from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import {styles} from './styles';
-import {Header, ModalRemoveUser} from '@component';
-import {iconAddUser} from '@images';
-import {Item} from './components/Item';
-import {useFocusEffect} from '@react-navigation/native';
-import {AppSocket} from '@util';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { styles } from './styles';
+import { Header, ModalRemoveUser } from '@component';
+import { iconAddUser } from '@images';
+import { Item } from './components/Item';
+import { useFocusEffect } from '@react-navigation/native';
+import { AppSocket } from '@util';
 
-import {getRoomList, getDetailMessageSocketSuccess} from '@redux';
-import {useDispatch, useSelector} from 'react-redux';
-import {getListUser, GlobalService, removeUser, removeGuest} from '@services';
+import { getRoomList, getDetailMessageSocketSuccess } from '@redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getListUser, GlobalService, removeUser, removeGuest, changeRole } from '@services';
 
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_NAME} from '@routeName';
+import { useNavigation } from '@react-navigation/native';
+import { ROUTE_NAME } from '@routeName';
 
 const ListUser = (props: any) => {
   const dispatch = useDispatch();
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
-  const {getSocket} = AppSocket;
+  const { getSocket } = AppSocket;
   const socket = getSocket();
-  const {route} = props;
-  const {idRoomChat, dataDetail} = route?.params;
+  const { route } = props;
+  const { idRoomChat, dataDetail } = route?.params;
   const navigation = useNavigation<any>();
   const [listUser, setListUser] = useState([]);
   const [nameUser, setNameUser] = useState<any>(null);
   const [idUser, setIdUser] = useState<any>(null);
   const [modal, setModal] = useState<boolean>(false);
 
-  const renderItem = ({item}: any) => (
+  const callApiChangeRole = async (value: any, idUser: any) => {
+    try {
+      GlobalService.showLoading()
+      const body = {
+        "room_id": idRoomChat,
+        "user_id": Math.abs(idUser),
+        "role": value
+      }
+      const res = await changeRole(body);
+      getListUserOfRoom()
+      GlobalService.hideLoading()
+    } catch {
+      GlobalService.hideLoading()
+    }
+  }
+
+  const renderItem = ({ item }: any) => (
     <Item
       item={item}
       deleteUser={(value: any) => {
@@ -39,6 +55,7 @@ const ListUser = (props: any) => {
         );
         onCancelModal();
       }}
+      changeRole={(value: any, idUser: any) => callApiChangeRole(value, idUser)}
     />
   );
 
@@ -137,7 +154,7 @@ const ListUser = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      const result = await getListUser({ room_id: idRoomChat, all: true });
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
@@ -145,7 +162,7 @@ const ListUser = (props: any) => {
         };
       });
       setListUser(result?.data?.users?.data?.concat(guest));
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useFocusEffect(
@@ -196,4 +213,4 @@ const ListUser = (props: any) => {
   );
 };
 
-export {ListUser};
+export { ListUser };

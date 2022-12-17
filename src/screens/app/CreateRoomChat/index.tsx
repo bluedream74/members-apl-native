@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -7,29 +7,30 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {styles} from './styles';
-import {Header, AppInput, AppButton} from '@component';
-import {iconClose} from '@images';
-import {colors} from '@stylesCommon';
-import {debounce} from 'lodash';
-import {AppSocket} from '@util';
+import { styles } from './styles';
+import { Header, AppInput, AppButton } from '@component';
+import { iconClose } from '@images';
+import { colors } from '@stylesCommon';
+import { debounce } from 'lodash';
+import { AppSocket } from '@util';
 
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
-import {useSelector, useDispatch} from 'react-redux';
-import {getDetailMessageSocketSuccess} from '@redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getDetailMessageSocketSuccess } from '@redux';
 
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {getListUser, createRoom, GlobalService, inviteMember} from '@services';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { getListUser, createRoom, GlobalService, inviteMember } from '@services';
 
 const CreateRoomChat = (props: any) => {
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
-  const {route} = props;
+  const { route } = props;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const user = useSelector((state: any) => state.auth.userInfo);
 
-  const {typeScreen, idRoomchat} = route?.params;
-  const {getSocket} = AppSocket;
+  const { typeScreen, idRoomchat } = route?.params;
+  const { getSocket } = AppSocket;
   const socket = getSocket();
 
   const [name, setName] = useState<any>(null);
@@ -61,10 +62,10 @@ const CreateRoomChat = (props: any) => {
   const onSearch = async (keySearch: any) => {
     try {
       if (keySearch?.length > 0) {
-        const result = await getListUser({name: keySearch});
+        const result = await getListUser({ name: keySearch });
         setResultUser(result?.data?.users?.data);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const onAddUser = (item: any) => {
@@ -94,7 +95,13 @@ const CreateRoomChat = (props: any) => {
     if (renderIdUser()?.length == 1) {
       return null;
     } else {
-      return '新規グループ';
+      let dataName = ''
+      const dataAdd = listUser?.forEach((item: any) => {
+        dataName = dataName + `${item?.last_name}${item?.first_name},`
+      });
+      const nameUser = `,${user?.last_name}${user?.first_name}`
+      const name = dataName?.replace(/.$/, '') + nameUser;
+      return name;
     }
   };
 
@@ -264,4 +271,4 @@ const CreateRoomChat = (props: any) => {
   );
 };
 
-export {CreateRoomChat};
+export { CreateRoomChat };

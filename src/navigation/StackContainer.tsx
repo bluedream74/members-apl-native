@@ -110,6 +110,10 @@ const NavigationApp = React.forwardRef((props: any, ref: any) => {
           name={ROUTE_NAME.LIST_FILE_IN_ROOM}
           component={screens.ListFileInRoom}
         />
+        <Stack.Screen
+          name={ROUTE_NAME.ADD_GROUP_FILTER_CHAT}
+          component={screens.AddGroupFilterChat}
+        />
       </>
     );
   };

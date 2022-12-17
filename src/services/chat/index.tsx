@@ -34,16 +34,29 @@ const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
 const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
 const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
-const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
+const DELETE_ROOM = 'user/chat/room';
+const CHANGE_ROLE = 'user/chat/room/role-user';
+
+const GET_LIST_CATEGORY = 'user/chat/category/list';
+const CREATE_CATEGORY = 'user/chat/category/create';
+const DETAIL_CATEGORY = 'user/chat/category';
+const EDIT_CATEGORY = 'user/chat/category/update';
+const DELETE_CATEGORY = 'user/chat/category';
 
 export const getRoomListApi: any = async (params: any) => {
-  const {key, company_id, page} = params;
+  const {key, company_id, page, type, category_id} = params;
   const response = await api.get(
     key?.length > 0
       ? `${GET_LIST_ROOM}?company_id=${company_id}&page=${
           page ? page : 1
+        }&type=${type ? type : 0}&category_id=${
+          category_id ? category_id : null
         }&search=${key}`
-      : `${GET_LIST_ROOM}?company_id=${company_id}&page=${page ? page : 1}`,
+      : `${GET_LIST_ROOM}?company_id=${company_id}&page=${
+          page ? page : 1
+        }&type=${type ? type : 0}&category_id=${
+          category_id ? category_id : null
+        }`,
   );
   return response;
 };
@@ -231,15 +244,38 @@ export const addUserMessage: any = async (body: any) => {
 };
 
 export const callApiChatBot: any = async (body: any) => {};
-export const getUnreadMessageCount: any = async (params: any) => {
-  const {id_room, id_message} = params;
-  const response = api.get(
-    `${GET_RESULT_SEARCH_MESSAGE}/${id_room}/messages-after-from-id?message_from_id=${id_message}`,
-  );
+
+export const deleteRoom: any = async (id: any) => {
+  const response = api.get(`${DELETE_ROOM}/${id}/delete`);
   return response;
 };
 
-export const getUnreadMessageCountApi: any = async (user_id: any) => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
+export const changeRole: any = async (body: any) => {
+  const response = api.post(CHANGE_ROLE, body);
+  return response;
+};
+
+export const getListCategory: any = async () => {
+  const response = api.get(GET_LIST_CATEGORY);
+  return response;
+};
+
+export const createCategory: any = async (body: any) => {
+  const response = api.post(CREATE_CATEGORY, body);
+  return response;
+};
+
+export const detailCategory: any = async (id: any) => {
+  const response = api.get(`${DETAIL_CATEGORY}/${id}/detail`);
+  return response;
+};
+
+export const updateCategory: any = async (body: any) => {
+  const response = api.post(EDIT_CATEGORY, body);
+  return response;
+};
+
+export const deleteCategory: any = async (id: any) => {
+  const response = api.get(`${DELETE_CATEGORY}/${id}/delete`);
   return response;
 };

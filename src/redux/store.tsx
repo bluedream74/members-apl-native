@@ -16,8 +16,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(
   persistedReducer,
-  // applyMiddleware(sagaMiddleware, logger), //enable log redux
-  applyMiddleware(sagaMiddleware), //disable log redux
+  applyMiddleware(sagaMiddleware, logger),
 );
 sagaMiddleware.run(rootSaga);
 

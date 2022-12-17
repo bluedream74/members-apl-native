@@ -1,15 +1,42 @@
-import React from 'react';
-import {TouchableOpacity, StyleSheet, View, Image, Text} from 'react-native';
-import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import React, { useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native';
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import LinearGradient from 'react-native-linear-gradient';
-import {colors, stylesCommon} from '@stylesCommon';
-import {iconRemove, defaultAvatar, iconPin} from '@images';
-import {useNavigation} from '@react-navigation/native';
-import {ROUTE_NAME} from '@routeName';
+import { colors, stylesCommon } from '@stylesCommon';
+import { iconRemove, defaultAvatar, iconPin, iconReload } from '@images';
+import { useNavigation } from '@react-navigation/native';
+import { ROUTE_NAME } from '@routeName';
+import { Menu } from 'react-native-material-menu';
+import { MenuOption } from './MenuOption';
 
 const Item = React.memo((props: any) => {
   const navigation = useNavigation<any>();
-  const {item, deleteUser} = props;
+  const { item, deleteUser, changeRole } = props;
+
+  const [showPopup, setShowPopUp] = useState<boolean>(false);
+
+  const renderViewRole = () => {
+    switch (item?.is_admin) {
+      case 1:
+        return (
+          <View style={[styles.viewRole, { backgroundColor: '#FDEEEA' }]}>
+            <Text style={styles.txtContent}>マスター</Text>
+          </View>
+        )
+      case 2:
+        return (
+          <View style={styles.viewRole}>
+            <Text style={styles.txtContent}>メンバー</Text>
+          </View>
+        )
+      default:
+        return (
+          <View style={styles.viewRole}>
+            <Text style={styles.txtContent}>ゲスト</Text>
+          </View>
+        )
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -18,7 +45,7 @@ const Item = React.memo((props: any) => {
           <View style={styles.image}>
             <Image
               source={
-                item?.icon_image ? {uri: item?.icon_image} : defaultAvatar
+                item?.icon_image ? { uri: item?.icon_image } : defaultAvatar
               }
               style={styles.image}
             />
@@ -46,7 +73,37 @@ const Item = React.memo((props: any) => {
               </Text>
             )}
           </>
+          {renderViewRole()}
         </View>
+        {item?.is_admin === 1 && item?.id > 0 ? <TouchableOpacity
+          onPress={() => {
+            setShowPopUp(true)
+          }}
+          style={[
+            styles.viewImageNext, { justifyContent: 'flex-end' },
+          ]}>
+          <Image source={iconReload} style={styles.iconReload} />
+          <Menu
+            style={styles.containerMenuDelete}
+            visible={showPopup}
+            onRequestClose={() => setShowPopUp(false)}
+            key={1}>
+            <MenuOption
+              title='マスタ'
+              onClick={() => {
+                changeRole(1, item?.id)
+                setShowPopUp(false)
+              }}
+            />
+            <MenuOption
+              title='メンバー'
+              onClick={() => {
+                changeRole(2, item?.id)
+                setShowPopUp(false)
+              }}
+            />
+          </Menu>
+        </TouchableOpacity> : <View style={styles.viewImageNext} />}
         <TouchableOpacity
           onPress={() => {
             deleteUser(item);
@@ -83,11 +140,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   viewTxt: {
-    width: '62%',
+    width: '57%',
     justifyContent: 'center',
   },
   viewImageNext: {
-    width: '15%',
+    width: '10%',
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -130,6 +187,30 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(12 / 2),
     backgroundColor: colors.active,
   },
+  viewRole: {
+    maxWidth: '45%',
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    marginTop: 6,
+    borderRadius: 10,
+    backgroundColor: '#E7F6F6',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  iconReload: {
+    width: moderateVerticalScale(25), height: moderateVerticalScale(25)
+  },
+  containerMenuDelete: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  }
 });
 
-export {Item};
+export { Item };
