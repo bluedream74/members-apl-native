@@ -257,15 +257,17 @@ const ItemMessage = React.memo((props: any) => {
         } else {
           // 他人宛のメンションの場合
           mention = (
-            <Text
-              key={word + index}
-              style={{
-                alignSelf: 'flex-start',
-                color: '#3366CC',
-                fontWeight: 'bold',
-              }}>
-              {word}
-            </Text>
+            <View>
+              <Text
+                key={word + index}
+                style={{
+                  alignSelf: 'flex-start',
+                  color: '#3366CC',
+                  fontWeight: 'bold',
+                }}>
+                {word}
+              </Text>
+            </View>
           );
         }
 
