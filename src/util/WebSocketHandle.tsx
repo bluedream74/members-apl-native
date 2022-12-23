@@ -12,9 +12,9 @@ import {store} from '../redux/store';
 import {EVENT_SOCKET} from '@util';
 
 //socket stagging
-// const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
+const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
 //socket product
-const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
+// const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
 
 let socket = io('', {
   autoConnect: false,
