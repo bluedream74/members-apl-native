@@ -159,8 +159,7 @@ const DetailChat = (props: any) => {
   });
 
   useEffect(() => {
-    if (text?.length > 0 && text.match('@All')) {
-      console.log(text.match('@All'))
+    if (text?.length > 0 && (text.match('@All') || text.match('@all'))) {
       const idsData = listUser?.map((item: any) => {
         return item?.id;
       });
@@ -286,7 +285,6 @@ const DetailChat = (props: any) => {
                     <ModalTagName
                       idRoomChat={idRoomChat}
                       choseUser={(value: any, id: any, item: any) => {
-                        console.log(value);
                         // logic khi tag name là tin nhắn tag có tên người và đồng thời gửi thêm 1 mảng id người dùng được tag
                         if (id < 0) {
                           // check nếu đây là id của khách lẻ thì không gửi mảng id lên
@@ -310,6 +308,7 @@ const DetailChat = (props: any) => {
                           }
                         }
                       }}
+                      text={text}
                     />
                   )}
                   {/* UI reply message */}

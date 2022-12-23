@@ -8,8 +8,11 @@ import {
 } from 'react-native';
 import {ViewHeader} from './ViewHeader';
 import {ViewItem} from './ViewItem';
+import {useDispatch} from 'react-redux';
+import {saveStatusFilter} from '@redux';
 
 const ViewList = React.memo((props: any) => {
+  const dispatch = useDispatch();
   const {onPressAdd, list, onPress, onEdit, onDelete, loading} = props;
 
   const renderItem = ({item, index}: any) => {
@@ -20,6 +23,7 @@ const ViewList = React.memo((props: any) => {
         isListEdit
         onPress={() => {
           onPress(item);
+          dispatch(saveStatusFilter(item?.name))
         }}
         onEdit={() => {
           onEdit(item);

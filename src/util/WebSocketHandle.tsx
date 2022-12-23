@@ -100,7 +100,12 @@ function createAppSocket() {
           }
         } else {
           store.dispatch(
-            getRoomList({company_id: state?.chat?.idCompany, search: null}),
+            getRoomList({
+              company_id: state?.chat?.idCompany,
+              search: null,
+              type: state?.chat?.type_Filter,
+              category_id: state?.chat?.categoryID_Filter,
+            }),
           );
         }
       } else {
@@ -108,7 +113,12 @@ function createAppSocket() {
           store?.dispatch(isGetInfoRoom(true));
         } else {
           store.dispatch(
-            getRoomList({company_id: state?.chat?.idCompany, search: null}),
+            getRoomList({
+              company_id: state?.chat?.idCompany,
+              search: null,
+              type: state?.chat?.type_Filter,
+              category_id: state?.chat?.categoryID_Filter,
+            }),
           );
         }
       }

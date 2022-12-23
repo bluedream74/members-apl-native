@@ -31,38 +31,22 @@ const AddGroupFilterChat = (props: any) => {
   const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getDetail = async () => {
-    try {
-      const res = await detailCategory(id);
-      setDetail(res?.data?.category);
-      setValue(res?.data?.category?.name);
-    } catch (error) {}
-  };
-
-  const getListChat = async () => {
-    try {
-      const params = {key: null, company_id: idCompany, page: 1};
-
-      const res = await getRoomListApi(params);
-      const result = res?.data?.rooms?.data?.map((item: any) => {
-        return {
-          ...item,
-          name:
-            item?.name && item?.name?.length > 0
-              ? item?.name
-              : `${
-                  item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
-                } ${
-                  item?.one_one_check ? item?.one_one_check[0]?.first_name : ''
-                }`,
-          checked: false,
-        };
+  const convertData = async (result: any, detail: any) => {
+    if (result?.length > 0) {
+      let data: any = [...result];
+      data?.forEach((itemData: any, indexData: any) => {
+        detail?.rooms?.forEach((itemDetail: any) => {
+          if (itemData?.id === itemDetail?.id) {
+            data[indexData].checked = true;
+          }
+        });
       });
 
-      setListChat(result);
-      setDataLocal(result);
+      setListChat(data);
+      setDataLocal(data);
       setLoading(false);
-    } catch (error) {}
+    } else {
+    }
   };
 
   const onSearch = async (value: string) => {
@@ -86,11 +70,59 @@ const AddGroupFilterChat = (props: any) => {
     setListChat(nList);
   };
 
-  useEffect(() => {
+  const getData = async () => {
     if (id) {
-      getDetail();
+      try {
+        const params = {key: null, company_id: idCompany, page: 1};
+        const res = await getRoomListApi(params);
+        const result = res?.data?.rooms?.data?.map((item: any) => {
+          return {
+            ...item,
+            name:
+              item?.name && item?.name?.length > 0
+                ? item?.name
+                : `${
+                    item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
+                  } ${
+                    item?.one_one_check
+                      ? item?.one_one_check[0]?.first_name
+                      : ''
+                  }`,
+            checked: false,
+          };
+        });
+
+        const resDetail = await detailCategory(id);
+        setDetail(resDetail?.data?.category);
+        setValue(resDetail?.data?.category?.name);
+
+        convertData(result, resDetail?.data?.category);
+      } catch (error) {}
+    } else {
+      const params = {key: null, company_id: idCompany, page: 1};
+      const res = await getRoomListApi(params);
+      const result = res?.data?.rooms?.data?.map((item: any) => {
+        return {
+          ...item,
+          name:
+            item?.name && item?.name?.length > 0
+              ? item?.name
+              : `${
+                  item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
+                } ${
+                  item?.one_one_check ? item?.one_one_check[0]?.first_name : ''
+                }`,
+          checked: false,
+        };
+      });
+      setListChat(result);
+      setDataLocal(result);
+      setLoading(false);
     }
-    getListChat();
+  };
+
+  useEffect(() => {
+    getData();
   }, [id]);
 
   const onBack = () => {
@@ -110,7 +142,7 @@ const AddGroupFilterChat = (props: any) => {
 
   const renderIds = () => {
     let arr: any = [];
-    const idsData = listChat?.forEach((item: any) => {
+    listChat?.forEach((item: any) => {
       if (item?.checked === true) {
         arr = arr?.concat([item?.id]);
       }

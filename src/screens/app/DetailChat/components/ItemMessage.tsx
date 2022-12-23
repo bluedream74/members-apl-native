@@ -51,7 +51,7 @@ const width = Dimensions.get('window').width;
 const dataAll: any = [
   {
     id: 'All',
-    last_name: 'A',
+    last_name: 'a',
     first_name: 'll',
   },
 ];
@@ -258,12 +258,6 @@ const ItemMessage = React.memo((props: any) => {
               <MenuOption onDeleteMessage={() => onActionMenu(11)} />
             </Menu>
           </TouchableOpacity>
-          {redLineId === _id && showRedLine === true ? (
-            <View style={styles.viewCenter}>
-              <View style={styles.viewRedLine} />
-              <Text style={styles.txtRedLine}>未読メッセージ</Text>
-            </View>
-          ) : null}
         </>
       ) : (
         <>
@@ -454,7 +448,7 @@ const ItemMessage = React.memo((props: any) => {
                                 searchWords={convertMentionToLink(
                                   text,
                                   listUser?.concat(dataAll),
-                                )}
+                                )?.concat(['@all'])}
                                 textToHighlight={convertString(text)}
                                 style={styles.txtMessage}
                               />

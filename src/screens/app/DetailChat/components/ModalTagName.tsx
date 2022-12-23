@@ -17,8 +17,9 @@ import {defaultAvatar, iconTagAll} from '@images';
 const width = Dimensions.get('window').width;
 
 const ModalTagName = React.memo((props: any) => {
-  const {idRoomChat, choseUser} = props;
+  const {idRoomChat, choseUser, text} = props;
   const [listUser, setListUser] = useState([]);
+  const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,14 +38,22 @@ const ModalTagName = React.memo((props: any) => {
       const dataAll: any = [
         {
           id: 'All',
-          last_name: 'このグループ全員に',
+          last_name: '@all このグループ全員に',
           first_name: '通知が送信されます',
-          value: 'All',
+          value: 'all',
         },
       ];
       const dataUser = result?.data?.users?.data?.concat(guest);
       const dataAddAll = dataAll?.concat(dataUser);
-      setListUser(dataAddAll);
+      const dataConvert = dataAddAll?.map((item: any) => {
+        return {
+          ...item,
+          nameUser:
+            item?.id < 0 ? item?.name : `${item?.last_name}${item?.first_name}`,
+        };
+      });
+      setDataLocal(dataConvert);
+      setListUser(dataConvert);
       setLoading(false);
     } catch {
       (error: any) => {
@@ -119,7 +128,7 @@ const ModalTagName = React.memo((props: any) => {
         </View>
       ) : (
         <FlatList
-          data={listUser}
+          data={dataLocal}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}

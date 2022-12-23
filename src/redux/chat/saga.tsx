@@ -12,7 +12,7 @@ import {
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
   getUnreadMessageCountSuccess,
-} from "./action";
+} from './action';
 
 import {typeChat} from './type';
 import {
@@ -166,6 +166,37 @@ export function* getDetailMessageSagaCurrent(action: any) {
   }
 }
 
+export function* fetchResultMessageRedLine(action: any) {
+  //Hàm xử lý cho việc tìm kiếm message
+  try {
+    const body = {
+      id_room: action.payload.id_room,
+      id_message: action.payload.id_message,
+    };
+    const res: ResponseGenerator = yield getResultSearchMessage(body);
+    if (res?.code === 200) {
+      const param = {
+        id: action.payload.id_room,
+        page: res?.data.pages,
+      };
+      const result: ResponseGenerator = yield getDetailChatApi(param);
+      const valueSave = {
+        data: convertArrUnique(
+          res?.data?.room_messages?.data.concat(
+            result?.data?.room_messages?.data,
+          ),
+          'id',
+        ),
+        paging: result?.data?.room_messages?.paging,
+      };
+      yield put(fetchResultMessageSuccess(valueSave));
+      yield put(saveIdMessageSearch(action.payload.id_message));
+    }
+  } catch (error) {
+  } finally {
+  }
+}
+
 export function* fetchResultMessage(action: any) {
   //Hàm xử lý cho việc tìm kiếm message
   try {
@@ -313,8 +344,7 @@ function* getDetailRoomSocket(action: any) {
   try {
     const result: ResponseGenerator = yield detailRoomchat(action?.payload);
     yield put(getDetailRoomSocketSuccess(result?.data?.room));
-  } catch (error: any) {
-  }
+  } catch (error: any) {}
 }
 export function* getUnreadMessageCountSaga() {
   try {
@@ -336,7 +366,10 @@ export function* chatSaga() {
     typeChat.GET_DETAIL_MESSAGE_SOCKET_CURRENT,
     getDetailMessageSagaCurrent,
   );
-  yield takeEvery(typeChat.FETCH_RESULT_SEARCH_MESSAGE, fetchResultMessage);
+  yield takeEvery(
+    typeChat.FETCH_RESULT_SEARCH_MESSAGE_RED_LINE,
+    fetchResultMessageRedLine,
+  );
   yield takeEvery(
     typeChat.FETCH_RESULT_SEARCH_MESSAGE_LIST_FILE,
     fetchResultMessageListFile,

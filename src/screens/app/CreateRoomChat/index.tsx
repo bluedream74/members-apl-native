@@ -97,9 +97,9 @@ const CreateRoomChat = (props: any) => {
     } else {
       let dataName = ''
       const dataAdd = listUser?.forEach((item: any) => {
-        dataName = dataName + `${item?.last_name}${item?.first_name},`
+        dataName = dataName + `${item?.last_name}${item?.first_name}、`
       });
-      const nameUser = `,${user?.last_name}${user?.first_name}`
+      const nameUser = `、${user?.last_name}${user?.first_name}`
       const name = dataName?.replace(/.$/, '') + nameUser;
       return name;
     }

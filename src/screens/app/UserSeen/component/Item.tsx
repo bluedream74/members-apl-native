@@ -39,7 +39,8 @@ const Item = React.memo((props: any) => {
           </>
           <>
             <Text style={styles.txtTitleDate} numberOfLines={2}>
-              閲覧: <Text style={{color: colors.primary}}>{string_date}</Text>
+              閲覧: {'\n'}{' '}
+              <Text style={{color: colors.primary}}>{string_date}</Text>
             </Text>
           </>
         </View>

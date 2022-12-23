@@ -36,33 +36,43 @@ const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
 const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 const DELETE_ROOM = 'user/chat/room';
 const CHANGE_ROLE = 'user/chat/room/role-user';
+const USER_OF_ROOM = 'user/chat/room';
 
 const GET_LIST_CATEGORY = 'user/chat/category/list';
 const CREATE_CATEGORY = 'user/chat/category/create';
 const DETAIL_CATEGORY = 'user/chat/category';
 const EDIT_CATEGORY = 'user/chat/category/update';
 const DELETE_CATEGORY = 'user/chat/category';
+const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page, type, category_id} = params;
-  const response = await api.get(
+
+  const URL_KEY = `${GET_LIST_ROOM}?company_id=${company_id}&page=${
+    page ? page : 1
+  }&type=${type ? type : 0}&search=${key}`;
+  const URL_NO_KEY = `${GET_LIST_ROOM}?company_id=${company_id}&page=${
+    page ? page : 1
+  }&type=${type ? type : 0}`;
+  const URL_CATEGORY =
     key?.length > 0
-      ? `${GET_LIST_ROOM}?company_id=${company_id}&page=${
-          page ? page : 1
-        }&type=${type ? type : 0}&category_id=${
-          category_id ? category_id : null
-        }&search=${key}`
-      : `${GET_LIST_ROOM}?company_id=${company_id}&page=${
-          page ? page : 1
-        }&type=${type ? type : 0}&category_id=${
-          category_id ? category_id : null
-        }`,
+      ? `${URL_KEY}&category_id=${category_id}`
+      : `${URL_NO_KEY}&category_id=${category_id}`;
+  const URL_NO_CATEGORY = key?.length > 0 ? `${URL_KEY}` : `${URL_NO_KEY}`;
+
+  const response = await api.get(
+    category_id ? `${URL_CATEGORY}` : `${URL_NO_CATEGORY}`,
   );
   return response;
 };
 
 export const getListUser: any = async (params: any) => {
   const response = api.get(GET_LIST_USER, {params});
+  return response;
+};
+
+export const getListUserOfRoomApi: any = async (id: any) => {
+  const response = api.get(`${USER_OF_ROOM}/${id}/users`);
   return response;
 };
 
@@ -277,5 +287,10 @@ export const updateCategory: any = async (body: any) => {
 
 export const deleteCategory: any = async (id: any) => {
   const response = api.get(`${DELETE_CATEGORY}/${id}/delete`);
+  return response;
+};
+
+export const getUnreadMessageCountApi: any = async (user_id: any) => {
+  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
   return response;
 };

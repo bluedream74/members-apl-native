@@ -13,6 +13,9 @@ export type ChatState = {
   messageQuote: any;
   redLineId: any;
   modalFilterChat: boolean;
+  type_Filter: any;
+  categoryID_Filter: any;
+  status_Filter: any;
 };
 
 export const INITIAL_STATE_CHAT: ChatState = {
@@ -30,4 +33,7 @@ export const INITIAL_STATE_CHAT: ChatState = {
   messageQuote: null,
   redLineId: null,
   modalFilterChat: false,
+  type_Filter: null,
+  categoryID_Filter: null,
+  status_Filter: 'すべてのチャット'
 };
