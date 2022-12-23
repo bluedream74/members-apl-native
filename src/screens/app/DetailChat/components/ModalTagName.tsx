@@ -22,26 +22,6 @@ const ModalTagName = React.memo((props: any) => {
   const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const searchName = async () => {
-    // let data: any = [];
-    // listUser?.forEach((item: any) => {
-    //   const textCut = text.replace('@', '');
-    //   console.log(item?.nameUser.includes(textCut), item?.nameUser, textCut);
-    //   if (
-    //     item?.nameUser.includes(textCut) ||
-    //     textCut.includes(item?.nameUser)
-    //   ) {
-    //     data = data?.concat([item]);
-    //   }
-    // });
-  };
-
-  // useEffect(() => {
-  //   if (text?.length > 0) {
-  //     searchName();
-  //   }
-  // }, [text]);
-
   useEffect(() => {
     getListUserApi();
   }, []);
