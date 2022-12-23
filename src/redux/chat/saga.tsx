@@ -11,7 +11,7 @@ import {
   updateMessageSeen,
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
-  // getUnreadMessageCountSuccess,
+  getUnreadMessageCountSuccess,
 } from './action';
 
 import {typeChat} from './type';
@@ -21,7 +21,7 @@ import {
   getMessageFromSocket,
   getResultSearchMessage,
   registerLastMessage,
-  // getUnreadMessageCountApi,
+  getUnreadMessageCountApi,
   GlobalService,
   detailRoomchat,
 } from '@services';
@@ -346,17 +346,17 @@ function* getDetailRoomSocket(action: any) {
     yield put(getDetailRoomSocketSuccess(result?.data?.room));
   } catch (error: any) {}
 }
-// export function* getUnreadMessageCountSaga() {
-//   try {
-//     const state = store.getState();
-//     const user_id = state?.auth?.userInfo.id;
-//     const result: ResponseGenerator = yield getUnreadMessageCountApi(user_id);
-//     yield put(getUnreadMessageCountSuccess(result?.data));
-//   } catch (error) {
-//   } finally {
-//     GlobalService.hideLoading();
-//   }
-// }
+export function* getUnreadMessageCountSaga() {
+  try {
+    const state = store.getState();
+    const user_id = state?.auth?.userInfo.id;
+    const result: ResponseGenerator = yield getUnreadMessageCountApi(user_id);
+    yield put(getUnreadMessageCountSuccess(result?.data));
+  } catch (error) {
+  } finally {
+    GlobalService.hideLoading();
+  }
+}
 
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
@@ -385,5 +385,8 @@ export function* chatSaga() {
   );
   yield takeEvery(typeChat.EDIT_MESSAGE_REACTION, editMessageReaction);
   yield takeEvery(typeChat.DETAIL_ROOM_SOCKET, getDetailRoomSocket);
-  // yield takeEvery(typeChat.GET_UNREAD_MESSAGE_COUNT_ALL, getUnreadMessageCountSaga);
+  yield takeEvery(
+    typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
+    getUnreadMessageCountSaga,
+  );
 }
