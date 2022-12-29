@@ -241,11 +241,13 @@ const InfoRoomChat = (props: any) => {
           dataDetail?.name && dataDetail?.name?.length > 0
             ? renderName(dataDetail?.name)
             : `${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check?.length > 0
                   ? dataDetail?.one_one_check[0]?.last_name
                   : ''
               } ${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check[0]?.length > 0
                   ? dataDetail?.one_one_check[0]?.first_name
                   : ''
               }`

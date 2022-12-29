@@ -194,7 +194,7 @@ const Item = React.memo((props: any) => {
                         : ''
                     }`}
               </Text>
-              {item?.name && item?.name?.length > 0 && count_user > 0 ? (
+              {item?.room_users?.length > 2 ? (
                 <Text> {`(${item?.room_users?.length})`}</Text>
               ) : null}
             </View>
