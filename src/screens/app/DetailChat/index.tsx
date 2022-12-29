@@ -266,11 +266,7 @@ const DetailChat = (props: any) => {
           onKeyPress: ({nativeEvent}: any) => {
             if (nativeEvent?.key?.trim() === '@') {
               setShowTag(true);
-            }
-            // else if (nativeEvent?.key === ' ' || nativeEvent?.key === '') {
-            //   setShowTag(false);
-            // }
-            else {
+            } else {
               setShowTag(false);
             }
           },

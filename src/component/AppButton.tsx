@@ -51,7 +51,7 @@ const styles = ScaledSheet.create({
     fontSize: '16@ms',
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-  }, 
+  },
 });
 
 export {AppButton};
