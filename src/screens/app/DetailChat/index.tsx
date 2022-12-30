@@ -288,18 +288,21 @@ const DetailChat = (props: any) => {
                         // logic khi tag name là tin nhắn tag có tên người và đồng thời gửi thêm 1 mảng id người dùng được tag
                         if (id < 0) {
                           // check nếu đây là id của khách lẻ thì không gửi mảng id lên
-                          setText(`${text}${value}`);
+                          let string = text + value;
+                            setText(string);
                           setShowTag(false);
                         } else {
                           if (id === 'All') {
-                            setText(`${text}${value}`);
+                            let string = text + value;
+                            setText(string);
                             const idsData = listUser?.map((item: any) => {
                               return item?.id;
                             });
                             setIds(idsData);
                             setShowTag(false);
                           } else {
-                            setText(`${text}${value}`);
+                            let string = text + value;
+                            setText(string);
                             setIds(ids?.concat([id]));
                             setListUserSelect(
                               listUserSelect?.concat([{...item}]),

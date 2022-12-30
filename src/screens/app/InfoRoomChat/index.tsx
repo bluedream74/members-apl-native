@@ -415,7 +415,8 @@ const InfoRoomChat = (props: any) => {
       <ModalConfirm
         visible={modal}
         onCancel={onCancelModal}
-        titleHeader="本当にログアウトしますか？"
+        titleHeader="グループを退出する"
+        contentHeader = "退出すると新しいメッセージが届かなくなります。"
         onConfirm={onLeave}
       />
       <ModalLink
