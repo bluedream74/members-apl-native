@@ -19,10 +19,14 @@ import {
   icon4,
   icon5,
   icon6,
+  understand,
+  bow,
+  congrats,
   iconBookmark,
   iconPin,
   iconQuote,
 } from '@images';
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
 const MenuFeature = React.memo((props: any) => {
@@ -34,8 +38,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuCopy,
       name: 'コピー',
       style: {
-        width: 14,
-        height: 18,
+        width: scale(14),
+        height: scale(18),
       },
       isShow: msg_type == 1 ? false : true,
     },
@@ -44,8 +48,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuEdit,
       name: '編集',
       style: {
-        width: 18,
-        height: 18,
+        width: scale(18),
+        height: scale(18),
       },
       isShow:
         userId == user_id && msg_type !== 1 && msg_type !== 2 ? true : false,
@@ -55,8 +59,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: 18,
-        height: 18,
+        width: scale(18),
+        height: scale(18),
       },
       isShow: true,
     },
@@ -65,8 +69,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPinChat,
       name: 'ブックマーク',
       style: {
-        width: 17,
-        height: 17,
+        width: scale(17),
+        height: scale(17),
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -76,8 +80,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuDelete,
       name: '削除',
       style: {
-        width: 18,
-        height: 18,
+        width: scale(18),
+        height: scale(18),
       },
       isShow: userId == user_id ? true : false,
     },
@@ -86,8 +90,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: 18,
-        height: 18,
+        width: scale(18),
+        height: scale(18),
         tintColor: '#FFFFFF',
       },
       isShow: msg_type !== 1 ? true : false,
@@ -97,8 +101,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconQuote,
       name: '引用',
       style: {
-        width: 18,
-        height: 18,
+        width: scale(18),
+        height: scale(18),
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -110,8 +114,8 @@ const MenuFeature = React.memo((props: any) => {
       id: 1,
       sourceImage: icon1,
       style: {
-        width: 21,
-        height: 18,
+        width: scale(21),
+        height: scale(18),
       },
     },
     {
@@ -126,12 +130,40 @@ const MenuFeature = React.memo((props: any) => {
       id: 4,
       sourceImage: icon4,
     },
+    // {
+    //   id: 5,
+    //   sourceImage: icon5,
+    // },
     {
       id: 6,
       sourceImage: icon6,
       style: {
-        width: 18,
-        height: 21,
+        width: scale(18),
+        height: scale(21),
+      },
+    },
+    {
+      id: 7,
+      sourceImage: understand,
+      style: {
+        width: scale(22),
+        height: scale(25),
+      },
+    },
+    {
+      id: 8,
+      sourceImage: bow,
+      style: {
+        width: scale(22),
+        height: scale(25),
+      },
+    },
+    {
+      id: 9,
+      sourceImage: congrats,
+      style: {
+        width: scale(22),
+        height: scale(25),
       },
     },
   ];
@@ -183,10 +215,10 @@ const MenuFeature = React.memo((props: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
-    paddingHorizontal: 13,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(13),
     backgroundColor: colors.backgroundTab,
-    borderRadius: 8,
+    borderRadius: moderateScale(8),
   },
   viewFeature: {
     flexDirection: 'row',
@@ -195,28 +227,28 @@ const styles = StyleSheet.create({
   },
   imageFeature: {
     tintColor: '#FFFFFF',
-    width: 20,
-    height: 20,
+    width: scale(20),
+    height: scale(20),
   },
   itemFeature: {
-    marginHorizontal: 4,
+    marginHorizontal: scale(4),
     justifyContent: 'center',
     alignItems: 'center',
   },
   txtNameFeature: {
-    marginTop: 5,
+    marginTop: verticalScale(5),
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-    fontSize: 12,
+    fontSize: verticalScale(12),
   },
   line: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#FFFFFF',
-    marginVertical: 8,
+    marginVertical: verticalScale(8),
   },
   imageEmoji: {
-    width: 21,
-    height: 21,
+    width: scale(21),
+    height: scale(21),
   },
 });
 
