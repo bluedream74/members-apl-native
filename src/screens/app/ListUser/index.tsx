@@ -198,7 +198,7 @@ const ListUser = (props: any) => {
         title="メンバー"
         imageCenter
         onRightFirst={onCreate}
-        iconRightFirst={iconAddUser}
+        iconRightFirst={is_admin === 1 ? iconAddUser : null}
         back
         styleIconRightFirst={styles.colorIcon}
       />

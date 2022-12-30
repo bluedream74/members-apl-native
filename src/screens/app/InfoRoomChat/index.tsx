@@ -234,6 +234,8 @@ const InfoRoomChat = (props: any) => {
     }
   };
 
+  console.log(dataDetail);
+
   return (
     <View style={styles.container}>
       <Header
@@ -305,7 +307,7 @@ const InfoRoomChat = (props: any) => {
                   />
                 </TouchableOpacity>
 
-                {!dataDetail?.one_one_check && dataDetail?.type !== 4 ? (
+                {!dataDetail?.one_one_check && dataDetail?.is_admin === 1 ? (
                   <TouchableOpacity
                     style={styles.buttonCamera}
                     onPress={upLoadImage}>
@@ -313,7 +315,7 @@ const InfoRoomChat = (props: any) => {
                   </TouchableOpacity>
                 ) : null}
 
-                {!dataDetail?.one_one_check && dataDetail?.type !== 4 ? (
+                {!dataDetail?.one_one_check && dataDetail?.is_admin === 1 ? (
                   <TouchableOpacity
                     style={styles.buttonDelete}
                     onPress={deleteAvatar}>
@@ -322,7 +324,7 @@ const InfoRoomChat = (props: any) => {
                 ) : null}
               </View>
             </View>
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconEdit}
                 title="チャットグループ名"
@@ -339,7 +341,7 @@ const InfoRoomChat = (props: any) => {
                 }}
               />
             )}
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconDetailRow}
                 title="概要"

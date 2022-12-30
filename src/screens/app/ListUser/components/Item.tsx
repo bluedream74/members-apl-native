@@ -111,7 +111,7 @@ const Item = React.memo((props: any) => {
         ) : (
           <View style={styles.viewImageNext} />
         )}
-        <TouchableOpacity
+        {showChange === true ? <TouchableOpacity
           onPress={() => {
             deleteUser(item);
           }}
@@ -124,7 +124,7 @@ const Item = React.memo((props: any) => {
           ]}>
           {item?.pin_flag == 1 && <Image source={iconPin} />}
           <Image source={iconRemove} />
-        </TouchableOpacity>
+        </TouchableOpacity> : null}
       </View>
     </View>
   );
