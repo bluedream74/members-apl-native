@@ -355,7 +355,7 @@ const InfoRoomChat = (props: any) => {
                 }}
               />
             )}
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconUpload}
                 content="チャット招待リンク"
