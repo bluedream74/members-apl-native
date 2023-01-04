@@ -38,8 +38,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuCopy,
       name: 'コピー',
       style: {
-        width: scale(14),
-        height: scale(18),
+        width: 14,
+        height: 18,
       },
       isShow: msg_type == 1 ? false : true,
     },
@@ -48,8 +48,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuEdit,
       name: '編集',
       style: {
-        width: scale(18),
-        height: scale(18),
+        width: 18,
+        height: 18,
       },
       isShow:
         userId == user_id && msg_type !== 1 && msg_type !== 2 ? true : false,
@@ -59,8 +59,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: scale(18),
-        height: scale(18),
+        width: 18,
+        height: 18,
       },
       isShow: true,
     },
@@ -69,8 +69,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPinChat,
       name: 'ブックマーク',
       style: {
-        width: scale(17),
-        height: scale(17),
+        width: 17,
+        height: 17,
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -80,8 +80,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuDelete,
       name: '削除',
       style: {
-        width: scale(18),
-        height: scale(18),
+        width: 18,
+        height: 18,
       },
       isShow: userId == user_id ? true : false,
     },
@@ -90,8 +90,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: scale(18),
-        height: scale(18),
+        width: 18,
+        height: 18,
         tintColor: '#FFFFFF',
       },
       isShow: msg_type !== 1 ? true : false,
@@ -101,8 +101,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconQuote,
       name: '引用',
       style: {
-        width: scale(18),
-        height: scale(18),
+        width: 18,
+        height: 18,
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -114,8 +114,8 @@ const MenuFeature = React.memo((props: any) => {
       id: 1,
       sourceImage: icon1,
       style: {
-        width: scale(21),
-        height: scale(18),
+        width: 21,
+        height: 18,
       },
     },
     {
@@ -138,32 +138,32 @@ const MenuFeature = React.memo((props: any) => {
       id: 6,
       sourceImage: icon6,
       style: {
-        width: scale(18),
-        height: scale(21),
+        width: 18,
+        height: 21,
       },
     },
     {
       id: 7,
       sourceImage: understand,
       style: {
-        width: scale(22),
-        height: scale(25),
+        width: 22,
+        height: 25,
       },
     },
     {
       id: 8,
       sourceImage: bow,
       style: {
-        width: scale(22),
-        height: scale(25),
+        width: 22,
+        height: 25,
       },
     },
     {
       id: 9,
       sourceImage: congrats,
       style: {
-        width: scale(22),
-        height: scale(25),
+        width: 22,
+        height: 25,
       },
     },
   ];
@@ -173,7 +173,7 @@ const MenuFeature = React.memo((props: any) => {
       <View style={styles.viewFeature}>
         {dataFeature.map((item: any, index: any) => {
           return (
-            <View key={item?.id}>
+            <View key={item?.id} style={{maxWidth: userId == user_id ? '20%' : '100%'}}>
               {item?.isShow === true ? (
                 <TouchableOpacity
                   style={styles.itemFeature}
@@ -216,7 +216,7 @@ const MenuFeature = React.memo((props: any) => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: verticalScale(16),
-    paddingHorizontal: scale(13),
+    paddingHorizontal: 13,
     backgroundColor: colors.backgroundTab,
     borderRadius: moderateScale(8),
   },
@@ -227,11 +227,11 @@ const styles = StyleSheet.create({
   },
   imageFeature: {
     tintColor: '#FFFFFF',
-    width: scale(20),
-    height: scale(20),
+    width: 20,
+    height: 20,
   },
   itemFeature: {
-    marginHorizontal: scale(4),
+    marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -247,8 +247,8 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
   },
   imageEmoji: {
-    width: scale(21),
-    height: scale(21),
+    width: 21,
+    height: 21,
   },
 });
 

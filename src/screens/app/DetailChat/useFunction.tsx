@@ -111,7 +111,7 @@ export const useFunction = (props: any) => {
       if (index && index >= 0) {
         giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
           animated: true,
-          index: index,
+          index: index - 1 >= 0 ? index - 1 : 0,
         });
       }
     },

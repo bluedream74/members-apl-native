@@ -1,11 +1,11 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import {
   scale,
   verticalScale,
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import { colors, stylesCommon } from '@stylesCommon';
+import {colors, stylesCommon} from '@stylesCommon';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   txtTime: {
-    marginLeft: scale(5),
+    marginLeft: scale(7),
     color: colors.border,
     fontSize: moderateScale(8),
   },
@@ -154,7 +154,15 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
     textAlign: 'center',
   },
-  txtBold: { fontWeight: 'bold', fontSize: moderateScale(16) },
+  txtBold: {
+    fontWeight: 'bold', 
+    fontSize: moderateScale(13),
+  },
+  txtBoldAndBackGroundColor: {
+    fontWeight: 'bold',
+    fontSize: moderateScale(13),
+    backgroundColor: '#bbbbbb',
+  },
   bottomMenu: {
     marginTop: verticalScale(-100),
   },
@@ -205,7 +213,7 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(5),
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   viewTimeEditLeft: {
     marginTop: moderateScale(5),
@@ -233,9 +241,9 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 0.5,
     marginVertical: moderateScale(20),
-    borderColor: 'red'
+    borderColor: 'red',
   },
-  txtRedLine:{
+  txtRedLine: {
     color: 'red',
     fontSize: moderateScale(14),
     position: 'absolute',
@@ -243,7 +251,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(10),
     backgroundColor: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-  }
+  },
 });
 
-export { styles };
+export {styles};
