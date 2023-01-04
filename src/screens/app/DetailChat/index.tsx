@@ -70,6 +70,7 @@ const DetailChat = (props: any) => {
     me,
     showRedLine,
     redLineId,
+    navigateToMessage
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -157,6 +158,9 @@ const DetailChat = (props: any) => {
             showRedLine={showRedLine}
             redLineId={redLineId}
             isAdmin={dataDetail?.is_admin}
+            moveToMessage={(id: any) => {
+              navigateToMessage(id);
+            }}
           />
         </>
       );

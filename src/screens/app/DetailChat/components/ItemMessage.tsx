@@ -76,6 +76,7 @@ const ItemMessage = React.memo((props: any) => {
     showRedLine,
     redLineId,
     isAdmin,
+    moveToMessage
   } = props;
   const {
     user,
@@ -95,8 +96,10 @@ const ItemMessage = React.memo((props: any) => {
     guest,
     task_link,
     message_quote,
+    quote_message_id,
     index,
     updated_at,
+    reply_to_message_id
   } = props.currentMessage;
 
   const [visible, setVisible] = useState(false);
@@ -112,6 +115,10 @@ const ItemMessage = React.memo((props: any) => {
 
   const navigateToList = useCallback(_id => {
     navigatiteToListReaction(_id);
+  }, []);
+
+  const onJumpToOriginal = useCallback((id) => {
+    moveToMessage(id);
   }, []);
 
   //Đây là hàm xử lý khi ấn vào menu reaction
@@ -430,24 +437,36 @@ const ItemMessage = React.memo((props: any) => {
                                     : '返信メッセージ'}
                                 </Text>
                                 {reply_to_message_text ? (
-                                  <Text
-                                    style={styles.txtContentReply}
-                                    numberOfLines={1}>
-                                    {decode(
-                                      reply_to_message_text
-                                        ?.split('<br>')
-                                        .join('\n'),
-                                    )}
-                                  </Text>
+                                  <TouchableOpacity
+                                    style={styles.chat}
+                                    onPress={() =>
+                                      onJumpToOriginal(reply_to_message_id)
+                                    }>
+                                    <Text
+                                      style={styles.txtContentReply}
+                                      numberOfLines={1}>
+                                      {decode(
+                                        reply_to_message_text
+                                          ?.split('<br>')
+                                          .join('\n'),
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
                                 {message_quote ? (
-                                  <Text
-                                    style={styles.txtContentReply}
-                                    numberOfLines={1}>
-                                    {decode(
-                                      message_quote?.split('<br>').join('\n'),
-                                    )}
-                                  </Text>
+                                  <TouchableOpacity
+                                    style={styles.chat}
+                                    onPress={() =>
+                                      onJumpToOriginal(quote_message_id)
+                                    }>
+                                    <Text
+                                      style={styles.txtContentReply}
+                                      numberOfLines={1}>
+                                      {decode(
+                                        message_quote?.split('<br>').join('\n'),
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
                                 {reply_to_message_files?.length > 0 ? (
                                   <View style={styles.viewRowEdit}>
