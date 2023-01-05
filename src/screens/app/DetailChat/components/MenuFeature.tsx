@@ -130,10 +130,6 @@ const MenuFeature = React.memo((props: any) => {
       id: 4,
       sourceImage: icon4,
     },
-    // {
-    //   id: 5,
-    //   sourceImage: icon5,
-    // },
     {
       id: 6,
       sourceImage: icon6,

@@ -31,7 +31,7 @@ const App = () => {
         </PersistGate>
       </Provider>
       <FlashMessage position="top" floating={true} hideStatusBar={false} />
-      <GlobalUI ref={GlobalService.globalUIRef} /> 
+      <GlobalUI ref={GlobalService.globalUIRef} />
     </>
   );
 };
