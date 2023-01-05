@@ -152,6 +152,17 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         isGetInfoRoom: action.payload,
       };
+    case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL:
+      return {
+        ...state,
+        GetUnreadMessageCount: action.payload,
+      };
+    case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS:
+      let count = action.payload;
+      return {
+        ...state,
+        unReadMessageCount: count,
+      };
     case typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT:
       return {
         ...state,

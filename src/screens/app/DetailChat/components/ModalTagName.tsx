@@ -28,7 +28,7 @@ const ModalTagName = React.memo((props: any) => {
 
   const getListUserApi = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({room_id: idRoomChat, all: true});
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,

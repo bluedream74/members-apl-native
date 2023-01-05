@@ -16,6 +16,7 @@ export type ChatState = {
   type_Filter: any;
   categoryID_Filter: any;
   status_Filter: any;
+  unReadMessageCount: any;
 };
 
 export const INITIAL_STATE_CHAT: ChatState = {
@@ -35,5 +36,6 @@ export const INITIAL_STATE_CHAT: ChatState = {
   modalFilterChat: false,
   type_Filter: null,
   categoryID_Filter: null,
-  status_Filter: 'すべてのチャット'
+  status_Filter: 'すべてのチャット',
+  unReadMessageCount: null,
 };
