@@ -21,6 +21,7 @@ import {
   iconPin,
   iconUpload,
   iconDocument,
+  iconDeleteRoom,
 } from '@images';
 import {ViewItem} from './components/ViewItem';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
@@ -29,7 +30,12 @@ import {detailRoomchat, pinFlag, leaveRoomChat, GlobalService} from '@services';
 import {showMessage} from 'react-native-flash-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import {verticalScale} from 'react-native-size-matters';
-import {updateImageRoomChat, deleteImageRoomChat, getListUser} from '@services';
+import {
+  updateImageRoomChat,
+  deleteImageRoomChat,
+  getListUser,
+  deleteRoom,
+} from '@services';
 import {colors} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
 import {AppSocket} from '@util';
@@ -39,15 +45,22 @@ const InfoRoomChat = (props: any) => {
   const {route} = props;
   const {idRoomChat} = route?.params;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const user = useSelector((state: any) => state.auth.userInfo);
   const navigation = useNavigation<any>();
   const {getSocket} = AppSocket;
   const socket = getSocket();
   const [dataDetail, setData] = useState<any>(null);
   const [activePin, setActivePin] = useState<any>(false);
   const [modal, setModal] = useState<boolean>(false);
+  const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [modalLink, setModalLink] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
   const [listUser, setListUser] = useState([]);
+
+  let count_user =
+    dataDetail?.name?.length > 0
+      ? (dataDetail?.name.match(/、/g) || []).length
+      : 0;
 
   const convertDataUser = useCallback(() => {
     //@ts-ignore
@@ -107,6 +120,10 @@ const InfoRoomChat = (props: any) => {
     setModal(!modal);
   }, [modal]);
 
+  const onCancelModalDelete = useCallback(() => {
+    setModalDelete(!modalDelete);
+  }, [modalDelete]);
+
   const onCancelModalLink = useCallback(() => {
     setModalLink(!modalLink);
   }, [modalLink]);
@@ -148,15 +165,23 @@ const InfoRoomChat = (props: any) => {
   };
 
   const onLeave = useCallback(async () => {
-    onCancelModal();
     try {
+      onCancelModal();
       const body = {
         room_id: idRoomChat,
       };
       const response = await leaveRoomChat(body);
       navigation.pop(2);
     } catch {}
-  }, [idRoomChat]);
+  }, [idRoomChat, modal]);
+
+  const onDelete = useCallback(async () => {
+    try {
+      onCancelModalDelete();
+      const response = await deleteRoom(idRoomChat);
+      navigation.pop(2);
+    } catch {}
+  }, [idRoomChat, modalDelete]);
 
   const upLoadImage = () => {
     ImagePicker.openPicker({
@@ -195,18 +220,36 @@ const InfoRoomChat = (props: any) => {
     }
   };
 
+  const renderName = (name: any) => {
+    if (count_user > 0) {
+      let dataName = '';
+      const dataAdd = listUser?.forEach((item: any) => {
+        dataName = dataName + `${item?.last_name}${item?.first_name},`;
+      });
+      const nameUser = `,${user?.last_name}${user?.first_name}`;
+      const name = dataName?.replace(/.$/, '') + nameUser;
+      return name;
+    } else {
+      return name;
+    }
+  };
+
+  console.log(dataDetail);
+
   return (
     <View style={styles.container}>
       <Header
         title={
           dataDetail?.name && dataDetail?.name?.length > 0
-            ? dataDetail?.name
+            ? renderName(dataDetail?.name)
             : `${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check?.length > 0
                   ? dataDetail?.one_one_check[0]?.last_name
                   : ''
               } ${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check[0]?.length > 0
                   ? dataDetail?.one_one_check[0]?.first_name
                   : ''
               }`
@@ -264,7 +307,7 @@ const InfoRoomChat = (props: any) => {
                   />
                 </TouchableOpacity>
 
-                {!dataDetail?.one_one_check && dataDetail?.type !== 4 ? (
+                {!dataDetail?.one_one_check && dataDetail?.is_admin === 1 ? (
                   <TouchableOpacity
                     style={styles.buttonCamera}
                     onPress={upLoadImage}>
@@ -272,7 +315,7 @@ const InfoRoomChat = (props: any) => {
                   </TouchableOpacity>
                 ) : null}
 
-                {!dataDetail?.one_one_check && dataDetail?.type !== 4 ? (
+                {!dataDetail?.one_one_check && dataDetail?.is_admin === 1 ? (
                   <TouchableOpacity
                     style={styles.buttonDelete}
                     onPress={deleteAvatar}>
@@ -281,21 +324,24 @@ const InfoRoomChat = (props: any) => {
                 ) : null}
               </View>
             </View>
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconEdit}
                 title="チャットグループ名"
-                content={dataDetail?.name}
+                content={renderName(dataDetail?.name)}
                 onClick={() => {
                   navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
                     idRoomChat: idRoomChat,
-                    dataDetail: dataDetail,
+                    dataDetail: {
+                      ...dataDetail,
+                      name: renderName(dataDetail?.name),
+                    },
                     type: 'name',
                   });
                 }}
               />
             )}
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconDetailRow}
                 title="概要"
@@ -309,7 +355,7 @@ const InfoRoomChat = (props: any) => {
                 }}
               />
             )}
-            {dataDetail?.type === 4 ? null : (
+            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconUpload}
                 content="チャット招待リンク"
@@ -335,6 +381,7 @@ const InfoRoomChat = (props: any) => {
                   navigation.navigate(ROUTE_NAME.LIST_USER, {
                     idRoomChat: idRoomChat,
                     dataDetail: dataDetail,
+                    is_admin: dataDetail?.is_admin,
                   });
                 }}
               />
@@ -344,11 +391,20 @@ const InfoRoomChat = (props: any) => {
                 sourceImage={iconLogout}
                 content="グループを退出"
                 isLogout
-                hideBorder
                 hideNext
                 onClick={onCancelModal}
               />
             )}
+            {dataDetail?.is_admin == 1 && listUser?.length > 1 ? (
+              <ViewItem
+                sourceImage={iconDelete}
+                content="グループを削除"
+                hideNext
+                isLogout
+                hideBorder
+                onClick={onCancelModalDelete}
+              />
+            ) : null}
           </ScrollView>
         ) : (
           <View style={styles.marginTop}>
@@ -359,7 +415,8 @@ const InfoRoomChat = (props: any) => {
       <ModalConfirm
         visible={modal}
         onCancel={onCancelModal}
-        titleHeader="本当にログアウトしますか？"
+        titleHeader="グループを退出する"
+        contentHeader = "退出すると新しいメッセージが届かなくなります。"
         onConfirm={onLeave}
       />
       <ModalLink
@@ -367,6 +424,12 @@ const InfoRoomChat = (props: any) => {
         onCancel={onCancelModalLink}
         titleHeader="チャット招待リンク"
         idRoomChat={idRoomChat}
+      />
+      <ModalConfirm
+        visible={modalDelete}
+        onCancel={onCancelModalDelete}
+        titleHeader="このグループを削除しますか?"
+        onConfirm={onDelete}
       />
     </View>
   );

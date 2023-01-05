@@ -35,6 +35,13 @@ const iconBookmark = require('./IconBookmark.png');
 const iconNetWorkErr = require('./netWorkErr.jpg');
 const iconListFile = require('./iconListFile.png');
 const iconQuote = require('./IconQuote.png');
+const iconTagAll = require('./IconTagAll.png');
+const iconDeleteRoom = require('./IconDeleteRoom.png');
+const iconReload = require('./IconReload.png');
+const iconFilterChat = require('./IconFilterChat.png');
+const iconActiveGroup = require('./ActiveIconGroup.png');
+const iconInActiveGroup = require('./InActiveIconGroup.png');
+
 export {
   iconBack,
   iconSearch,
@@ -73,4 +80,10 @@ export {
   iconNetWorkErr,
   iconListFile,
   iconQuote,
+  iconTagAll,
+  iconDeleteRoom,
+  iconReload,
+  iconFilterChat,
+  iconActiveGroup,
+  iconInActiveGroup
 };

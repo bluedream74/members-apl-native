@@ -9,7 +9,13 @@ import {AppSocket} from '@util';
 
 import {getRoomList, getDetailMessageSocketSuccess} from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
-import {getListUser, GlobalService, removeUser, removeGuest} from '@services';
+import {
+  getListUserOfRoomApi,
+  GlobalService,
+  removeUser,
+  removeGuest,
+  changeRole,
+} from '@services';
 
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -20,12 +26,28 @@ const ListUser = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
   const {route} = props;
-  const {idRoomChat, dataDetail} = route?.params;
+  const {idRoomChat, dataDetail, is_admin} = route?.params;
   const navigation = useNavigation<any>();
   const [listUser, setListUser] = useState([]);
   const [nameUser, setNameUser] = useState<any>(null);
   const [idUser, setIdUser] = useState<any>(null);
   const [modal, setModal] = useState<boolean>(false);
+
+  const callApiChangeRole = async (value: any, idUser: any) => {
+    try {
+      GlobalService.showLoading();
+      const body = {
+        room_id: idRoomChat,
+        user_id: Math.abs(idUser),
+        role: value,
+      };
+      const res = await changeRole(body);
+      getListUserOfRoom();
+      GlobalService.hideLoading();
+    } catch {
+      GlobalService.hideLoading();
+    }
+  };
 
   const renderItem = ({item}: any) => (
     <Item
@@ -39,6 +61,8 @@ const ListUser = (props: any) => {
         );
         onCancelModal();
       }}
+      changeRole={(value: any, idUser: any) => callApiChangeRole(value, idUser)}
+      showChange={is_admin === 1 ? true : false}
     />
   );
 
@@ -137,14 +161,15 @@ const ListUser = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      const result = await getListUserOfRoomApi(idRoomChat);
+      console.log(result);
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
           id: Number(item?.id) * -1,
         };
       });
-      setListUser(result?.data?.users?.data?.concat(guest));
+      setListUser(result?.data?.users?.concat(guest));
     } catch (error) {}
   };
 
@@ -172,8 +197,8 @@ const ListUser = (props: any) => {
       <Header
         title="メンバー"
         imageCenter
-        onRightFirst={onCreate}
-        iconRightFirst={iconAddUser}
+        onRightFirst={is_admin === 1 ? onCreate : null}
+        iconRightFirst={is_admin === 1 ? iconAddUser : null}
         back
         styleIconRightFirst={styles.colorIcon}
       />

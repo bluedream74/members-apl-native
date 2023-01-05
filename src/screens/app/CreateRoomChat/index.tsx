@@ -27,6 +27,7 @@ const CreateRoomChat = (props: any) => {
   const navigation = useNavigation<any>();
   const {route} = props;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const user = useSelector((state: any) => state.auth.userInfo);
 
   const {typeScreen, idRoomchat} = route?.params;
   const {getSocket} = AppSocket;
@@ -94,7 +95,13 @@ const CreateRoomChat = (props: any) => {
     if (renderIdUser()?.length == 1) {
       return null;
     } else {
-      return '新規グループ';
+      let dataName = '';
+      const dataAdd = listUser?.forEach((item: any) => {
+        dataName = dataName + `${item?.last_name}${item?.first_name}、`;
+      });
+      const nameUser = `、${user?.last_name}${user?.first_name}`;
+      const name = dataName?.replace(/.$/, '') + nameUser;
+      return name;
     }
   };
 
@@ -150,10 +157,10 @@ const CreateRoomChat = (props: any) => {
           user_id: user_id,
           room_id: idRoomchat,
           member_info: {
-            type: 11,
+            type: 1,
             ids: renderIdUser(),
           },
-          method: 2,
+          method: 11,
         });
         dispatch(getDetailMessageSocketSuccess([result?.data?.data]));
         navigation.goBack();

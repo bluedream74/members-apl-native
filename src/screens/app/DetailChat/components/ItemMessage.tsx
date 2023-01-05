@@ -11,7 +11,14 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-import {iconFile, iconPdf, iconDoc, iconXls, defaultAvatar} from '@images';
+import {
+  iconFile,
+  iconPdf,
+  iconDoc,
+  iconXls,
+  defaultAvatar,
+  iconEdit,
+} from '@images';
 import {Menu} from 'react-native-material-menu';
 import {MenuFeature} from '../components/MenuFeature';
 import moment from 'moment';
@@ -35,10 +42,19 @@ import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
 import {ViewInvite} from './ViewInvite';
 import {decode} from 'html-entities';
+import {MenuOption} from './MenuOption';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
 const color = ['#FDF5E6', '#FDF5E6'];
 const width = Dimensions.get('window').width;
+
+const dataAll: any = [
+  {
+    id: 'All',
+    last_name: 'a',
+    first_name: 'll',
+  },
+];
 
 const ItemMessage = React.memo((props: any) => {
   const navigation = useNavigation<any>();
@@ -57,6 +73,10 @@ const ItemMessage = React.memo((props: any) => {
     newIndexArray,
     quoteMsg,
     me,
+    showRedLine,
+    redLineId,
+    isAdmin,
+    moveToMessage
   } = props;
   const {
     user,
@@ -76,17 +96,29 @@ const ItemMessage = React.memo((props: any) => {
     guest,
     task_link,
     message_quote,
+    quote_message_id,
     index,
+    updated_at,
+    reply_to_message_id
   } = props.currentMessage;
 
   const [visible, setVisible] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
   }, [visible]);
 
+  const onShowModalDelete = useCallback(() => {
+    setShowModalDelete(!showModalDelete);
+  }, [showModalDelete]);
+
   const navigateToList = useCallback(_id => {
     navigatiteToListReaction(_id);
+  }, []);
+
+  const onJumpToOriginal = useCallback((id) => {
+    moveToMessage(id);
   }, []);
 
   //Đây là hàm xử lý khi ấn vào menu reaction
@@ -95,7 +127,7 @@ const ItemMessage = React.memo((props: any) => {
       onShowMenu();
       switch (value) {
         case 7:
-          Clipboard.setString(text);
+          Clipboard.setString(text.replace(/<br>/g, "\n"));
           showMessage({
             message: 'コピー',
             backgroundColor: colors.backgroundTab,
@@ -173,7 +205,10 @@ const ItemMessage = React.memo((props: any) => {
   const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
     let textBold: any = [];
     joinedUsers.forEach((joinedUser: any) => {
-      let mentionText = `@${joinedUser?.last_name.replace(' ', '',)}${joinedUser?.first_name?.replace(' ', '')}`;
+      let mentionText = `@${joinedUser?.last_name.replace(
+        ' ',
+        '',
+      )}${joinedUser?.first_name?.replace(' ', '')}さん`;
       if (text?.includes(mentionText)) {
         textBold = textBold?.concat(mentionText);
       }
@@ -224,7 +259,10 @@ const ItemMessage = React.memo((props: any) => {
           ? formattedText.push(nonmention)
           : formattedText.push(nonmention, ' ');
       } else {
-        let myName = `@${me?.last_name.replace(' ', '',)}${me?.first_name?.replace(' ', '')}`;
+        let myName = `@${me?.last_name.replace(
+          ' ',
+          '',
+        )}${me?.first_name?.replace(' ', '')}`;
         let mention;
         // 自分宛のメンションの場合
         if (word.includes(myName)) {
@@ -256,7 +294,6 @@ const ItemMessage = React.memo((props: any) => {
           );
         }
 
-
         isLastWord
           ? formattedText.push(mention)
           : formattedText.push(mention, ' ');
@@ -274,7 +311,10 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 10 ||
       msg_type == 9 ||
       msg_type == 12 ? (
-        <View style={styles.viewCenter}>
+        <TouchableOpacity
+          style={styles.viewCenter}
+          onPress={onShowModalDelete}
+          disabled={isAdmin === 1 ? false : true}>
           <Text style={styles.txtCenter} numberOfLines={2}>
             {msg_type === 9
               ? `${guest?.name}さんが参加しました。`
@@ -282,9 +322,22 @@ const ItemMessage = React.memo((props: any) => {
               ? `${user?.name}さんが参加しました。`
               : text}
           </Text>
-        </View>
+          <Menu
+            style={styles.containerMenuDelete}
+            visible={showModalDelete}
+            onRequestClose={onShowModalDelete}
+            key={1}>
+            <MenuOption onDeleteMessage={() => onActionMenu(11)} />
+          </Menu>
+        </TouchableOpacity>
       ) : (
         <>
+          {redLineId === _id && showRedLine === true ? (
+            <View style={styles.viewCenter}>
+              <View style={styles.viewRedLine} />
+              <Text style={styles.txtRedLine}>未読メッセージ</Text>
+            </View>
+          ) : null}
           <View
             style={
               user?._id == user_id ? styles.containerCurrent : styles.container
@@ -314,11 +367,24 @@ const ItemMessage = React.memo((props: any) => {
                 {user?._id == user_id ? (
                   <>
                     {msg_type == 6 || msg_type == 8 ? null : (
-                      <Text style={styles.txtTimeCurent}>
-                        {moment(createdAt, 'YYYY/MM/DD hh:mm:ss').format(
-                          'MM/DD HH:mm',
+                      <>
+                        {moment(createdAt) < moment(updated_at) ? (
+                          <Image source={iconEdit} style={styles.iconEdit} />
+                        ) : null}
+                        {moment(createdAt) < moment(updated_at) ? (
+                          <Text style={styles.txtTime}>
+                            {moment(updated_at, 'YYYY/MM/DD hh:mm:ss').format(
+                              'MM/DD HH:mm',
+                            )}
+                          </Text>
+                        ) : (
+                          <Text style={styles.txtTime}>
+                            {moment(createdAt, 'YYYY/MM/DD hh:mm:ss').format(
+                              'MM/DD HH:mm',
+                            )}
+                          </Text>
                         )}
-                      </Text>
+                      </>
                     )}
                   </>
                 ) : (
@@ -371,24 +437,36 @@ const ItemMessage = React.memo((props: any) => {
                                     : '返信メッセージ'}
                                 </Text>
                                 {reply_to_message_text ? (
-                                  <Text
-                                    style={styles.txtContentReply}
-                                    numberOfLines={1}>
-                                    {decode(
-                                      reply_to_message_text
-                                        ?.split('<br>')
-                                        .join('\n'),
-                                    )}
-                                  </Text>
+                                  <TouchableOpacity
+                                    style={styles.chat}
+                                    onPress={() =>
+                                      onJumpToOriginal(reply_to_message_id)
+                                    }>
+                                    <Text
+                                      style={styles.txtContentReply}
+                                      numberOfLines={1}>
+                                      {decode(
+                                        reply_to_message_text
+                                          ?.split('<br>')
+                                          .join('\n'),
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
                                 {message_quote ? (
-                                  <Text
-                                    style={styles.txtContentReply}
-                                    numberOfLines={1}>
-                                    {decode(
-                                      message_quote?.split('<br>').join('\n'),
-                                    )}
-                                  </Text>
+                                  <TouchableOpacity
+                                    style={styles.chat}
+                                    onPress={() =>
+                                      onJumpToOriginal(quote_message_id)
+                                    }>
+                                    <Text
+                                      style={styles.txtContentReply}
+                                      numberOfLines={1}>
+                                      {decode(
+                                        message_quote?.split('<br>').join('\n'),
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
                                 {reply_to_message_files?.length > 0 ? (
                                   <View style={styles.viewRowEdit}>
@@ -451,7 +529,10 @@ const ItemMessage = React.memo((props: any) => {
                                 <HighlightText
                                   highlightStyle={styles.txtBold}
                                   //@ts-ignore
-                                  searchWords={convertMentionToLink(text, listUser)}
+                                  searchWords={convertMentionToLink(
+                                    text,
+                                    listUser.concat(dataAll),
+                                  )?.concat(['@all'])}
                                   textToHighlight={convertString(text)}
                                   style={styles.txtMessage}
                                 />
@@ -473,11 +554,24 @@ const ItemMessage = React.memo((props: any) => {
                 {user?._id == user_id ||
                 msg_type == 6 ||
                 msg_type == 8 ? null : (
-                  <Text style={styles.txtTime}>
-                    {moment(createdAt, 'YYYY/MM/DD hh:mm:ss').format(
-                      'MM/DD HH:mm',
+                  <>
+                    {moment(createdAt) < moment(updated_at) ? (
+                      <Text style={styles.txtTime}>
+                        {moment(updated_at, 'YYYY/MM/DD hh:mm:ss').format(
+                          'MM/DD HH:mm',
+                        )}
+                      </Text>
+                    ) : (
+                      <Text style={styles.txtTime}>
+                        {moment(createdAt, 'YYYY/MM/DD hh:mm:ss').format(
+                          'MM/DD HH:mm',
+                        )}
+                      </Text>
                     )}
-                  </Text>
+                    {moment(createdAt) < moment(updated_at) ? (
+                      <Image source={iconEdit} style={styles.iconEdit} />
+                    ) : null}
+                  </>
                 )}
               </TouchableOpacity>
               {reaction?.length > 0 && (

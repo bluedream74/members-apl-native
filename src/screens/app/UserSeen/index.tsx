@@ -1,13 +1,13 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import {styles} from './style';
-import {Header} from '@component';
-import {getListUserSeen} from '@services';
-import {Item} from './component/Item';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { styles } from './style';
+import { Header } from '@component';
+import { getListUserSeen } from '@services';
+import { Item } from './component/Item';
 
 const UserSeen = (props: any) => {
-  const {route} = props;
-  const {id} = route.params;
+  const { route } = props;
+  const { id } = route.params;
 
   const [stateButton, setState] = useState(1);
   const [listUserSeen, setListUserSeen] = useState([]);
@@ -28,7 +28,7 @@ const UserSeen = (props: any) => {
       setListUserSeen(res?.data?.data?.users_seen);
       setListUserNotSeen(res?.data?.data?.users_not_seen);
       setData(res?.data?.data?.users_seen);
-    } catch (error: any) {}
+    } catch (error: any) { }
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const UserSeen = (props: any) => {
     }
   }, [stateButton, listUserSeen, listUserNotSeen]);
 
-  const renderItem = ({item}: any) => <Item item={item} />;
+  const renderItem = ({ item }: any) => <Item item={item} />;
 
   return (
     <View style={styles.container}>
@@ -82,4 +82,4 @@ const UserSeen = (props: any) => {
   );
 };
 
-export {UserSeen};
+export { UserSeen };

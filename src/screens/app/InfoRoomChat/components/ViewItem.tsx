@@ -42,7 +42,7 @@ const ViewItem = React.memo((props: any) => {
         <View style={styles.viewImage}>
           <Image
             source={sourceImage}
-            style={{tintColor: isLogout ? '#EA5A31' : colors.darkGrayText}}
+            style={{tintColor: isLogout ? '#EA5A31' : colors.darkGrayText, width: 30, height: 30}}
           />
         </View>
         <View style={styles.viewTxt}>

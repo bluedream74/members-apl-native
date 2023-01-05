@@ -33,6 +33,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
               ),
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
+        redLineId: action.payload.redline,
       };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
@@ -95,6 +96,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         detailChat: [],
         pagingDetail: null,
         id_messageSearch: null,
+        redLineId: null,
       };
     case typeChat.RESULT_SEARCH_MESSAGE:
       return {
@@ -160,6 +162,26 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       return {
         ...state,
         unReadMessageCount: count,
+      };
+    case typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT:
+      return {
+        ...state,
+        modalFilterChat: action.payload,
+      };
+    case typeChat.SAVE_TYPE_FILTER:
+      return {
+        ...state,
+        type_Filter: action.payload,
+      };
+    case typeChat.SAVE_CATEGORY_FILTER:
+      return {
+        ...state,
+        categoryID_Filter: action.payload,
+      };
+    case typeChat.SAVE_STATUS_FILTER:
+      return {
+        ...state,
+        status_Filter: action.payload,
       };
     default:
       return state;
