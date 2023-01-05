@@ -24,6 +24,7 @@ import {DetailVideo} from './app/DetailVideo';
 import {Bookmark} from './app/Bookmark';
 import {NetworkErr} from './app/NetworkErr';
 import {ListFileInRoom} from './app/ListFileInRoom';
+import {AddGroupFilterChat} from './app/AddGroupFilterChat';
 
 //Nhóm các màn hình vào 1 file index
 const screens = {
@@ -52,6 +53,7 @@ const screens = {
   Bookmark,
   NetworkErr,
   ListFileInRoom,
+  AddGroupFilterChat,
 };
 
 export {screens};

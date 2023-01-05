@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: verticalScale(5),
   },
-  buttonRight: {paddingLeft: 5, marginLeft: 0, paddingTop: 8},
+  buttonRight: {marginRight: 16, marginLeft: 0},
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),

@@ -5,7 +5,7 @@ import {AppButton} from '../AppButton';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 
 const ModalConfirm = React.memo((prop: any) => {
-  const {titleHeader, onCancel, onConfirm, visible} = prop;
+  const {titleHeader, onCancel, onConfirm, visible, contentHeader} = prop;
   const closeModal = () => {
     onCancel();
   };
@@ -23,6 +23,11 @@ const ModalConfirm = React.memo((prop: any) => {
         />
         <View style={styles.container}>
           <Text style={styles.txtHeader}>{titleHeader}</Text>
+          {contentHeader ? (
+            <Text style={[styles.txtHeader, {marginTop: 0}]}>
+              {contentHeader}
+            </Text>
+          ) : null}
           <View style={styles.viewButton}>
             <AppButton
               title="はい"
@@ -80,7 +85,6 @@ const styles = StyleSheet.create({
   button: {
     width: '48.5%',
     backgroundColor: colors.darkGrayText,
-    
   },
 });
 

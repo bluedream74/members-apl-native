@@ -37,6 +37,7 @@ function createAppSocket() {
     socket.on(EVENT_SOCKET.CONNECT, () => {});
 
     socket.on(EVENT_SOCKET.NEW_MESSAGE_IND, (data: any) => {
+      console.log(EVENT_SOCKET.NEW_MESSAGE_IND, data)
       const state = store.getState();
       if (data?.room_id == state?.chat?.id_roomChat) {
         return null;
@@ -54,6 +55,7 @@ function createAppSocket() {
     });
 
     socket.on(EVENT_SOCKET.MESSAGE_IND, (data: any) => {
+      console.log(EVENT_SOCKET.MESSAGE_IND, data)
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
         if (data?.room_id == state?.chat?.id_roomChat) {
@@ -92,6 +94,7 @@ function createAppSocket() {
     });
 
     socket.on(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, (data: any) => {
+      console.log(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, data)
       const state = store.getState();
       if (data?.member_info?.ids?.includes(state?.auth?.userInfo?.id)) {
         if (data?.room_id == state?.chat?.id_roomChat) {
@@ -100,7 +103,12 @@ function createAppSocket() {
           }
         } else {
           store.dispatch(
-            getRoomList({company_id: state?.chat?.idCompany, search: null}),
+            getRoomList({
+              company_id: state?.chat?.idCompany,
+              search: null,
+              type: state?.chat?.type_Filter,
+              category_id: state?.chat?.categoryID_Filter,
+            }),
           );
         }
       } else {
@@ -108,13 +116,19 @@ function createAppSocket() {
           store?.dispatch(isGetInfoRoom(true));
         } else {
           store.dispatch(
-            getRoomList({company_id: state?.chat?.idCompany, search: null}),
+            getRoomList({
+              company_id: state?.chat?.idCompany,
+              search: null,
+              type: state?.chat?.type_Filter,
+              category_id: state?.chat?.categoryID_Filter,
+            }),
           );
         }
       }
     });
 
     socket.on(EVENT_SOCKET.NEW_MESSAGE_CONF, async (data: any) => {
+      console.log(EVENT_SOCKET.NEW_MESSAGE_CONF, data)
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
         if (data?.room_id == state?.chat?.id_roomChat) {

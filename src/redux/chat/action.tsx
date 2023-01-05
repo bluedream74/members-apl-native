@@ -121,6 +121,11 @@ export const saveIdMessageSearch = (payload: any) => ({
   payload,
 });
 
+export const fetchResultMessageActionRedLine = (payload: any) => ({
+  type: typeChat.FETCH_RESULT_SEARCH_MESSAGE_RED_LINE,
+  payload,
+});
+
 //Action dùng để cập nhật tin nhắn cuối cùng trong room
 export const updateMessageSeen = (payload: any) => ({
   type: typeChat.UPDATE_MESSAGE_SEEN,
@@ -156,8 +161,24 @@ export const getDetailRoomSocketSuccess = (payload: any) => ({
   type: typeChat.DETAIL_ROOM_SOCKET_SUCCESS,
   payload,
 });
-export const getUnreadMessageCount = (payload: any) => ({
-  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
+
+export const showHideModalFilterListChat = (payload: any) => ({
+  type: typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT,
+  payload,
+});
+
+export const saveTypeFilter = (payload: any) => ({
+  type: typeChat.SAVE_TYPE_FILTER,
+  payload,
+});
+
+export const saveCategoryFilter = (payload: any) => ({
+  type: typeChat.SAVE_CATEGORY_FILTER,
+  payload,
+});
+
+export const saveStatusFilter = (payload: any) => ({
+  type: typeChat.SAVE_STATUS_FILTER,
   payload,
 });
 

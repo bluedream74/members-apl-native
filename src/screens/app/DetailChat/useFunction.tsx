@@ -10,6 +10,7 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
+  fetchResultMessageActionRedLine
 } from '@redux';
 import {
   deleteMessageApi,
@@ -55,6 +56,7 @@ export const useFunction = (props: any) => {
     (state: any) => state.chat?.id_messageSearch,
   );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
+  const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
   const dispatch = useDispatch();
   const {route} = props;
@@ -75,6 +77,18 @@ export const useFunction = (props: any) => {
   const [listUserRoot, setListUserRoot] = useState([]);
   const [listUserSelect, setListUserSelect] = useState<any>([]);
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
+  const [showRedLine, setShowRedLine] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (redLineId) {
+      const body = {
+        id_room: idRoomChat,
+        id_message: redLineId,
+      };
+      dispatch(fetchResultMessageActionRedLine(body));
+    } else {
+    }
+  }, [redLineId]);
 
   useEffect(() => {
     //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
@@ -97,7 +111,7 @@ export const useFunction = (props: any) => {
       if (index && index >= 0) {
         giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
           animated: true,
-          index: index,
+          index: index - 1 >= 0 ? index - 1 : 0,
         });
       }
     },
@@ -132,11 +146,11 @@ export const useFunction = (props: any) => {
       reaction: message?.reactions,
       msg_type: message?.msg_type,
       reply_to_message_text: message?.reply_to_message_text,
-      reply_to_message_id: message?.reply_to_message_id,
       attachment_files: message?.attachment_files,
       reply_to_message_files: message?.reply_to_message_files,
       reply_to_message_stamp: message?.reply_to_message_stamp,
       stamp_icon: message?.stamp_icon,
+      reply_to_message_id: message?.reply_to_message_id,
       stamp_no: message?.stamp_no,
       index: index,
       users_seen: message?.users_seen,
@@ -144,6 +158,7 @@ export const useFunction = (props: any) => {
       guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
+      updated_at: message?.updated_at,
       quote_message_id: message?.quote_message_id,
     };
   }, []);
@@ -211,6 +226,7 @@ export const useFunction = (props: any) => {
   const deleteMsg = useCallback(
     async (id: any) => {
       try {
+        setShowRedLine(false);
         GlobalService.showLoading();
         const res = await deleteMessageApi(id, idRoomChat);
         socket.emit('message_ind', {
@@ -246,6 +262,7 @@ export const useFunction = (props: any) => {
     async mes => {
       setShowTag(false);
       setShowModalStamp(false);
+      setShowRedLine(false);
       if (messageReply) {
         try {
           const data = new FormData();
@@ -427,6 +444,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const reactionMessage = useCallback(async (data, id) => {
+    setShowRedLine(false);
     const body = {
       message_id: id,
       reaction_no: data,
@@ -478,6 +496,7 @@ export const useFunction = (props: any) => {
   }, [pickFile]);
 
   const chosePhoto = () => {
+    setShowRedLine(false);
     ImagePicker.openPicker({
       multiple: true,
     }).then(async images => {
@@ -550,6 +569,7 @@ export const useFunction = (props: any) => {
   };
 
   const choseFile = () => {
+    setShowRedLine(false);
     DocumentPicker.pickMultiple({
       presentationStyle: 'fullScreen',
       copyTo: 'cachesDirectory',
@@ -605,6 +625,7 @@ export const useFunction = (props: any) => {
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
     setShowModalStamp(false);
+    setShowRedLine(false);
     try {
       const data = new FormData();
       data.append('room_id', idRoomChat);
@@ -876,6 +897,8 @@ export const useFunction = (props: any) => {
     formatText,
     getText,
     me,
-    navigateToMessage,
+    showRedLine,
+    redLineId,
+    navigateToMessage
   };
 };

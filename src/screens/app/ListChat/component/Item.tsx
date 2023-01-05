@@ -26,16 +26,39 @@ import notifee, {EventType} from '@notifee/react-native';
 
 const Item = React.memo((props: any) => {
   const idCompany = useSelector((state: any) => state.chat.idCompany);
+  const user = useSelector((state: any) => state.auth.userInfo);
   const dispatch = useDispatch();
+  const type_Filter = useSelector((state: any) => state.chat.type_Filter);
+  const categoryID_Filter = useSelector(
+    (state: any) => state.chat.categoryID_Filter,
+  );
   const navigation = useNavigation<any>();
   const {item, index} = props;
   const [pin, setStatusPin] = useState<any>(null);
+
+  let count_user =
+    item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
 
   useEffect(() => {
     if (item?.pin_flag) {
       setStatusPin(Number(item?.pin_flag));
     }
   }, [item?.pin_flag]);
+
+  const renderNameRoom = (name: any) => {
+    if (count_user > 0) {
+      let dataName = '';
+      const dataAdd = item?.room_users?.forEach((item: any) => {
+        dataName =
+          dataName + `${item?.user?.last_name}${item?.user?.first_name}、`;
+      });
+      const nameUser = `、${user?.last_name}${user?.first_name}`;
+      const name = dataName?.replace(/.$/, '') + nameUser;
+      return name;
+    } else {
+      return name;
+    }
+  };
 
   const navigateDetail = () => {
     try {
@@ -80,7 +103,15 @@ const Item = React.memo((props: any) => {
         message: response?.data?.message,
         type: 'success',
       });
-      await dispatch(getRoomList({key: '', company_id: idCompany, page: 1}));
+      await dispatch(
+        getRoomList({
+          key: '',
+          company_id: idCompany,
+          page: 1,
+          type: type_Filter,
+          category_id: categoryID_Filter,
+        }),
+      );
     } catch {
       GlobalService.hideLoading();
     }
@@ -138,26 +169,35 @@ const Item = React.memo((props: any) => {
         </View>
         <View style={styles.viewTxt}>
           <>
-            <Text
-              style={[
-                styles.txtContent,
-                {
-                  fontWeight: item?.message_unread > 0 ? 'bold' : '600',
-                  color:
-                    item?.message_unread > 0 ? '#000000' : colors.backgroundTab,
-                },
-              ]}
-              numberOfLines={1}>
-              {item?.name && item?.name?.length > 0
-                ? item?.name
-                : `${
-                    item?.one_one_check ? item?.one_one_check[0]?.last_name : ''
-                  } ${
-                    item?.one_one_check
-                      ? item?.one_one_check[0]?.first_name
-                      : ''
-                  }`}
-            </Text>
+            <View style={styles.viewRowTitle}>
+              <Text
+                style={[
+                  styles.txtContent,
+                  {
+                    fontWeight: item?.message_unread > 0 ? 'bold' : '600',
+                    color:
+                      item?.message_unread > 0
+                        ? '#000000'
+                        : colors.backgroundTab,
+                  },
+                ]}
+                numberOfLines={1}>
+                {item?.name && item?.name?.length > 0
+                  ? renderNameRoom(item?.name)
+                  : `${
+                      item?.one_one_check
+                        ? item?.one_one_check[0]?.last_name
+                        : ''
+                    } ${
+                      item?.one_one_check
+                        ? item?.one_one_check[0]?.first_name
+                        : ''
+                    }`}
+              </Text>
+              {item?.room_users?.length > 2 ? (
+                <Text> {`(${item?.room_users?.length})`}</Text>
+              ) : null}
+            </View>
             {item?.lastMessageJoin?.attachment_files?.length > 0 ? (
               <View style={styles.viewRow}>
                 {item?.lastMessageJoin?.attachment_files?.map((item: any) => (
@@ -294,6 +334,11 @@ const styles = StyleSheet.create({
   viewRow: {
     flexDirection: 'row',
     marginTop: verticalScale(10),
+  },
+  viewRowTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: '95%',
   },
   imageSmall: {
     width: moderateScale(30),

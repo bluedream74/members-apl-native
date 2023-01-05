@@ -7,11 +7,11 @@ import {
   TextInput,
   RefreshControl,
   ActivityIndicator,
-  Platform,
+  Image,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
-import {iconSearch, iconAddListChat} from '@images';
+import {iconSearch, iconAddListChat, iconFilterChat, iconNext} from '@images';
 import {Item} from './component/Item';
 import {useFocusEffect} from '@react-navigation/native';
 import {debounce} from 'lodash';
@@ -23,7 +23,7 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
-  getUnreadMessageCount,
+  showHideModalFilterListChat,
 } from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -32,7 +32,7 @@ import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import {FilterListChat} from '../FilterListChat';
 
 const ListChat = () => {
   const refInput = useRef<any>(null);
@@ -42,6 +42,15 @@ const ListChat = () => {
   const navigation = useNavigation<any>();
   const listRoom = useSelector((state: any) => state.chat.roomList);
   const paging = useSelector((state: any) => state.chat.pagingListRoom);
+  const type_Filter = useSelector((state: any) => state.chat.type_Filter);
+  const categoryID_Filter = useSelector(
+    (state: any) => state.chat.categoryID_Filter,
+  );
+  const status_Filter = useSelector((state: any) => state.chat.status_Filter);
+
+  const showModalFilter = useSelector(
+    (state: any) => state.chat.modalFilterChat,
+  );
 
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const user = useSelector((state: any) => state.auth.userInfo);
@@ -50,19 +59,23 @@ const ListChat = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  let unreadMessageCount = useSelector((state: any) =>
-    state.chat?.unReadMessageCount === null
-      ? 0
-      : state.chat?.unReadMessageCount,
-  );
+  const [filterChat, setFilterChat] = useState<boolean>(false);
 
   useFocusEffect(
     useCallback(() => {
       dispatch(saveIdRoomChat(null));
       dispatch(saveMessageReply(null));
       dispatch(resetDataChat());
-      dispatch(getRoomList({key: key, company_id: idCompany, page: 1}));
-    }, []),
+      dispatch(
+        getRoomList({
+          key: key,
+          company_id: idCompany,
+          page: 1,
+          type: type_Filter,
+          category_id: categoryID_Filter,
+        }),
+      );
+    }, [type_Filter, categoryID_Filter]),
   );
 
   //Logic tính tổng các tin nhắn chưa đọc
@@ -87,13 +100,22 @@ const ListChat = () => {
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
+      dispatch(showHideModalFilterListChat(false));
     }
   }, []);
 
   useEffect(() => {
     try {
       if (page > 1) {
-        dispatch(getRoomList({key: key, company_id: idCompany, page: page}));
+        dispatch(
+          getRoomList({
+            key: key,
+            company_id: idCompany,
+            page: page,
+            type: type_Filter,
+            category_id: categoryID_Filter,
+          }),
+        );
       }
     } catch (err) {
     } finally {
@@ -104,7 +126,15 @@ const ListChat = () => {
   const debounceText = useCallback(
     debounce(
       text =>
-        dispatch(getRoomList({key: text, company_id: idCompany, page: page})),
+        dispatch(
+          getRoomList({
+            key: text,
+            company_id: idCompany,
+            page: page,
+            type: type_Filter,
+            category_id: categoryID_Filter,
+          }),
+        ),
       500,
     ),
     [],
@@ -112,8 +142,16 @@ const ListChat = () => {
 
   const onRefresh = useCallback(() => {
     setPage(1);
-    dispatch(getRoomList({key: key, company_id: idCompany, page: 1}));
-  }, [page, idCompany]);
+    dispatch(
+      getRoomList({
+        key: key,
+        company_id: idCompany,
+        page: 1,
+        type: type_Filter,
+        category_id: categoryID_Filter,
+      }),
+    );
+  }, [page, idCompany, categoryID_Filter, type_Filter, key]);
 
   const onChangeText = (text: any) => {
     setKey(text);
@@ -193,6 +231,19 @@ const ListChat = () => {
             />
           </Menu>
         </View>
+        <TouchableOpacity
+          style={styles.viewFilter}
+          onPress={() => {
+            dispatch(showHideModalFilterListChat(true));
+          }}>
+          <View style={styles.viewCenter}>
+            <Image source={iconFilterChat} />
+            <Text style={styles.txtTitle}>
+              {status_Filter?.length > 0 ? status_Filter : 'すべてのチャット'}
+            </Text>
+          </View>
+          <Image source={iconNext} style={{transform: [{rotate: '90deg'}]}} />
+        </TouchableOpacity>
         <FlatList
           data={listRoom}
           renderItem={renderItem}
@@ -215,6 +266,12 @@ const ListChat = () => {
           }
         />
       </View>
+      <FilterListChat
+        visible={showModalFilter}
+        closeModal={() => {
+          dispatch(showHideModalFilterListChat(false));
+        }}
+      />
       <ModalSearchMessage
         visible={showSearchMessage}
         onClose={onCloseModal}

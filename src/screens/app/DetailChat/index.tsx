@@ -68,7 +68,9 @@ const DetailChat = (props: any) => {
     formatText,
     getText,
     me,
-    navigateToMessage,
+    showRedLine,
+    redLineId,
+    navigateToMessage
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -153,6 +155,9 @@ const DetailChat = (props: any) => {
             listUser={listUser}
             newIndexArray={newIndexArray}
             me={me}
+            showRedLine={showRedLine}
+            redLineId={redLineId}
+            isAdmin={dataDetail?.is_admin}
             moveToMessage={(id: any) => {
               navigateToMessage(id);
             }}
@@ -195,11 +200,13 @@ const DetailChat = (props: any) => {
           dataDetail?.name && dataDetail?.name?.length > 0
             ? dataDetail?.name
             : `${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check?.length > 0
                   ? dataDetail?.one_one_check[0]?.last_name
                   : ''
               } ${
-                dataDetail?.one_one_check[0]
+                dataDetail?.one_one_check &&
+                dataDetail?.one_one_check[0]?.length > 0
                   ? dataDetail?.one_one_check[0]?.first_name
                   : ''
               }`

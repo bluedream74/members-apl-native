@@ -154,7 +154,10 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
     textAlign: 'center',
   },
-  txtBold: {fontWeight: 'bold', fontSize: moderateScale(13)},
+  txtBold: {
+    fontWeight: 'bold', 
+    fontSize: moderateScale(13),
+  },
   txtBoldAndBackGroundColor: {
     fontWeight: 'bold',
     fontSize: moderateScale(13),
@@ -201,6 +204,53 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  txtEdited: {
+    color: colors.border,
+    fontSize: moderateScale(10),
+  },
+  viewTimeEditRight: {
+    marginTop: moderateScale(5),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  viewTimeEditLeft: {
+    marginTop: moderateScale(5),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: scale(26) + scale(7),
+  },
+  iconEdit: {
+    width: moderateScale(10),
+    height: moderateScale(10),
+  },
+  containerMenuDelete: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  viewRedLine: {
+    width: '100%',
+    borderWidth: 0.5,
+    marginVertical: moderateScale(20),
+    borderColor: 'red',
+  },
+  txtRedLine: {
+    color: 'red',
+    fontSize: moderateScale(14),
+    position: 'absolute',
+    top: moderateScale(11),
+    paddingHorizontal: moderateScale(10),
+    backgroundColor: '#FFFFFF',
+    ...stylesCommon.fontWeight500,
   },
 });
 
