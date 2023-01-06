@@ -10,7 +10,7 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  fetchResultMessageActionRedLine
+  fetchResultMessageActionRedLine,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -78,9 +78,16 @@ export const useFunction = (props: any) => {
   const [listUserSelect, setListUserSelect] = useState<any>([]);
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [indexRedLine, setIndexRedLine] = useState(null);
 
   useEffect(() => {
     if (redLineId) {
+      const index = listChat.findIndex(
+        (element: any) => element?.id == redLineId,
+      );
+      if(index > 0){
+        setIndexRedLine(index)
+      }
       const body = {
         id_room: idRoomChat,
         id_message: redLineId,
@@ -899,6 +906,7 @@ export const useFunction = (props: any) => {
     me,
     showRedLine,
     redLineId,
-    navigateToMessage
+    navigateToMessage,
+    indexRedLine,
   };
 };
