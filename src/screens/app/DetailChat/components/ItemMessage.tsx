@@ -58,7 +58,10 @@ const dataAll: any = [
 
 const ItemMessage = React.memo((props: any) => {
   const navigation = useNavigation<any>();
+
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const listChat = useSelector((state: any) => state.chat?.detailChat);
+
   const {
     deleteMsg,
     pinMsg,
@@ -76,7 +79,8 @@ const ItemMessage = React.memo((props: any) => {
     showRedLine,
     redLineId,
     isAdmin,
-    moveToMessage
+    moveToMessage,
+    indexRedLine,
   } = props;
   const {
     user,
@@ -99,7 +103,7 @@ const ItemMessage = React.memo((props: any) => {
     quote_message_id,
     index,
     updated_at,
-    reply_to_message_id
+    reply_to_message_id,
   } = props.currentMessage;
 
   const [visible, setVisible] = useState(false);
@@ -117,7 +121,7 @@ const ItemMessage = React.memo((props: any) => {
     navigatiteToListReaction(_id);
   }, []);
 
-  const onJumpToOriginal = useCallback((id) => {
+  const onJumpToOriginal = useCallback(id => {
     moveToMessage(id);
   }, []);
 
@@ -127,7 +131,7 @@ const ItemMessage = React.memo((props: any) => {
       onShowMenu();
       switch (value) {
         case 7:
-          Clipboard.setString(text.replace(/<br>/g, "\n"));
+          Clipboard.setString(text.replace(/<br>/g, '\n'));
           showMessage({
             message: 'コピー',
             backgroundColor: colors.backgroundTab,
@@ -339,9 +343,15 @@ const ItemMessage = React.memo((props: any) => {
             </View>
           ) : null}
           <View
-            style={
-              user?._id == user_id ? styles.containerCurrent : styles.container
-            }>
+            style={[
+              user?._id == user_id ? styles.containerCurrent : styles.container,
+              {
+                marginBottom:
+                  indexRedLine && indexRedLine - 1 === index
+                    ? moderateVerticalScale(30)
+                    : 0,
+              },
+            ]}>
             <>
               {user?._id == user_id ? null : renderTxtName()}
               {msg_type == 6 ? (
