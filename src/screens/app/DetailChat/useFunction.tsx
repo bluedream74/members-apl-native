@@ -316,6 +316,7 @@ export const useFunction = (props: any) => {
             text: res?.data?.data?.message,
             text2: null,
             time: res?.data?.data?.created_at,
+            time2: res?.data?.data?.updated_at,
           });
           dispatch(saveMessageEdit(null));
           dispatch(
