@@ -188,7 +188,6 @@ const AddGroupFilterChat = (props: any) => {
       <View style={styles.viewContent}>
         <Text style={styles.textTitleInput}>カテゴリ名:</Text>
         <AppInput
-          placeholder="グループ名、メッセージ内容を検索"
           onChange={(text: any) => {
             setValue(text);
           }}
@@ -198,7 +197,6 @@ const AddGroupFilterChat = (props: any) => {
         />
         <Text style={styles.textTitleInput}>グループを選択:</Text>
         <AppInput
-          placeholder="グループ名、メッセージ内容を検索"
           onChange={(text: any) => {
             setValue2(text);
             onSearch(text);
@@ -226,7 +224,7 @@ const AddGroupFilterChat = (props: any) => {
       </View>
       <View style={styles.viewBottom}>
         <AppButton
-          title="アップデート"
+          title="保存"
           onPress={onSubmitCategory}
           styleButton={styles.button}
           disabled={value?.length === 0}
