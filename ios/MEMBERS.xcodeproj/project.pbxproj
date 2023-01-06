@@ -16,7 +16,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		ACD75F7823184650AE580BC6 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86C4DFA65B054104A52CEE87 /* Inter-SemiBold.ttf */; };
 		BF82EB53CFAC4E9C9A08CE0F /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 103559E1A2B449A5A638A207 /* Inter-Medium.ttf */; };
-		FB9C40E828B3427A00DD2922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB9C40E728B3427A00DD2922 /* GoogleService-Info.plist */; };
+		CEADAA63296828AC00BAE0AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEADAA62296828AC00BAE0AC /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +48,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MEMBERS/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		86C4DFA65B054104A52CEE87 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-MEMBERS-MEMBERSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MEMBERS-MEMBERSTests.release.xcconfig"; path = "Target Support Files/Pods-MEMBERS-MEMBERSTests/Pods-MEMBERS-MEMBERSTests.release.xcconfig"; sourceTree = "<group>"; };
+		CEADAA62296828AC00BAE0AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FB9C40E728B3427A00DD2922 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/Telegram Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FBC01B08284DADEB00CC9056 /* MEMBERS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MEMBERS.entitlements; path = MEMBERS/MEMBERS.entitlements; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				CEADAA62296828AC00BAE0AC /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* MEMBERS */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* MEMBERSTests */,
@@ -263,9 +265,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEADAA63296828AC00BAE0AC /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				FB9C40E828B3427A00DD2922 /* GoogleService-Info.plist in Resources */,
 				BF82EB53CFAC4E9C9A08CE0F /* Inter-Medium.ttf in Resources */,
 				ACD75F7823184650AE580BC6 /* Inter-SemiBold.ttf in Resources */,
 			);
@@ -528,7 +530,7 @@
 				CODE_SIGN_ENTITLEMENTS = MEMBERS/MEMBERS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 88;
+				CURRENT_PROJECT_VERSION = 89;
 				DEVELOPMENT_TEAM = K8PL42RGXD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MEMBERS/Info.plist;
@@ -562,7 +564,7 @@
 				CODE_SIGN_ENTITLEMENTS = MEMBERS/MEMBERS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 88;
+				CURRENT_PROJECT_VERSION = 89;
 				DEVELOPMENT_TEAM = K8PL42RGXD;
 				INFOPLIST_FILE = MEMBERS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
