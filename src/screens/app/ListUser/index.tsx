@@ -162,7 +162,6 @@ const ListUser = (props: any) => {
   const getListUserOfRoom = async () => {
     try {
       const result = await getListUserOfRoomApi(idRoomChat);
-      console.log(result);
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
