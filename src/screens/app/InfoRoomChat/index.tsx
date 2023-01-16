@@ -364,6 +364,15 @@ const InfoRoomChat = (props: any) => {
             )}
             <ViewItem
               sourceImage={iconDocument}
+              content="概要"
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.SUMMARY_OF_ROOM, {
+                  idRoom_chat: idRoomChat,
+                });
+              }}
+            />
+            <ViewItem
+              sourceImage={iconDocument}
               content="メディア・ファイル・URL"
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.LIST_FILE_IN_ROOM, {

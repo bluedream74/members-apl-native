@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     ...stylesCommon.fontWeight500,
     color: colors.darkGrayText,
+    lineHeight: moderateScale(20),
   },
   txtCenter: {
     fontSize: moderateScale(10),
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   txtBold: {
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     fontSize: moderateScale(13),
   },
   txtBoldAndBackGroundColor: {

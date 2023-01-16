@@ -32,6 +32,7 @@ const DELETE_BOOKMARK = 'user/chat/room/unbookmark';
 const LIST_IMAGE_INROOM = 'user/chat/room';
 const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
+const SUMMARY_OF_ROOM = 'user/chat/room';
 const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
 const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 const DELETE_ROOM = 'user/chat/room';
@@ -245,6 +246,16 @@ export const getListFileInroom: any = async (id: any, page: any) => {
 
 export const getListLinkInRoom: any = async (id: any, page: any) => {
   const response = api.get(`${LIST_LINK_INROOM}/${id}/links?page=${page}`);
+  return response;
+};
+
+export const getSummaryOfRoom: any = async (id: any) => {
+  const response = api.get(`${SUMMARY_OF_ROOM}/${id}/summary`);
+  return response;
+};
+
+export const saveSummaryOfRoom: any = async (param: any) => {
+  const response = api.post(`${SUMMARY_OF_ROOM}/saveSummary`, param);
   return response;
 };
 
