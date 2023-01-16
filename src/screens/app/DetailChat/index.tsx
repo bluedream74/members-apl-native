@@ -163,6 +163,7 @@ const DetailChat = (props: any) => {
               navigateToMessage(id);
             }}
             indexRedLine={indexRedLine}
+            setFormattedText={setFormattedText}
           />
         </>
       );

@@ -81,6 +81,7 @@ const ItemMessage = React.memo((props: any) => {
     isAdmin,
     moveToMessage,
     indexRedLine,
+    setFormattedText,
   } = props;
   const {
     user,
@@ -167,6 +168,25 @@ const ItemMessage = React.memo((props: any) => {
             stamp_no: stamp_no,
           };
           replyMsg(dataMessageReply);
+          if (user.name === null) {
+            // in case of guest message
+            return;
+          }
+          const formattedText1: (string | JSX.Element)[] = [];
+          const word = '@' + user.name + ' ';
+          const mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: '#3366CC',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+          formattedText1.push(mention);
+          setFormattedText([...formattedText1]);
           break;
         case 10:
           pinMsg(_id);
