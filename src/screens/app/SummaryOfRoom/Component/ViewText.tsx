@@ -98,7 +98,7 @@ const ViewText = React.memo((props: any) => {
         }}
         value={summary}
       />
-      <Button
+      <AppButton
         title="保存"
         onPress={saveSummary}
         disabled={summary?.length === 0}
