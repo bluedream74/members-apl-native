@@ -168,6 +168,7 @@ const ItemMessage = React.memo((props: any) => {
             stamp_no: stamp_no,
           };
           replyMsg(dataMessageReply);
+          // add mention to textbox
           if (user.name === null) {
             // in case of guest message
             return;

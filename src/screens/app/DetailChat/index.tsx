@@ -60,8 +60,6 @@ const DetailChat = (props: any) => {
     newIndexArray,
     quoteMessage,
     messageQuote,
-    listUserSelect,
-    setListUserSelect,
     formattedText,
     setFormattedText,
     mentionedUsers,
