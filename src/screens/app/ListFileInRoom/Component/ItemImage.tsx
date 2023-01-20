@@ -35,7 +35,7 @@ const ItemImage = React.memo((props: any) => {
           uri: item?.path,
           priority: FastImage.priority.high,
         }}
-        resizeMode="cover"
+        resizeMode={'contain'}
         onLoadStart={() => onLoadStart()}
         onLoad={() => onLoad()}
       />

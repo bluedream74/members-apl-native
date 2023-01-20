@@ -322,37 +322,33 @@ const InfoRoomChat = (props: any) => {
                 ) : null}
               </View>
             </View>
-            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
-              <ViewItem
-                sourceImage={iconEdit}
-                title="チャットグループ名"
-                content={renderName(dataDetail?.name)}
-                onClick={() => {
-                  navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
-                    idRoomChat: idRoomChat,
-                    dataDetail: {
-                      ...dataDetail,
-                      name: renderName(dataDetail?.name),
-                    },
-                    type: 'name',
-                  });
-                }}
-              />
-            )}
-            {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
-              <ViewItem
-                sourceImage={iconDetailRow}
-                title="概要"
-                content={dataDetail?.summary_column}
-                onClick={() => {
-                  navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
-                    idRoomChat: idRoomChat,
-                    dataDetail: dataDetail,
-                    type: 'content',
-                  });
-                }}
-              />
-            )}
+            <ViewItem
+              sourceImage={iconEdit}
+              title="チャットグループ名"
+              content={renderName(dataDetail?.name)}
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
+                  idRoomChat: idRoomChat,
+                  dataDetail: {
+                    ...dataDetail,
+                    name: renderName(dataDetail?.name),
+                  },
+                  type: 'name',
+                });
+              }}
+            />
+            <ViewItem
+              sourceImage={iconDetailRow}
+              title="概要"
+              content={dataDetail?.summary_column}
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
+                  idRoomChat: idRoomChat,
+                  dataDetail: dataDetail,
+                  type: 'content',
+                });
+              }}
+            />
             {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
                 sourceImage={iconUpload}
@@ -362,15 +358,6 @@ const InfoRoomChat = (props: any) => {
                 }}
               />
             )}
-            <ViewItem
-              sourceImage={iconDocument}
-              content="概要"
-              onClick={() => {
-                navigation.navigate(ROUTE_NAME.SUMMARY_OF_ROOM, {
-                  idRoom_chat: idRoomChat,
-                });
-              }}
-            />
             <ViewItem
               sourceImage={iconDocument}
               content="メディア・ファイル・URL"

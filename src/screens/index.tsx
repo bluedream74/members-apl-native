@@ -25,7 +25,6 @@ import {Bookmark} from './app/Bookmark';
 import {NetworkErr} from './app/NetworkErr';
 import {ListFileInRoom} from './app/ListFileInRoom';
 import {AddGroupFilterChat} from './app/AddGroupFilterChat';
-import {SummaryOfRoom} from './app/SummaryOfRoom';
 
 //Nhóm các màn hình vào 1 file index
 const screens = {
@@ -55,7 +54,6 @@ const screens = {
   NetworkErr,
   ListFileInRoom,
   AddGroupFilterChat,
-  SummaryOfRoom,
 };
 
 export {screens};
