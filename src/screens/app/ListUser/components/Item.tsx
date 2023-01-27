@@ -63,11 +63,6 @@ const Item = React.memo((props: any) => {
         </View>
         <View style={styles.viewTxt}>
           <>
-            {item?.id < 0 ? null : (
-              <Text style={styles.txtContent} numberOfLines={1}>
-                {item?.mail}
-              </Text>
-            )}
             {item?.id < 0 ? (
               <Text style={styles.txtTitle} numberOfLines={2}>
                 {item?.name}
