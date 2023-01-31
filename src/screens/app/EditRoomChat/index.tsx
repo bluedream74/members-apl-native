@@ -135,6 +135,7 @@ const EditRoomChat = (props: any) => {
               title={type === 'name' ? 'グループ名を変更' : '概要を変更'}
               onPress={handleSubmit}
               styleButton={styles.button}
+              disabled={dataDetail?.type === 4 || dataDetail?.is_admin !== 1}
             />
           </KeyboardAwareScrollView>
         </View>

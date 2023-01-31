@@ -60,8 +60,6 @@ const DetailChat = (props: any) => {
     newIndexArray,
     quoteMessage,
     messageQuote,
-    listUserSelect,
-    setListUserSelect,
     formattedText,
     setFormattedText,
     mentionedUsers,
@@ -163,6 +161,7 @@ const DetailChat = (props: any) => {
               navigateToMessage(id);
             }}
             indexRedLine={indexRedLine}
+            setFormattedText={setFormattedText}
           />
         </>
       );
