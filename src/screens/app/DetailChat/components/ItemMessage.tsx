@@ -154,7 +154,7 @@ const ItemMessage = React.memo((props: any) => {
           const dataMessageEdit = {
             id: _id,
             user: user,
-            text: text,
+            text: text.replace(/<br>/g, '\n'),
             attachment_files: attachment_files,
           };
           editMsg(dataMessageEdit);
