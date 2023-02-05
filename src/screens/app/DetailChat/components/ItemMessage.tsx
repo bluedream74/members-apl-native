@@ -573,7 +573,7 @@ const ItemMessage = React.memo((props: any) => {
                             />
                           ) : (
                             <Autolink
-                              text={decode(text?.split('<br>').join('\n'))}
+                              text={decode(text?.split('<br>').join(' \n'))}
                               email
                               url
                               renderText={text => formatText(text)}
