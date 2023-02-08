@@ -33,7 +33,7 @@ import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 
-const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv)$/;
+const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/;
 
 const MsgFile = React.memo((props: any) => {
   const {data} = props;
@@ -158,7 +158,10 @@ const MsgFile = React.memo((props: any) => {
               />
             </TouchableOpacity>
           )}
-          {(item?.type == 7 || item?.type == 1 || item?.type == 6) && (
+          {(item?.type == 7 ||
+            item?.type == 1 ||
+            item?.type == 6 ||
+            item?.type == 8) && (
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() => openFile(item?.path)}>
