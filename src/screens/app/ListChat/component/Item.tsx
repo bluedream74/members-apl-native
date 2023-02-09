@@ -49,9 +49,12 @@ const Item = React.memo((props: any) => {
     if (count_user > 0) {
       let dataName = '';
       const dataAdd = item?.room_users?.forEach((item: any) => {
-        dataName =
-          dataName + `${item?.user?.last_name}${item?.user?.first_name}、`;
+        if (item?.user?.last_name) {
+          dataName =
+            dataName + `${item?.user?.last_name}${item?.user?.first_name}、`;
+        }
       });
+
       const nameUser = `、${user?.last_name}${user?.first_name}`;
       const name = dataName?.replace(/.$/, '') + nameUser;
       return name;

@@ -81,6 +81,7 @@ const ItemMessage = React.memo((props: any) => {
     isAdmin,
     moveToMessage,
     indexRedLine,
+    setFormattedText,
   } = props;
   const {
     user,
@@ -153,7 +154,7 @@ const ItemMessage = React.memo((props: any) => {
           const dataMessageEdit = {
             id: _id,
             user: user,
-            text: text,
+            text: text.replace(/<br>/g, '\n'),
             attachment_files: attachment_files,
           };
           editMsg(dataMessageEdit);
@@ -167,6 +168,26 @@ const ItemMessage = React.memo((props: any) => {
             stamp_no: stamp_no,
           };
           replyMsg(dataMessageReply);
+          // add mention to textbox
+          if (user.name === null) {
+            // in case of guest message
+            return;
+          }
+          const formattedText1: (string | JSX.Element)[] = [];
+          const word = '@' + user.name + ' ';
+          const mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: '#3366CC',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+          formattedText1.push(mention);
+          setFormattedText([...formattedText1]);
           break;
         case 10:
           pinMsg(_id);
@@ -286,15 +307,17 @@ const ItemMessage = React.memo((props: any) => {
         } else {
           // 他人宛のメンションの場合
           mention = (
-            <Text
-              key={word + index}
-              style={{
-                alignSelf: 'flex-start',
-                color: '#3366CC',
-                fontWeight: 'bold',
-              }}>
-              {word}
-            </Text>
+            <View>
+              <Text
+                key={word + index}
+                style={{
+                  alignSelf: 'flex-start',
+                  color: '#3366CC',
+                  fontWeight: 'bold',
+                }}>
+                {word}
+              </Text>
+            </View>
           );
         }
 
@@ -550,7 +573,7 @@ const ItemMessage = React.memo((props: any) => {
                             />
                           ) : (
                             <Autolink
-                              text={decode(text?.split('<br>').join('\n'))}
+                              text={decode(text?.split('<br>').join(' \n'))}
                               email
                               url
                               renderText={text => formatText(text)}

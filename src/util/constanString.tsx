@@ -15,3 +15,11 @@ export const EVENT_SOCKET = {
   //Sự kiện nhận message về (chỉ nghe được khi đã join vào 1 room)
   MESSAGE_IND: 'message_ind',
 };
+
+export const ATTACHMENT_FILE_TYPE = {
+  IMAGE: 4,
+  MOVIE: 8,
+  PDF: 2,
+  DOC: 5,
+  XLS: 3,
+}

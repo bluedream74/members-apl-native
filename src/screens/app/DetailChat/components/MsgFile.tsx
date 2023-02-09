@@ -32,6 +32,7 @@ import {GlobalService} from '@services';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
+import {ATTACHMENT_FILE_TYPE} from '@util';
 
 const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/;
 
@@ -141,7 +142,7 @@ const MsgFile = React.memo((props: any) => {
     ({item}: any) => {
       return (
         <>
-          {item?.type == 4 && (
+          {item?.type == ATTACHMENT_FILE_TYPE.IMAGE && (
             <TouchableOpacity
               onPress={async () => {
                 await setUrlModalImage([{uri: item?.path}]);
@@ -161,7 +162,7 @@ const MsgFile = React.memo((props: any) => {
           {(item?.type == 7 ||
             item?.type == 1 ||
             item?.type == 6 ||
-            item?.type == 8) && (
+            item?.type == ATTACHMENT_FILE_TYPE.MOVIE) && (
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() => openFile(item?.path)}>
@@ -171,7 +172,7 @@ const MsgFile = React.memo((props: any) => {
               </Text>
             </TouchableOpacity>
           )}
-          {item?.type == 2 && (
+          {item?.type == ATTACHMENT_FILE_TYPE.PDF && (
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() => openFile(item?.path)}>
@@ -181,7 +182,7 @@ const MsgFile = React.memo((props: any) => {
               </Text>
             </TouchableOpacity>
           )}
-          {item?.type == 5 && (
+          {item?.type == ATTACHMENT_FILE_TYPE.DOC && (
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() => openFile(item?.path)}>
@@ -191,7 +192,7 @@ const MsgFile = React.memo((props: any) => {
               </Text>
             </TouchableOpacity>
           )}
-          {item?.type == 3 && (
+          {item?.type == ATTACHMENT_FILE_TYPE.XLS && (
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() => openFile(item?.path)}>

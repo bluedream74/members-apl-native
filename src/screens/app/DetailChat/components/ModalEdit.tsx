@@ -44,7 +44,7 @@ const ModalEdit = React.memo(() => {
         <Text style={styles.name}>メッセージの編集</Text>
         {message_edit?.text ? (
           <Text style={styles.content} numberOfLines={2}>
-            {convertString(message_edit?.text)}
+            {convertString(message_edit?.text.replace(/<br>/g, '\n'))}
           </Text>
         ) : (
           <View style={styles.viewRow}>
