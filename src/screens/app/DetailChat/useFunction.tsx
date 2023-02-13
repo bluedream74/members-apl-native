@@ -25,6 +25,8 @@ import {
   getListUser,
   addBookmark,
   callApiChatBot,
+  saveTask,
+  updateTask,
 } from '@services';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -79,14 +81,15 @@ export const useFunction = (props: any) => {
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
   const [indexRedLine, setIndexRedLine] = useState(null);
+  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
 
   useEffect(() => {
     if (redLineId) {
       const index = listChat.findIndex(
         (element: any) => element?.id == redLineId,
       );
-      if(index > 0){
-        setIndexRedLine(index)
+      if (index > 0) {
+        setIndexRedLine(index);
       }
       const body = {
         id_room: idRoomChat,
@@ -852,6 +855,39 @@ export const useFunction = (props: any) => {
     } catch (error) {}
   };
 
+  const onCreateTask = useCallback(() => {
+    setShowTaskForm(!showTaskForm);
+  }, []);
+  const onSaveTask = useCallback(async input => {
+    const data = {
+      project_id: 1,
+      item_id: 1,
+      task_name: input.taskName,
+      actual_start_date: input.date,
+      actual_end_date: input.date,
+      plans_end_date: input.date,
+      plans_end_time: input.time,
+      plans_time: 0,
+      actual_time: 0,
+      plans_cnt: 0,
+      actual_cnt: 0,
+      cost: 0,
+      task_person_id: input.selected,
+      description: input.taskDescription,
+      cost_flg: 0,
+      remaindar_flg: 0,
+      repeat_flag: 0,
+      gcalendar_flg: input.isGoogleCalendar,
+      all_day_flg: input.isAllDay,
+    };
+    const res = await saveTask(data);
+    setShowTaskForm(false);
+  }, []);
+  const onUpdateTask = useCallback(async data => {
+    const res = await updateTask(data);
+    setShowTaskForm(false);
+  }, []);
+
   return {
     chatUser,
     idRoomChat,
@@ -909,5 +945,10 @@ export const useFunction = (props: any) => {
     redLineId,
     navigateToMessage,
     indexRedLine,
+    onCreateTask,
+    setShowTaskForm,
+    showTaskForm,
+    onSaveTask,
+    onUpdateTask,
   };
 };
