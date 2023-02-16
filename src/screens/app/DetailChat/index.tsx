@@ -162,6 +162,7 @@ const DetailChat = (props: any) => {
             }}
             indexRedLine={indexRedLine}
             setFormattedText={setFormattedText}
+            mentionedUsers={mentionedUsers}
           />
         </>
       );

@@ -82,6 +82,7 @@ const ItemMessage = React.memo((props: any) => {
     moveToMessage,
     indexRedLine,
     setFormattedText,
+    mentionedUsers,
   } = props;
   const {
     user,
@@ -174,7 +175,8 @@ const ItemMessage = React.memo((props: any) => {
             return;
           }
           const formattedText1: (string | JSX.Element)[] = [];
-          const word = '@' + user.name + ' ';
+          const word = '@' + user.name + 'さん ';
+          mentionedUsers.push(word.trim());
           const mention = (
             <Text
               key={word + index}
