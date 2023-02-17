@@ -308,13 +308,14 @@ const DetailChat = (props: any) => {
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any, props: any) => {
+                      choseUser={(value: any, title: string, id: any, props: any) => {
                         setIds(ids?.concat([id]));
                         setShowTag(false);
                         if (value) {
+                          mentionedUsers.push('@' + value + title);
                           mentionedUsers.push('@' + value);
                           formatText(
-                            getText(formattedText) + '' + '@' + value,
+                            getText(formattedText) + '' + '@' + value + title,
                             true,
                           );
                         }

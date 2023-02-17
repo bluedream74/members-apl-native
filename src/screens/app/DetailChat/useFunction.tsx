@@ -85,8 +85,8 @@ export const useFunction = (props: any) => {
       const index = listChat.findIndex(
         (element: any) => element?.id == redLineId,
       );
-      if(index > 0){
-        setIndexRedLine(index)
+      if (index > 0) {
+        setIndexRedLine(index);
       }
       const body = {
         id_room: idRoomChat,
@@ -745,7 +745,15 @@ export const useFunction = (props: any) => {
     const formattedText1: (string | JSX.Element)[] = [];
     words.forEach((word, index) => {
       const isLastWord = index === words.length - 1;
-      if (!word.startsWith('@') || !mentionedUsers.includes(word)) {
+      const includingList = mentionedUsers.filter((el: string) => {
+        var re = new RegExp('^' + el + '', 'gi');
+        var result = re.test(word);
+        if (result) {
+          return true;
+        }
+        return false;
+      });
+      if (!word.startsWith('@') || includingList.length === 0) {
         const nonmention = (
           <Text
             key={word + index}

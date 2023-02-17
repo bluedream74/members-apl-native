@@ -63,17 +63,18 @@ const ModalTagName = React.memo((props: any) => {
   };
 
   const onChoseUser = (item: any) => {
+    const title = 'さん';
     if (item?.id === 'All') {
-      const valueName = item?.id < 0 ? `${item?.name}さん` : `${item?.value}`;
+      const valueName = item?.id < 0 ? `${item?.name}` : `${item?.value}`;
       const id = item?.id;
-      choseUser(valueName?.replace(' ', ''), id, item);
+      choseUser(valueName?.replace(' ', ''), title, id, item);
     } else {
       const valueName =
         item?.id < 0
-          ? `${item?.name}さん`
-          : `${item?.last_name}${item?.first_name}さん`;
+          ? `${item?.name}`
+          : `${item?.last_name}${item?.first_name}`;
       const id = item?.id;
-      choseUser(valueName?.replace(' ', ''), id, item);
+      choseUser(valueName?.replace(' ', ''), title, id, item);
     }
   };
 
