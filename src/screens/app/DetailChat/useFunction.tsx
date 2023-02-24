@@ -741,6 +741,7 @@ export const useFunction = (props: any) => {
       setFormattedText([]);
       return;
     }
+    inputText = inputText.trim().replace(/(\n)(\S)/g, '\n $2');
     const words = inputText.split(' ');
     const formattedText1: (string | JSX.Element)[] = [];
     words.forEach((word, index) => {
