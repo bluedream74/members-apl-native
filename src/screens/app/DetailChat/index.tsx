@@ -240,6 +240,7 @@ const DetailChat = (props: any) => {
         formattedText={formattedText}
         ref={giftedChatRef}
         onInputTextChanged={inputText => {
+          console.log('hosotanidebug333');
           formatText(inputText, false);
         }}
         messages={getConvertedMessages(listChat)}
@@ -290,6 +291,14 @@ const DetailChat = (props: any) => {
           onKeyPress: ({nativeEvent}: any) => {
             if (nativeEvent?.key?.trim() === '@') {
               setShowTag(true);
+            } else if (nativeEvent?.key === 'Enter') {
+              console.log('hosotanidebug222');
+              console.log(getText(formattedText));
+              // const inputText = getText(formattedText) + 'x';
+              // formatText(inputText, false);
+              formattedText.push(' ');
+              setFormattedText(formattedText);
+              return false;
             } else {
               setShowTag(false);
             }
