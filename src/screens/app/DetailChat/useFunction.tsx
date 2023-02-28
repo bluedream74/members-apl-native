@@ -683,13 +683,6 @@ export const useFunction = (props: any) => {
     }
   }, [modalStamp]);
 
-  // const setTextInput = React.useCallback(
-  //   value => {
-  //     setText(value);
-  //   },
-  //   [text],
-  // );
-
   const getUserListChat = useCallback(async () => {
     try {
       const result = await getListUser({room_id: idRoomChat});
@@ -742,9 +735,33 @@ export const useFunction = (props: any) => {
       return;
     }
     const words = inputText.split(' ');
+    const newWords: string[] = [];
+    words.forEach(word => {
+      if (word.match('.+\n.+')) {
+        const splitNewWord = word.split('\n');
+        newWords.push(splitNewWord[0]);
+        newWords.push('\n');
+        newWords.push(splitNewWord[1]);
+      } else if (word.match('.+\n')) {
+        const splitNewWord = word.split('\n');
+        newWords.push(splitNewWord[0]);
+        newWords.push('\n');
+      } else if (word.match('\n.+')) {
+        const splitNewWord = word.split('\n');
+        newWords.push('\n');
+        newWords.push(splitNewWord[1]);
+      } else if (word.match('　')) {
+        const splitNewWord = word.split('　');
+        newWords.push(splitNewWord[0]);
+        newWords.push(' ');
+        newWords.push(splitNewWord[1]);
+      } else {
+        newWords.push(word);
+      }
+    });
     const formattedText1: (string | JSX.Element)[] = [];
-    words.forEach((word, index) => {
-      const isLastWord = index === words.length - 1;
+    newWords.forEach((word, index) => {
+      const isLastWord = index === newWords.length - 1;
       const includingList = mentionedUsers.filter((el: string) => {
         var re = new RegExp('^' + el + '', 'gi');
         var result = re.test(word);
