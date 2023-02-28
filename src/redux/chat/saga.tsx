@@ -59,7 +59,7 @@ export function* getDetailChatSaga(action: any) {
     if (action?.payload.page === 1) {
       const data = {
         id_room: action?.payload.id,
-        id_message: result?.data?.room_messages?.data[0]?.id,
+        id_message: result?.data?.room_messages?.data[0]?.id ?? 0,
       };
       yield put(updateMessageSeen(data));
     }
