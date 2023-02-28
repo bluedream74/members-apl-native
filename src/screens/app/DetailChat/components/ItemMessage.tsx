@@ -237,7 +237,7 @@ const ItemMessage = React.memo((props: any) => {
       let mentionText = `@${joinedUser?.last_name.replace(
         ' ',
         '',
-      )}${joinedUser?.first_name?.replace(' ', '')}さん`;
+      )}${joinedUser?.first_name?.replace(' ', '')}`;
       if (text?.includes(mentionText)) {
         textBold = textBold?.concat(mentionText);
       }
