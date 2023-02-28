@@ -729,6 +729,12 @@ export const useFunction = (props: any) => {
       };
     }
   }, []);
+
+  /**
+   * format method
+   * @param inputText
+   * @param fromTagFlg
+   */
   const formatText = (inputText: string, fromTagFlg: boolean) => {
     if (inputText.length === 0) {
       setFormattedText([]);
@@ -744,12 +750,15 @@ export const useFunction = (props: any) => {
         newWords.push(splitNewWord[1]);
       } else if (word.match('.+\n')) {
         const splitNewWord = word.split('\n');
-        newWords.push(splitNewWord[0]);
+        if (splitNewWord[0] !== '') {
+          newWords.push(splitNewWord[0]);
+        } else {
+          newWords.push('\n');
+          newWords.push(splitNewWord[1]);
+        }
         newWords.push('\n');
       } else if (word.match('\n.+')) {
-        const splitNewWord = word.split('\n');
-        newWords.push('\n');
-        newWords.push(splitNewWord[1]);
+        newWords.push(word);
       } else if (word.match('　')) {
         const splitNewWord = word.split('　');
         newWords.push(splitNewWord[0]);
