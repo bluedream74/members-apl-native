@@ -162,6 +162,7 @@ const DetailChat = (props: any) => {
             }}
             indexRedLine={indexRedLine}
             setFormattedText={setFormattedText}
+            mentionedUsers={mentionedUsers}
           />
         </>
       );
@@ -289,6 +290,10 @@ const DetailChat = (props: any) => {
           onKeyPress: ({nativeEvent}: any) => {
             if (nativeEvent?.key?.trim() === '@') {
               setShowTag(true);
+            } else if (nativeEvent?.key === 'Enter') {
+              formattedText.push(' ');
+              setFormattedText(formattedText);
+              return false;
             } else {
               setShowTag(false);
             }
@@ -307,13 +312,14 @@ const DetailChat = (props: any) => {
                   {showTagModal && (
                     <ModalTagName
                       idRoomChat={idRoomChat}
-                      choseUser={(value: any, id: any, props: any) => {
+                      choseUser={(value: any, title: string, id: any, props: any) => {
                         setIds(ids?.concat([id]));
                         setShowTag(false);
                         if (value) {
+                          mentionedUsers.push('@' + value + title);
                           mentionedUsers.push('@' + value);
                           formatText(
-                            getText(formattedText) + '' + '@' + value,
+                            getText(formattedText) + '' + '@' + value + title,
                             true,
                           );
                         }
