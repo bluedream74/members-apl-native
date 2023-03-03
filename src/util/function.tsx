@@ -46,5 +46,6 @@ export const convertString = (str: any = '') => {
     });
   }
   text = replaceAll(str, rv);
+  text = text.replace(/\[(\/*)(title|info|hr|bold|red)\]/g, '');
   return text;
 };
