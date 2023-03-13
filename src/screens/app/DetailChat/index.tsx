@@ -358,8 +358,6 @@ const DetailChat = (props: any) => {
       <ModalTask
         visible={showTaskForm}
         onCancel={() => setShowTaskForm(false)}
-        chosePhoto={chosePhoto}
-        choseFile={choseFile}
         onSaveTask={onSaveTask}
         idRoomChat={idRoomChat}
       />

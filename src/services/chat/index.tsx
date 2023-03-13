@@ -300,7 +300,7 @@ export const getUnreadMessageCountApi: any = async (user_id: any) => {
 
 export const getListTask: any = async (data: any) => {
   const response = api.get(
-    `${GET_LIST_TASK}?page=${data?.page}&company_id=${data.idCompany}`,
+    `${GET_LIST_TASK}?page=${data?.page}&company_id=${data.idCompany}&chat_room_id=${data.idRoomChat}`,
   );
   return response;
 };

@@ -49,7 +49,8 @@ const Task = (props: any) => {
       const params = {
         page: 1,
         idCompany: idCompany,
-        task_linked_myself: 1,
+        // task_linked_myself: 1,
+        idRoomChat: idRoomChat,
       };
       callApiSearch(params);
     }, []),

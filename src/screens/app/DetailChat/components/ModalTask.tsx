@@ -97,19 +97,17 @@ const ModalTask = React.memo((prop: any) => {
         time: time,
         isGoogleCalendar: isGoogleCalendar,
         isAllDay: isAllDay,
+        chat_room_id: idRoomChat,
       };
       onSaveTask(data);
     } else {
       data = {
         project_id: item.project_id,
         task_id: item.id,
-        // task_name: item?.name,
         task_name: taskName,
         actual_start_date: item.actual_start_date,
         actual_end_date: item.actual_end_date,
-        // plans_end_date: item.plans_end_date,
         plans_end_date: date,
-        // plans_end_time: item.plans_end_time,
         plans_end_time: time,
         plans_time: item.plans_time,
         actual_time: item.actual_time,
@@ -119,13 +117,12 @@ const ModalTask = React.memo((prop: any) => {
         task_person_id: item.persons.map((person: {user_id: any}) => {
           return person.user_id;
         }),
-        // task_person_id: selected,
-        // description: item.description,
         description: taskDescription,
         cost_flg: item.cost_flg,
         remaindar_flg: item.remaindar_flg,
         repeat_flag: item.repeat_flag ?? 0,
         stat: item.stat,
+        chat_room_id: idRoomChat,
       };
       onUpdateTask(data);
     }
