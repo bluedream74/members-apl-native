@@ -115,11 +115,6 @@ const Accordion = React.memo((props: any) => {
             </>
           </View>
           <View style={styles(color).viewFinish}>
-            {reload ? (
-              <Text>111-></Text>
-            ) : (<Text>222-></Text>)}
-          </View>
-          <View style={styles(color).viewFinish}>
             {item.stat !== 2 ? (
               <AppButton
                 title={'完了'}
