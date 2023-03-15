@@ -71,23 +71,15 @@ const Task = (props: any) => {
   }, [page]);
 
   useEffect(() => {
-    const params = {
-      page: page,
-      idCompany: idCompany,
-      idRoomChat: idRoom_chat,
-    };
-    callApiSearch(params);
-    setIsRefreshing(true);
+    setTimeout(() => {
+      const params = {
+        page: page,
+        idCompany: idCompany,
+        idRoomChat: idRoom_chat,
+      };
+      callApiSearch(params);
+    }, 500);
   }, [reload]);
-
-  const onRefresh = () => {
-    const params = {
-      page: page,
-      idCompany: idCompany,
-      idRoomChat: idRoom_chat,
-    };
-    callApiSearch(params);
-  };
 
   const handleLoadMore = useCallback(() => {
     if (page < lastPage) {
@@ -124,7 +116,6 @@ const Task = (props: any) => {
       showTaskForm={showTaskForm}
       setSpecificItem={setSpecificItem}
       specificItem={specificItem}
-      reload={reload}
     />
   );
 
@@ -143,9 +134,6 @@ const Task = (props: any) => {
             onEndReachedThreshold={0.01}
             onEndReached={handleLoadMore}
             contentContainerStyle={{paddingBottom: 100}}
-            // onRefresh={onRefresh}
-            // refreshing={isRefreshing}
-            extraData={reload}
           />
         </View>
       </View>

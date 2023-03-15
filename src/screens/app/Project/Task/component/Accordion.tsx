@@ -20,7 +20,7 @@ import {Colors} from './Colors';
 import moment from 'moment/moment';
 
 const Accordion = React.memo((props: any) => {
-  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem, reload} = props;
+  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem} = props;
   const [expanded, setExpanded] = useState(false);
   const [color, setColor] = useState('');
 
