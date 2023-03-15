@@ -7,18 +7,22 @@ import {GlobalService, getListTask, finishTask} from '@services';
 import {useFocusEffect} from '@react-navigation/native';
 import {Accordion} from './component/Accordion';
 import {ModalTask} from '../../DetailChat/components/ModalTask';
-import {useFunction} from '../../DetailChat/useFunction';
+import {ModalUserList} from '../../DetailChat/components/ModalUserList';
+import {useFunction} from './useFunction';
+import { showMessage } from "react-native-flash-message";
 
 const Task = (props: any) => {
   // custom hook logic
-  const {idRoomChat, setShowTaskForm, showTaskForm, onUpdateTask} =
-    useFunction(props);
+  const {setShowTaskForm, showTaskForm, onUpdateTask, selected, setSelected, reload} = useFunction(props);
   const idCompany = useSelector((state: any) => state.chat.idCompany);
+  const {route} = props;
+  const {idRoom_chat} = route?.params;
   const [listTask, setList] = useState([]);
   const [specificItem, setSpecificItem] = useState(null);
   const [total, setTotal] = useState(null);
   const [lastPage, setLastPage] = useState(1);
   const [page, setPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const stat = {
     STATUS_NOT_START: 0,
     STATUS_IN_PROGRESS: 1,
@@ -49,8 +53,7 @@ const Task = (props: any) => {
       const params = {
         page: 1,
         idCompany: idCompany,
-        // task_linked_myself: 1,
-        idRoomChat: idRoomChat,
+        idRoomChat: idRoom_chat,
       };
       callApiSearch(params);
     }, []),
@@ -61,11 +64,30 @@ const Task = (props: any) => {
       const params = {
         page: page,
         idCompany: idCompany,
-        task_linked_myself: 1,
+        idRoomChat: idRoom_chat,
       };
       callApiSearch(params);
     }
   }, [page]);
+
+  useEffect(() => {
+    const params = {
+      page: page,
+      idCompany: idCompany,
+      idRoomChat: idRoom_chat,
+    };
+    callApiSearch(params);
+    setIsRefreshing(true);
+  }, [reload]);
+
+  const onRefresh = () => {
+    const params = {
+      page: page,
+      idCompany: idCompany,
+      idRoomChat: idRoom_chat,
+    };
+    callApiSearch(params);
+  };
 
   const handleLoadMore = useCallback(() => {
     if (page < lastPage) {
@@ -79,7 +101,19 @@ const Task = (props: any) => {
       ...input,
       stat: stat.STATUS_DONE,
     };
-    await finishTask(data);
+    const res = await finishTask(data);
+    console.log(res);
+    if (res.data?.errors) {
+      showMessage({
+        message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
+        type: 'danger',
+      });
+    } else {
+      showMessage({
+        message: '保存しました。',
+        type: 'success',
+      });
+    }
   }, []);
 
   const renderItem = ({item}: any) => (
@@ -90,6 +124,7 @@ const Task = (props: any) => {
       showTaskForm={showTaskForm}
       setSpecificItem={setSpecificItem}
       specificItem={specificItem}
+      reload={reload}
     />
   );
 
@@ -108,6 +143,9 @@ const Task = (props: any) => {
             onEndReachedThreshold={0.01}
             onEndReached={handleLoadMore}
             contentContainerStyle={{paddingBottom: 100}}
+            // onRefresh={onRefresh}
+            // refreshing={isRefreshing}
+            extraData={reload}
           />
         </View>
       </View>
@@ -115,8 +153,10 @@ const Task = (props: any) => {
         visible={showTaskForm}
         onCancel={() => setShowTaskForm(false)}
         onUpdateTask={onUpdateTask}
-        idRoomChat={idRoomChat}
+        idRoomChat={idRoom_chat}
         item={specificItem}
+        selected={selected}
+        setSelected={setSelected}
       />
     </View>
   );

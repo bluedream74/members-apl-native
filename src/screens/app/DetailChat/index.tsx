@@ -20,6 +20,7 @@ import {ModalEdit} from './components/ModalEdit';
 import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
 import {ModalTask} from './components/ModalTask';
+import {ModalUserList} from './components/ModalUserList';
 
 const DetailChat = (props: any) => {
   // custom hook logic
@@ -75,6 +76,10 @@ const DetailChat = (props: any) => {
     setShowTaskForm,
     showTaskForm,
     onSaveTask,
+    setShowUserList,
+    showUserList,
+    selected,
+    setSelected,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -200,7 +205,7 @@ const DetailChat = (props: any) => {
   return (
     <View style={styles.container}>
       <View style={showTaskForm ? [styles.blackout] : []}></View>
-      <View style={showTaskForm ? [styles.displayNone] : []}>
+      <View style={showTaskForm ? [styles.displayNone] : [{height: '100%'}]}>
         <Header
           back
           //Check title header nếu đây là chat 1-1 hay chat nhóm
@@ -360,6 +365,16 @@ const DetailChat = (props: any) => {
         onCancel={() => setShowTaskForm(false)}
         onSaveTask={onSaveTask}
         idRoomChat={idRoomChat}
+        selected={selected}
+        setSelected={setSelected}
+      />
+      <ModalUserList
+        visible={showUserList}
+        onCancel={() => setShowUserList(false)}
+        idRoomChat={idRoomChat}
+        setShowTaskForm={setShowTaskForm}
+        setShowUserList={setShowUserList}
+        setSelected={setSelected}
       />
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile

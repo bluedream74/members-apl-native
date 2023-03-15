@@ -25,8 +25,7 @@ import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
 
 const ModalTask = React.memo((prop: any) => {
-  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item} = prop;
-  const [selected, setSelected] = React.useState([]);
+  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected} = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
@@ -39,23 +38,24 @@ const ModalTask = React.memo((prop: any) => {
     getListUserApi();
   }, []);
   useEffect(() => {
-    if (item !== null) {
+    if (item) {
       setTaskName(item?.name);
       setDate(item?.plans_end_date);
       setTime(item?.plans_end_time);
       setTaskDescription(item?.description);
       setSelected(
         item?.persons.map((person: {name: any; user_id: any}) => {
-          return {label: person.name, value: person.user_id};
+          return person.user_id;
         }),
       );
+      setIsGoogleCalendar(item?.gcalendar_flg);
+      setIsAllDay(item?.all_day_flg);
     }
   }, [item]);
 
   const getListUserApi = async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      console.log(result);
       const guest = result?.data?.guests?.map((element: any) => {
         return {
           ...element,
@@ -72,7 +72,16 @@ const ModalTask = React.memo((prop: any) => {
               : `${element?.last_name}${element?.first_name}`,
         };
       });
-      setListUser(dataConvert);
+      const temp = dataConvert.map((user) => {
+        return {label: user.label, value: user.id};
+      });
+      console.log(temp);
+      // setListUser(dataConvert);
+      setListUser(
+        dataConvert.map((user) => {
+          return {label: user.label, value: user.id};
+        }),
+      );
     } catch {
       () => {
         showMessage({
@@ -88,7 +97,8 @@ const ModalTask = React.memo((prop: any) => {
   };
   const saveTask = () => {
     let data;
-    if (item === null) {
+    if (!item) {
+      // create new
       data = {
         taskName: taskName,
         taskDescription: taskDescription,
@@ -101,6 +111,7 @@ const ModalTask = React.memo((prop: any) => {
       };
       onSaveTask(data);
     } else {
+      // update
       data = {
         project_id: item.project_id,
         task_id: item.id,
@@ -114,15 +125,15 @@ const ModalTask = React.memo((prop: any) => {
         plans_cnt: item.plans_cnt,
         actual_cnt: item.actual_cnt,
         cost: item.cost,
-        task_person_id: item.persons.map((person: {user_id: any}) => {
-          return person.user_id;
-        }),
+        task_person_id: selected,
         description: taskDescription,
         cost_flg: item.cost_flg,
         remaindar_flg: item.remaindar_flg,
         repeat_flag: item.repeat_flag ?? 0,
         stat: item.stat,
         chat_room_id: idRoomChat,
+        gcalendar_flg: isGoogleCalendar,
+        all_day_flg: isAllDay,
       };
       onUpdateTask(data);
     }
@@ -259,7 +270,7 @@ const ModalTask = React.memo((prop: any) => {
                   },
                 }}
                 onDateChange={time => {
-                  setTime(time);
+                  setTime(time + ':00');
                 }}
               />
             </View>
@@ -303,8 +314,8 @@ const ModalTask = React.memo((prop: any) => {
               value={selected}
               search
               searchPlaceholder="Search..."
-              onChange={item => {
-                setSelected(item);
+              onChange={user => {
+                setSelected(user);
               }}
               renderLeftIcon={() => (
                 <AntDesign
@@ -459,7 +470,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dropdown: {
-    height: 50,
+    height: 35,
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 12,

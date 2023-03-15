@@ -20,8 +20,7 @@ import {Colors} from './Colors';
 import moment from 'moment/moment';
 
 const Accordion = React.memo((props: any) => {
-  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem} =
-    props;
+  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem, reload} = props;
   const [expanded, setExpanded] = useState(false);
   const [color, setColor] = useState('');
 
@@ -114,6 +113,11 @@ const Accordion = React.memo((props: any) => {
                 期限：{item?.plans_end_date}　{item?.plans_end_time.substring(0, 5)}
               </Text>
             </>
+          </View>
+          <View style={styles(color).viewFinish}>
+            {reload ? (
+              <Text>111-></Text>
+            ) : (<Text>222-></Text>)}
           </View>
           <View style={styles(color).viewFinish}>
             {item.stat !== 2 ? (
