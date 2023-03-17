@@ -745,25 +745,31 @@ export const useFunction = (props: any) => {
     words.forEach(word => {
       if (word.match('.+\n.+')) {
         const splitNewWord = word.split('\n');
-        newWords.push(splitNewWord[0]);
-        newWords.push('\n');
-        newWords.push(splitNewWord[1]);
+        splitNewWord.forEach((s, index) => {
+          if (index > 0) {
+            newWords.push('\n');
+          }
+          newWords.push(s);
+        }) 
       } else if (word.match('.+\n')) {
         const splitNewWord = word.split('\n');
-        if (splitNewWord[0] !== '') {
-          newWords.push(splitNewWord[0]);
-        } else {
-          newWords.push('\n');
-          newWords.push(splitNewWord[1]);
-        }
-        newWords.push('\n');
+        splitNewWord.forEach(s => {
+          if (s !== '') {
+            newWords.push(s);
+          } else {
+            newWords.push('\n');
+          }
+        }) 
       } else if (word.match('\n.+')) {
         newWords.push(word);
       } else if (word.match('　')) {
         const splitNewWord = word.split('　');
-        newWords.push(splitNewWord[0]);
-        newWords.push(' ');
-        newWords.push(splitNewWord[1]);
+        splitNewWord.forEach((s, index) => {
+          if (index > 0) {
+            newWords.push(' ');
+          }
+          newWords.push(s);
+        }) 
       } else {
         newWords.push(word);
       }
