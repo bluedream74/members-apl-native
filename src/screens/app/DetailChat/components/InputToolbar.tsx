@@ -38,20 +38,19 @@ export const renderComposer = (props: any) => {
     return (
       <View style={styles.composerContainer}>
         <View style={styles.inputContainer}>
-        <ScrollView style={styles.scrollMessage}>
-          <TextInput
-            {...props}
-            placeholder={'メッセージ.'}
-            style={styles.inputMessage}
-            multiline={true}
-            scrollEnabled={false}
-            onKeyPress={props.textInputProps.onKeyPress}
-            value={null}
-            onChangeText={(value: any) => {
-              props.onInputTextChanged(value);
-            }}>
-            {props.formattedText}
-          </TextInput>
+          <ScrollView style={styles.scrollMessage}>
+            <TextInput
+              {...props}
+              placeholder={'メッセージ.'}
+              style={styles.inputMessage}
+              multiline={true}
+              onKeyPress={props.textInputProps.onKeyPress}
+              value={null}
+              onChangeText={(value: any) => {
+                props.onInputTextChanged(value);
+              }}>
+              {props.formattedText}
+            </TextInput>
           </ScrollView>
         </View>
       </View>
