@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Image, StyleSheet, Platform, View, Text, TextInput} from 'react-native';
+import {Image, StyleSheet, Platform, View, Text, TextInput, ScrollView} from 'react-native';
 import {InputToolbar, Actions, Composer, Send} from 'react-native-gifted-chat';
 import {iconEmoji} from '@images';
 import {isIphoneX} from 'react-native-iphone-x-helper';
@@ -38,18 +38,21 @@ export const renderComposer = (props: any) => {
     return (
       <View style={styles.composerContainer}>
         <View style={styles.inputContainer}>
-          <TextInput
-            {...props}
-            placeholder={'メッセージ.'}
-            style={styles.inputMessage}
-            multiline={true}
-            onKeyPress={props.textInputProps.onKeyPress}
-            value={null}
-            onChangeText={(value: any) => {
-              props.onInputTextChanged(value);
-            }}>
-            {props.formattedText}
-          </TextInput>
+          <ScrollView style={styles.scrollMessage}>
+            <TextInput
+              {...props}
+              placeholder={'メッセージ.'}
+              style={styles.inputMessage}
+              multiline={true}
+              scrollEnabled={false}
+              onKeyPress={props.textInputProps.onKeyPress}
+              value={null}
+              onChangeText={(value: any) => {
+                props.onInputTextChanged(value);
+              }}>
+              {props.formattedText}
+            </TextInput>
+          </ScrollView>
         </View>
       </View>
     );
@@ -77,19 +80,22 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'ios' ? (isIphoneX() ? 0 : 0) : 6,
     paddingTop: 8,
   },
-  inputMessage: {
+  scrollMessage: {
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(8),
-    paddingLeft: scale(10),
-    paddingTop: Platform.OS === 'ios' ? verticalScale(12) : undefined,
     marginRight: scale(10),
     marginLeft: scale(10),
     minHeight: verticalScale(39),
-    paddingRight: scale(43),
     borderWidth: 1,
     borderColor: '#989898',
     width: '94%',
   },
+  inputMessage: {
+    paddingLeft: scale(10),
+    paddingTop: Platform.OS === 'ios' ? verticalScale(12) : undefined,
+    paddingRight: scale(43),
+  },
+  
   iconEmojiStyle: {
     width: 29,
     height: 29,
