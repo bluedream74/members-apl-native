@@ -401,6 +401,13 @@ export const useFunction = (props: any) => {
         index: 0,
       });
       setIds([]);
+      // prevent from becoming blue character after sending mention message.
+      const formattedText1: (string | JSX.Element)[] = [];
+      formattedText1.push(' ');
+      setFormattedText(formattedText1);
+      formattedText1.shift();
+      setFormattedText(formattedText1);
+
     },
     [messageReply, message_edit, ids, messageQuote],
   );
@@ -750,7 +757,7 @@ export const useFunction = (props: any) => {
             newWords.push('\n');
           }
           newWords.push(s);
-        }) 
+        })
       } else if (word.match('.+\n')) {
         const splitNewWord = word.split('\n');
         splitNewWord.forEach(s => {
@@ -759,7 +766,7 @@ export const useFunction = (props: any) => {
           } else {
             newWords.push('\n');
           }
-        }) 
+        })
       } else if (word.match('\n.+')) {
         newWords.push(word);
       } else if (word.match('　')) {
@@ -769,7 +776,7 @@ export const useFunction = (props: any) => {
             newWords.push(' ');
           }
           newWords.push(s);
-        }) 
+        })
       } else {
         newWords.push(word);
       }
