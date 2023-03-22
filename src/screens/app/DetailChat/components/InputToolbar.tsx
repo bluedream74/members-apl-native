@@ -44,6 +44,7 @@ export const renderComposer = (props: any) => {
               placeholder={'メッセージ.'}
               style={styles.inputMessage}
               multiline={true}
+              scrollEnabled={false}
               onKeyPress={props.textInputProps.onKeyPress}
               value={null}
               onChangeText={(value: any) => {
