@@ -21,6 +21,7 @@ import {
 } from '@images';
 import {Menu} from 'react-native-material-menu';
 import {MenuFeature} from '../components/MenuFeature';
+import MessageInfo from '../components/MessageInfo';
 import moment from 'moment';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {showMessage} from 'react-native-flash-message';
@@ -555,34 +556,7 @@ const ItemMessage = React.memo((props: any) => {
                           {attachment_files?.length > 0 ? (
                             <MsgFile data={attachment_files} />
                           ) : null}
-                          {/* Xử lý message hightlight khi message có link, tagName, hightlight... */}
-                          {user?._id == user_id ? (
-                            <Autolink
-                              //Convert message có kí tự <br> nhận từ web (kí tự xuống dòng)
-                              text={decode(text?.split('<br>').join('\n'))}
-                              email
-                              url
-                              renderText={text => (
-                                <HighlightText
-                                  highlightStyle={styles.txtBold}
-                                  //@ts-ignore
-                                  searchWords={convertMentionToLink(
-                                    text,
-                                    listUser.concat(dataAll),
-                                  )?.concat(['@all'])}
-                                  textToHighlight={convertString(text)}
-                                  style={styles.txtMessage}
-                                />
-                              )}
-                            />
-                          ) : (
-                            <Autolink
-                              text={decode(text?.split('<br>').join(' \n'))}
-                              email
-                              url
-                              renderText={text => formatText(text)}
-                            />
-                          )}
+                          <MessageInfo text={text} joinedUsers={listUser.concat(me)} />
                         </LinearGradient>
                       )}
                     </>

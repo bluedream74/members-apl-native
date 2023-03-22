@@ -13,7 +13,7 @@ import FastImage from 'react-native-fast-image';
 import {colors, stylesCommon} from '@stylesCommon';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {saveMessageEdit} from '@redux';
-import {convertString} from '@util';
+import MessageInfo from '../components/MessageInfo';
 
 const ModalEdit = React.memo(() => {
   const dispatch = useDispatch();
@@ -43,9 +43,7 @@ const ModalEdit = React.memo(() => {
       <View style={styles.viewTxtRepMessage}>
         <Text style={styles.name}>メッセージの編集</Text>
         {message_edit?.text ? (
-          <Text style={styles.content} numberOfLines={2}>
-            {convertString(message_edit?.text.replace(/<br>/g, '\n'))}
-          </Text>
+          <MessageInfo text={message_edit?.text} />
         ) : (
           <View style={styles.viewRow}>
             {message_edit?.attachment_files?.map((item: any) => (
@@ -111,6 +109,7 @@ const styles = StyleSheet.create({
   },
   content: {
     fontSize: 12,
+    overflow: 'hidden',
     color: colors.darkGrayText,
     ...stylesCommon.fontWeight500,
   },

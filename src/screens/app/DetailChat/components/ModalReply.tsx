@@ -19,6 +19,7 @@ import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {saveMessageReply} from '@redux';
 import {convertString} from '@util';
 import {decode} from 'html-entities';
+import MessageInfo from '../components/MessageInfo';
 
 const ModalReply = React.memo(() => {
   const dispatch = useDispatch();
@@ -62,9 +63,10 @@ const ModalReply = React.memo(() => {
       <View style={styles.viewTxtRepMessage}>
         <Text style={styles.name}>返信メッセージ</Text>
         {messageReply?.text ? (
-          <Text style={styles.content}>
-            {convertString(decode(messageReply?.text.split('<br>').join('\n')))}
-          </Text>
+          // <Text style={styles.content}>
+          //   {convertString(decode(messageReply?.text.split('<br>').join('\n')))}
+          // </Text>
+          <MessageInfo text={messageReply?.text} />
         ) : null}
         {messageReply?.attachment_files?.length > 0 ? (
           <View style={styles.viewRow}>
