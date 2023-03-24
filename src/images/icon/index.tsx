@@ -41,6 +41,8 @@ const iconReload = require('./IconReload.png');
 const iconFilterChat = require('./IconFilterChat.png');
 const iconActiveGroup = require('./ActiveIconGroup.png');
 const iconInActiveGroup = require('./InActiveIconGroup.png');
+const iconDown = require('./IconDown.png');
+const iconUp = require('./IconUp.png');
 
 export {
   iconBack,
@@ -85,5 +87,7 @@ export {
   iconReload,
   iconFilterChat,
   iconActiveGroup,
-  iconInActiveGroup
+  iconInActiveGroup,
+  iconDown,
+  iconUp,
 };

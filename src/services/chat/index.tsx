@@ -37,6 +37,9 @@ const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 const DELETE_ROOM = 'user/chat/room';
 const CHANGE_ROLE = 'user/chat/room/role-user';
 const USER_OF_ROOM = 'user/chat/room';
+const GET_LIST_TASK = 'tasks/get-task-list';
+const SAVE_TASK = 'tasks/save-task';
+const UPDATE_TASK = 'tasks/update-task';
 
 const GET_LIST_CATEGORY = 'user/chat/category/list';
 const CREATE_CATEGORY = 'user/chat/category/create';
@@ -292,5 +295,24 @@ export const deleteCategory: any = async (id: any) => {
 
 export const getUnreadMessageCountApi: any = async (user_id: any) => {
   const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
+  return response;
+};
+
+export const getListTask: any = async (data: any) => {
+  const response = api.get(
+    `${GET_LIST_TASK}?page=${data?.page}&company_id=${data.idCompany}&chat_room_id=${data.idRoomChat}`,
+  );
+  return response;
+};
+export const saveTask: any = async (body: any) => {
+  const response = api.post(`${SAVE_TASK}`, body);
+  return response;
+};
+export const finishTask: any = async (body: any) => {
+  const response = api.post(`${UPDATE_TASK}`, body);
+  return response;
+};
+export const updateTask: any = async (body: any) => {
+  const response = api.post(`${UPDATE_TASK}`, body);
   return response;
 };

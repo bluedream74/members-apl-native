@@ -367,6 +367,15 @@ const InfoRoomChat = (props: any) => {
                 });
               }}
             />
+            <ViewItem
+              sourceImage={iconDocument}
+              content="タスク"
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.TASK_SCREEN, {
+                  idRoom_chat: idRoomChat,
+                });
+              }}
+            />
             {dataDetail?.type === 4 ? null : (
               <ViewItem
                 sourceImage={iconUser}

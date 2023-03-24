@@ -1,7 +1,6 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import {colors, stylesCommon} from '@stylesCommon';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {isIphoneX} from 'react-native-iphone-x-helper';
 
 const height_screen = Dimensions.get('window').height;
 
@@ -34,7 +33,8 @@ const styles = StyleSheet.create({
     tintColor: colors.darkGrayText,
   },
   viewContent: {
-    width: '90%',
+    width: '100%',
+    height: '100%',
   },
   viewIcon: {
     width: '10%',
@@ -104,16 +104,6 @@ const styles = StyleSheet.create({
     width: moderateScale(25),
     height: moderateScale(25),
   },
-  viewTask: {
-    width: '10%',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    position: 'absolute',
-    top: '82%',
-  },
-  imageTask: {
-    tintColor: 'green',
-  },
   displayNone: {
     display: 'none',
   },
@@ -126,6 +116,13 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     backgroundColor: '#787878',
     opacity: 0.9,
+  },
+  txtEmpty: {
+    textAlign: 'center',
+    marginTop: verticalScale(20),
+    color: colors.darkGrayText,
+    ...stylesCommon.fontWeight600,
+    fontSize: moderateScale(18),
   },
 });
 
