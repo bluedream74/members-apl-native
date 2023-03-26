@@ -79,6 +79,8 @@ export const useFunction = (props: any) => {
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
   const [indexRedLine, setIndexRedLine] = useState(null);
+  const [inputText, setInputText] = useState<string>('');
+  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
 
   useEffect(() => {
     if (redLineId) {
@@ -899,6 +901,24 @@ export const useFunction = (props: any) => {
     } catch (error) {}
   };
 
+  const onDecoSelected = (tagName: string) => {
+    let newText = '';
+    let tag = '[' + tagName + ']';
+    if (tagName === 'hr') {
+      newText = inputText.substring(0, textSelection.end) + tag + inputText.substring(textSelection.end);
+    } else {
+      // insert closing tags
+      let closingTag = '[/' + tagName + ']';
+      newText = inputText.substring(0, textSelection.end) + closingTag + inputText.substring(textSelection.end);
+      // insert opening tags
+      let openingTag = '[' + tagName + ']';
+      newText = newText.substring(0, textSelection.start) + openingTag + newText.substring(textSelection.start);
+    }
+
+    setInputText(newText);
+    setFormattedText([newText]);
+  };
+
   return {
     chatUser,
     idRoomChat,
@@ -956,5 +976,9 @@ export const useFunction = (props: any) => {
     redLineId,
     navigateToMessage,
     indexRedLine,
+    setInputText,
+    textSelection,
+    setTextSelection,
+    onDecoSelected,
   };
 };

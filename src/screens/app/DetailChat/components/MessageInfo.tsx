@@ -89,17 +89,17 @@ export default function MessageInfo({
       )}${joinedUser?.first_name?.replace(' ', '')}`;
       if (text.includes(mentionText)) {
         const escapedText = mentionText.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
-        text = text.replace(new RegExp(escapedText, 'g'), '<a href="#">$&</a>');
+        text = text.replace(new RegExp(escapedText, 'g'), '<b>$&</b>');
       }
       //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-      const matchs = text.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
+      const matchs = text.match(new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'));
       if (matchs != null) {
-        text = text.replace(new RegExp("^@all|@all$| @all|@all ", 'g'), '<a href="#">@all</a>');
+        text = text.replace(new RegExp('^@all|@all$| @all|@all ', 'g'), '<b>@all</b>');
       }
       //@AIをリンク色にする（@AI単独、@AI+半角スペース、@AI+全角スペース、@aAI+改行の場合）
-      const AiMatchs = text.match(new RegExp("@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$", 'g'));
+      const AiMatchs = text.match(new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'g'));
       if (AiMatchs != null) {
-        text = text.replace(new RegExp("^@AI|@AI$| @aAI|@AI ", 'g'), '<a href="#">@AI</a>');
+        text = text.replace(new RegExp('^@AI|@AI$| @aAI|@AI ', 'g'), '<b>@AI</b>');
       }
     });
     return text;
@@ -113,11 +113,11 @@ export default function MessageInfo({
     if (str === null) {
       return str;
     }
-    let regexp_url = /((h?)(ttps?:\/\/[-_.!~*\'()a-zA-Z0-9;"'\/?:\@&=+\$,%#\[…\]\u3001-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+))/g; // ']))/;正規表現（/〜/）を解釈してくれないエディタ等で自動整形を崩さないため。
-    let regexp_makeLink = function (url: string, href: string) {
-      return '<a href="' + href + '" >' + url + '</a>';
-    }
-    str = str.replace(regexp_url, regexp_makeLink);
+
+    let regexp_url = /(https?:\/\/[^\s]+)/g;
+    str = str.replace(regexp_url, '<a href="$1">$1</a>');
+    str = str.replace('">https://', '">');
+    str = str.replace('">http://', '">');
 
     let regexp_email = /(\/|:)?([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+/g;
     let regexp_makeMailLink = function (mail: string) {

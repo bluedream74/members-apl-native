@@ -18,6 +18,8 @@ import {
   iconXls,
   defaultAvatar,
   iconEdit,
+  iconReply,
+  iconQuote2,
 } from '@images';
 import {Menu} from 'react-native-material-menu';
 import {MenuFeature} from '../components/MenuFeature';
@@ -467,7 +469,9 @@ const ItemMessage = React.memo((props: any) => {
                           reply_to_message_stamp?.stamp_icon ||
                           message_quote ? (
                             <View style={styles.viewReply}>
-                              <View style={styles.viewColumn} />
+                              <View style={styles.viewIconRepMessage}>
+                                <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
+                              </View>
                               <View>
                                 <Text style={styles.txtTitleReply}>
                                   {message_quote
@@ -480,7 +484,7 @@ const ItemMessage = React.memo((props: any) => {
                                     onPress={() =>
                                       onJumpToOriginal(reply_to_message_id)
                                     }>
-                                    <Text
+                                    {/* <Text
                                       style={styles.txtContentReply}
                                       numberOfLines={1}>
                                       {decode(
@@ -488,7 +492,8 @@ const ItemMessage = React.memo((props: any) => {
                                           ?.split('<br>')
                                           .join('\n'),
                                       )}
-                                    </Text>
+                                    </Text> */}
+                                    <MessageInfo text={reply_to_message_text} />
                                   </TouchableOpacity>
                                 ) : null}
                                 {message_quote ? (
@@ -497,13 +502,14 @@ const ItemMessage = React.memo((props: any) => {
                                     onPress={() =>
                                       onJumpToOriginal(quote_message_id)
                                     }>
-                                    <Text
+                                      <MessageInfo text={message_quote} />
+                                    {/* <Text
                                       style={styles.txtContentReply}
                                       numberOfLines={1}>
                                       {decode(
                                         message_quote?.split('<br>').join('\n'),
                                       )}
-                                    </Text>
+                                    </Text> */}
                                   </TouchableOpacity>
                                 ) : null}
                                 {reply_to_message_files?.length > 0 ? (

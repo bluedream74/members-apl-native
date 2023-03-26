@@ -104,6 +104,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     marginRight: scale(6),
   },
+  viewIconRepMessage: {
+    width: '20%',
+    marginRight:10,
+  },
+  iconReply: {
+    width: moderateScale(20),
+  },
   txtTitleReply: {
     fontSize: moderateScale(10),
     ...stylesCommon.fontWeight500,
@@ -252,6 +259,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(10),
     backgroundColor: '#FFFFFF',
     ...stylesCommon.fontWeight500,
+  },
+  decoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#f2f2f2',
+    paddingBottom: 10,
+  },
+  decoButton: {
+    width: moderateScale(56),
+    height: moderateScale(32),
+    backgroundColor: '#ffffff',
+    borderColor: '#D6D6D6',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 0
+  },
+  decoText: {
+    color: '#444444',
+    fontSize: 14,
   },
 });
 
