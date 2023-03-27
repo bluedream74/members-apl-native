@@ -43,7 +43,7 @@ const ModalEdit = React.memo(() => {
       <View style={styles.viewTxtRepMessage}>
         <Text style={styles.name}>メッセージの編集</Text>
         {message_edit?.text ? (
-          <MessageInfo text={message_edit?.text} />
+          <MessageInfo text={message_edit?.text} textSetting={{numberOfLines: 1}} />
         ) : (
           <View style={styles.viewRow}>
             {message_edit?.attachment_files?.map((item: any) => (

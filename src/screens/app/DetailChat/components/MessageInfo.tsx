@@ -6,11 +6,13 @@ import { styles } from './stylesItem';
 export type MessageInfoProps = {
   text: string;
   joinedUsers: any;
+  textSetting: any;
 };
 
 export default function MessageInfo({
   text,
   joinedUsers,
+  textSetting,
 }: MessageInfoProps) {
   const customHTMLElementModels = {
     'deco-info': HTMLElementModel.fromCustomModel({
@@ -146,6 +148,7 @@ export default function MessageInfo({
   return (
     <>
       <RenderHtml
+        defaultTextProps={textSetting}
         contentWidth={width}
         source={{
           html: convertMentionToLink(customAnchorify(convertMessageNotation(text)), joinedUsers)
@@ -160,4 +163,5 @@ export default function MessageInfo({
 
 MessageInfo.defaultProps = {
   joinedUsers: [],
+  textSetting: {},
 };

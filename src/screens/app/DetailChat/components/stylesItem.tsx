@@ -104,17 +104,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     marginRight: scale(6),
   },
-  viewIconRepMessage: {
-    width: '20%',
-    marginRight:10,
-  },
   iconReply: {
-    width: moderateScale(20),
+    marginRight: 10,
+    marginTop: 5,
   },
-  txtTitleReply: {
-    fontSize: moderateScale(10),
-    ...stylesCommon.fontWeight500,
-    color: colors.border,
+  txtReply: {
+    width:'90%',
   },
   txtContentReply: {
     fontSize: moderateScale(12),

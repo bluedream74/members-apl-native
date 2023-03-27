@@ -469,31 +469,15 @@ const ItemMessage = React.memo((props: any) => {
                           reply_to_message_stamp?.stamp_icon ||
                           message_quote ? (
                             <View style={styles.viewReply}>
-                              <View style={styles.viewIconRepMessage}>
-                                <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
-                              </View>
-                              <View>
-                                <Text style={styles.txtTitleReply}>
-                                  {message_quote
-                                    ? '引用メッセージ'
-                                    : '返信メッセージ'}
-                                </Text>
+                              <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
+                              <View style={styles.txtReply}>
                                 {reply_to_message_text ? (
                                   <TouchableOpacity
                                     style={styles.chat}
                                     onPress={() =>
                                       onJumpToOriginal(reply_to_message_id)
                                     }>
-                                    {/* <Text
-                                      style={styles.txtContentReply}
-                                      numberOfLines={1}>
-                                      {decode(
-                                        reply_to_message_text
-                                          ?.split('<br>')
-                                          .join('\n'),
-                                      )}
-                                    </Text> */}
-                                    <MessageInfo text={reply_to_message_text} />
+                                    <MessageInfo text={reply_to_message_text} textSetting={{numberOfLines: 1}} />
                                   </TouchableOpacity>
                                 ) : null}
                                 {message_quote ? (
@@ -502,14 +486,7 @@ const ItemMessage = React.memo((props: any) => {
                                     onPress={() =>
                                       onJumpToOriginal(quote_message_id)
                                     }>
-                                      <MessageInfo text={message_quote} />
-                                    {/* <Text
-                                      style={styles.txtContentReply}
-                                      numberOfLines={1}>
-                                      {decode(
-                                        message_quote?.split('<br>').join('\n'),
-                                      )}
-                                    </Text> */}
+                                      <MessageInfo text={message_quote} textSetting={{numberOfLines: 1}} />
                                   </TouchableOpacity>
                                 ) : null}
                                 {reply_to_message_files?.length > 0 ? (
