@@ -105,15 +105,12 @@ const styles = StyleSheet.create({
     height: moderateScale(25),
   },
   viewTask: {
-    width: '10%',
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
     top: '82%',
   },
-  imageTask: {
-    tintColor: 'green',
-  },
+  imageTask: {},
   displayNone: {
     display: 'none',
   },
