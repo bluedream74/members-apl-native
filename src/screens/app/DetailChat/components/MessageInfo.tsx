@@ -138,7 +138,7 @@ export default function MessageInfo({
   const convertMessageNotation = useCallback((text: string) => {
     text = text.replace(new RegExp('\\[title\\]((.?\s?)*?)\\[/title\\]', 'gi'), '<deco-title>$1</deco-title>');
     text = text.replace(new RegExp('\\[info\\]((.?\s?)*?)\\[/info\\]', 'gi'), '<deco-info>$1</deco-info>');
-    text = text.replace('[hr]', '<deco-hr></deco-hr>');
+    text = text.replace(new RegExp('\\[hr\\]((.?\s?)*?)', 'gi'), '<deco-hr></deco-hr>$1');
     text = text.replace(new RegExp('\\[bold\\]((.?\s?)*?)\\[/bold\\]', 'gi'), '<deco-bold>$1</deco-bold>');
     text = text.replace(new RegExp('\\[red\\]((.?\s?)*?)\\[/red\\]', 'gi'), '<deco-red>$1</deco-red>');
 
