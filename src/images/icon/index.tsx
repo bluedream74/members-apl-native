@@ -45,6 +45,7 @@ const iconDown = require('./IconDown.png');
 const iconUp = require('./IconUp.png');
 const iconTask = require('./IconTask.png');
 const iconCreated = require('./IconCreated.png');
+const iconTaskCutting = require('./IconTaskCutting.png');
 
 export {
   iconBack,
@@ -94,4 +95,5 @@ export {
   iconUp,
   iconTask,
   iconCreated,
+  iconTaskCutting,
 };

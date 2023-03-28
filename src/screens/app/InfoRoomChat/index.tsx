@@ -22,6 +22,7 @@ import {
   iconUpload,
   iconDocument,
   iconDeleteRoom,
+  iconTaskCutting,
 } from '@images';
 import {ViewItem} from './components/ViewItem';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
@@ -368,7 +369,7 @@ const InfoRoomChat = (props: any) => {
               }}
             />
             <ViewItem
-              sourceImage={iconDocument}
+              sourceImage={iconTaskCutting}
               content="タスク"
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.TASK_SCREEN, {
