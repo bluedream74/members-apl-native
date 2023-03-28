@@ -17,9 +17,7 @@ import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {HITSLOP} from '@util';
 import DatePicker from 'react-native-datepicker';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {MultiSelect} from 'react-native-element-dropdown';
-AntDesign.loadFont().then();
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
@@ -138,11 +136,22 @@ const ModalTask = React.memo((prop: any) => {
       onUpdateTask(data);
     }
   };
-  const renderDataItem = item => {
+  const renderDataItem = (item, selected) => {
     return (
       <View style={styles.item}>
+        {selected && (<CheckBox
+          value={true}
+          style={styles.checkbox}
+          boxType={'square'}
+          hideBox={false}
+        />)}
+        {!selected && (<CheckBox
+          value={false}
+          style={styles.checkbox}
+          boxType={'square'}
+          hideBox={false}
+        />)}
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
-        <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
       </View>
     );
   };
@@ -317,20 +326,12 @@ const ModalTask = React.memo((prop: any) => {
               onChange={user => {
                 setSelected(user);
               }}
-              renderLeftIcon={() => (
-                <AntDesign
-                  style={styles.icon}
-                  color="black"
-                  name="Safety"
-                  size={15}
-                />
-              )}
+              renderLeftIcon={() => {}}
               renderItem={renderDataItem}
               renderSelectedItem={(item, unSelect) => (
                 <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
                   <View style={styles.selectedStyle}>
                     <Text style={styles.textSelectedStyle}>{item.label}</Text>
-                    <AntDesign color="black" name="delete" size={10} />
                   </View>
                 </TouchableOpacity>
               )}
@@ -501,7 +502,7 @@ const styles = StyleSheet.create({
   item: {
     padding: 17,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   selectedStyle: {
