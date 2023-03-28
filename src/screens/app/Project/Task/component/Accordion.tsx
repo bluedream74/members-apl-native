@@ -11,16 +11,14 @@ import {
 } from 'react-native';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {colors, stylesCommon} from '@stylesCommon';
-import {
-  iconDown,
-  iconUp,
-} from '@images';
+import {iconDown, iconCreated, iconUp} from '@images';
 import {AppButton} from '@component';
 import {Colors} from './Colors';
 import moment from 'moment/moment';
 
 const Accordion = React.memo((props: any) => {
-  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem} = props;
+  const {item, onFinishTask, setShowTaskForm, showTaskForm, setSpecificItem} =
+    props;
   const [expanded, setExpanded] = useState(false);
   const [color, setColor] = useState('');
 
@@ -110,7 +108,8 @@ const Accordion = React.memo((props: any) => {
                 {item?.name}
               </Text>
               <Text style={styles(color).txtDate} numberOfLines={2}>
-                期限：{item?.plans_end_date}　{item?.plans_end_time.substring(0, 5)}
+                期限：{item?.plans_end_date}
+                {item?.plans_end_time.substring(0, 5)}
               </Text>
             </>
           </View>
@@ -130,7 +129,12 @@ const Accordion = React.memo((props: any) => {
             onPress={() => showEdit(item)}
             style={styles(color).childContainer}>
             <View style={styles(color).child}>
-              <Text style={styles(color).txtCreated}>作成日：{item?.created_at.substring(0, 10)}</Text>
+              <View style={styles(color).contentCreated}>
+                <Image source={iconCreated} style={styles(color).imageCreated} />
+                <Text style={styles(color).txtCreated}>
+                  作成日：{item?.created_at.substring(0, 10)}
+                </Text>
+              </View>
               <View style={styles(color).parentHr} />
               <View style={styles(color).rowCreatedUser}>
                 <Image
@@ -145,7 +149,9 @@ const Accordion = React.memo((props: any) => {
               </View>
               <View style={styles(color).parentHr} />
               <Text style={styles(color).textTitleInput}>説明:</Text>
-              <Text style={styles(color).txtExpandedContent}>{item?.description}</Text>
+              <Text style={styles(color).txtExpandedContent}>
+                {item?.description}
+              </Text>
             </View>
           </TouchableOpacity>
         )}
@@ -157,8 +163,6 @@ const Accordion = React.memo((props: any) => {
 const styles = (color: string) =>
   StyleSheet.create({
     container: {
-      // paddingLeft: scale(10),
-      // paddingRight: scale(10),
       backgroundColor: color,
       borderRadius: verticalScale(20) / 2,
       marginVertical: scale(5),
@@ -254,8 +258,6 @@ const styles = (color: string) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       height: 56,
-      // paddingLeft: 5,
-      // paddingRight: 5,
       alignItems: 'center',
       paddingLeft: scale(10),
       paddingRight: scale(10),
@@ -315,6 +317,17 @@ const styles = (color: string) =>
     tinyLogo: {
       width: 50,
       height: 50,
+    },
+    imageCreated: {
+      width: 15,
+      height: 15,
+      marginRight: scale(10),
+    },
+    contentCreated: {
+      flexDirection: 'row',
+      height: 30,
+      alignItems: 'center',
+      paddingLeft: scale(5),
     },
   });
 

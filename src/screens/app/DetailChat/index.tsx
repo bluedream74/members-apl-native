@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import { View, Image, Platform, TouchableOpacity } from "react-native";
 import {styles} from './styles';
 import {Header} from '@component';
-import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconListFile } from "@images";
+import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from "@images";
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -362,7 +362,7 @@ const DetailChat = (props: any) => {
         {/* create task icon */}
         <View style={styles.viewTask}>
           <TouchableOpacity onPress={onCreateTask}>
-            <Image source={iconListFile} style={styles.imageTask} />
+            <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>
         </View>
       </View>
