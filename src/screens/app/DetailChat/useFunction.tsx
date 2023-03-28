@@ -904,7 +904,7 @@ export const useFunction = (props: any) => {
       actual_start_date: null,
       actual_end_date: input.date,
       plans_end_date: input.date,
-      plans_end_time: input.time + ':00',
+      plans_end_time: input.time,
       plans_time: 0,
       actual_time: 0,
       plans_cnt: 0,
