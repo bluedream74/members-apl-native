@@ -902,7 +902,7 @@ export const useFunction = (props: any) => {
       item_id: 1,
       task_name: input.taskName,
       actual_start_date: null,
-      actual_end_date: input.date,
+      actual_end_date: null,
       plans_end_date: input.date,
       plans_end_time: input.time,
       plans_time: 0,
