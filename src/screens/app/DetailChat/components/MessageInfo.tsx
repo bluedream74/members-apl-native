@@ -62,7 +62,6 @@ export default function MessageInfo({
       tagName: 'deco-red',
       mixedUAStyles: {
         color: '#E44122',
-        fontFamily: '"Nunito", sans-serif',
       },
       contentModel: HTMLContentModel.block
     })
