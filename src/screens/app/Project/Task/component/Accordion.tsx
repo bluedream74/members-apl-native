@@ -108,8 +108,7 @@ const Accordion = React.memo((props: any) => {
                 {item?.name}
               </Text>
               <Text style={styles(color).txtDate} numberOfLines={2}>
-                期限：{item?.plans_end_date}
-                {item?.plans_end_time.substring(0, 5)}
+                期限：{item?.plans_end_date} {item?.plans_end_time?.substring(0, 5)}
               </Text>
             </>
           </View>
@@ -132,7 +131,7 @@ const Accordion = React.memo((props: any) => {
               <View style={styles(color).contentCreated}>
                 <Image source={iconCreated} style={styles(color).imageCreated} />
                 <Text style={styles(color).txtCreated}>
-                  作成日：{item?.created_at.substring(0, 10)}
+                  作成日：{item?.created_at?.substring(0, 10)}
                 </Text>
               </View>
               <View style={styles(color).parentHr} />
