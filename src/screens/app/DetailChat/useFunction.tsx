@@ -84,6 +84,8 @@ export const useFunction = (props: any) => {
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
+  const [inputText, setInputText] = useState<string>('');
+  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
 
   useEffect(() => {
     if (redLineId) {
@@ -906,6 +908,24 @@ export const useFunction = (props: any) => {
     } catch (error) {}
   };
 
+  const onDecoSelected = (tagName: string) => {
+    let newText = '';
+    let tag = '[' + tagName + ']';
+    if (tagName === 'hr') {
+      newText = inputText.substring(0, textSelection.end) + tag + inputText.substring(textSelection.end);
+    } else {
+      // insert closing tags
+      let closingTag = '[/' + tagName + ']';
+      newText = inputText.substring(0, textSelection.end) + closingTag + inputText.substring(textSelection.end);
+      // insert opening tags
+      let openingTag = '[' + tagName + ']';
+      newText = newText.substring(0, textSelection.start) + openingTag + newText.substring(textSelection.start);
+    }
+
+    setInputText(newText);
+    setFormattedText([newText]);
+  };
+
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);
   }, []);
@@ -1017,5 +1037,9 @@ export const useFunction = (props: any) => {
     showUserList,
     selected,
     setSelected,
+    setInputText,
+    textSelection,
+    setTextSelection,
+    onDecoSelected,
   };
 };
