@@ -25,6 +25,8 @@ import {
   getListUser,
   addBookmark,
   callApiChatBot,
+  saveTask,
+  updateTask,
 } from '@services';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -79,8 +81,9 @@ export const useFunction = (props: any) => {
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
   const [indexRedLine, setIndexRedLine] = useState(null);
-  const [inputText, setInputText] = useState<string>('');
-  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
+  const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [selected, setSelected] = useState<any>([]);
 
   useEffect(() => {
     if (redLineId) {
@@ -212,7 +215,9 @@ export const useFunction = (props: any) => {
 
   useFocusEffect(
     useCallback(() => {
-      getDetail();
+      if (idRoomChat) {
+        getDetail();
+      }
     }, []),
   );
 
@@ -901,23 +906,50 @@ export const useFunction = (props: any) => {
     } catch (error) {}
   };
 
-  const onDecoSelected = (tagName: string) => {
-    let newText = '';
-    let tag = '[' + tagName + ']';
-    if (tagName === 'hr') {
-      newText = inputText.substring(0, textSelection.end) + tag + inputText.substring(textSelection.end);
+  const onCreateTask = useCallback(() => {
+    setShowUserList(!showUserList);
+  }, []);
+  const onSaveTask = useCallback(async input => {
+    const data = {
+      project_id: 1,
+      item_id: 1,
+      task_name: input.taskName,
+      actual_start_date: null,
+      actual_end_date: null,
+      plans_end_date: input.date,
+      plans_end_time: input.time,
+      plans_time: 0,
+      actual_time: 0,
+      plans_cnt: 0,
+      actual_cnt: 0,
+      cost: 0,
+      task_person_id: input.selected,
+      description: input.taskDescription,
+      cost_flg: 0,
+      remaindar_flg: 0,
+      repeat_flag: 0,
+      gcalendar_flg: input.isGoogleCalendar,
+      all_day_flg: input.isAllDay,
+      chat_room_id: input.chat_room_id,
+    };
+    const res = await saveTask(data);
+    if (res.data?.errors) {
+      showMessage({
+        message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
+        type: 'danger',
+      });
     } else {
-      // insert closing tags
-      let closingTag = '[/' + tagName + ']';
-      newText = inputText.substring(0, textSelection.end) + closingTag + inputText.substring(textSelection.end);
-      // insert opening tags
-      let openingTag = '[' + tagName + ']';
-      newText = newText.substring(0, textSelection.start) + openingTag + newText.substring(textSelection.start);
+      showMessage({
+        message: '保存しました。',
+        type: 'success',
+      });
     }
-
-    setInputText(newText);
-    setFormattedText([newText]);
-  };
+    setShowTaskForm(false);
+  }, []);
+  const onUpdateTask = useCallback(async data => {
+    const res = await updateTask(data);
+    setShowTaskForm(false);
+  }, []);
 
   return {
     chatUser,
@@ -976,9 +1008,14 @@ export const useFunction = (props: any) => {
     redLineId,
     navigateToMessage,
     indexRedLine,
-    setInputText,
-    textSelection,
-    setTextSelection,
-    onDecoSelected,
+    onCreateTask,
+    setShowTaskForm,
+    showTaskForm,
+    onSaveTask,
+    onUpdateTask,
+    setShowUserList,
+    showUserList,
+    selected,
+    setSelected,
   };
 };

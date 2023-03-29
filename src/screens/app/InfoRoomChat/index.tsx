@@ -22,6 +22,7 @@ import {
   iconUpload,
   iconDocument,
   iconDeleteRoom,
+  iconTaskCutting,
 } from '@images';
 import {ViewItem} from './components/ViewItem';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
@@ -363,6 +364,15 @@ const InfoRoomChat = (props: any) => {
               content="メディア・ファイル・URL"
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.LIST_FILE_IN_ROOM, {
+                  idRoom_chat: idRoomChat,
+                });
+              }}
+            />
+            <ViewItem
+              sourceImage={iconTaskCutting}
+              content="タスク"
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.TASK_SCREEN, {
                   idRoom_chat: idRoomChat,
                 });
               }}

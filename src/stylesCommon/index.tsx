@@ -12,6 +12,8 @@ const colors = {
   darkGrayText: '#595757',
   colorGradient: ['#8BC227', '#1AA1AA', '#FCD000', '#F4A217', '#EA5A31'],
   active: '#8BC227',
+  black: '#000000',
+  white: '#FFFFFF',
 };
 
 //Font chữ được sử dụng trong app
