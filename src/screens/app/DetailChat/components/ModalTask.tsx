@@ -21,14 +21,15 @@ import {MultiSelect} from 'react-native-element-dropdown';
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
+import moment from 'moment/moment';
 
 const ModalTask = React.memo((prop: any) => {
   const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected} = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [date, setDate] = useState(moment().format("YYYY/MM/DD"));
+  const [time, setTime] = useState('00:00:00');
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
 
