@@ -373,6 +373,7 @@ const DetailChat = (props: any) => {
         idRoomChat={idRoomChat}
         selected={selected}
         setSelected={setSelected}
+        showTaskForm={showTaskForm}
       />
       <ModalUserList
         visible={showUserList}

@@ -25,7 +25,7 @@ import {useSelector} from 'react-redux';
 import moment from 'moment/moment';
 
 const ModalTask = React.memo((prop: any) => {
-  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected} = prop;
+  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected, showTaskForm} = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
@@ -53,6 +53,14 @@ const ModalTask = React.memo((prop: any) => {
       setIsAllDay(item?.all_day_flg);
     }
   }, [item]);
+  useEffect(() => {
+    setTaskName('');
+    setTaskDescription('');
+    setDate(moment().format('YYYY/MM/DD'));
+    setTime('00:00:00');
+    setIsGoogleCalendar(false);
+    setIsAllDay(false);
+  }, [showTaskForm]);
 
   const getListUserApi = async () => {
     try {
@@ -96,12 +104,6 @@ const ModalTask = React.memo((prop: any) => {
   };
 
   const closeModal = () => {
-    setTaskName('');
-    setTaskDescription('');
-    setDate(moment().format('YYYY/MM/DD'));
-    setTime('00:00:00');
-    setIsGoogleCalendar(false);
-    setIsAllDay(false);
     onCancel();
   };
   const saveTask = () => {
@@ -146,13 +148,6 @@ const ModalTask = React.memo((prop: any) => {
       };
       onUpdateTask(data);
     }
-    setTaskName('');
-    setTaskDescription('');
-    setListUser([]);
-    setDate(moment().format('YYYY/MM/DD'));
-    setTime('00:00:00');
-    setIsGoogleCalendar(false);
-    setIsAllDay(false);
   };
   const renderDataItem = (item, selected) => {
     return (
