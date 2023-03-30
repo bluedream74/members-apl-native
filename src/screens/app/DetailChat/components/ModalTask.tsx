@@ -28,8 +28,8 @@ const ModalTask = React.memo((prop: any) => {
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState(moment().format("HH:mm"));
+  const [date, setDate] = useState(moment().format("YYYY/MM/DD"));
+  const [time, setTime] = useState('00:00:00');
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
 

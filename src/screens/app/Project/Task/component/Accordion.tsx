@@ -28,11 +28,8 @@ const Accordion = React.memo((props: any) => {
       item.plans_end_date + ' ' + item.plans_end_time,
       'YYYY/MM/DD hh:mm:ss',
     ).unix();
-    const threeDaysLater = moment(
-      item.plans_end_date + ' ' + item.plans_end_time,
-      'YYYY/MM/DD hh:mm:ss',
-    )
-      .add(-3, 'days')
+    const threeDaysLater = moment()
+      .add(+3, 'days')
       .unix();
     let colorString;
     if (plansEndDate < currentDate) {
