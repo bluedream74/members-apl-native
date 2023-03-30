@@ -36,6 +36,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
+import moment from 'moment/moment';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -901,8 +902,8 @@ export const useFunction = (props: any) => {
       project_id: 1,
       item_id: 1,
       task_name: input.taskName,
-      actual_start_date: null,
-      actual_end_date: null,
+      actual_start_date: moment().format("YYYY/MM/DD"),
+      actual_end_date: '00:00:00',
       plans_end_date: input.date,
       plans_end_time: input.time,
       plans_time: 0,
