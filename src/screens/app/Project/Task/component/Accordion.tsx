@@ -132,21 +132,27 @@ const Accordion = React.memo((props: any) => {
                 </Text>
               </View>
               <View style={styles(color).parentHr} />
-              <View style={styles(color).rowCreatedUser}>
-                <Image
-                  style={styles(color).avatar}
-                  source={{
-                    uri: item?.created_user_icon,
-                  }}
-                />
-                <Text style={styles(color).textContentInput}>
-                  {item?.created_user_last_name} {item?.created_user_first_name}
-                </Text>
-              </View>
+              {item.persons.map((person) => {
+                if (person?.name) {
+                  return (
+                    <View style={styles(color).rowCreatedUser}>
+                      <Image
+                        style={styles(color).avatar}
+                        source={{
+                          uri: person?.icon,
+                        }}
+                      />
+                      <Text style={styles(color).textContentInput}>
+                        {person?.name}
+                      </Text>
+                    </View>
+                  );
+                }
+              })}
               <View style={styles(color).parentHr} />
               <Text style={styles(color).textTitleInput}>説明:</Text>
               <Text style={styles(color).txtExpandedContent}>
-                {item?.description.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'').replace(/&nbsp;/gi," ")}
+                {item?.description}
               </Text>
             </View>
           </TouchableOpacity>
