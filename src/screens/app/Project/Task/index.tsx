@@ -13,7 +13,7 @@ import { showMessage } from "react-native-flash-message";
 
 const Task = (props: any) => {
   // custom hook logic
-  const {setShowTaskForm, showTaskForm, onUpdateTask, selected, setSelected, reload} = useFunction(props);
+  const {setShowTaskForm, showTaskForm, onUpdateTask, selected, setSelected, reload, setReload} = useFunction(props);
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const {route} = props;
   const {idRoom_chat} = route?.params;
@@ -22,7 +22,7 @@ const Task = (props: any) => {
   const [total, setTotal] = useState(null);
   const [lastPage, setLastPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const stat = {
     STATUS_NOT_START: 0,
     STATUS_IN_PROGRESS: 1,
@@ -82,9 +82,6 @@ const Task = (props: any) => {
   }, [reload]);
 
   const handleLoadMore = useCallback(() => {
-    console.log('hosotanidebug333');
-    console.log(page);
-    console.log(lastPage);
     if (page < lastPage) {
       setPage(prevPage => prevPage + 1);
     }
@@ -95,13 +92,13 @@ const Task = (props: any) => {
       stat: stat.STATUS_DONE,
     };
     const res = await finishTask(data);
-    console.log(res);
     if (res.data?.errors) {
       showMessage({
         message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
         type: 'danger',
       });
     } else {
+      setReload(!reload);
       showMessage({
         message: '保存しました。',
         type: 'success',

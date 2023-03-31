@@ -41,5 +41,6 @@ export const useFunction = (props: any) => {
     selected,
     setSelected,
     reload,
+    setReload,
   };
 };
