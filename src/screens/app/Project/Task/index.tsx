@@ -82,10 +82,11 @@ const Task = (props: any) => {
   }, [reload]);
 
   const handleLoadMore = useCallback(() => {
+    console.log('hosotanidebug333');
+    console.log(page);
+    console.log(lastPage);
     if (page < lastPage) {
       setPage(prevPage => prevPage + 1);
-    } else {
-      null;
     }
   }, [page, lastPage]);
   const onFinishTask = useCallback(async input => {
@@ -133,7 +134,7 @@ const Task = (props: any) => {
             ListEmptyComponent={<Text style={styles.txtEmpty}>データなし</Text>}
             onEndReachedThreshold={0.01}
             onEndReached={handleLoadMore}
-            contentContainerStyle={{paddingBottom: 100}}
+            contentContainerStyle={{paddingBottom: 300}}
           />
         </View>
       </View>
