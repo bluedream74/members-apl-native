@@ -21,17 +21,19 @@ import {MultiSelect} from 'react-native-element-dropdown';
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
+import {useSelector} from 'react-redux';
 import moment from 'moment/moment';
 
 const ModalTask = React.memo((prop: any) => {
-  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected} = prop;
+  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected, showTaskForm} = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
-  const [date, setDate] = useState(moment().format("YYYY/MM/DD"));
+  const [date, setDate] = useState(moment().format('YYYY/MM/DD'));
   const [time, setTime] = useState('00:00:00');
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
+  const loginUser = useSelector((state: any) => state.auth.userInfo);
 
   useEffect(() => {
     getListUserApi();
@@ -51,6 +53,14 @@ const ModalTask = React.memo((prop: any) => {
       setIsAllDay(item?.all_day_flg);
     }
   }, [item]);
+  useEffect(() => {
+    setTaskName('');
+    setTaskDescription('');
+    setDate(moment().format('YYYY/MM/DD'));
+    setTime('00:00:00');
+    setIsGoogleCalendar(false);
+    setIsAllDay(false);
+  }, [showTaskForm]);
 
   const getListUserApi = async () => {
     try {
@@ -71,15 +81,17 @@ const ModalTask = React.memo((prop: any) => {
               : `${element?.last_name}${element?.first_name}`,
         };
       });
-      const temp = dataConvert.map((user) => {
-        return {label: user.label, value: user.id};
-      });
-      console.log(temp);
-      // setListUser(dataConvert);
       setListUser(
-        dataConvert.map((user) => {
-          return {label: user.label, value: user.id};
-        }),
+        dataConvert
+          .map(user => {
+            return {label: user.label, value: user.id};
+          })
+          .concat([
+            {
+              label: loginUser.last_name + loginUser.first_name,
+              value: loginUser.id,
+            },
+          ]),
       );
     } catch {
       () => {
@@ -140,23 +152,26 @@ const ModalTask = React.memo((prop: any) => {
   const renderDataItem = (item, selected) => {
     return (
       <View style={styles.item}>
-        {selected && (<CheckBox
-          value={true}
-          style={styles.checkbox}
-          boxType={'square'}
-          hideBox={false}
-        />)}
-        {!selected && (<CheckBox
-          value={false}
-          style={styles.checkbox}
-          boxType={'square'}
-          hideBox={false}
-        />)}
+        {selected && (
+          <CheckBox
+            value={true}
+            style={styles.checkbox}
+            boxType={'square'}
+            hideBox={false}
+          />
+        )}
+        {!selected && (
+          <CheckBox
+            value={false}
+            style={styles.checkbox}
+            boxType={'square'}
+            hideBox={false}
+          />
+        )}
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
       </View>
     );
   };
-
   return (
     <Modal
       transparent={true}
@@ -501,10 +516,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   item: {
-    padding: 17,
+    paddingLeft: 17,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    height: 30
   },
   selectedStyle: {
     flexDirection: 'row',
