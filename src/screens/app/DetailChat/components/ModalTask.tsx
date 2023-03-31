@@ -65,13 +65,8 @@ const ModalTask = React.memo((prop: any) => {
   const getListUserApi = async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      const guest = result?.data?.guests?.map((element: any) => {
-        return {
-          ...element,
-          id: Number(element?.id) * -1,
-        };
-      });
-      const dataUser = result?.data?.users?.data?.concat(guest);
+
+      const dataUser = result?.data?.users?.data;
       const dataConvert = dataUser?.map((element: any) => {
         return {
           ...element,

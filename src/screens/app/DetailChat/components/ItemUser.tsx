@@ -9,7 +9,7 @@ const ItemUser = React.memo((props: any) => {
   const {item, setShowTaskForm, setShowUserList, setSelected} = props;
   const loginUser = useSelector((state: any) => state.auth.userInfo);
   const showTaskForm = () => {
-    setSelected([item.value, loginUser.id]);
+    setSelected([item.value]);
     setShowUserList(false);
     setShowTaskForm(true);
   };
