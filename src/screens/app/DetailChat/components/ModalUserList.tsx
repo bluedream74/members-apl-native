@@ -20,17 +20,10 @@ import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
 import {ItemUser} from '../../DetailChat/components/ItemUser';
-import {useSelector} from 'react-redux';
+import { useSelector } from "react-redux";
 
 const ModalUserList = React.memo((prop: any) => {
-  const {
-    onCancel,
-    visible,
-    idRoomChat,
-    setShowTaskForm,
-    setShowUserList,
-    setSelected,
-  } = prop;
+  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected} = prop;
   const [listUser, setListUser] = useState<any>([]);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
 
@@ -59,12 +52,16 @@ const ModalUserList = React.memo((prop: any) => {
         };
       });
       setListUser(
-        dataConvert.concat([
-          {
-            label: loginUser.last_name + loginUser.first_name,
-            value: loginUser.id,
-          },
-        ]),
+        dataConvert
+          .map(user => {
+            return {label: user.label, value: user.id};
+          })
+          .concat([
+            {
+              label: loginUser.last_name + loginUser.first_name,
+              value: loginUser.id,
+            },
+          ]),
       );
     } catch {
       () => {
