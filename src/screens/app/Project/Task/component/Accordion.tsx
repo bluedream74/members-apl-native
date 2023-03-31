@@ -152,7 +152,7 @@ const Accordion = React.memo((props: any) => {
               <View style={styles(color).parentHr} />
               <Text style={styles(color).textTitleInput}>説明:</Text>
               <Text style={styles(color).txtExpandedContent}>
-                {item?.description}
+                {item?.description.replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '')}
               </Text>
             </View>
           </TouchableOpacity>

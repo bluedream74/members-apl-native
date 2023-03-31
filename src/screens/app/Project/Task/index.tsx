@@ -9,11 +9,19 @@ import {Accordion} from './component/Accordion';
 import {ModalTask} from '../../DetailChat/components/ModalTask';
 import {ModalUserList} from '../../DetailChat/components/ModalUserList';
 import {useFunction} from './useFunction';
-import { showMessage } from "react-native-flash-message";
+import {showMessage} from 'react-native-flash-message';
 
 const Task = (props: any) => {
   // custom hook logic
-  const {setShowTaskForm, showTaskForm, onUpdateTask, selected, setSelected, reload, setReload} = useFunction(props);
+  const {
+    setShowTaskForm,
+    showTaskForm,
+    onUpdateTask,
+    selected,
+    setSelected,
+    reload,
+    setReload,
+  } = useFunction(props);
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const {route} = props;
   const {idRoom_chat} = route?.params;
@@ -86,25 +94,30 @@ const Task = (props: any) => {
       setPage(prevPage => prevPage + 1);
     }
   }, [page, lastPage]);
-  const onFinishTask = useCallback(async input => {
-    const data = {
-      ...input,
-      stat: stat.STATUS_DONE,
-    };
-    const res = await finishTask(data);
-    if (res.data?.errors) {
-      showMessage({
-        message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
-        type: 'danger',
-      });
-    } else {
-      setReload(!reload);
-      showMessage({
-        message: '保存しました。',
-        type: 'success',
-      });
-    }
-  }, []);
+  const onFinishTask = useCallback(
+    async input => {
+      const data = {
+        ...input,
+        stat: stat.STATUS_DONE,
+      };
+      const res = await finishTask(data);
+      if (res.data?.errors) {
+        showMessage({
+          message: res.data?.errors
+            ? JSON.stringify(res.data?.errors)
+            : 'Network Error',
+          type: 'danger',
+        });
+      } else {
+        setReload(!reload);
+        showMessage({
+          message: '保存しました。',
+          type: 'success',
+        });
+      }
+    },
+    [reload],
+  );
 
   const renderItem = ({item}: any) => (
     <Accordion
