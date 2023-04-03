@@ -150,7 +150,7 @@ export default function MessageInfo({
         defaultTextProps={textSetting}
         contentWidth={width}
         source={{
-          html: convertMentionToLink(customAnchorify(convertMessageNotation(text)), joinedUsers)
+          html: text ? convertMentionToLink(customAnchorify(convertMessageNotation(text)), joinedUsers) : ''
         }}
         customHTMLElementModels={customHTMLElementModels}
         // @ts-ignore
