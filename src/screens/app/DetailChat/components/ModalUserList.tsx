@@ -47,12 +47,13 @@ const ModalUserList = React.memo((prop: any) => {
       setListUser(
         dataConvert
           .map(user => {
-            return {label: user.label, value: user.id};
+            return {label: user.label, value: user.id, icon_image: user.icon_image};
           })
           .concat([
             {
               label: loginUser.last_name + loginUser.first_name,
               value: loginUser.id,
+              icon_image: loginUser.icon_image,
             },
           ]),
       );
