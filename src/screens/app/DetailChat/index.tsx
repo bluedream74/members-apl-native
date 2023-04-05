@@ -84,6 +84,7 @@ const DetailChat = (props: any) => {
     setInputText,
     textSelection,
     onDecoSelected,
+    keyboardHeight,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -371,7 +372,7 @@ const DetailChat = (props: any) => {
         />
         <DecoButton onDecoSelected={onDecoSelected} />
         {/* create task icon */}
-        <View style={styles.viewTask}>
+        <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>

@@ -109,6 +109,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '78%',
   },
+  viewTaskWithKeyboard: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    top: '38%',
+  },
   imageTask: {},
   displayNone: {
     display: 'none',
