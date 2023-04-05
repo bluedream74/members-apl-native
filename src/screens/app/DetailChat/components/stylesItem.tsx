@@ -1,11 +1,11 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   scale,
   verticalScale,
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import {colors, stylesCommon} from '@stylesCommon';
+import { colors, stylesCommon } from '@stylesCommon';
 
 const styles = StyleSheet.create({
   container: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   txtReply: {
-    width:'90%',
+    width: '90%',
   },
   txtContentReply: {
     fontSize: moderateScale(12),
@@ -257,10 +257,11 @@ const styles = StyleSheet.create({
   },
   decoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: '#f2f2f2',
-    paddingBottom: 10,
-    paddingTop: Platform.OS === 'ios' ? 5 : 0,
+    position: 'relative',
+    paddingLeft: moderateScale(15),
+    paddingBottom: moderateScale(30),
+    paddingTop: moderateScale(16),
   },
   decoButton: {
     width: moderateScale(56),
@@ -269,12 +270,13 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     borderRadius: 16,
-    paddingVertical: 0
+    paddingVertical: 0,
+    marginLeft: 5,
   },
   decoText: {
     color: '#444444',
-    fontSize: 14,
+    fontSize: moderateScale(14),
   },
 });
 
-export {styles};
+export { styles };

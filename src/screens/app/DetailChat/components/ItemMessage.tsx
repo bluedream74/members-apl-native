@@ -539,7 +539,7 @@ const ItemMessage = React.memo((props: any) => {
                           {attachment_files?.length > 0 ? (
                             <MsgFile data={attachment_files} />
                           ) : null}
-                          <MessageInfo text={text} joinedUsers={listUser.concat(me)} />
+                          <MessageInfo text={text} joinedUsers={listUser ? listUser.concat(me) : []} />
                         </LinearGradient>
                       )}
                     </>
