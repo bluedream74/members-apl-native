@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import {
   scale,
   verticalScale,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingLeft: moderateScale(15),
     paddingBottom: moderateScale(30),
-    paddingTop: moderateScale(16),
+    paddingTop: Platform.OS === 'ios' ? moderateScale(16) : moderateScale(6),
   },
   decoButton: {
     width: moderateScale(56),
