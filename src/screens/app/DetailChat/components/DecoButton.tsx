@@ -33,14 +33,12 @@ export default function DecoButton({ onDecoSelected }: DecoButtonProps) {
   Keyboard.addListener(
     'keyboardWillShow',
     () => {
-      console.log('Keyboard is open')
       setBottom(340);
     }
   )
   Keyboard.addListener(
     'keyboardWillHide',
     () => {
-      console.log('Keyboard is closed')
       setBottom(0);
     }
   )
