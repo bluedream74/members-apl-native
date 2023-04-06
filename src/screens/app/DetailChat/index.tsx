@@ -394,6 +394,7 @@ const DetailChat = (props: any) => {
         setShowTaskForm={setShowTaskForm}
         setShowUserList={setShowUserList}
         setSelected={setSelected}
+        keyboardHeight={keyboardHeight}
       />
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile

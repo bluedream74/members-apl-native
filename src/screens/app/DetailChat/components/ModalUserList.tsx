@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import { AppInput } from "@component";
 
 const ModalUserList = React.memo((prop: any) => {
-  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected} = prop;
+  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected, keyboardHeight} = prop;
   const [listUser, setListUser] = useState<any>([]);
   const [allListUser, setAllListUser] = useState<any>([]);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
@@ -105,7 +105,7 @@ const ModalUserList = React.memo((prop: any) => {
         closeModal();
       }}>
         <View style={styles.containerModal}>
-          <View style={styles.viewContent}>
+          <View style={keyboardHeight === 0 ? styles.viewContent : styles.viewContentWithKeyboard}>
             <AppInput
               onChange={(text: any) => {
                 setSearchWord(text);
@@ -335,6 +335,16 @@ const styles = StyleSheet.create({
     width: '50%',
     height: '20%',
     bottom: 170,
+    left: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: moderateScale(10),
+    borderWidth: 0.5,
+    borderColor: '#999999',
+  },
+  viewContentWithKeyboard: {
+    width: '50%',
+    height: '20%',
+    bottom: 370,
     left: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(10),
