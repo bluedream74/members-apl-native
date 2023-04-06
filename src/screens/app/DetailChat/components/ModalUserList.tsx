@@ -131,6 +131,7 @@ const ModalUserList = React.memo((prop: any) => {
               onEndReachedThreshold={0.01}
               onEndReached={() => {}}
               contentContainerStyle={{paddingBottom: 5}}
+              keyboardShouldPersistTaps={'handled'}
             />
           </View>
         </View>
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   viewContent: {
     width: '50%',
     height: '20%',
-    bottom: 170,
+    bottom: 180,
     left: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(10),
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
   viewContentWithKeyboard: {
     width: '50%',
     height: '20%',
-    bottom: 370,
+    bottom: 520,
     left: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(10),
