@@ -118,6 +118,7 @@ const ModalUserList = React.memo((prop: any) => {
               value={searchWord}
               styleContainer={styles.containerSearch}
               styleInput={styles.input}
+              placeholder={'Search'}
             />
             <FlatList
               data={listUser}

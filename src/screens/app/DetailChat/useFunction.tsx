@@ -37,6 +37,7 @@ import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
+import { Keyboard, KeyboardEvent } from 'react-native';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -87,6 +88,23 @@ export const useFunction = (props: any) => {
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    function onKeyboardDidShow(e: KeyboardEvent) { // Remove type here if not using TypeScript
+      setKeyboardHeight(e.endCoordinates.height);
+    }
+
+    function onKeyboardDidHide() {
+      setKeyboardHeight(0);
+    }
+
+    const showSubscription = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (redLineId) {
@@ -1043,5 +1061,6 @@ export const useFunction = (props: any) => {
     textSelection,
     setTextSelection,
     onDecoSelected,
+    keyboardHeight,
   };
 };
