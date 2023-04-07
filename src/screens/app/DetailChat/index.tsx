@@ -386,6 +386,7 @@ const DetailChat = (props: any) => {
         selected={selected}
         setSelected={setSelected}
         showTaskForm={showTaskForm}
+        keyboardHeight={keyboardHeight}
       />
       <ModalUserList
         visible={showUserList}
