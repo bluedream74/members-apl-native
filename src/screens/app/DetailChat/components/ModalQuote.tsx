@@ -2,24 +2,13 @@ import React, {useCallback} from 'react';
 import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
-  menuReply,
   iconClose,
-  iconFile,
-  iconPdf,
-  iconDoc,
-  iconXls,
-  chatStamp2,
-  chatStamp3,
-  chatStamp4,
-  iconLike,
   iconQuote
 } from '@images';
-import FastImage from 'react-native-fast-image';
 import {colors, stylesCommon} from '@stylesCommon';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {saveMessageQuote} from '@redux';
-import {convertString} from '@util';
-import {decode} from 'html-entities';
+import MessageInfo from '../components/MessageInfo';
 
 const ModalQuote = React.memo(() => {
   const dispatch = useDispatch();
@@ -36,11 +25,7 @@ const ModalQuote = React.memo(() => {
       </View>
       <View style={styles.viewTxtRepMessage}>
         <Text style={styles.name}>引用メッセージ</Text>
-        {messageQuote?.text ? (
-          <Text style={styles.content}>
-            {convertString(decode(messageQuote?.text.split('<br>').join('\n')))}
-          </Text>
-        ) : null}
+        {messageQuote?.text ? <MessageInfo text={messageQuote?.text} textSetting={{numberOfLines: 1}} /> : <></>}
       </View>
       <TouchableOpacity
         style={styles.viewIconRepMessage}

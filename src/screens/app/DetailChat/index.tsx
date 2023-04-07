@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import { View, Image, Platform, TouchableOpacity } from "react-native";
 import {styles} from './styles';
 import {Header} from '@component';
@@ -6,6 +6,7 @@ import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
+import DecoButton from './components/DecoButton';
 import {
   renderSend,
   renderInputToolbar,
@@ -80,6 +81,10 @@ const DetailChat = (props: any) => {
     showUserList,
     selected,
     setSelected,
+    setInputText,
+    textSelection,
+    onDecoSelected,
+    keyboardHeight,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -253,7 +258,9 @@ const DetailChat = (props: any) => {
           ref={giftedChatRef}
           onInputTextChanged={inputText => {
             formatText(inputText, false);
+            setInputText(inputText);
           }}
+          textSelection={textSelection}
           messages={getConvertedMessages(listChat)}
           onSend={() => {
             showModalStamp();
@@ -310,6 +317,10 @@ const DetailChat = (props: any) => {
                 setShowTag(false);
               }
             },
+            onSelectionChange: ({nativeEvent}: any) => {
+              textSelection.start = nativeEvent.selection.start;
+              textSelection.end = nativeEvent.selection.end;
+            },
           }}
           //Chú ý đây là phần xử lý các UI nằm bên trên của input chat (có custom trong thư viện)
           renderAccessory={
@@ -359,8 +370,9 @@ const DetailChat = (props: any) => {
           bottomOffset={0}
           messagesContainerStyle={styles.containerMessage}
         />
+        <DecoButton onDecoSelected={onDecoSelected} />
         {/* create task icon */}
-        <View style={styles.viewTask}>
+        <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>
@@ -374,6 +386,7 @@ const DetailChat = (props: any) => {
         selected={selected}
         setSelected={setSelected}
         showTaskForm={showTaskForm}
+        keyboardHeight={keyboardHeight}
       />
       <ModalUserList
         visible={showUserList}
@@ -382,6 +395,7 @@ const DetailChat = (props: any) => {
         setShowTaskForm={setShowTaskForm}
         setShowUserList={setShowUserList}
         setSelected={setSelected}
+        keyboardHeight={keyboardHeight}
       />
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile

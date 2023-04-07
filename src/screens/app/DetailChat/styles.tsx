@@ -1,7 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
-import {colors, stylesCommon} from '@stylesCommon';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {isIphoneX} from 'react-native-iphone-x-helper';
+import { StyleSheet, Dimensions } from 'react-native';
+import { colors, stylesCommon } from '@stylesCommon';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
 const height_screen = Dimensions.get('window').height;
 
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: verticalScale(5),
   },
-  buttonRight: {marginRight: 16, marginLeft: 0},
+  buttonRight: { marginRight: 16, marginLeft: 0 },
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),
@@ -108,7 +107,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '82%',
+    top: '78%',
+  },
+  viewTaskWithKeyboard: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    top: '38%',
   },
   imageTask: {},
   displayNone: {
@@ -126,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {styles};
+export { styles };

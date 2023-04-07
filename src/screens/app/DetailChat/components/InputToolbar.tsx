@@ -47,6 +47,8 @@ export const renderComposer = (props: any) => {
               scrollEnabled={false}
               onKeyPress={props.textInputProps.onKeyPress}
               value={null}
+              // selection={props.textSelection}
+              onSelectionChange={props.textInputProps.onSelectionChange}
               onChangeText={(value: any) => {
                 props.onInputTextChanged(value);
               }}>

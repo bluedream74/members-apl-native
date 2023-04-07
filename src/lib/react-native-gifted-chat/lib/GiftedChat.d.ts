@@ -62,6 +62,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
         [key: string]: any;
     };
     optionTintColor?: string;
+    textSelection?: any;
     quickReplyStyle?: StyleProp<ViewStyle>;
     isCustomViewBottom?: boolean;
     infiniteScroll?: boolean;

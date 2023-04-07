@@ -1,11 +1,11 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import {
   scale,
   verticalScale,
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import {colors, stylesCommon} from '@stylesCommon';
+import { colors, stylesCommon } from '@stylesCommon';
 
 const styles = StyleSheet.create({
   container: {
@@ -104,10 +104,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     marginRight: scale(6),
   },
-  txtTitleReply: {
-    fontSize: moderateScale(10),
-    ...stylesCommon.fontWeight500,
-    color: colors.border,
+  iconReply: {
+    marginRight: 10,
+    marginTop: 5,
+  },
+  txtReply: {
+    width: '90%',
   },
   txtContentReply: {
     fontSize: moderateScale(12),
@@ -253,6 +255,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     ...stylesCommon.fontWeight500,
   },
+  decoContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f2f2f2',
+    position: 'relative',
+    paddingLeft: moderateScale(15),
+    paddingBottom: moderateScale(30),
+    paddingTop: Platform.OS === 'ios' ? moderateScale(16) : moderateScale(6),
+  },
+  decoButton: {
+    width: moderateScale(56),
+    height: moderateScale(32),
+    backgroundColor: '#ffffff',
+    borderColor: '#D6D6D6',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 0,
+    marginLeft: 5,
+  },
+  decoText: {
+    color: '#444444',
+    fontSize: moderateScale(14),
+  },
 });
 
-export {styles};
+export { styles };
