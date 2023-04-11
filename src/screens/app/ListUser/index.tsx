@@ -74,7 +74,7 @@ const ListUser = (props: any) => {
         user_id: idUser,
       };
       const result = await removeUser(body);
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         task_id: null,
@@ -90,7 +90,7 @@ const ListUser = (props: any) => {
         text2: null,
         time: result?.data?.data?.created_at,
       });
-      socket.emit('ChatGroup_update_ind', {
+      socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         member_info: {
@@ -117,7 +117,7 @@ const ListUser = (props: any) => {
         guest_id: Number(idUser) * -1,
       };
       const result = await removeGuest(body);
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         task_id: null,
@@ -133,7 +133,7 @@ const ListUser = (props: any) => {
         text2: null,
         time: result?.data?.data?.created_at,
       });
-      socket.emit('ChatGroup_update_ind', {
+      socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         member_info: {

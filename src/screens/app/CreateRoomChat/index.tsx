@@ -114,7 +114,7 @@ const CreateRoomChat = (props: any) => {
           user_id: renderIdUser(),
         };
         const result = await createRoom(body);
-        socket.emit('ChatGroup_update_ind', {
+        socket.emit('ChatGroup_update_ind2', {
           user_id: user_id,
           room_id: result?.data?.data?.id,
           member_info: {
@@ -137,7 +137,7 @@ const CreateRoomChat = (props: any) => {
           user_id: renderIdUser(),
         };
         const result = await inviteMember(body);
-        socket.emit('message_ind', {
+        socket.emit('message_ind2', {
           user_id: user_id,
           room_id: idRoomchat,
           task_id: null,
@@ -153,7 +153,7 @@ const CreateRoomChat = (props: any) => {
           text2: null,
           time: result?.data?.data?.created_at,
         });
-        socket.emit('ChatGroup_update_ind', {
+        socket.emit('ChatGroup_update_ind2', {
           user_id: user_id,
           room_id: idRoomchat,
           member_info: {
