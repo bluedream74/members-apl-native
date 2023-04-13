@@ -435,6 +435,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       formattedText1.shift();
       setFormattedText(formattedText1);
+      // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
     [messageReply, message_edit, ids, messageQuote],
