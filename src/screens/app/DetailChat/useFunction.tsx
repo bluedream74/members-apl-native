@@ -435,7 +435,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       formattedText1.shift();
       setFormattedText(formattedText1);
-
+      setInputText('');
     },
     [messageReply, message_edit, ids, messageQuote],
   );
