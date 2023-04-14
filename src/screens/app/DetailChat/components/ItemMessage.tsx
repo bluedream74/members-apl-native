@@ -50,6 +50,7 @@ import {MenuOption} from './MenuOption';
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
 const color = ['#FDF5E6', '#FDF5E6'];
 const colorSelfMention = ['#FDE3E3', '#FDE3E3'];
+const colorReplyQuote = ['#DCDCDC', '#DCDCDC'];
 const width = Dimensions.get('window').width;
 
 const dataAll: any = [
@@ -346,14 +347,16 @@ const ItemMessage = React.memo((props: any) => {
       return color;
     }
   };
-  
+
   /**
    * 自分のメンションが入っているメッセージ
    */
   const checkMessageToSelfMention = () => {
     let isSelfMention = false;
     //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-    const matchs = text.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
+    const matchs = text.match(
+      new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
+    );
     if (matchs != null) {
       isSelfMention = true;
     } else {
@@ -494,88 +497,113 @@ const ItemMessage = React.memo((props: any) => {
                   ) : (
                     <>
                       {msg_type == 6 || msg_type == 8 ? null : (
-                        <LinearGradient
-                          colors={formatColor()}
-                          start={{x: 1, y: 0}}
-                          end={{x: 0, y: 0}}
-                          style={styles.containerChat}>
+                        <View style={styles.containerViewChat}>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
                           reply_to_message_stamp?.stamp_icon ||
                           message_quote ? (
-                            <View style={styles.viewReply}>
-                              <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
-                              <View style={styles.txtReply}>
-                                {reply_to_message_text ? (
-                                  <TouchableOpacity
-                                    style={styles.chat}
-                                    onPress={() =>
-                                      onJumpToOriginal(reply_to_message_id)
-                                    }>
-                                    <MessageInfo text={reply_to_message_text} textSetting={{numberOfLines: 1}} />
-                                  </TouchableOpacity>
-                                ) : null}
-                                {message_quote ? (
-                                  <TouchableOpacity
-                                    style={styles.chat}
-                                    onPress={() =>
-                                      onJumpToOriginal(quote_message_id)
-                                    }>
-                                      <MessageInfo text={message_quote} textSetting={{numberOfLines: 1}} />
-                                  </TouchableOpacity>
-                                ) : null}
-                                {reply_to_message_files?.length > 0 ? (
-                                  <View style={styles.viewRowEdit}>
-                                    {reply_to_message_files?.map(
-                                      (item: any) => (
-                                        <View key={item?.id}>
-                                          {item?.type == 4 ? (
-                                            <FastImage
-                                              source={{
-                                                uri: item?.path,
-                                                priority:
-                                                  FastImage.priority.high,
-                                                cache:
-                                                  FastImage.cacheControl
-                                                    .immutable,
-                                              }}
-                                              style={styles.imageSmall}
-                                            />
-                                          ) : (
-                                            <FastImage
-                                              source={renderImgaeFile(
-                                                item?.type,
-                                              )}
-                                              style={styles.imageFile}
-                                            />
-                                          )}
-                                        </View>
-                                      ),
-                                    )}
-                                  </View>
-                                ) : null}
-                                {reply_to_message_stamp?.stamp_icon ? (
-                                  <FastImage
-                                    source={{
-                                      uri: reply_to_message_stamp?.stamp_icon,
-                                      priority: FastImage.priority.high,
-                                      cache: FastImage.cacheControl.immutable,
-                                    }}
-                                    style={
-                                      reply_to_message_stamp?.stamp_no == 1
-                                        ? styles.imageLikeReply
-                                        : styles.imageStampRepLy
-                                    }
-                                  />
-                                ) : null}
+                            <>
+                              <View style={styles.containerAdditionalMessage}>
+                                <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
+                                <Text>返信しました</Text>
                               </View>
-                            </View>
+                              <LinearGradient
+                                colors={colorReplyQuote}
+                                start={{x: 1, y: 0}}
+                                end={{x: 0, y: 0}}
+                                style={styles.containerAdditionalChat}>
+                                <View style={styles.viewReply}>
+                                  <View style={styles.txtReply}>
+                                    {reply_to_message_text ? (
+                                      <TouchableOpacity
+                                        style={styles.chat}
+                                        onPress={() =>
+                                          onJumpToOriginal(reply_to_message_id)
+                                        }>
+                                        <MessageInfo
+                                          text={reply_to_message_text}
+                                          textSetting={{numberOfLines: 1}}
+                                        />
+                                      </TouchableOpacity>
+                                    ) : null}
+                                    {message_quote ? (
+                                      <TouchableOpacity
+                                        style={styles.chat}
+                                        onPress={() =>
+                                          onJumpToOriginal(quote_message_id)
+                                        }>
+                                        <MessageInfo
+                                          text={message_quote}
+                                          textSetting={{numberOfLines: 1}}
+                                        />
+                                      </TouchableOpacity>
+                                    ) : null}
+                                    {reply_to_message_files?.length > 0 ? (
+                                      <View style={styles.viewRowEdit}>
+                                        {reply_to_message_files?.map(
+                                          (item: any) => (
+                                            <View key={item?.id}>
+                                              {item?.type == 4 ? (
+                                                <FastImage
+                                                  source={{
+                                                    uri: item?.path,
+                                                    priority:
+                                                    FastImage.priority.high,
+                                                    cache:
+                                                    FastImage.cacheControl
+                                                      .immutable,
+                                                  }}
+                                                  style={styles.imageSmall}
+                                                />
+                                              ) : (
+                                                <FastImage
+                                                  source={renderImgaeFile(
+                                                    item?.type,
+                                                  )}
+                                                  style={styles.imageFile}
+                                                />
+                                              )}
+                                            </View>
+                                          ),
+                                        )}
+                                      </View>
+                                    ) : null}
+                                    {reply_to_message_stamp?.stamp_icon ? (
+                                      <FastImage
+                                        source={{
+                                          uri: reply_to_message_stamp?.stamp_icon,
+                                          priority: FastImage.priority.high,
+                                          cache: FastImage.cacheControl.immutable,
+                                        }}
+                                        style={
+                                          reply_to_message_stamp?.stamp_no == 1
+                                            ? styles.imageLikeReply
+                                            : styles.imageStampRepLy
+                                        }
+                                      />
+                                    ) : null}
+                                  </View>
+                                </View>
+                                {attachment_files?.length > 0 ? (
+                                  <MsgFile data={attachment_files} />
+                                ) : null}
+                              </LinearGradient>
+                            </>
                           ) : null}
-                          {attachment_files?.length > 0 ? (
-                            <MsgFile data={attachment_files} />
-                          ) : null}
-                          <MessageInfo text={text} joinedUsers={listUser ? listUser.concat(me) : []} />
-                        </LinearGradient>
+                          <LinearGradient
+                            colors={formatColor()}
+                            start={{x: 1, y: 0}}
+                            end={{x: 0, y: 0}}
+                            style={reply_to_message_text ||
+                            reply_to_message_files?.length > 0 ||
+                            reply_to_message_stamp?.stamp_icon ||
+                            message_quote ? styles.containerChatWithMargin : styles.containerChat}>
+                            <MessageInfo
+                              text={text}
+                              joinedUsers={listUser ? listUser.concat(me) : []}
+                            />
+                          </LinearGradient>
+                        </View>
                       )}
                     </>
                   )}
