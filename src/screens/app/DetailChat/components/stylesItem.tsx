@@ -26,38 +26,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerViewChat: {
-    position: 'relative',
     maxWidth: '100%',
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(14),
-    borderRadius: verticalScale(16),
-  },
-  containerAdditionalChat: {
-    position: 'absolute',
-    top: '20%',
-    left: 0,
-    maxWidth: '100%',
-    paddingVertical: verticalScale(5),
+    paddingVertical: verticalScale(2),
     paddingHorizontal: scale(5),
     borderRadius: verticalScale(16),
   },
-  containerChat: {
-    maxWidth: '90%',
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(14),
+  containerAdditionalChat: {
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(5),
     borderRadius: verticalScale(16),
+    marginBottom: scale(-10),
   },
-  containerChatWithMargin: {
-    maxWidth: '90%',
+  containerChat: {
+    maxWidth: '100%',
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(14),
-    marginVertical: scale(40),
     borderRadius: verticalScale(16),
   },
   containerAdditionalMessage: {
-    position: 'absolute',
-    top: '0%',
-    left: 0,
     maxWidth: '100%',
     paddingVertical: verticalScale(5),
     paddingHorizontal: scale(5),
@@ -143,13 +129,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     marginRight: scale(6),
   },
-  iconReply: {
-    marginRight: 10,
-    marginTop: 5,
-  },
-  txtReply: {
-    width: '90%',
-  },
+  iconReply: {},
+  txtReply: {},
   txtContentReply: {
     fontSize: moderateScale(12),
     ...stylesCommon.fontWeight500,
