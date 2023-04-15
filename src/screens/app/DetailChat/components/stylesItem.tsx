@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
+  containerAdditionalMessageText: {
+    fontSize: moderateScale(10),
+    color: colors.darkGrayText,
+  },
   chat: {
     flex: 1,
     flexDirection: 'row',

@@ -97,6 +97,7 @@ const ItemMessage = React.memo((props: any) => {
     createdAt,
     msg_type,
     reply_to_message_text,
+    reply_to_message_user,
     attachment_files,
     reply_to_message_files,
     reply_to_message_stamp,
@@ -108,6 +109,7 @@ const ItemMessage = React.memo((props: any) => {
     task_link,
     message_quote,
     quote_message_id,
+    quote_message_user,
     index,
     updated_at,
     reply_to_message_id,
@@ -503,10 +505,40 @@ const ItemMessage = React.memo((props: any) => {
                           reply_to_message_stamp?.stamp_icon ||
                           message_quote ? (
                             <>
-                              <View style={styles.containerAdditionalMessage}>
-                                <Image source={message_quote ? iconQuote2 : iconReply} style={styles.iconReply} />
-                                <Text>返信しました</Text>
-                              </View>
+                              {reply_to_message_text && (
+                                <View style={styles.containerAdditionalMessage}>
+                                  <Image
+                                    source={
+                                      message_quote ? iconQuote2 : iconReply
+                                    }
+                                    style={styles.iconReply}
+                                  />
+                                  <Text
+                                    style={
+                                      styles.containerAdditionalMessageText
+                                    }>
+                                    {user.name}が{reply_to_message_user}
+                                    に返信しました
+                                  </Text>
+                                </View>
+                              )}
+                              {message_quote && (
+                                <View style={styles.containerAdditionalMessage}>
+                                  <Image
+                                    source={
+                                      message_quote ? iconQuote2 : iconReply
+                                    }
+                                    style={styles.iconReply}
+                                  />
+                                  <Text
+                                    style={
+                                      styles.containerAdditionalMessageText
+                                    }>
+                                    {user.name}が{quote_message_user}
+                                    　を引用しました
+                                  </Text>
+                                </View>
+                              )}
                               <LinearGradient
                                 colors={colorReplyQuote}
                                 start={{x: 1, y: 0}}
@@ -548,10 +580,10 @@ const ItemMessage = React.memo((props: any) => {
                                                   source={{
                                                     uri: item?.path,
                                                     priority:
-                                                    FastImage.priority.high,
+                                                      FastImage.priority.high,
                                                     cache:
-                                                    FastImage.cacheControl
-                                                      .immutable,
+                                                      FastImage.cacheControl
+                                                        .immutable,
                                                   }}
                                                   style={styles.imageSmall}
                                                 />
@@ -573,7 +605,8 @@ const ItemMessage = React.memo((props: any) => {
                                         source={{
                                           uri: reply_to_message_stamp?.stamp_icon,
                                           priority: FastImage.priority.high,
-                                          cache: FastImage.cacheControl.immutable,
+                                          cache:
+                                            FastImage.cacheControl.immutable,
                                         }}
                                         style={
                                           reply_to_message_stamp?.stamp_no == 1
@@ -594,10 +627,14 @@ const ItemMessage = React.memo((props: any) => {
                             colors={formatColor()}
                             start={{x: 1, y: 0}}
                             end={{x: 0, y: 0}}
-                            style={reply_to_message_text ||
-                            reply_to_message_files?.length > 0 ||
-                            reply_to_message_stamp?.stamp_icon ||
-                            message_quote ? styles.containerChatWithMargin : styles.containerChat}>
+                            style={
+                              reply_to_message_text ||
+                              reply_to_message_files?.length > 0 ||
+                              reply_to_message_stamp?.stamp_icon ||
+                              message_quote
+                                ? styles.containerChatWithMargin
+                                : styles.containerChat
+                            }>
                             <MessageInfo
                               text={text}
                               joinedUsers={listUser ? listUser.concat(me) : []}
