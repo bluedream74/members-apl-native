@@ -49,6 +49,7 @@ import {MenuOption} from './MenuOption';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
 const color = ['#FDF5E6', '#FDF5E6'];
+const colorSelfMention = ['#FDE3E3', '#FDE3E3'];
 const width = Dimensions.get('window').width;
 
 const dataAll: any = [
@@ -336,6 +337,40 @@ const ItemMessage = React.memo((props: any) => {
     return formattedText;
   };
 
+  const formatColor = () => {
+    if (user?._id == user_id) {
+      return colorCurrent;
+    } else if (checkMessageToSelfMention()) {
+      return colorSelfMention;
+    } else {
+      return color;
+    }
+  };
+  
+  /**
+   * 自分のメンションが入っているメッセージ
+   */
+  const checkMessageToSelfMention = () => {
+    let isSelfMention = false;
+    //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
+    const matchs = text.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
+    if (matchs != null) {
+      isSelfMention = true;
+    } else {
+      //@自分
+      let mentionText = `@${me?.last_name.replace(
+        ' ',
+        '',
+      )}${me?.first_name?.replace(' ', '')}さん`;
+
+      if (text?.includes(mentionText)) {
+        isSelfMention = true;
+      }
+    }
+
+    return isSelfMention;
+  };
+
   return (
     <>
       {msg_type == 11 ||
@@ -460,7 +495,7 @@ const ItemMessage = React.memo((props: any) => {
                     <>
                       {msg_type == 6 || msg_type == 8 ? null : (
                         <LinearGradient
-                          colors={user?._id == user_id ? colorCurrent : color}
+                          colors={formatColor()}
                           start={{x: 1, y: 0}}
                           end={{x: 0, y: 0}}
                           style={styles.containerChat}>

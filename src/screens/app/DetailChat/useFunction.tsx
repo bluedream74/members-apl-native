@@ -264,7 +264,7 @@ export const useFunction = (props: any) => {
         setShowRedLine(false);
         GlobalService.showLoading();
         const res = await deleteMessageApi(id, idRoomChat);
-        socket.emit('message_ind', {
+        socket.emit('message_ind2', {
           user_id: user_id,
           room_id: idRoomChat,
           task_id: null,
@@ -309,7 +309,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await replyMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -336,7 +336,7 @@ export const useFunction = (props: any) => {
             ids: ids,
           };
           const res = await editMessageApi(message_edit?.id, param);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -370,7 +370,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await sendMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -399,7 +399,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await sendMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -435,7 +435,8 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       formattedText1.shift();
       setFormattedText(formattedText1);
-
+      // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
+      setInputText('');
     },
     [messageReply, message_edit, ids, messageQuote],
   );
@@ -493,7 +494,7 @@ export const useFunction = (props: any) => {
       reaction_no: data,
     };
     const res = await sendReactionApi(body);
-    socket.emit('message_ind', {
+    socket.emit('message_ind2', {
       user_id: user_id,
       room_id: idRoomChat,
       task_id: null,
@@ -582,7 +583,7 @@ export const useFunction = (props: any) => {
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
           const res = await sendMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: user_id,
             room_id: idRoomChat,
             task_id: null,
@@ -637,7 +638,7 @@ export const useFunction = (props: any) => {
         data.append('room_id', idRoomChat);
         data.append('from_id', user_id);
         const res = await sendMessageApi(data);
-        socket.emit('message_ind', {
+        socket.emit('message_ind2', {
           user_id: user_id,
           room_id: idRoomChat,
           task_id: null,
@@ -678,7 +679,7 @@ export const useFunction = (props: any) => {
       data.append('method', 0);
       data.append('stamp_no', stamp_no);
       const res = await sendLabelApi(data);
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         task_id: null,

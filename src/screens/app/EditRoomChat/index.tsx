@@ -76,7 +76,7 @@ const EditRoomChat = (props: any) => {
       };
       GlobalService.showLoading();
       const response = await updateInfoRoomchat(body);
-      socket.emit('ChatGroup_update_ind', {
+      socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         member_info: {

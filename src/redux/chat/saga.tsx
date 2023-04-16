@@ -301,9 +301,9 @@ function* updateMessageSeenSaga(action: any) {
       id_message: action.payload.id_message,
     };
     const result: ResponseGenerator = yield registerLastMessage(body);
-    yield socket.emit('connect_room_join_req', {
+    yield socket.emit('connect_room_join_req2', {
       user_id: user_id,
-      room_id: action.payload.id_room,
+      room_ids: [action.payload.id_room],
     });
     yield socket.emit('new_message_conf', {
       user_id: user_id,
