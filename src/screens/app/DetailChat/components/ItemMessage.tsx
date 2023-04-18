@@ -546,7 +546,7 @@ const ItemMessage = React.memo((props: any) => {
                                           onJumpToOriginal(reply_to_message_id)
                                         }>
                                         <MessageInfo
-                                          text={reply_to_message_text}
+                                          text={reply_to_message_text.replace(/[<]br[^>]*[>]/gi,"")}
                                           textSetting={{numberOfLines: 1}}
                                         />
                                       </TouchableOpacity>
