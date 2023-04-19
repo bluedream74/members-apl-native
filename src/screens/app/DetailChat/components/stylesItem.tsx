@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: verticalScale(16),
   },
   containerAdditionalChat: {
-    maxWidth: '70%',
+    maxWidth: '80%',
     paddingVertical: verticalScale(5),
     paddingHorizontal: scale(5),
     borderRadius: verticalScale(16),
