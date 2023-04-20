@@ -184,6 +184,7 @@ export const useFunction = (props: any) => {
       reply_to_message_stamp: message?.reply_to_message_stamp,
       stamp_icon: message?.stamp_icon,
       reply_to_message_id: message?.reply_to_message_id,
+      reply_to_message_user: message?.reply_to_message_user,
       stamp_no: message?.stamp_no,
       index: index,
       users_seen: message?.users_seen,
@@ -193,6 +194,7 @@ export const useFunction = (props: any) => {
       message_quote: message?.message_quote,
       updated_at: message?.updated_at,
       quote_message_id: message?.quote_message_id,
+      quote_message_user: message?.quote_message_user,
     };
   }, []);
 
