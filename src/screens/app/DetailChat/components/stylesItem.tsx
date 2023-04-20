@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   containerViewChat: {
     maxWidth: '77%',
     paddingVertical: verticalScale(2),
-    paddingHorizontal: scale(5),
+    paddingHorizontal: scale(0),
     borderRadius: verticalScale(16),
   },
   containerAdditionalChat: {
