@@ -130,8 +130,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     marginRight: scale(6),
   },
-  iconReply: {},
-  txtReply: {},
+  iconReply: {
+    marginRight: 10,
+    marginTop: 5,
+  },
+  txtReply: {
+    width: '90%',
+  },
   txtContentReply: {
     fontSize: moderateScale(12),
     ...stylesCommon.fontWeight500,
