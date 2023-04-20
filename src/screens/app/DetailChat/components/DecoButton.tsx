@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
-import { Keyboard, View } from 'react-native';
+import { Dimensions, Keyboard, View } from 'react-native';
 import { AppButton } from '@component';
 import { styles } from './stylesItem';
+
+const height = Dimensions.get('window').height;
 
 export type DecoButtonProps = {
   onDecoSelected: any;
@@ -33,7 +35,7 @@ export default function DecoButton({ onDecoSelected }: DecoButtonProps) {
   Keyboard.addListener(
     'keyboardWillShow',
     () => {
-      setBottom(340);
+      setBottom(height >= 812 ? 340 : 250);
     }
   )
   Keyboard.addListener(
