@@ -346,14 +346,14 @@ const ItemMessage = React.memo((props: any) => {
       return color;
     }
   };
-  
+
   /**
    * 自分のメンションが入っているメッセージ
    */
   const checkMessageToSelfMention = () => {
     let isSelfMention = false;
     //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-    const matchs = text.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
+    const matchs = text?.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
     if (matchs != null) {
       isSelfMention = true;
     } else {
