@@ -497,7 +497,7 @@ const ItemMessage = React.memo((props: any) => {
                   ) : (
                     <>
                       {msg_type == 6 || msg_type == 8 ? null : (
-                        <View style={styles.containerViewChat}>
+                        <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
                           reply_to_message_stamp?.stamp_icon ||
