@@ -134,9 +134,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 5,
   },
-  txtReply: {
-    width: '90%',
-  },
+  txtReply: {},
   txtContentReply: {
     fontSize: moderateScale(12),
     ...stylesCommon.fontWeight500,
