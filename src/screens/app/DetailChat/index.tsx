@@ -182,7 +182,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [listUser, newIndexArray],
+    [listUser, newIndexArray, listChat],
   );
 
   //Check phạm vi để gọi hàm loadmore
