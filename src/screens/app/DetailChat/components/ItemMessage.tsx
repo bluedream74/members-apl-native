@@ -98,6 +98,7 @@ const ItemMessage = React.memo((props: any) => {
     msg_type,
     reply_to_message_text,
     reply_to_message_user,
+    reply_to_message_user_id,
     attachment_files,
     reply_to_message_files,
     reply_to_message_stamp,
@@ -110,6 +111,7 @@ const ItemMessage = React.memo((props: any) => {
     message_quote,
     quote_message_id,
     quote_message_user,
+    quote_message_user_id,
     index,
     updated_at,
     reply_to_message_id,
@@ -515,8 +517,10 @@ const ItemMessage = React.memo((props: any) => {
                                     style={
                                       styles.containerAdditionalMessageText
                                     }>
-                                    {user.name}が{reply_to_message_user}
-                                    に返信しました
+                                    {reply_to_message_user_id !== user?._id && reply_to_message_user_id === user_id && user.name + 'が' + reply_to_message_user + 'に返信しました'}
+                                    {reply_to_message_user_id === user?._id && reply_to_message_user_id === user_id && '自分に返信しました'}
+                                    {reply_to_message_user_id !== user?._id && reply_to_message_user_id !== user_id && reply_to_message_user + 'に返信しました'}
+
                                   </Text>
                                 </View>
                               )}
