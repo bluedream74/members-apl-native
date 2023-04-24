@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '78%',
+    top: '74%',
   },
   viewTaskWithKeyboard: {
     justifyContent: 'center',

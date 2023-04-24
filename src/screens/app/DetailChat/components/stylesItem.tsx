@@ -25,11 +25,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(11),
     alignItems: 'center',
   },
+  containerViewChat: {
+    maxWidth: '77%',
+    paddingVertical: verticalScale(2),
+    paddingHorizontal: scale(0),
+    borderRadius: verticalScale(16),
+  },
+  containerAdditionalChat: {
+    maxWidth: '80%',
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(5),
+    borderRadius: verticalScale(16),
+    marginBottom: scale(-10),
+  },
   containerChat: {
-    maxWidth: '70%',
+    maxWidth: '100%',
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(14),
     borderRadius: verticalScale(16),
+  },
+  containerAdditionalMessage: {
+    maxWidth: '100%',
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(5),
+    borderRadius: verticalScale(16),
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  containerAdditionalMessageText: {
+    fontSize: moderateScale(10),
+    color: colors.darkGrayText,
   },
   chat: {
     flex: 1,
@@ -108,9 +134,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 5,
   },
-  txtReply: {
-    width: '90%',
-  },
+  txtReply: {},
   txtContentReply: {
     fontSize: moderateScale(12),
     ...stylesCommon.fontWeight500,
