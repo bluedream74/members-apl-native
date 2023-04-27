@@ -56,14 +56,14 @@ export default function MessageInfo({
       mixedUAStyles: {
         fontWeight: 'bold'
       },
-      contentModel: HTMLContentModel.block
+      contentModel: HTMLContentModel.textual
     }),
     'deco-red': HTMLElementModel.fromCustomModel({
       tagName: 'deco-red',
       mixedUAStyles: {
         color: '#E44122',
       },
-      contentModel: HTMLContentModel.block
+      contentModel: HTMLContentModel.textual
     })
   };
 
