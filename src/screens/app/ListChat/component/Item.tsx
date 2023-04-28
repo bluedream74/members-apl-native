@@ -251,7 +251,7 @@ const Item = React.memo((props: any) => {
           {item?.message_unread > 0 ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
-                {item?.message_unread}
+                {item?.message_unread > 9 ? '9+' : item?.message_unread}
               </Text>
               {item?.message_mention_unread === true ? (
                 <View style={styles.viewActiveTag} />
