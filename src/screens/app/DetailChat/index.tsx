@@ -84,6 +84,7 @@ const DetailChat = (props: any) => {
     setInputText,
     textSelection,
     onDecoSelected,
+    keyboardHeight,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -130,7 +131,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, messageQuote],
+    [messageReply, message_edit, ids, messageQuote],
   );
 
   //Render ra UI của message
@@ -181,7 +182,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [listUser, newIndexArray],
+    [listUser, newIndexArray, listChat],
   );
 
   //Check phạm vi để gọi hàm loadmore
@@ -371,7 +372,7 @@ const DetailChat = (props: any) => {
         />
         <DecoButton onDecoSelected={onDecoSelected} />
         {/* create task icon */}
-        <View style={styles.viewTask}>
+        <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>
@@ -385,6 +386,7 @@ const DetailChat = (props: any) => {
         selected={selected}
         setSelected={setSelected}
         showTaskForm={showTaskForm}
+        keyboardHeight={keyboardHeight}
       />
       <ModalUserList
         visible={showUserList}
@@ -393,6 +395,7 @@ const DetailChat = (props: any) => {
         setShowTaskForm={setShowTaskForm}
         setShowUserList={setShowUserList}
         setSelected={setSelected}
+        keyboardHeight={keyboardHeight}
       />
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile

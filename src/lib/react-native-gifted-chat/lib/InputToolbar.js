@@ -103,7 +103,7 @@ export default class InputToolbar extends React.Component {
                 <View style={[
                     styles.container,
                     { position: this.state.position },
-                    { bottom: (this.state.position === 'relative' && heigth >= 812) ? 20 : 5 },
+                    { bottom: (this.state.position === 'relative' && heigth >= 812) ? 50 : 5 },
                     this.props.containerStyle,
                 ]}>
                     {this.renderAccessory()}

@@ -99,7 +99,7 @@ const ListReaction = (props: any) => {
     try {
       const res = await removeReactionApi(body);
       getListReaction();
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: room_id,
         task_id: null,

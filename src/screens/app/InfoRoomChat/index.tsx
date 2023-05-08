@@ -91,7 +91,7 @@ const InfoRoomChat = (props: any) => {
         message: res?.data?.message,
         type: 'success',
       });
-      // socket.emit('ChatGroup_update_ind', {
+      // socket.emit('ChatGroup_update_ind2', {
       //   user_id: user_id,
       //   room_id: idRoomChat,
       //   member_info: {
@@ -206,7 +206,7 @@ const InfoRoomChat = (props: any) => {
         message: res?.data?.message,
         type: 'success',
       });
-      // socket.emit('ChatGroup_update_ind', {
+      // socket.emit('ChatGroup_update_ind2', {
       //   user_id: user_id,
       //   room_id: idRoomChat,
       //   member_info: {

@@ -56,14 +56,14 @@ export default function MessageInfo({
       mixedUAStyles: {
         fontWeight: 'bold'
       },
-      contentModel: HTMLContentModel.block
+      contentModel: HTMLContentModel.textual
     }),
     'deco-red': HTMLElementModel.fromCustomModel({
       tagName: 'deco-red',
       mixedUAStyles: {
         color: '#E44122',
       },
-      contentModel: HTMLContentModel.block
+      contentModel: HTMLContentModel.textual
     })
   };
 
@@ -115,7 +115,7 @@ export default function MessageInfo({
       return str;
     }
 
-    let regexp_url = /(https?:\/\/[^\s]+)/g;
+    let regexp_url = /((h?)(ttps?:\/\/[-_.!~*\'()a-zA-Z0-9;"'\/?:\@&=+\$,%#\[…\]\u3001-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+))/g;
     str = str.replace(regexp_url, '<a href="$1">$1</a>');
     str = str.replace('">https://', '">');
     str = str.replace('">http://', '">');

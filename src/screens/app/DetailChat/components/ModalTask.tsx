@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,7 +8,9 @@ import {
   Image,
   StatusBar,
   TextInput,
-} from 'react-native';
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
 import {iconClose} from '@images';
@@ -25,7 +27,18 @@ import {useSelector} from 'react-redux';
 import moment from 'moment/moment';
 
 const ModalTask = React.memo((prop: any) => {
-  const {onCancel, visible, onSaveTask, onUpdateTask, idRoomChat, item, selected, setSelected, showTaskForm} = prop;
+  const {
+    onCancel,
+    visible,
+    onSaveTask,
+    onUpdateTask,
+    idRoomChat,
+    item,
+    selected,
+    setSelected,
+    showTaskForm,
+    keyboardHeight,
+  } = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
   const [listUser, setListUser] = useState<any>([]);
@@ -34,6 +47,7 @@ const ModalTask = React.memo((prop: any) => {
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
+  const inputRef = useRef();
 
   useEffect(() => {
     getListUserApi();
@@ -100,6 +114,9 @@ const ModalTask = React.memo((prop: any) => {
 
   const closeModal = () => {
     onCancel();
+  };
+  const onPressDescription = () => {
+    inputRef.current.focus();
   };
   const saveTask = () => {
     let data;
@@ -173,211 +190,221 @@ const ModalTask = React.memo((prop: any) => {
       visible={visible}
       onRequestClose={closeModal}
       animationType="fade">
-      <View style={styles.containerModal}>
-        <View
-          style={styles.viewOut}
-          //@ts-ignore
-          onStartShouldSetResponder={closeModal}
-        />
-        <View style={styles.container}>
-          <View style={styles.viewHeader}>
-            <TouchableOpacity
-              style={styles.buttonClose}
-              hitSlop={HITSLOP}
-              onPress={closeModal}>
-              <Image source={iconClose} style={styles.icon} />
-            </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.containerModal}>
+          <View
+            style={styles.viewOut}
+            //@ts-ignore
+            onStartShouldSetResponder={closeModal}
+          />
+          <View style={styles.container}>
+            <View style={styles.viewHeader}>
+              <TouchableOpacity
+                style={styles.buttonClose}
+                hitSlop={HITSLOP}
+                onPress={closeModal}>
+                <Image source={iconClose} style={styles.icon} />
+              </TouchableOpacity>
+              <AppButton
+                title={'保存'}
+                onPress={saveTask}
+                styleButton={styles.buttonSave}
+                styleTitle={styles.buttonSaveTitle}
+              />
+            </View>
+            <View style={styles.parentHr} />
+            <View style={styles.rowTitle}>
+              <Text style={styles.textTitleInput}>タスク名</Text>
+              <View style={styles.mandatory}>
+                <Text style={styles.textMandatory}>必須</Text>
+              </View>
+            </View>
+            <AppInput
+              onChange={(text: any) => {
+                setTaskName(text);
+              }}
+              value={taskName}
+              styleContainer={styles.containerSearch}
+              styleInput={styles.input}
+            />
+            <Text style={[styles.textTitleInput, {paddingTop: 10}]}>期間</Text>
+            <View style={styles.row}>
+              <Text
+                style={[
+                  styles.textTitleInput,
+                  {width: '10%', color: '#777777', ...stylesCommon.fontWeight500},
+                ]}>
+                終了
+              </Text>
+              <View style={styles.periodBox}>
+                <DatePicker
+                  style={styles.datePickerStyle}
+                  date={date}
+                  mode="date"
+                  placeholder="終了日を入力"
+                  format="YYYY/MM/DD"
+                  confirmBtnText="決定"
+                  cancelBtnText="キャンセル"
+                  customStyles={{
+                    dateIcon: {
+                      position: 'absolute',
+                      right: -5,
+                      top: 4,
+                      marginLeft: 0,
+                      display: 'none',
+                    },
+                    dateInput: {
+                      borderColor: 'gray',
+                      alignItems: 'flex-start',
+                      borderWidth: 1,
+                      borderRadius: moderateScale(10),
+                      padding: 5,
+                      paddingLeft: 15,
+                    },
+                    placeholderText: {
+                      fontSize: 12,
+                      color: 'gray',
+                    },
+                    dateText: {
+                      fontSize: 12,
+                    },
+                  }}
+                  onDateChange={date => {
+                    setDate(date);
+                  }}
+                />
+              </View>
+              <View style={styles.periodBox}>
+                <DatePicker
+                  style={styles.datePickerStyle}
+                  date={time}
+                  mode="time"
+                  placeholder="終了時刻を選択"
+                  // format="HH:II"
+                  confirmBtnText="決定"
+                  cancelBtnText="キャンセル"
+                  customStyles={{
+                    dateIcon: {
+                      position: 'absolute',
+                      right: -5,
+                      top: 4,
+                      marginLeft: 0,
+                      display: 'none',
+                    },
+                    dateInput: {
+                      borderColor: 'gray',
+                      alignItems: 'flex-start',
+                      borderWidth: 1,
+                      borderRadius: moderateScale(10),
+                      padding: 5,
+                      paddingLeft: 15,
+                    },
+                    placeholderText: {
+                      fontSize: 12,
+                      color: 'gray',
+                    },
+                    dateText: {
+                      fontSize: 12,
+                    },
+                  }}
+                  onDateChange={time => {
+                    setTime(time + ':00');
+                  }}
+                />
+              </View>
+            </View>
+            <View style={styles.checkboxContainer}>
+              <CheckBox
+                value={isGoogleCalendar}
+                onValueChange={setIsGoogleCalendar}
+                style={styles.checkbox}
+                boxType={'square'}
+                hideBox={false}
+              />
+              <Text style={styles.checkboxLabel}>Googleカレンダーに表示</Text>
+              <CheckBox
+                value={isAllDay}
+                onValueChange={setIsAllDay}
+                style={styles.checkbox}
+                boxType={'square'}
+                hideBox={false}
+              />
+              <Text style={styles.checkboxLabel}>終日</Text>
+            </View>
+
+            <View style={[styles.rowTitle, {paddingTop: 0}]}>
+              <Text style={styles.textTitleInput}>担当者</Text>
+              <View style={styles.mandatory}>
+                <Text style={styles.textMandatory}>必須</Text>
+              </View>
+            </View>
+            <View style={styles.containerDropdown}>
+              <MultiSelect
+                style={styles.dropdown}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={listUser}
+                labelField="label"
+                valueField="value"
+                placeholder="担当者を選択"
+                value={selected}
+                search
+                searchPlaceholder="Search..."
+                onChange={user => {
+                  setSelected(user);
+                }}
+                renderLeftIcon={() => {}}
+                renderItem={renderDataItem}
+                renderSelectedItem={(item, unSelect) => (
+                  <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                    <View style={styles.selectedStyle}>
+                      <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
+              <StatusBar />
+            </View>
+            <Text style={[styles.textTitleInput, {paddingTop: 10}]}>説明</Text>
+            <View style={styles.containerDescriptionModal}>
+              <View
+                style={
+                  keyboardHeight === 0
+                    ? styles.viewContent
+                    : styles.viewContentWithKeyboard
+                }>
+                <TouchableOpacity
+                  style={{
+                    height: '90%',
+                    marginHorizontal: 5,
+                    backgroundColor: '#ffffff',
+                    marginTop: 5,
+                  }}
+                  onPress={onPressDescription}>
+                  <TextInput
+                    ref={inputRef}
+                    editable
+                    multiline
+                    numberOfLines={5}
+                    maxLength={400}
+                    onChangeText={text => setTaskDescription(text)}
+                    value={taskDescription}
+                    style={{padding: 10}}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
             <AppButton
               title={'保存'}
               onPress={saveTask}
-              styleButton={styles.buttonSave}
-              styleTitle={styles.buttonSaveTitle}
+              styleButton={styles.buttonBottomSave}
+              styleTitle={styles.buttonBottomSaveTitle}
             />
           </View>
-          <View style={styles.parentHr} />
-          <View style={styles.rowTitle}>
-            <Text style={styles.textTitleInput}>タスク名</Text>
-            <View style={styles.mandatory}>
-              <Text style={styles.textMandatory}>必須</Text>
-            </View>
-          </View>
-          <AppInput
-            onChange={(text: any) => {
-              setTaskName(text);
-            }}
-            value={taskName}
-            styleContainer={styles.containerSearch}
-            styleInput={styles.input}
-          />
-          <Text style={[styles.textTitleInput, {paddingTop: 10}]}>期間</Text>
-          <View style={styles.row}>
-            <Text
-              style={[
-                styles.textTitleInput,
-                {width: '10%', color: '#777777', ...stylesCommon.fontWeight500},
-              ]}>
-              終了
-            </Text>
-            <View style={styles.periodBox}>
-              <DatePicker
-                style={styles.datePickerStyle}
-                date={date}
-                mode="date"
-                placeholder="終了日を入力"
-                format="YYYY/MM/DD"
-                confirmBtnText="決定"
-                cancelBtnText="キャンセル"
-                customStyles={{
-                  dateIcon: {
-                    position: 'absolute',
-                    right: -5,
-                    top: 4,
-                    marginLeft: 0,
-                    display: 'none',
-                  },
-                  dateInput: {
-                    borderColor: 'gray',
-                    alignItems: 'flex-start',
-                    borderWidth: 1,
-                    borderRadius: moderateScale(10),
-                    padding: 5,
-                    paddingLeft: 15,
-                  },
-                  placeholderText: {
-                    fontSize: 12,
-                    color: 'gray',
-                  },
-                  dateText: {
-                    fontSize: 12,
-                  },
-                }}
-                onDateChange={date => {
-                  setDate(date);
-                }}
-              />
-            </View>
-            <View style={styles.periodBox}>
-              <DatePicker
-                style={styles.datePickerStyle}
-                date={time}
-                mode="time"
-                placeholder="終了時刻を選択"
-                // format="HH:II"
-                confirmBtnText="決定"
-                cancelBtnText="キャンセル"
-                customStyles={{
-                  dateIcon: {
-                    position: 'absolute',
-                    right: -5,
-                    top: 4,
-                    marginLeft: 0,
-                    display: 'none',
-                  },
-                  dateInput: {
-                    borderColor: 'gray',
-                    alignItems: 'flex-start',
-                    borderWidth: 1,
-                    borderRadius: moderateScale(10),
-                    padding: 5,
-                    paddingLeft: 15,
-                  },
-                  placeholderText: {
-                    fontSize: 12,
-                    color: 'gray',
-                  },
-                  dateText: {
-                    fontSize: 12,
-                  },
-                }}
-                onDateChange={time => {
-                  setTime(time + ':00');
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.checkboxContainer}>
-            <CheckBox
-              value={isGoogleCalendar}
-              onValueChange={setIsGoogleCalendar}
-              style={styles.checkbox}
-              boxType={'square'}
-              hideBox={false}
-            />
-            <Text style={styles.checkboxLabel}>Googleカレンダーに表示</Text>
-            <CheckBox
-              value={isAllDay}
-              onValueChange={setIsAllDay}
-              style={styles.checkbox}
-              boxType={'square'}
-              hideBox={false}
-            />
-            <Text style={styles.checkboxLabel}>終日</Text>
-          </View>
-
-          <View style={[styles.rowTitle, {paddingTop: 0}]}>
-            <Text style={styles.textTitleInput}>担当者</Text>
-            <View style={styles.mandatory}>
-              <Text style={styles.textMandatory}>必須</Text>
-            </View>
-          </View>
-          <View style={styles.containerDropdown}>
-            <MultiSelect
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={listUser}
-              labelField="label"
-              valueField="value"
-              placeholder="担当者を選択"
-              value={selected}
-              search
-              searchPlaceholder="Search..."
-              onChange={user => {
-                setSelected(user);
-              }}
-              renderLeftIcon={() => {}}
-              renderItem={renderDataItem}
-              renderSelectedItem={(item, unSelect) => (
-                <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                  <View style={styles.selectedStyle}>
-                    <Text style={styles.textSelectedStyle}>{item.label}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
-            <StatusBar />
-          </View>
-          <Text style={[styles.textTitleInput, {paddingTop: 10}]}>説明</Text>
-          <View
-            style={{
-              backgroundColor: '#ffffff',
-              borderColor: '#000000',
-              borderWidth: 0.5,
-              width: '100%',
-              height: '30%',
-              marginBottom: 10,
-              borderRadius: moderateScale(10),
-            }}>
-            <TextInput
-              editable
-              multiline
-              numberOfLines={5}
-              maxLength={400}
-              onChangeText={text => setTaskDescription(text)}
-              value={taskDescription}
-              style={{padding: 10}}
-            />
-          </View>
-          <AppButton
-            title={'保存'}
-            onPress={saveTask}
-            styleButton={styles.buttonBottomSave}
-            styleTitle={styles.buttonBottomSaveTitle}
-          />
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 });
@@ -393,6 +420,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     background: '#000000',
+  },
+  containerDescriptionModal: {
+    width: '100%',
+    height: '30%',
+    backgroundColor: 'transparent',
   },
   container: {
     width: '100%',
@@ -515,7 +547,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    height: 30
+    height: 30,
   },
   selectedStyle: {
     flexDirection: 'row',
@@ -596,6 +628,27 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     fontSize: moderateScale(11),
     color: '#999999',
+  },
+  viewContent: {
+    backgroundColor: '#ffffff',
+    borderColor: '#000000',
+    borderWidth: 0.5,
+    width: '100%',
+    height: '90%',
+    marginBottom: 10,
+    borderRadius: moderateScale(10),
+  },
+  viewContentWithKeyboard: {
+    position: 'absolute',
+    top: '-100%',
+    margin: '0 auto',
+    backgroundColor: '#ffffff',
+    borderColor: '#000000',
+    borderWidth: 0.5,
+    width: '100%',
+    height: '90%',
+    marginBottom: 10,
+    borderRadius: moderateScale(10),
   },
 });
 

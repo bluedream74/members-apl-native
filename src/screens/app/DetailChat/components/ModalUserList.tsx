@@ -7,13 +7,11 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import {AppButton} from '@component';
-import {iconClose} from '@images';
-import {getBottomSpace} from 'react-native-iphone-x-helper';
+
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import {HITSLOP} from '@util';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 AntDesign.loadFont().then();
 import {getListUser} from '@services';
@@ -21,11 +19,14 @@ import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
 import {ItemUser} from '../../DetailChat/components/ItemUser';
 import { useSelector } from "react-redux";
+import { AppInput } from "@component";
 
 const ModalUserList = React.memo((prop: any) => {
-  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected} = prop;
+  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected, keyboardHeight} = prop;
   const [listUser, setListUser] = useState<any>([]);
+  const [allListUser, setAllListUser] = useState<any>([]);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
+  const [searchWord, setSearchWord] = useState<any>('');
 
   useEffect(() => {
     getListUserApi();
@@ -45,6 +46,19 @@ const ModalUserList = React.memo((prop: any) => {
         };
       });
       setListUser(
+        dataConvert
+          .map(user => {
+            return {label: user.label, value: user.id, icon_image: user.icon_image};
+          })
+          .concat([
+            {
+              label: loginUser.last_name + loginUser.first_name,
+              value: loginUser.id,
+              icon_image: loginUser.icon_image,
+            },
+          ]),
+      );
+      setAllListUser(
         dataConvert
           .map(user => {
             return {label: user.label, value: user.id, icon_image: user.icon_image};
@@ -84,16 +98,28 @@ const ModalUserList = React.memo((prop: any) => {
     <Modal
       transparent={true}
       visible={visible}
-      onRequestClose={closeModal}
+      onRequestClose={() => {}}
+      style={{ width: '100%', alignSelf: 'center', height: '100%', justifyContent: 'flex-start', backgroundColor: 'green' }}
       animationType="fade">
-      <View style={styles.containerModal}>
-        <View
-          style={styles.viewOut}
-          //@ts-ignore
-          onStartShouldSetResponder={closeModal}
-        />
-        <View style={styles.container}>
-          <View style={styles.viewContent}>
+      <TouchableWithoutFeedback onPress={() => {
+        closeModal();
+      }}>
+        <View style={styles.containerModal}>
+          <View style={keyboardHeight === 0 ? styles.viewContent : styles.viewContentWithKeyboard}>
+            <AppInput
+              onChange={(text: any) => {
+                setSearchWord(text);
+                if (text !== '') {
+                  setListUser(allListUser.filter((user) => user.label.includes(text)));
+                } else {
+                  setListUser(allListUser);
+                }
+              }}
+              value={searchWord}
+              styleContainer={styles.containerSearch}
+              styleInput={styles.input}
+              placeholder={'Search'}
+            />
             <FlatList
               data={listUser}
               renderItem={renderItem}
@@ -105,10 +131,11 @@ const ModalUserList = React.memo((prop: any) => {
               onEndReachedThreshold={0.01}
               onEndReached={() => {}}
               contentContainerStyle={{paddingBottom: 5}}
+              keyboardShouldPersistTaps={'handled'}
             />
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 });
@@ -116,24 +143,20 @@ const ModalUserList = React.memo((prop: any) => {
 const styles = StyleSheet.create({
   containerModal: {
     position: 'absolute',
-    bottom: 170,
-    left: 10,
-    width: '40%',
-    height: '20%',
+    width: '100%',
+    height: '100%',
     justifyContent: 'flex-end',
-    alignItems: 'center',
-    textAlign: 'center',
-    background: '#ff0000',
-  },
-  container: {
-    width: '100%',
-    height: '100%',
     alignItems: 'flex-start',
+    textAlign: 'center',
+    backgroundColor: 'transparent',
   },
+
   viewOut: {
+    top: 0,
+    left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'transparent',
+    backgroundColor: '#0000ff',
   },
   icon: {
     tintColor: colors.darkGrayText,
@@ -164,13 +187,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   containerSearch: {
-    borderRadius: verticalScale(10) / 2,
-    paddingHorizontal: scale(13),
+    width: '90%',
+    textAlign: 'center',
+    alignSelf: 'center',
+    borderRadius: moderateScale(0),
+    margin: scale(5),
+    paddingHorizontal: verticalScale(1),
   },
   input: {
-    paddingVertical: verticalScale(10),
-    fontSize: moderateScale(14),
-    ...stylesCommon.fontWeight500,
+    paddingVertical: verticalScale(1),
+    fontSize: moderateScale(13),
   },
   periodBox: {
     width: '45%',
@@ -307,8 +333,20 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
   viewContent: {
-    width: '100%',
-    height: '100%',
+    width: '50%',
+    height: '20%',
+    bottom: 180,
+    left: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: moderateScale(10),
+    borderWidth: 0.5,
+    borderColor: '#999999',
+  },
+  viewContentWithKeyboard: {
+    width: '50%',
+    height: '20%',
+    bottom: 520,
+    left: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: moderateScale(10),
     borderWidth: 0.5,

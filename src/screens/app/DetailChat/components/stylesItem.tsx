@@ -5,7 +5,7 @@ import {
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import {colors, stylesCommon} from '@stylesCommon';
+import { colors, stylesCommon } from '@stylesCommon';
 
 const styles = StyleSheet.create({
   container: {
@@ -25,11 +25,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(11),
     alignItems: 'center',
   },
+  containerViewChat: {
+    maxWidth: '77%',
+    paddingVertical: verticalScale(2),
+    paddingHorizontal: scale(0),
+    borderRadius: verticalScale(16),
+  },
+  containerAdditionalChat: {
+    maxWidth: '80%',
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(5),
+    borderRadius: verticalScale(16),
+    marginBottom: scale(-10),
+  },
   containerChat: {
-    maxWidth: '70%',
+    maxWidth: '100%',
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(14),
     borderRadius: verticalScale(16),
+  },
+  containerAdditionalMessage: {
+    maxWidth: '100%',
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(5),
+    borderRadius: verticalScale(16),
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  containerAdditionalMessageText: {
+    fontSize: moderateScale(10),
+    color: colors.darkGrayText,
   },
   chat: {
     flex: 1,
@@ -108,9 +134,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 5,
   },
-  txtReply: {
-    width:'90%',
-  },
+  txtReply: {},
   txtContentReply: {
     fontSize: moderateScale(12),
     ...stylesCommon.fontWeight500,
@@ -257,10 +281,11 @@ const styles = StyleSheet.create({
   },
   decoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: '#f2f2f2',
-    paddingBottom: 10,
-    paddingTop: Platform.OS === 'ios' ? 5 : 0,
+    position: 'relative',
+    paddingLeft: moderateScale(15),
+    paddingBottom: moderateScale(30),
+    paddingTop: Platform.OS === 'ios' ? moderateScale(16) : moderateScale(6),
   },
   decoButton: {
     width: moderateScale(56),
@@ -269,12 +294,13 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     borderRadius: 16,
-    paddingVertical: 0
+    paddingVertical: 0,
+    marginLeft: 5,
   },
   decoText: {
     color: '#444444',
-    fontSize: 14,
+    fontSize: moderateScale(14),
   },
 });
 
-export {styles};
+export { styles };

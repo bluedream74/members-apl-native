@@ -37,6 +37,7 @@ import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
+import { Keyboard, KeyboardEvent } from 'react-native';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -87,6 +88,23 @@ export const useFunction = (props: any) => {
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    function onKeyboardDidShow(e: KeyboardEvent) { // Remove type here if not using TypeScript
+      setKeyboardHeight(e.endCoordinates.height);
+    }
+
+    function onKeyboardDidHide() {
+      setKeyboardHeight(0);
+    }
+
+    const showSubscription = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (redLineId) {
@@ -166,6 +184,8 @@ export const useFunction = (props: any) => {
       reply_to_message_stamp: message?.reply_to_message_stamp,
       stamp_icon: message?.stamp_icon,
       reply_to_message_id: message?.reply_to_message_id,
+      reply_to_message_user: message?.reply_to_message_user,
+      reply_to_message_user_id: message?.reply_to_message_user_id,
       stamp_no: message?.stamp_no,
       index: index,
       users_seen: message?.users_seen,
@@ -175,6 +195,8 @@ export const useFunction = (props: any) => {
       message_quote: message?.message_quote,
       updated_at: message?.updated_at,
       quote_message_id: message?.quote_message_id,
+      quote_message_user: message?.quote_message_user,
+      quote_message_user_id: message?.quote_message_user_id,
     };
   }, []);
 
@@ -246,7 +268,7 @@ export const useFunction = (props: any) => {
         setShowRedLine(false);
         GlobalService.showLoading();
         const res = await deleteMessageApi(id, idRoomChat);
-        socket.emit('message_ind', {
+        socket.emit('message_ind2', {
           user_id: user_id,
           room_id: idRoomChat,
           task_id: null,
@@ -291,7 +313,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await replyMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -318,7 +340,7 @@ export const useFunction = (props: any) => {
             ids: ids,
           };
           const res = await editMessageApi(message_edit?.id, param);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -352,7 +374,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await sendMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -381,7 +403,7 @@ export const useFunction = (props: any) => {
             data.append('ids[]', item);
           });
           const res = await sendMessageApi(data);
-          socket.emit('message_ind', {
+          socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
             room_id: idRoomChat,
             task_id: null,
@@ -417,7 +439,8 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       formattedText1.shift();
       setFormattedText(formattedText1);
-
+      // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
+      setInputText('');
     },
     [messageReply, message_edit, ids, messageQuote],
   );
@@ -475,7 +498,7 @@ export const useFunction = (props: any) => {
       reaction_no: data,
     };
     const res = await sendReactionApi(body);
-    socket.emit('message_ind', {
+    socket.emit('message_ind2', {
       user_id: user_id,
       room_id: idRoomChat,
       task_id: null,
@@ -561,7 +584,6 @@ export const useFunction = (props: any) => {
               data.append('msg_type', 2);
               data.append('room_id', idRoomChat);
               data.append('from_id', user_id);
-              console.log(user_id)
               let res = await sendMessageApi(data);
               socket.emit('message_ind', {
                 user_id: user_id,
@@ -620,7 +642,7 @@ export const useFunction = (props: any) => {
         data.append('room_id', idRoomChat);
         data.append('from_id', user_id);
         const res = await sendMessageApi(data);
-        socket.emit('message_ind', {
+        socket.emit('message_ind2', {
           user_id: user_id,
           room_id: idRoomChat,
           task_id: null,
@@ -661,7 +683,7 @@ export const useFunction = (props: any) => {
       data.append('method', 0);
       data.append('stamp_no', stamp_no);
       const res = await sendLabelApi(data);
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         task_id: null,
@@ -1044,5 +1066,6 @@ export const useFunction = (props: any) => {
     textSelection,
     setTextSelection,
     onDecoSelected,
+    keyboardHeight,
   };
 };

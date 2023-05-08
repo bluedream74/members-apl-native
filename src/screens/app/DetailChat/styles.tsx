@@ -1,7 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
-import {colors, stylesCommon} from '@stylesCommon';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {isIphoneX} from 'react-native-iphone-x-helper';
+import { StyleSheet, Dimensions } from 'react-native';
+import { colors, stylesCommon } from '@stylesCommon';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
 const height_screen = Dimensions.get('window').height;
 
@@ -99,35 +98,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: verticalScale(5),
   },
-  buttonRight: {marginRight: 16, marginLeft: 0},
+  buttonRight: { marginRight: 16, marginLeft: 0 },
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),
-  },
-  decoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#f2f2f2',
-    paddingBottom: 10,
-  },
-  decoButton: {
-    width: moderateScale(56),
-    height: moderateScale(32),
-    backgroundColor: '#ffffff',
-    borderColor: '#D6D6D6',
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingVertical: 0
-  },
-  decoText: {
-    color: '#444444',
-    fontSize: 14,
   },
   viewTask: {
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '82%',
+    top: '74%',
+  },
+  viewTaskWithKeyboard: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    top: '38%',
   },
   imageTask: {},
   displayNone: {
@@ -145,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {styles};
+export { styles };

@@ -25,7 +25,7 @@ const ViewInvite = React.memo((props: any) => {
         room_id: idRoomChat,
       };
       const res = await addUserMessage(params);
-      socket.emit('message_ind', {
+      socket.emit('message_ind2', {
         user_id: user_id,
         room_id: idRoomChat * -1,
         task_id: null,
