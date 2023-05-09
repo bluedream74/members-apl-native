@@ -548,7 +548,6 @@ export const useFunction = (props: any) => {
     ImagePicker.openPicker({
       multiple: true,
     }).then(async images => {
-      const data = new FormData();
       if (images?.length > 3) {
         cancelModal();
         showMessage({
@@ -560,8 +559,9 @@ export const useFunction = (props: any) => {
         try {
           if (images?.length > 0) {
             GlobalService.showLoading();
-            images?.forEach((item: any) => {
-              const isHEIC =
+            images?.forEach(async (item: any) => {
+              let data = new FormData();
+              let isHEIC =
                 item?.sourceURL?.endsWith('.heic') ||
                 item?.sourceURL?.endsWith('.HEIC');
               data.append('attachment[]', {
@@ -581,34 +581,34 @@ export const useFunction = (props: any) => {
                     : item?.mime,
                 height: item?.height,
               });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+              let res = await sendMessageApi(data);
+              socket.emit('message_ind', {
+                user_id: user_id,
+                room_id: idRoomChat,
+                task_id: null,
+                to_info: null,
+                level: res?.data?.data?.msg_level,
+                message_id: res?.data?.data?.id,
+                message_type: res?.data?.data?.msg_type,
+                method: res?.data?.data?.method,
+                attachment_files: res?.data?.attachmentFiles,
+                stamp_no: res?.data?.data?.stamp_no,
+                relation_message_id: res?.data?.data?.reply_to_message_id,
+                text: res?.data?.data?.message,
+                text2: null,
+                time: res?.data?.data?.created_at,
+              });
+              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+              giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+                animated: true,
+                index: 0,
+              });
+              GlobalService.hideLoading();
             });
           }
-          data.append('msg_type', 2);
-          data.append('room_id', idRoomChat);
-          data.append('from_id', user_id);
-          const res = await sendMessageApi(data);
-          socket.emit('message_ind2', {
-            user_id: user_id,
-            room_id: idRoomChat,
-            task_id: null,
-            to_info: null,
-            level: res?.data?.data?.msg_level,
-            message_id: res?.data?.data?.id,
-            message_type: res?.data?.data?.msg_type,
-            method: res?.data?.data?.method,
-            attachment_files: res?.data?.attachmentFiles,
-            stamp_no: res?.data?.data?.stamp_no,
-            relation_message_id: res?.data?.data?.reply_to_message_id,
-            text: res?.data?.data?.message,
-            text2: null,
-            time: res?.data?.data?.created_at,
-          });
-          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
-          GlobalService.hideLoading();
         } catch (error: any) {
           GlobalService.hideLoading();
         }
