@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: scale(16),
     paddingBottom: getBottomSpace(),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f2f2f2',
   },
   viewOut: {
     width: '100%',

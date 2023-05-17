@@ -437,6 +437,8 @@ export const useFunction = (props: any) => {
           // );
         } catch (error: any) {}
       }
+      // send files
+      sendFile();
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
@@ -451,8 +453,6 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
-      // send files
-      sendFile();
     },
     [messageReply, message_edit, ids, messageQuote],
   );
@@ -1028,7 +1028,7 @@ export const useFunction = (props: any) => {
   const deleteFile = useCallback(
     async sourceURL => {
       const chosenFilesDeleted = chosenFiles.filter(item => {
-        if (item.sourceURL !== sourceURL) {
+        if (item.sourceURL !== sourceURL && typeof item !== 'undefined') {
           return item;
         }
       });
