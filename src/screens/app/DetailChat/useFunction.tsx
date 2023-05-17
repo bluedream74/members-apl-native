@@ -37,7 +37,7 @@ import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
-import { Keyboard, KeyboardEvent } from 'react-native';
+import {Keyboard, KeyboardEvent} from 'react-native';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -90,10 +90,11 @@ export const useFunction = (props: any) => {
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
-  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
-    function onKeyboardDidShow(e: KeyboardEvent) { // Remove type here if not using TypeScript
+    function onKeyboardDidShow(e: KeyboardEvent) {
+      // Remove type here if not using TypeScript
       setKeyboardHeight(e.endCoordinates.height);
     }
 
@@ -101,8 +102,14 @@ export const useFunction = (props: any) => {
       setKeyboardHeight(0);
     }
 
-    const showSubscription = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
+    const showSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      onKeyboardDidShow,
+    );
+    const hideSubscription = Keyboard.addListener(
+      'keyboardDidHide',
+      onKeyboardDidHide,
+    );
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
@@ -444,6 +451,8 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
+      // send files
+      sendFile();
     },
     [messageReply, message_edit, ids, messageQuote],
   );
@@ -584,41 +593,15 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = async() => {
+  const sendFile = async () => {
     try {
-      setPickedFile(!pickedFile)
       if (chosenFiles?.length > 0) {
         GlobalService.showLoading();
-        // send message
-        const dataForMessage = new FormData();
-        dataForMessage.append('room_id', idRoomChat);
-        dataForMessage.append('from_id', user_id);
-        dataForMessage.append('message', imageDescription?.split('\n').join('<br>'));
-        ids?.forEach((item: any) => {
-          dataForMessage.append('ids[]', item);
-        });
-        const res = await sendMessageApi(dataForMessage);
-        socket.emit('message_ind2', {
-          user_id: user_id,
-          room_id: idRoomChat,
-          task_id: null,
-          to_info: null,
-          level: res?.data?.data?.msg_level,
-          message_id: res?.data?.data?.id,
-          message_type: res?.data?.data?.msg_type,
-          method: res?.data?.data?.method,
-          attachment_files: res?.data?.attachmentFiles,
-          stamp_no: res?.data?.data?.stamp_no,
-          relation_message_id: res?.data?.data?.reply_to_message_id,
-          text: res?.data?.data?.message,
-          text2: null,
-          time: res?.data?.data?.created_at,
-        });
-        dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
         // send files
         for (const item of chosenFiles) {
           let data = new FormData();
-          if (item?.sourceURL) {// in case of image
+          if (item?.sourceURL) {
+            // in case of image
             let isHEIC =
               item?.sourceURL?.endsWith('.heic') ||
               item?.sourceURL?.endsWith('.HEIC');
@@ -632,10 +615,10 @@ export const useFunction = (props: any) => {
               type:
                 Platform.OS === 'ios'
                   ? `image/${
-                    isHEIC
-                      ? item?.path?.split('.')[0] + '.JPG'
-                      : item?.path?.split('.').pop()
-                  }}`
+                      isHEIC
+                        ? item?.path?.split('.')[0] + '.JPG'
+                        : item?.path?.split('.').pop()
+                    }}`
                   : item?.mime,
               height: item?.height,
             });
@@ -660,7 +643,8 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          } else {// in case of file
+          } else {
+            // in case of file
             data.append('attachment[]', {
               name: item?.name,
               type: item?.type,
@@ -698,11 +682,12 @@ export const useFunction = (props: any) => {
           });
           GlobalService.hideLoading();
         }
+        setchosenFiles([]);
       }
     } catch (error: any) {
       GlobalService.hideLoading();
     }
-  }
+  };
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
@@ -824,7 +809,7 @@ export const useFunction = (props: any) => {
             newWords.push('\n');
           }
           newWords.push(s);
-        })
+        });
       } else if (word.match('.+\n')) {
         const splitNewWord = word.split('\n');
         splitNewWord.forEach(s => {
@@ -833,7 +818,7 @@ export const useFunction = (props: any) => {
           } else {
             newWords.push('\n');
           }
-        })
+        });
       } else if (word.match('\n.+')) {
         newWords.push(word);
       } else if (word.match('　')) {
@@ -843,7 +828,7 @@ export const useFunction = (props: any) => {
             newWords.push(' ');
           }
           newWords.push(s);
-        })
+        });
       } else {
         newWords.push(word);
       }
@@ -970,14 +955,23 @@ export const useFunction = (props: any) => {
     let newText = '';
     let tag = '[' + tagName + ']';
     if (tagName === 'hr') {
-      newText = inputText.substring(0, textSelection.end) + tag + inputText.substring(textSelection.end);
+      newText =
+        inputText.substring(0, textSelection.end) +
+        tag +
+        inputText.substring(textSelection.end);
     } else {
       // insert closing tags
       let closingTag = '[/' + tagName + ']';
-      newText = inputText.substring(0, textSelection.end) + closingTag + inputText.substring(textSelection.end);
+      newText =
+        inputText.substring(0, textSelection.end) +
+        closingTag +
+        inputText.substring(textSelection.end);
       // insert opening tags
       let openingTag = '[' + tagName + ']';
-      newText = newText.substring(0, textSelection.start) + openingTag + newText.substring(textSelection.start);
+      newText =
+        newText.substring(0, textSelection.start) +
+        openingTag +
+        newText.substring(textSelection.start);
     }
 
     setInputText(newText);
@@ -992,7 +986,7 @@ export const useFunction = (props: any) => {
       project_id: 1,
       item_id: 1,
       task_name: input.taskName,
-      actual_start_date: moment().format("YYYY/MM/DD"),
+      actual_start_date: moment().format('YYYY/MM/DD'),
       actual_start_time: '00:00:00',
       actual_end_date: null,
       plans_end_date: input.date,
@@ -1014,7 +1008,9 @@ export const useFunction = (props: any) => {
     const res = await saveTask(data);
     if (res.data?.errors) {
       showMessage({
-        message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
+        message: res.data?.errors
+          ? JSON.stringify(res.data?.errors)
+          : 'Network Error',
         type: 'danger',
       });
     } else {
@@ -1029,6 +1025,17 @@ export const useFunction = (props: any) => {
     const res = await updateTask(data);
     setShowTaskForm(false);
   }, []);
+  const deleteFile = useCallback(
+    async sourceURL => {
+      const chosenFilesDeleted = chosenFiles.filter(item => {
+        if (item.sourceURL !== sourceURL) {
+          return item;
+        }
+      });
+      setchosenFiles(chosenFilesDeleted);
+    },
+    [chosenFiles],
+  );
 
   return {
     chatUser,
@@ -1104,9 +1111,7 @@ export const useFunction = (props: any) => {
     setTextSelection,
     onDecoSelected,
     keyboardHeight,
-    sendFile,
     chosenFiles,
-    imageDescription,
-    setImageDescription
+    deleteFile,
   };
 };

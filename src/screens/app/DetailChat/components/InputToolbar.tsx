@@ -22,11 +22,24 @@ export const renderSend = (props: any) => {
 };
 
 export const renderInputToolbar = (props: any) => {
+  let height = 60;
+  let bottom = 10;
+  let diffHeight = 0;
+  if (props && props.formattedText.length > 0) {
+    height = 80;
+    diffHeight = 20;
+  }
+  if (props && props.keyboardHeight > 0) {
+    bottom = 60 + diffHeight;
+  } else {
+    bottom = 10;
+  }
+
   return (
     <>
       <InputToolbar
         {...props}
-        containerStyle={styles.toolBar}
+        containerStyle={[styles.toolBar, {height: height, bottom: bottom}]}
         primaryStyle={{alignItems: 'center'}}
       />
     </>

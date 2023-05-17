@@ -13,7 +13,7 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {ModalPickedFile} from './components/ModalPickedFile';
+import {ShowPickedFile} from './components/ShowPickedFile';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
@@ -45,10 +45,7 @@ const DetailChat = (props: any) => {
     reactionMessage,
     navigatiteToListReaction,
     pickFile,
-    pickedFile,
     cancelModal,
-    cancelModalPickedFile,
-    onBack,
     chosePhoto,
     choseFile,
     sendLabel,
@@ -89,10 +86,8 @@ const DetailChat = (props: any) => {
     textSelection,
     onDecoSelected,
     keyboardHeight,
-    sendFile,
     chosenFiles,
-    imageDescription,
-    setImageDescription
+    deleteFile,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -263,6 +258,7 @@ const DetailChat = (props: any) => {
         <GiftedChat
           text={text}
           formattedText={formattedText}
+          keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
           onInputTextChanged={inputText => {
             formatText(inputText, false);
@@ -379,6 +375,12 @@ const DetailChat = (props: any) => {
           messagesContainerStyle={styles.containerMessage}
         />
         <DecoButton onDecoSelected={onDecoSelected} />
+        {chosenFiles.length > 0 && (
+          <ShowPickedFile
+            chosenFiles={chosenFiles}
+            deleteFile={deleteFile}
+          />
+        )}
         {/* create task icon */}
         <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
           <TouchableOpacity onPress={onCreateTask}>
@@ -411,15 +413,6 @@ const DetailChat = (props: any) => {
         onCancel={cancelModal}
         chosePhoto={chosePhoto}
         choseFile={choseFile}
-      />
-      <ModalPickedFile
-        visible={pickedFile}
-        onCancel={cancelModalPickedFile}
-        onBack={onBack}
-        sendFile={sendFile}
-        chosenFiles={chosenFiles}
-        setImageDescription={setImageDescription}
-        imageDescription={imageDescription}
       />
     </View>
   );
