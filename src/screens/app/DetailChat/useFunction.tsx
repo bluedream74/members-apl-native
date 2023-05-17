@@ -69,9 +69,7 @@ export const useFunction = (props: any) => {
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<any>(1);
   const [pickFile, setPickFile] = useState(false);
-  const [pickedFile, setPickedFile] = useState(false);
   const [chosenFiles, setchosenFiles] = useState<any>([]);
-  const [imageDescription, setImageDescription] = useState<string>('');
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
   const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
@@ -438,7 +436,7 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       }
       // send files
-      sendFile();
+      await sendFile(chosenFiles);
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
@@ -454,7 +452,7 @@ export const useFunction = (props: any) => {
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
-    [messageReply, message_edit, ids, messageQuote],
+    [messageReply, message_edit, ids, messageQuote, chosenFile],
   );
 
   const updateGimMessage = useCallback(
@@ -554,16 +552,10 @@ export const useFunction = (props: any) => {
   const cancelModal = useCallback(() => {
     setPickFile(!pickFile);
   }, [pickFile]);
-  const cancelModalPickedFile = useCallback(() => {
-    setPickedFile(!pickedFile);
-  }, [pickedFile]);
-  const onBack = useCallback(() => {
-    setPickedFile(!pickedFile);
-    setPickFile(!pickFile);
-  }, [pickedFile]);
 
   const chosePhoto = () => {
     setShowRedLine(false);
+    setchosenFiles([]);
     ImagePicker.openPicker({
       multiple: true,
     }).then(async images => {
@@ -576,118 +568,124 @@ export const useFunction = (props: any) => {
       } else {
         cancelModal();
         setchosenFiles(images);
-        setPickedFile(!pickedFile);
       }
     });
   };
 
   const choseFile = () => {
     setShowRedLine(false);
+    setchosenFiles([]);
     DocumentPicker.pickMultiple({
       presentationStyle: 'fullScreen',
       copyTo: 'cachesDirectory',
     }).then(async file => {
       cancelModal();
       setchosenFiles(file);
-      setPickedFile(!pickedFile);
     });
   };
 
-  const sendFile = async () => {
-    try {
-      if (chosenFiles?.length > 0) {
-        GlobalService.showLoading();
-        // send files
-        for (const item of chosenFiles) {
-          let data = new FormData();
-          if (item?.sourceURL) {
-            // in case of image
-            let isHEIC =
-              item?.sourceURL?.endsWith('.heic') ||
-              item?.sourceURL?.endsWith('.HEIC');
-            data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\\/]/, ''),
-              name: item?.path?.replace(/^.*[\\\/]/, ''),
-              width: item?.width,
-              uri: item?.path,
-              path: item?.path,
-              size: item?.size,
-              type:
-                Platform.OS === 'ios'
-                  ? `image/${
-                      isHEIC
-                        ? item?.path?.split('.')[0] + '.JPG'
-                        : item?.path?.split('.').pop()
-                    }}`
-                  : item?.mime,
-              height: item?.height,
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            let res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          } else {
-            // in case of file
-            data.append('attachment[]', {
-              name: item?.name,
-              type: item?.type,
-              uri:
-                Platform.OS === 'ios'
-                  ? decodeURIComponent(item?.uri?.replace('file://', ''))
-                  : decodeURIComponent(item?.fileCopyUri),
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            const res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          }
+  const sendFile = useCallback(
+    async chosenFilesV => {
+      try {
+        console.log('hosotanidebug888');
+        console.log(chosenFilesV);
+        if (chosenFilesV?.length > 0) {
+          GlobalService.showLoading();
+          // send files
+          for (const item of chosenFilesV) {
+            let data = new FormData();
+            if (item?.sourceURL) {
+              // in case of image
+              let isHEIC =
+                item?.sourceURL?.endsWith('.heic') ||
+                item?.sourceURL?.endsWith('.HEIC');
+              data.append('attachment[]', {
+                fileName: item?.path?.replace(/^.*[\\\/]/, ''),
+                name: item?.path?.replace(/^.*[\\\/]/, ''),
+                width: item?.width,
+                uri: item?.path,
+                path: item?.path,
+                size: item?.size,
+                type:
+                  Platform.OS === 'ios'
+                    ? `image/${
+                        isHEIC
+                          ? item?.path?.split('.')[0] + '.JPG'
+                          : item?.path?.split('.').pop()
+                      }}`
+                    : item?.mime,
+                height: item?.height,
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+              let res = await sendMessageApi(data);
+              socket.emit('message_ind2', {
+                user_id: user_id,
+                room_id: idRoomChat,
+                task_id: null,
+                to_info: null,
+                level: res?.data?.data?.msg_level,
+                message_id: res?.data?.data?.id,
+                message_type: res?.data?.data?.msg_type,
+                method: res?.data?.data?.method,
+                attachment_files: res?.data?.attachmentFiles,
+                stamp_no: res?.data?.data?.stamp_no,
+                relation_message_id: res?.data?.data?.reply_to_message_id,
+                text: res?.data?.data?.message,
+                text2: null,
+                time: res?.data?.data?.created_at,
+              });
+              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            } else {
+              // in case of file
+              data.append('attachment[]', {
+                name: item?.name,
+                type: item?.type,
+                uri:
+                  Platform.OS === 'ios'
+                    ? decodeURIComponent(item?.uri?.replace('file://', ''))
+                    : decodeURIComponent(item?.fileCopyUri),
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+              const res = await sendMessageApi(data);
+              socket.emit('message_ind2', {
+                user_id: user_id,
+                room_id: idRoomChat,
+                task_id: null,
+                to_info: null,
+                level: res?.data?.data?.msg_level,
+                message_id: res?.data?.data?.id,
+                message_type: res?.data?.data?.msg_type,
+                method: res?.data?.data?.method,
+                attachment_files: res?.data?.attachmentFiles,
+                stamp_no: res?.data?.data?.stamp_no,
+                relation_message_id: res?.data?.data?.reply_to_message_id,
+                text: res?.data?.data?.message,
+                text2: null,
+                time: res?.data?.data?.created_at,
+              });
+              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            }
 
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
-          GlobalService.hideLoading();
+            giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
+              {
+                animated: true,
+                index: 0,
+              },
+            );
+            GlobalService.hideLoading();
+          }
+          setchosenFiles([]);
         }
-        setchosenFiles([]);
+      } catch (error: any) {
+        GlobalService.hideLoading();
       }
-    } catch (error: any) {
-      GlobalService.hideLoading();
-    }
-  };
+    },
+    [chosenFiles],
+  );
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
@@ -1060,10 +1058,7 @@ export const useFunction = (props: any) => {
     reactionMessage,
     navigatiteToListReaction,
     pickFile,
-    pickedFile,
     cancelModal,
-    cancelModalPickedFile,
-    onBack,
     chosePhoto,
     choseFile,
     sendLabel,
