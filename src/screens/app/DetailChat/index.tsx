@@ -106,7 +106,7 @@ const DetailChat = (props: any) => {
     (props: any) => {
       return (
         <>
-          {props.formattedText?.length > 0 ? (
+          {props.formattedText?.length > 0 || chosenFiles.length > 0 ? (
             <Actions
               {...props}
               containerStyle={styles.buttonRight}
@@ -382,7 +382,7 @@ const DetailChat = (props: any) => {
           />
         )}
         {/* create task icon */}
-        <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
+        <View style={keyboardHeight === 0 && chosenFiles.length ===0 ? styles.viewTask : chosenFiles.length > 0 ? styles.viewTaskWithFiles : keyboardHeight === 0 ? styles.viewTaskWithKeyboard: styles.viewTaskWithKeyboardFiles}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>

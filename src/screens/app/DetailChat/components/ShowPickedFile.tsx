@@ -46,9 +46,11 @@ const ShowPickedFile = React.memo((prop: any) => {
                     uri: item.sourceURL,
                   }}
                   style={styles.imageEmoji}>
-                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "gray", width: "25%", alignSelf: "flex-end"}}>
-                    <Image source={iconDelete} style={{height: 9, width: 9,margin:4}}
-                    />
+                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
+                    {/*<Image source={iconDelete} style={{height: 9, width: 9,margin:4}} />*/}
+                    <View style={styles.iconDelete}>
+                      <Text style={styles.crossDelete}>x</Text>
+                    </View>
                   </TouchableHighlight>
                 </ImageBackground>
               )}
@@ -130,6 +132,22 @@ const styles = StyleSheet.create({
   imageEmoji: {
     width: 80,
     height: 80,
+  },
+  iconDelete: {
+    backgroundColor: '#000000',
+    borderRadius: 25,
+    width: 15,
+    height: 15,
+  },
+  crossDelete: {
+    marginTop: 1,
+    marginLeft: 4,
+    color: '#ffffff',
+    fontSize: 13,
+    width: 13,
+    height: 13,
+    lineHeight: 13,
+    fontWeight: 'bold',
   },
 });
 

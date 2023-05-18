@@ -403,36 +403,38 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       } else {
         try {
-          const data = new FormData();
-          data.append('room_id', idRoomChat);
-          data.append('from_id', mes[0]?.user?._id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
-          ids?.forEach((item: any) => {
-            data.append('ids[]', item);
-          });
-          const res = await sendMessageApi(data);
-          socket.emit('message_ind2', {
-            user_id: mes[0]?.user?._id,
-            room_id: idRoomChat,
-            task_id: null,
-            to_info: null,
-            level: res?.data?.data?.msg_level,
-            message_id: res?.data?.data?.id,
-            message_type: res?.data?.data?.msg_type,
-            method: res?.data?.data?.method,
-            attachment_files: res?.data?.attachmentFiles,
-            stamp_no: res?.data?.data?.stamp_no,
-            relation_message_id: res?.data?.data?.reply_to_message_id,
-            text: res?.data?.data?.message,
-            text2: null,
-            time: res?.data?.data?.created_at,
-          });
-          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          // callApiChatBotRequest(
-          //   res?.data?.data?.message,
-          //   res?.data?.data?.id,
-          //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
-          // );
+          if (mes[0]?.text) {
+            const data = new FormData();
+            data.append('room_id', idRoomChat);
+            data.append('from_id', mes[0]?.user?._id);
+            data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+            ids?.forEach((item: any) => {
+              data.append('ids[]', item);
+            });
+            const res = await sendMessageApi(data);
+            socket.emit('message_ind2', {
+              user_id: mes[0]?.user?._id,
+              room_id: idRoomChat,
+              task_id: null,
+              to_info: null,
+              level: res?.data?.data?.msg_level,
+              message_id: res?.data?.data?.id,
+              message_type: res?.data?.data?.msg_type,
+              method: res?.data?.data?.method,
+              attachment_files: res?.data?.attachmentFiles,
+              stamp_no: res?.data?.data?.stamp_no,
+              relation_message_id: res?.data?.data?.reply_to_message_id,
+              text: res?.data?.data?.message,
+              text2: null,
+              time: res?.data?.data?.created_at,
+            });
+            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            // callApiChatBotRequest(
+            //   res?.data?.data?.message,
+            //   res?.data?.data?.id,
+            //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+            // );
+          }
         } catch (error: any) {}
       }
       // send files
@@ -555,7 +557,6 @@ export const useFunction = (props: any) => {
 
   const chosePhoto = () => {
     setShowRedLine(false);
-    setchosenFiles([]);
     ImagePicker.openPicker({
       multiple: true,
     }).then(async images => {
@@ -567,20 +568,21 @@ export const useFunction = (props: any) => {
         });
       } else {
         cancelModal();
-        setchosenFiles(images);
+        const mergedFiles = images.concat(chosenFiles);
+        setchosenFiles(mergedFiles);
       }
     });
   };
 
   const choseFile = () => {
     setShowRedLine(false);
-    setchosenFiles([]);
     DocumentPicker.pickMultiple({
       presentationStyle: 'fullScreen',
       copyTo: 'cachesDirectory',
     }).then(async file => {
       cancelModal();
-      setchosenFiles(file);
+      const mergedFiles = file.concat(chosenFiles);
+      setchosenFiles(mergedFiles);
     });
   };
 

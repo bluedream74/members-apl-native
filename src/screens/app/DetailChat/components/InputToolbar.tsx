@@ -31,6 +31,7 @@ export const renderInputToolbar = (props: any) => {
   }
   if (props && props.keyboardHeight > 0) {
     bottom = 75 + diffHeight;
+    height = 110;
   } else {
     bottom = 10;
   }
