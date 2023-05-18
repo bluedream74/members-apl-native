@@ -46,8 +46,8 @@ const ShowPickedFile = React.memo((prop: any) => {
                     uri: item.sourceURL,
                   }}
                   style={styles.imageEmoji}>
-                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)}>
-                    <Image source={iconDelete} style={{height: 10, width: 10,margin:5}}
+                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "gray", width: "25%", alignSelf: "flex-end"}}>
+                    <Image source={iconDelete} style={{height: 9, width: 9,margin:4}}
                     />
                   </TouchableHighlight>
                 </ImageBackground>

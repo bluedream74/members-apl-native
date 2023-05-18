@@ -26,11 +26,11 @@ export const renderInputToolbar = (props: any) => {
   let bottom = 10;
   let diffHeight = 0;
   if (props && props.formattedText.length > 0) {
-    height = 80;
+    height = 110;
     diffHeight = 20;
   }
   if (props && props.keyboardHeight > 0) {
-    bottom = 60 + diffHeight;
+    bottom = 75 + diffHeight;
   } else {
     bottom = 10;
   }

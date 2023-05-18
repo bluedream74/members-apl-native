@@ -107,13 +107,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '74%',
+    top: '68%',
   },
   viewTaskWithKeyboard: {
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '38%',
+    top: '18%',
   },
   imageTask: {},
   displayNone: {
