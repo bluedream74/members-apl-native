@@ -382,7 +382,7 @@ const DetailChat = (props: any) => {
           />
         )}
         {/* create task icon */}
-        <View style={keyboardHeight === 0 && chosenFiles.length ===0 ? styles.viewTask : chosenFiles.length > 0 ? styles.viewTaskWithFiles : keyboardHeight === 0 ? styles.viewTaskWithKeyboard: styles.viewTaskWithKeyboardFiles}>
+        <View style={keyboardHeight === 0 && chosenFiles.length ===0 ? styles.viewTask : (chosenFiles.length > 0 && keyboardHeight === 0)? styles.viewTaskWithFiles : (keyboardHeight > 0 && chosenFiles.length === 0) ? styles.viewTaskWithKeyboard: styles.viewTaskWithKeyboardFiles}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>

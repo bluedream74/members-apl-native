@@ -11,7 +11,7 @@ import {
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import {iconDelete } from "@images";
+import {iconPdf, iconXls, iconFile, iconDoc} from "@images";
 
 const height = Dimensions.get('window').height;
 
@@ -47,14 +47,27 @@ const ShowPickedFile = React.memo((prop: any) => {
                   }}
                   style={styles.imageEmoji}>
                   <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
-                    {/*<Image source={iconDelete} style={{height: 9, width: 9,margin:4}} />*/}
                     <View style={styles.iconDelete}>
                       <Text style={styles.crossDelete}>x</Text>
                     </View>
                   </TouchableHighlight>
                 </ImageBackground>
               )}
-              {item?.uri && <Text>{item.name}</Text>}
+              {item?.uri && (
+                <>
+                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
+                    <View style={styles.iconDelete}>
+                      <Text style={styles.crossDelete}>x</Text>
+                    </View>
+                  </TouchableHighlight>
+                  {/[^.]+$/.exec(item.name) == 'pdf' && (<Image source={iconPdf} style={styles.iconFile} />)}
+                  {(/[^.]+$/.exec(item.name) == 'xls' || /[^.]+$/.exec(item.name) == 'xlsm') && (<Image source={iconXls} style={styles.iconFile} />)}
+                  {(/[^.]+$/.exec(item.name) == 'doc' || /[^.]+$/.exec(item.name) == 'docx') && (<Image source={iconDoc} style={styles.iconFile} />)}
+                  {/[^.]+$/.exec(item.name) != 'pdf' && /[^.]+$/.exec(item.name) != 'xls' && /[^.]+$/.exec(item.name) != 'xlsm' && /[^.]+$/.exec(item.name) != 'doc' && /[^.]+$/.exec(item.name) != 'docx' &&(<Image source={iconFile} style={styles.iconFile} />)}
+                  {/*<Text>{item.name}</Text>*/}
+                  {/*<Text>{/[^.]+$/.exec(item.name)}</Text>*/}
+                </>
+              )}
             </View>
           );
         })}
@@ -130,8 +143,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageEmoji: {
-    width: 80,
-    height: 80,
+    width: moderateScale(80),
+    height: moderateScale(80),
   },
   iconDelete: {
     backgroundColor: '#000000',
@@ -148,6 +161,10 @@ const styles = StyleSheet.create({
     height: 13,
     lineHeight: 13,
     fontWeight: 'bold',
+  },
+  iconFile: {
+    width: moderateScale(60),
+    height: moderateScale(60),
   },
 });
 

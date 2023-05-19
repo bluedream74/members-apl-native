@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '28%',
+    top: '18%',
   },
   imageTask: {},
   displayNone: {
