@@ -55,7 +55,7 @@ const ShowPickedFile = React.memo((prop: any) => {
               )}
               {item?.uri && (
                 <>
-                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
+                  <TouchableHighlight onPress={()=> deleteFile(item.uri)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
                     <View style={styles.iconDelete}>
                       <Text style={styles.crossDelete}>x</Text>
                     </View>
@@ -64,8 +64,9 @@ const ShowPickedFile = React.memo((prop: any) => {
                   {(/[^.]+$/.exec(item.name) == 'xls' || /[^.]+$/.exec(item.name) == 'xlsm') && (<Image source={iconXls} style={styles.iconFile} />)}
                   {(/[^.]+$/.exec(item.name) == 'doc' || /[^.]+$/.exec(item.name) == 'docx') && (<Image source={iconDoc} style={styles.iconFile} />)}
                   {/[^.]+$/.exec(item.name) != 'pdf' && /[^.]+$/.exec(item.name) != 'xls' && /[^.]+$/.exec(item.name) != 'xlsm' && /[^.]+$/.exec(item.name) != 'doc' && /[^.]+$/.exec(item.name) != 'docx' &&(<Image source={iconFile} style={styles.iconFile} />)}
-                  {/*<Text>{item.name}</Text>*/}
-                  {/*<Text>{/[^.]+$/.exec(item.name)}</Text>*/}
+                  <Text>{item.name.substring(0, 7)}</Text>
+                  <Text>{item.name.length > 5 ? '...' : ''}{/[^.]+$/.exec(item.name)}</Text>
+                  {/*<Text>{item?.uri}</Text>*/}
                 </>
               )}
             </View>

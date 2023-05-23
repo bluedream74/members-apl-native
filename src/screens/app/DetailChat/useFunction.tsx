@@ -1021,7 +1021,7 @@ export const useFunction = (props: any) => {
   const deleteFile = useCallback(
     async sourceURL => {
       const chosenFilesDeleted = chosenFiles.filter(item => {
-        if (item.sourceURL !== sourceURL && typeof item !== 'undefined') {
+        if (item.sourceURL !== sourceURL && item.uri !== sourceURL && typeof item !== 'undefined') {
           return item;
         }
       });
