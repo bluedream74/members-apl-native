@@ -13,7 +13,6 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
-import {ModalPickedFile} from './components/ModalPickedFile';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
@@ -45,10 +44,7 @@ const DetailChat = (props: any) => {
     reactionMessage,
     navigatiteToListReaction,
     pickFile,
-    pickedFile,
     cancelModal,
-    cancelModalPickedFile,
-    onBack,
     chosePhoto,
     choseFile,
     sendLabel,
@@ -89,10 +85,6 @@ const DetailChat = (props: any) => {
     textSelection,
     onDecoSelected,
     keyboardHeight,
-    sendFile,
-    chosenFiles,
-    imageDescription,
-    setImageDescription
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -411,15 +403,6 @@ const DetailChat = (props: any) => {
         onCancel={cancelModal}
         chosePhoto={chosePhoto}
         choseFile={choseFile}
-      />
-      <ModalPickedFile
-        visible={pickedFile}
-        onCancel={cancelModalPickedFile}
-        onBack={onBack}
-        sendFile={sendFile}
-        chosenFiles={chosenFiles}
-        setImageDescription={setImageDescription}
-        imageDescription={imageDescription}
       />
     </View>
   );
