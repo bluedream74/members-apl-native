@@ -8,11 +8,12 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
+import {useUnreadMessage} from './useUnreadMessage';
 
-function createAppNotification() {
+function CreateAppNotification() {
   let fcmToken = '';
   let lastMessageId = '';
-
+  const {updateUnreadMessageCount} = useUnreadMessage();
   const initFB = () => {
     requestUserPermisstion();
     messaging().onTokenRefresh((newFcmToken: string) => {
@@ -86,6 +87,7 @@ function createAppNotification() {
     let {notification, data} = message;
     let title = '';
     let bodyMessage = '';
+    const state = store.getState();
     try {
       title = notification.title;
       bodyMessage = notification.body;
@@ -98,6 +100,7 @@ function createAppNotification() {
         //@ts-ignore
         onPress: async () => {},
       });
+      updateUnreadMessageCount();
     } catch (error) {}
   };
 
@@ -134,4 +137,4 @@ function createAppNotification() {
   };
 }
 
-export const AppNotification = createAppNotification();
+export const AppNotification = CreateAppNotification();
