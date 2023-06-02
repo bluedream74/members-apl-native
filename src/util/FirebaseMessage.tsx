@@ -8,6 +8,7 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
+import {getRoomList} from "@redux";
 
 function createAppNotification() {
   let fcmToken = '';
@@ -86,6 +87,7 @@ function createAppNotification() {
     let {notification, data} = message;
     let title = '';
     let bodyMessage = '';
+    const state = store.getState();
     try {
       title = notification.title;
       bodyMessage = notification.body;
@@ -98,6 +100,16 @@ function createAppNotification() {
         //@ts-ignore
         onPress: async () => {},
       });
+      // update list chat unread message count
+      store.dispatch(
+        getRoomList({
+          key: null,
+          company_id: state.chat.idCompany,
+          page: 1,
+          type: state.chat.type_Filter,
+          category_id: state.chat.categoryID_Filter,
+        }),
+      );
     } catch (error) {}
   };
 
