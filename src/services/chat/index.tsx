@@ -47,6 +47,7 @@ const DETAIL_CATEGORY = 'user/chat/category';
 const EDIT_CATEGORY = 'user/chat/category/update';
 const DELETE_CATEGORY = 'user/chat/category';
 const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
+const CALL_CHAT_BOT = 'user/chat/chat-bot';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page, type, category_id} = params;
@@ -256,7 +257,10 @@ export const addUserMessage: any = async (body: any) => {
   return response;
 };
 
-export const callApiChatBot: any = async (body: any) => {};
+export const callApiChatBot: any = async (body: any) => {
+  const response = api.post(`${CALL_CHAT_BOT}`, body);
+  return response;
+};
 
 export const deleteRoom: any = async (id: any) => {
   const response = api.get(`${DELETE_ROOM}/${id}/delete`);
