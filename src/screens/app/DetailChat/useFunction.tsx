@@ -420,11 +420,11 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
           });
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          // callApiChatBotRequest(
-          //   res?.data?.data?.message,
-          //   res?.data?.data?.id,
-          //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
-          // );
+          callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+            `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+          );
         } catch (error: any) {}
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
@@ -781,42 +781,9 @@ export const useFunction = (props: any) => {
       return;
     }
     const words = inputText.split(' ');
-    const newWords: string[] = [];
-    words.forEach(word => {
-      if (word.match('.+\n.+')) {
-        const splitNewWord = word.split('\n');
-        splitNewWord.forEach((s, index) => {
-          if (index > 0) {
-            newWords.push('\n');
-          }
-          newWords.push(s);
-        })
-      } else if (word.match('.+\n')) {
-        const splitNewWord = word.split('\n');
-        splitNewWord.forEach(s => {
-          if (s !== '') {
-            newWords.push(s);
-          } else {
-            newWords.push('\n');
-          }
-        })
-      } else if (word.match('\n.+')) {
-        newWords.push(word);
-      } else if (word.match('　')) {
-        const splitNewWord = word.split('　');
-        splitNewWord.forEach((s, index) => {
-          if (index > 0) {
-            newWords.push(' ');
-          }
-          newWords.push(s);
-        })
-      } else {
-        newWords.push(word);
-      }
-    });
     const formattedText1: (string | JSX.Element)[] = [];
-    newWords.forEach((word, index) => {
-      const isLastWord = index === newWords.length - 1;
+    words.forEach((word, index) => {
+      const isLastWord = index === words.length - 1;
       const includingList = mentionedUsers.filter((el: string) => {
         var re = new RegExp('^' + el + '', 'gi');
         var result = re.test(word);
@@ -920,16 +887,23 @@ export const useFunction = (props: any) => {
       } else if (numberOfMember > 2) {
         sendInfo = listUserSelect;
       }
+      const sendInfoNew = sendInfo.map(el => {
+        el.userId = el.id;
+        el.userName = el.last_name + el.first_name;
+        return el;
+      });
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
         'mention_members',
-        JSON.stringify(convertArrUnique(sendInfo, 'id')),
+        JSON.stringify(convertArrUnique(sendInfoNew, 'id')),
       );
       formData.append('message', message);
       formData.append('message_id', messageId);
+      formData.append('room_id', idRoomChat);
       const res = await callApiChatBot(formData);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
 
   const onDecoSelected = (tagName: string) => {
