@@ -10,8 +10,8 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  fetchResultMessageActionRedLine,
-} from '@redux';
+  fetchResultMessageActionRedLine, logMessage,
+} from "@redux";
 import {
   deleteMessageApi,
   GlobalService,
@@ -135,6 +135,21 @@ export const useFunction = (props: any) => {
       }, 1000);
     }
   }, [idMessageSearchListChat]);
+
+  // check if messages belongs to this room
+  useEffect(() => {
+    for (let i = 0; i < listChat.length; i++) {
+      if (idRoomChat !== listChat[i].room_id) {
+        getListChat();
+        dispatch(
+          logMessage({
+            room_id: listChat[i].room_id,
+            message_id: listChat[i].id,
+          }),
+        );
+      }
+    }
+  }, [listChat]);
 
   const navigateToMessage = useCallback(
     idMessageSearch => {

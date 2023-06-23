@@ -183,6 +183,14 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         status_Filter: action.payload,
       };
+    case typeChat.LOG_MESSAGE:
+      let room_id = action.payload?.room_id;
+      let message_id = action.payload?.message_id;
+      return {
+        ...state,
+        room_id: room_id,
+        message_id: message_id,
+      };
     default:
       return state;
   }
