@@ -138,16 +138,20 @@ export const useFunction = (props: any) => {
 
   // check if messages belongs to this room
   useEffect(() => {
+    const irregular_message_ids = [];
     for (let i = 0; i < listChat.length; i++) {
       if (idRoomChat !== listChat[i].room_id) {
-        getListChat();
-        dispatch(
-          logMessage({
-            room_id: listChat[i].room_id,
-            message_id: listChat[i].id,
-          }),
-        );
+        irregular_message_ids.push(listChat[i].id);
       }
+    }
+    if (irregular_message_ids.length > 0){
+      getListChat();
+      dispatch(
+        logMessage({
+          current_room_id: idRoomChat,
+          irregular_message_ids: irregular_message_ids,
+        }),
+      );
     }
   }, [listChat]);
 
