@@ -10,8 +10,9 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  fetchResultMessageActionRedLine, logMessage,
-} from "@redux";
+  fetchResultMessageActionRedLine,
+  logMessage,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -37,7 +38,7 @@ import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
-import { Keyboard, KeyboardEvent } from 'react-native';
+import {Keyboard, KeyboardEvent} from 'react-native';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -87,7 +88,7 @@ export const useFunction = (props: any) => {
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
-  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
     function onKeyboardDidShow(e: KeyboardEvent) { // Remove type here if not using TypeScript
@@ -144,7 +145,7 @@ export const useFunction = (props: any) => {
         irregular_message_ids.push(listChat[i].id);
       }
     }
-    if (irregular_message_ids.length > 0){
+    if (irregular_message_ids.length > 0) {
       getListChat();
       dispatch(
         logMessage({
@@ -921,8 +922,7 @@ export const useFunction = (props: any) => {
       formData.append('message_id', messageId);
       formData.append('room_id', idRoomChat);
       const res = await callApiChatBot(formData);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const onDecoSelected = (tagName: string) => {
@@ -951,7 +951,7 @@ export const useFunction = (props: any) => {
       project_id: 1,
       item_id: 1,
       task_name: input.taskName,
-      actual_start_date: moment().format("YYYY/MM/DD"),
+      actual_start_date: moment().format('YYYY/MM/DD'),
       actual_start_time: '00:00:00',
       actual_end_date: null,
       plans_end_date: input.date,
