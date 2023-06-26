@@ -48,7 +48,7 @@ const EDIT_CATEGORY = 'user/chat/category/update';
 const DELETE_CATEGORY = 'user/chat/category';
 const GET_UNREAD_MESSAGE_COUNT_ALL = 'user/chat/get_unread_message_count_all';
 const CALL_CHAT_BOT = 'user/chat/chat-bot';
-const LOG_MESSAGE = 'user/chat/log-message';
+const LOG_MESSAGE = 'user/chat/irregular-message-report';
 
 export const getRoomListApi: any = async (params: any) => {
   const {key, company_id, page, type, category_id} = params;
