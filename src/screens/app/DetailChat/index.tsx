@@ -85,6 +85,8 @@ const DetailChat = (props: any) => {
     textSelection,
     onDecoSelected,
     keyboardHeight,
+    setListUserSelect,
+    listUserSelect,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -338,6 +340,23 @@ const DetailChat = (props: any) => {
                         choseUser={(value: any, title: string, id: any, props: any) => {
                           setIds(ids?.concat([id]));
                           setShowTag(false);
+                          if (id === 'All') {
+                            setListUserSelect(
+                              listUser.map(el => {
+                                return {
+                                  userId: el.id,
+                                  userName: el.last_name + el.first_name,
+                                };
+                            }));
+                            console.log(listUserSelect);
+                          } else {
+                            listUserSelect.push({
+                              userId: id,
+                              userName: value,
+                            });
+                            setListUserSelect(listUserSelect);
+                          }
+
                           if (value) {
                             mentionedUsers.push('@' + value + title);
                             mentionedUsers.push('@' + value);

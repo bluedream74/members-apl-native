@@ -425,6 +425,7 @@ export const useFunction = (props: any) => {
             res?.data?.data?.id,
             `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
           );
+          setListUserSelect([]);
         } catch (error: any) {}
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
@@ -725,7 +726,7 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({room_id: idRoomChat, all: true});
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
@@ -878,25 +879,11 @@ export const useFunction = (props: any) => {
     useName: any,
   ) => {
     try {
-      let sendInfo: any = [];
-      const numberOfMember = listUserRoot.length;
-      if (numberOfMember < 2) {
-        return null;
-      } else if (numberOfMember === 2) {
-        sendInfo = listUserRoot;
-      } else if (numberOfMember > 2) {
-        sendInfo = listUserSelect;
-      }
-      const sendInfoNew = sendInfo.map(el => {
-        el.userId = el.id;
-        el.userName = el.last_name + el.first_name;
-        return el;
-      });
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
         'mention_members',
-        JSON.stringify(convertArrUnique(sendInfoNew, 'id')),
+        JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
       );
       formData.append('message', message);
       formData.append('message_id', messageId);
