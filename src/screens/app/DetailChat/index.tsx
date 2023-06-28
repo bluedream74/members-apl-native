@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import { View, Image, Platform, TouchableOpacity } from "react-native";
+import { View, Image, Platform, TouchableOpacity, Text } from "react-native";
 import {styles} from './styles';
 import {Header} from '@component';
 import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from "@images";
@@ -87,6 +87,7 @@ const DetailChat = (props: any) => {
     keyboardHeight,
     setListUserSelect,
     listUserSelect,
+    listUserRoot,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -133,7 +134,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote],
+    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser],
   );
 
   //Render ra UI của message
