@@ -879,6 +879,21 @@ export const useFunction = (props: any) => {
     useName: any,
   ) => {
     try {
+      const numberOfMember = listUserRoot.length;
+      if (numberOfMember < 1) {
+        return null;
+      } else if (numberOfMember === 1) {
+        // in case of 2 people only in room(me and you only)
+        setListUserSelect(
+          listUserRoot.map(el => {
+            return {
+              userId: el.id,
+              userName: el.last_name + el.first_name,
+            };
+          }));
+      } else if (numberOfMember > 1) {
+        // Nothing Done.
+      }
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
