@@ -349,7 +349,6 @@ const DetailChat = (props: any) => {
                                   userName: el.last_name + el.first_name,
                                 };
                             }));
-                            console.log(listUserSelect);
                           } else {
                             listUserSelect.push({
                               userId: id,
