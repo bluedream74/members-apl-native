@@ -450,7 +450,16 @@ export const useFunction = (props: any) => {
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
-    [messageReply, message_edit, ids, messageQuote, idRoomChat, listUserRoot, listUser],
+    [
+      messageReply,
+      message_edit,
+      ids,
+      messageQuote,
+      idRoomChat,
+      listUserRoot,
+      listUser,
+      listUserSelect,
+    ],
   );
 
   const updateGimMessage = useCallback(
@@ -890,14 +899,21 @@ export const useFunction = (props: any) => {
     try {
       const numberOfMember = listUserRoot.length;
       const numberOfAll = listUser.length;
+      console.log('hosotanidebug000');
+      console.log(numberOfMember);
       if (numberOfMember < 1) {
         return null;
       } else if (numberOfMember === 1) {
+        console.log('hosotanidebug111');
+        console.log(listUserRoot[0]);
+
         // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-        setListUserSelect({
-          userId: listUserRoot[0].id,
-          userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
-        });
+        setListUserSelect([
+          {
+            userId: listUserRoot[0].id,
+            userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+          },
+        ]);
       } else if (numberOfMember > 1) {
         // Nothing Done.
       }
@@ -910,6 +926,11 @@ export const useFunction = (props: any) => {
       formData.append('message', message);
       formData.append('message_id', messageId);
       formData.append('room_id', idRoomChat);
+      console.log('hosotanidebug222');
+      console.log(listUserSelect);
+      console.log(convertArrUnique(listUserSelect, 'userId'));
+      console.log(JSON.stringify(convertArrUnique(listUserSelect, 'userId')));
+      console.log(formData);
       const res = await callApiChatBot(formData);
     } catch (error) {}
   };
