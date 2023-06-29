@@ -134,7 +134,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser, listUserSelect],
+    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser],
   );
 
   //Render ra UI của message
