@@ -23,8 +23,8 @@ import {
   registerLastMessage,
   getUnreadMessageCountApi,
   GlobalService,
-  detailRoomchat,
-} from '@services';
+  detailRoomchat, logMessage,
+} from "@services";
 
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
@@ -357,6 +357,18 @@ export function* getUnreadMessageCountSaga() {
     GlobalService.hideLoading();
   }
 }
+export function* logMessageSaga(action: any) {
+  try {
+    const body = {
+      current_room_id: action.payload.current_room_id,
+      irregular_message_ids: action.payload.irregular_message_ids,
+    };
+    const res: ResponseGenerator = yield logMessage(body);
+  } catch (error) {
+  } finally {
+    GlobalService.hideLoading();
+  }
+}
 
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
@@ -389,4 +401,5 @@ export function* chatSaga() {
     typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
     getUnreadMessageCountSaga,
   );
+  yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
 }

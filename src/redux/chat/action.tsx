@@ -186,3 +186,8 @@ export const getUnreadMessageCountSuccess = (payload: any) => ({
   type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS,
   payload,
 });
+
+export const logMessage = (payload: any) => ({
+  type: typeChat.LOG_MESSAGE,
+  payload,
+});
