@@ -37,7 +37,7 @@ import {Platform, Text} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
 import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
-import { Keyboard, KeyboardEvent } from 'react-native';
+import {Keyboard, KeyboardEvent} from 'react-native';
 
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
@@ -87,10 +87,11 @@ export const useFunction = (props: any) => {
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
-  const [textSelection, setTextSelection] = useState<any>({ start: 0, end: 0 });
+  const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
-    function onKeyboardDidShow(e: KeyboardEvent) { // Remove type here if not using TypeScript
+    function onKeyboardDidShow(e: KeyboardEvent) {
+      // Remove type here if not using TypeScript
       setKeyboardHeight(e.endCoordinates.height);
     }
 
@@ -98,8 +99,14 @@ export const useFunction = (props: any) => {
       setKeyboardHeight(0);
     }
 
-    const showSubscription = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
+    const showSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      onKeyboardDidShow,
+    );
+    const hideSubscription = Keyboard.addListener(
+      'keyboardDidHide',
+      onKeyboardDidHide,
+    );
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
@@ -420,11 +427,12 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
           });
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          callApiChatBotRequest(
+          await callApiChatBotRequest(
             res?.data?.data?.message,
             res?.data?.data?.id,
             `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
           );
+          setListUserSelect([]);
         } catch (error: any) {}
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
@@ -442,7 +450,7 @@ export const useFunction = (props: any) => {
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
-    [messageReply, message_edit, ids, messageQuote],
+    [messageReply, message_edit, ids, messageQuote, idRoomChat, listUserRoot, listUser],
   );
 
   const updateGimMessage = useCallback(
@@ -602,10 +610,12 @@ export const useFunction = (props: any) => {
                 time: res?.data?.data?.created_at,
               });
               dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-              giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-                animated: true,
-                index: 0,
-              });
+              giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
+                {
+                  animated: true,
+                  index: 0,
+                },
+              );
               GlobalService.hideLoading();
             });
           }
@@ -725,7 +735,7 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({room_id: idRoomChat, all: true});
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
@@ -878,46 +888,53 @@ export const useFunction = (props: any) => {
     useName: any,
   ) => {
     try {
-      let sendInfo: any = [];
       const numberOfMember = listUserRoot.length;
-      if (numberOfMember < 2) {
+      const numberOfAll = listUser.length;
+      if (numberOfMember < 1) {
         return null;
-      } else if (numberOfMember === 2) {
-        sendInfo = listUserRoot;
-      } else if (numberOfMember > 2) {
-        sendInfo = listUserSelect;
+      } else if (numberOfMember === 1) {
+        // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
+        setListUserSelect({
+          userId: listUserRoot[0].id,
+          userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+        });
+      } else if (numberOfMember > 1) {
+        // Nothing Done.
       }
-      const sendInfoNew = sendInfo.map(el => {
-        el.userId = el.id;
-        el.userName = el.last_name + el.first_name;
-        return el;
-      });
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
         'mention_members',
-        JSON.stringify(convertArrUnique(sendInfoNew, 'id')),
+        JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
       );
       formData.append('message', message);
       formData.append('message_id', messageId);
       formData.append('room_id', idRoomChat);
       const res = await callApiChatBot(formData);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const onDecoSelected = (tagName: string) => {
     let newText = '';
     let tag = '[' + tagName + ']';
     if (tagName === 'hr') {
-      newText = inputText.substring(0, textSelection.end) + tag + inputText.substring(textSelection.end);
+      newText =
+        inputText.substring(0, textSelection.end) +
+        tag +
+        inputText.substring(textSelection.end);
     } else {
       // insert closing tags
       let closingTag = '[/' + tagName + ']';
-      newText = inputText.substring(0, textSelection.end) + closingTag + inputText.substring(textSelection.end);
+      newText =
+        inputText.substring(0, textSelection.end) +
+        closingTag +
+        inputText.substring(textSelection.end);
       // insert opening tags
       let openingTag = '[' + tagName + ']';
-      newText = newText.substring(0, textSelection.start) + openingTag + newText.substring(textSelection.start);
+      newText =
+        newText.substring(0, textSelection.start) +
+        openingTag +
+        newText.substring(textSelection.start);
     }
 
     setInputText(newText);
@@ -932,7 +949,7 @@ export const useFunction = (props: any) => {
       project_id: 1,
       item_id: 1,
       task_name: input.taskName,
-      actual_start_date: moment().format("YYYY/MM/DD"),
+      actual_start_date: moment().format('YYYY/MM/DD'),
       actual_start_time: '00:00:00',
       actual_end_date: null,
       plans_end_date: input.date,
@@ -954,7 +971,9 @@ export const useFunction = (props: any) => {
     const res = await saveTask(data);
     if (res.data?.errors) {
       showMessage({
-        message: res.data?.errors ? JSON.stringify(res.data?.errors) : 'Network Error',
+        message: res.data?.errors
+          ? JSON.stringify(res.data?.errors)
+          : 'Network Error',
         type: 'danger',
       });
     } else {
@@ -1006,6 +1025,7 @@ export const useFunction = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
+    listUserRoot,
     setText,
     bookmarkMessage,
     setIds,
