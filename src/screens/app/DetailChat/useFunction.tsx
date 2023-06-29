@@ -889,6 +889,7 @@ export const useFunction = (props: any) => {
   ) => {
     try {
       const numberOfMember = listUserRoot.length;
+      const numberOfAll = listUser.length;
       if (numberOfMember < 1) {
         return null;
       } else if (numberOfMember === 1) {
@@ -1024,6 +1025,7 @@ export const useFunction = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
+    listUserRoot,
     setText,
     bookmarkMessage,
     setIds,
