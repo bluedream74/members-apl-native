@@ -470,7 +470,15 @@ export const useFunction = (props: any) => {
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
-    [messageReply, message_edit, ids, messageQuote, idRoomChat, listUserRoot, listUser],
+    [
+      messageReply,
+      message_edit,
+      ids,
+      messageQuote,
+      idRoomChat,
+      listUserRoot,
+      listUser,
+    ],
   );
 
   const updateGimMessage = useCallback(
@@ -909,15 +917,18 @@ export const useFunction = (props: any) => {
   ) => {
     try {
       const numberOfMember = listUserRoot.length;
-      const numberOfAll = listUser.length;
+      let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
       if (numberOfMember < 1) {
         return null;
       } else if (numberOfMember === 1) {
         // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-        setListUserSelect({
-          userId: listUserRoot[0].id,
-          userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
-        });
+        listUserRootOnlyOne = [
+          {
+            userId: listUserRoot[0].id,
+            userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+          },
+        ];
+        setListUserSelect(listUserRootOnlyOne);
       } else if (numberOfMember > 1) {
         // Nothing Done.
       }
@@ -925,7 +936,9 @@ export const useFunction = (props: any) => {
       formData.append('from_user_name', useName);
       formData.append(
         'mention_members',
-        JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
+        numberOfMember === 1
+          ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
+          : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
       );
       formData.append('message', message);
       formData.append('message_id', messageId);
