@@ -18,8 +18,6 @@ LogBox.ignoreAllLogs();
 const App = () => {
   const checkUpdateNeeded = async () => {
     let updateNeeded = await VersionCheck.needUpdate();
-    console.log('hosotanidebug111');
-    console.log(updateNeeded);
     if (updateNeeded && updateNeeded.isNeeded) {
       //Alert the user and direct to the app url
       Alert.alert(
@@ -29,8 +27,6 @@ const App = () => {
           {
             text: 'update',
             onPress: () => {
-              console.log('hosotanidebug222aaaa');
-              console.log(updateNeeded.storeUrl);
               const link = updateNeeded.storeUrl;
               Linking.canOpenURL(link).then(
                 supported => {
