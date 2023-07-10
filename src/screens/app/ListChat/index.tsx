@@ -88,6 +88,7 @@ const ListChat = () => {
   }, [listRoom]);
 
   //Đây là hàm logic lắng nghe tổng các tin nhắn chưa đọc, nếu có kết quả thì set lại badge noti
+  // これは、未読メッセージの合計をリッスンする論理関数です。結果がある場合は、バッジ通知をリセットします
   useEffect(() => {
     if (countMessage > 0) {
       notifee.setBadgeCount(countMessage);
