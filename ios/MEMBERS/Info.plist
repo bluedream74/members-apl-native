@@ -31,7 +31,7 @@
 			<string>itms-apps</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>itms-apps</string>
+				<string>directlink</string>
 			</array>
 		</dict>
 	</array>
@@ -39,6 +39,10 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>itms-apps</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -80,9 +84,5 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>itms-apps</string>
-    </array>
 </dict>
 </plist>
