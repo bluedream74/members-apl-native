@@ -21,11 +21,11 @@ const App = () => {
     if (updateNeeded && updateNeeded.isNeeded) {
       //Alert the user and direct to the app url
       Alert.alert(
-        'Please Update',
-        'you will have to update your app to the latest version to continue using.',
+        'バージョンを更新してください',
+        '本アプリを利用するには最新バージョンに更新する必要があります。',
         [
           {
-            text: 'update',
+            text: '更新',
             onPress: () => {
               const link = updateNeeded.storeUrl;
               Linking.canOpenURL(link).then(
