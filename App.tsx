@@ -1,5 +1,5 @@
-import React from 'react';
-import {StatusBar} from 'react-native';
+import React, { useEffect } from "react";
+import { StatusBar, Alert, BackHandler, Linking } from "react-native";
 import NavigationApp from './src/navigation/StackContainer';
 import {NavigationUtils} from '@navigation';
 import {store, persistor} from './src/redux/store';
@@ -9,11 +9,44 @@ import {GlobalUI} from '@component';
 import {GlobalService} from '@services';
 import FlashMessage from 'react-native-flash-message';
 import {LogBox} from 'react-native';
+import VersionCheck from 'react-native-version-check';
+import RNExitApp from 'react-native-exit-app';
 
 //Disable yellow box warning
 LogBox.ignoreAllLogs();
 
 const App = () => {
+  const checkUpdateNeeded = async () => {
+    let updateNeeded = await VersionCheck.needUpdate();
+    if (updateNeeded && updateNeeded.isNeeded) {
+      //Alert the user and direct to the app url
+      Alert.alert(
+        'バージョンを更新してください',
+        '本アプリを利用するには最新バージョンに更新する必要があります。',
+        [
+          {
+            text: '更新',
+            onPress: () => {
+              const link = updateNeeded.storeUrl;
+              Linking.canOpenURL(link).then(
+                supported => {
+                  supported && Linking.openURL(link);
+                },
+                err => console.log(err),
+              );
+              setTimeout(() => {
+                RNExitApp.exitApp();
+              }, 2000);
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    }
+  };
+  useEffect(() => {
+    checkUpdateNeeded();
+  }, []);
   return (
     <>
       <StatusBar
