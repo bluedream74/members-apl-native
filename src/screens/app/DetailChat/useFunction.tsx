@@ -11,6 +11,7 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
+  logMessage,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -143,6 +144,25 @@ export const useFunction = (props: any) => {
       }, 1000);
     }
   }, [idMessageSearchListChat]);
+
+  // check if messages belongs to this room
+  useEffect(() => {
+    const irregular_message_ids = [];
+    for (let i = 0; i < listChat.length; i++) {
+      if (idRoomChat !== listChat[i].room_id) {
+        irregular_message_ids.push(listChat[i].id);
+      }
+    }
+    if (irregular_message_ids.length > 0) {
+      getListChat();
+      dispatch(
+        logMessage({
+          current_room_id: idRoomChat,
+          irregular_message_ids: irregular_message_ids,
+        }),
+      );
+    }
+  }, [listChat]);
 
   const navigateToMessage = useCallback(
     idMessageSearch => {
@@ -454,7 +474,16 @@ export const useFunction = (props: any) => {
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
     },
-    [messageReply, message_edit, ids, messageQuote, chosenFiles],
+    [
+      messageReply,
+      message_edit,
+      ids,
+      messageQuote,
+      idRoomChat,
+      listUserRoot,
+      listUser,
+      chosenFiles
+    ],
   );
 
   const updateGimMessage = useCallback(
@@ -737,7 +766,7 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      const result = await getListUser({room_id: idRoomChat, all: true});
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,
@@ -827,8 +856,8 @@ export const useFunction = (props: any) => {
       }
     });
     const formattedText1: (string | JSX.Element)[] = [];
-    newWords.forEach((word, index) => {
-      const isLastWord = index === newWords.length - 1;
+    words.forEach((word, index) => {
+      const isLastWord = index === words.length - 1;
       const includingList = mentionedUsers.filter((el: string) => {
         var re = new RegExp('^' + el + '', 'gi');
         var result = re.test(word);
@@ -923,23 +952,33 @@ export const useFunction = (props: any) => {
     useName: any,
   ) => {
     try {
-      let sendInfo: any = [];
       const numberOfMember = listUserRoot.length;
-      if (numberOfMember < 2) {
+      let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
+      if (numberOfMember < 1) {
         return null;
-      } else if (numberOfMember === 2) {
-        sendInfo = listUserRoot;
-      } else if (numberOfMember > 2) {
-        sendInfo = listUserSelect;
+      } else if (numberOfMember === 1) {
+        // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
+        listUserRootOnlyOne = [
+          {
+            userId: listUserRoot[0].id,
+            userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+          },
+        ];
+        setListUserSelect(listUserRootOnlyOne);
+      } else if (numberOfMember > 1) {
+        // Nothing Done.
       }
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
         'mention_members',
-        JSON.stringify(convertArrUnique(sendInfo, 'id')),
+        numberOfMember === 1
+          ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
+          : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
       );
       formData.append('message', message);
       formData.append('message_id', messageId);
+      formData.append('room_id', idRoomChat);
       const res = await callApiChatBot(formData);
     } catch (error) {}
   };
@@ -1066,6 +1105,7 @@ export const useFunction = (props: any) => {
     setShowTag,
     showTagModal,
     listUser,
+    listUserRoot,
     setText,
     bookmarkMessage,
     setIds,

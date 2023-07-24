@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import { View, Image, Platform, TouchableOpacity } from "react-native";
+import { View, Image, Platform, TouchableOpacity, Text } from "react-native";
 import {styles} from './styles';
 import {Header} from '@component';
 import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from "@images";
@@ -88,6 +88,9 @@ const DetailChat = (props: any) => {
     keyboardHeight,
     chosenFiles,
     deleteFile,
+    setListUserSelect,
+    listUserSelect,
+    listUserRoot,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -134,7 +137,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote, chosenFiles],
+    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser, chosenFiles],
   );
 
   //Render ra UI của message
@@ -342,6 +345,22 @@ const DetailChat = (props: any) => {
                         choseUser={(value: any, title: string, id: any, props: any) => {
                           setIds(ids?.concat([id]));
                           setShowTag(false);
+                          if (id === 'All') {
+                            setListUserSelect(
+                              listUser.map(el => {
+                                return {
+                                  userId: el.id,
+                                  userName: el.last_name + el.first_name,
+                                };
+                            }));
+                          } else {
+                            listUserSelect.push({
+                              userId: id,
+                              userName: value,
+                            });
+                            setListUserSelect(listUserSelect);
+                          }
+
                           if (value) {
                             mentionedUsers.push('@' + value + title);
                             mentionedUsers.push('@' + value);
