@@ -80,7 +80,7 @@ const ListChat = () => {
 
   //Logic tính tổng các tin nhắn chưa đọc
   var countMessage = listRoom?.reduce(function (total: any, course: any) {
-    return total + course.message_unread;
+    return total + parseInt(course.message_unread);
   }, 0);
 
   useEffect(() => {
