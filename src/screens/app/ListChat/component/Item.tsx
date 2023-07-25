@@ -248,7 +248,7 @@ const Item = React.memo((props: any) => {
               style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
             />
           </TouchableOpacity>
-          {(item?.message_unread > 0 && idRoomChat && idRoomChat !== item?.id) ? (
+          {(item?.message_unread > 0 && !idRoomChat) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
@@ -257,6 +257,8 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
+          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat === item?.id) ? (
+            <Image source={iconNext} />
           ) : (
             <Image source={iconNext} />
           )}

@@ -61,8 +61,6 @@ const ListChat = (props: any) => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [filterChat, setFilterChat] = useState<boolean>(false);
   const {route} = props;
-  const {idRoomChat} = route?.params;
-
 
   useFocusEffect(
     useCallback(() => {
@@ -162,7 +160,9 @@ const ListChat = (props: any) => {
     debounceText(text);
   };
   const renderItem = ({item, index}: any) => {
-    return <Item item={item} index={index} idRoomChat={idRoomChat} />;
+    console.log('hosotanidebug222');
+    console.log(route?.params?.idRoomChat);
+    return <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />;
   };
 
   const onCreate = useCallback(() => {
