@@ -160,8 +160,6 @@ const ListChat = (props: any) => {
     debounceText(text);
   };
   const renderItem = ({item, index}: any) => {
-    console.log('hosotanidebug222');
-    console.log(route?.params?.idRoomChat);
     return <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />;
   };
 
