@@ -13,6 +13,7 @@ import {
   renderComposer,
 } from './components/InputToolbar';
 import {ModalPickFile} from './components/ModalPickFile';
+import {ShowPickedFile} from './components/ShowPickedFile';
 
 import {ModalStamp} from './components/ModalStamp';
 import {ModalReply} from './components/ModalReply';
@@ -85,6 +86,8 @@ const DetailChat = (props: any) => {
     textSelection,
     onDecoSelected,
     keyboardHeight,
+    chosenFiles,
+    deleteFile,
     setListUserSelect,
     listUserSelect,
     listUserRoot,
@@ -106,7 +109,7 @@ const DetailChat = (props: any) => {
     (props: any) => {
       return (
         <>
-          {props.formattedText?.length > 0 ? (
+          {props.formattedText?.length > 0 || chosenFiles.length > 0 ? (
             <Actions
               {...props}
               containerStyle={styles.buttonRight}
@@ -134,7 +137,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser],
+    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser, chosenFiles],
   );
 
   //Render ra UI của message
@@ -258,6 +261,7 @@ const DetailChat = (props: any) => {
         <GiftedChat
           text={text}
           formattedText={formattedText}
+          keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
           onInputTextChanged={inputText => {
             formatText(inputText, false);
@@ -390,8 +394,14 @@ const DetailChat = (props: any) => {
           messagesContainerStyle={styles.containerMessage}
         />
         <DecoButton onDecoSelected={onDecoSelected} />
+        {chosenFiles.length > 0 && (
+          <ShowPickedFile
+            chosenFiles={chosenFiles}
+            deleteFile={deleteFile}
+          />
+        )}
         {/* create task icon */}
-        <View style={keyboardHeight === 0 ? styles.viewTask : styles.viewTaskWithKeyboard}>
+        <View style={keyboardHeight === 0 && chosenFiles.length ===0 ? styles.viewTask : (chosenFiles.length > 0 && keyboardHeight === 0)? styles.viewTaskWithFiles : (keyboardHeight > 0 && chosenFiles.length === 0) ? styles.viewTaskWithKeyboard: styles.viewTaskWithKeyboardFiles}>
           <TouchableOpacity onPress={onCreateTask}>
             <Image source={iconTask} style={styles.imageTask} />
           </TouchableOpacity>
