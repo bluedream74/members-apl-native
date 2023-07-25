@@ -88,6 +88,7 @@ const DetailChat = (props: any) => {
     setListUserSelect,
     listUserSelect,
     listUserRoot,
+    customBack,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -245,6 +246,7 @@ const DetailChat = (props: any) => {
               : dataDetail?.icon_image
           }
           onRightSecond={searchMessage}
+          customBack={customBack}
         />
         {/* UI pin message */}
         {message_pinned?.id && (
