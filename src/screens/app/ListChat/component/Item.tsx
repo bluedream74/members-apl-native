@@ -257,6 +257,15 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
+          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat !== item?.id) ? (
+            <View style={styles.viewUnread}>
+              <Text style={styles.txtMessageUnread} numberOfLines={1}>
+                {item?.message_unread > 9 ? '9+' : item?.message_unread}
+              </Text>
+              {item?.message_mention_unread === true ? (
+                <View style={styles.viewActiveTag} />
+              ) : null}
+            </View>
           ) : (item?.message_unread > 0 && idRoomChat && idRoomChat === item?.id) ? (
             <Image source={iconNext} />
           ) : (
