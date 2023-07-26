@@ -1069,6 +1069,12 @@ export const useFunction = (props: any) => {
     [chosenFiles],
   );
 
+  const customBack = useCallback(() => {
+    navigation.navigate(ROUTE_NAME.LISTCHAT_SCREEN, {
+      idRoomChat: idRoomChat,
+    });
+  }, []);
+
   return {
     chatUser,
     idRoomChat,
@@ -1141,6 +1147,7 @@ export const useFunction = (props: any) => {
     setTextSelection,
     onDecoSelected,
     keyboardHeight,
+    customBack,
     chosenFiles,
     deleteFile,
   };
