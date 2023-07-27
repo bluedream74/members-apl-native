@@ -24,18 +24,6 @@ export const renderSend = (props: any) => {
 export const renderInputToolbar = (props: any) => {
   let height = 60;
   let bottom = 10;
-  let diffHeight = 0;
-  if (props && props.formattedText.length > 0) {
-    height = 110;
-    diffHeight = 20;
-  }
-  if (props && props.keyboardHeight > 0) {
-    bottom = 75 + diffHeight;
-    height = 110;
-  } else {
-    bottom = 10;
-  }
-
   return (
     <>
       <InputToolbar
@@ -111,7 +99,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? verticalScale(12) : undefined,
     paddingRight: scale(43),
   },
-  
+
   iconEmojiStyle: {
     width: 29,
     height: 29,
