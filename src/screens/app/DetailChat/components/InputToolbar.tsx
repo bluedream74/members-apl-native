@@ -22,13 +22,11 @@ export const renderSend = (props: any) => {
 };
 
 export const renderInputToolbar = (props: any) => {
-  let height = 60;
-  let bottom = 10;
   return (
     <>
       <InputToolbar
         {...props}
-        containerStyle={[styles.toolBar, {height: height, bottom: bottom}]}
+        containerStyle={styles.toolBar}
         primaryStyle={{alignItems: 'center'}}
       />
     </>
