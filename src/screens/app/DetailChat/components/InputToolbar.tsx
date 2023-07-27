@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? verticalScale(12) : undefined,
     paddingRight: scale(43),
   },
-  
+
   iconEmojiStyle: {
     width: 29,
     height: 29,

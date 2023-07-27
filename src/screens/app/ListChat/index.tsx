@@ -34,7 +34,7 @@ import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
 import {FilterListChat} from '../FilterListChat';
 
-const ListChat = () => {
+const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
   //Khởi tạo Firebase noti
   let {initFB} = AppNotification;
@@ -60,6 +60,7 @@ const ListChat = () => {
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [filterChat, setFilterChat] = useState<boolean>(false);
+  const {route} = props;
 
   useFocusEffect(
     useCallback(() => {
@@ -80,7 +81,7 @@ const ListChat = () => {
 
   //Logic tính tổng các tin nhắn chưa đọc
   var countMessage = listRoom?.reduce(function (total: any, course: any) {
-    return total + course.message_unread;
+    return total + parseInt(course.message_unread);
   }, 0);
 
   useEffect(() => {
@@ -159,7 +160,7 @@ const ListChat = () => {
     debounceText(text);
   };
   const renderItem = ({item, index}: any) => {
-    return <Item item={item} index={index} />;
+    return <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />;
   };
 
   const onCreate = useCallback(() => {

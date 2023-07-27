@@ -33,7 +33,7 @@ const Item = React.memo((props: any) => {
     (state: any) => state.chat.categoryID_Filter,
   );
   const navigation = useNavigation<any>();
-  const {item, index} = props;
+  const {item, index, idRoomChat} = props;
   const [pin, setStatusPin] = useState<any>(null);
 
   let count_user =
@@ -248,7 +248,7 @@ const Item = React.memo((props: any) => {
               style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
             />
           </TouchableOpacity>
-          {item?.message_unread > 0 ? (
+          {(item?.message_unread > 0 && !idRoomChat) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
@@ -257,6 +257,17 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
+          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat !== item?.id) ? (
+            <View style={styles.viewUnread}>
+              <Text style={styles.txtMessageUnread} numberOfLines={1}>
+                {item?.message_unread > 9 ? '9+' : item?.message_unread}
+              </Text>
+              {item?.message_mention_unread === true ? (
+                <View style={styles.viewActiveTag} />
+              ) : null}
+            </View>
+          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat === item?.id) ? (
+            <Image source={iconNext} />
           ) : (
             <Image source={iconNext} />
           )}
