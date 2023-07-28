@@ -39,19 +39,36 @@ const ShowPickedFile = React.memo((prop: any) => {
       <View style={styles.viewFeature}>
         {chosenFiles.map((item: any, index: any) => {
           return (
-            <View key={item?.id}>
+            <View key={index}>
               {item?.sourceURL && (
-                <ImageBackground
-                  source={{
-                    uri: item.sourceURL,
-                  }}
-                  style={styles.imageEmoji}>
-                  <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
-                    <View style={styles.iconDelete}>
-                      <Text style={styles.crossDelete}>x</Text>
-                    </View>
-                  </TouchableHighlight>
-                </ImageBackground>
+                <>
+                  <ImageBackground
+                    source={{
+                      uri: item.sourceURL,
+                    }}
+                    style={styles.imageEmoji}>
+                    <TouchableHighlight onPress={()=> deleteFile(item.sourceURL)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
+                      <View style={styles.iconDelete}>
+                        <Text style={styles.crossDelete}>x</Text>
+                      </View>
+                    </TouchableHighlight>
+                  </ImageBackground>
+                </>
+              )}
+              {item?.path && (
+                <>
+                  <ImageBackground
+                    source={{
+                      uri: item.path,
+                    }}
+                    style={styles.imageEmoji}>
+                    <TouchableHighlight onPress={()=> deleteFile(item.path)} style={{backgroundColor: "transparent", width: "25%", alignSelf: "flex-end"}}>
+                      <View style={styles.iconDelete}>
+                        <Text style={styles.crossDelete}>x</Text>
+                      </View>
+                    </TouchableHighlight>
+                  </ImageBackground>
+                </>
               )}
               {item?.uri && (
                 <>
