@@ -1063,7 +1063,7 @@ export const useFunction = (props: any) => {
     async sourceURL => {
       const chosenFilesDeleted = chosenFiles.filter(item => {
         if (
-          item.sourceUR &&
+          item.sourceURL &&
           item.sourceURL !== sourceURL &&
           item.uri !== sourceURL &&
           item.path !== sourceURL &&
