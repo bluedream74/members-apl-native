@@ -335,7 +335,7 @@ export const useFunction = (props: any) => {
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
           data.append('reply_to_message_id', messageReply?.id);
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
@@ -364,7 +364,7 @@ export const useFunction = (props: any) => {
         try {
           const param = {
             room_id: idRoomChat,
-            message: mes[0]?.text?.split('\n').join('<br>'),
+            message: mes[0]?.text?.split('\\n').join('<br>'),
             ids: ids,
           };
           const res = await editMessageApi(message_edit?.id, param);
@@ -395,7 +395,7 @@ export const useFunction = (props: any) => {
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
           data.append('message_quote', messageQuote?.text);
           data.append('quote_message_id', messageQuote?.id);
           ids?.forEach((item: any) => {
@@ -427,7 +427,7 @@ export const useFunction = (props: any) => {
             const data = new FormData();
             data.append('room_id', idRoomChat);
             data.append('from_id', mes[0]?.user?._id);
-            data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+            data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
             ids?.forEach((item: any) => {
               data.append('ids[]', item);
             });
