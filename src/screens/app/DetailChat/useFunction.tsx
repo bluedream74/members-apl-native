@@ -335,7 +335,7 @@ export const useFunction = (props: any) => {
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
           data.append('reply_to_message_id', messageReply?.id);
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
@@ -364,7 +364,7 @@ export const useFunction = (props: any) => {
         try {
           const param = {
             room_id: idRoomChat,
-            message: mes[0]?.text?.split('\n').join('<br>'),
+            message: mes[0]?.text?.split('\\n').join('<br>'),
             ids: ids,
           };
           const res = await editMessageApi(message_edit?.id, param);
@@ -395,7 +395,7 @@ export const useFunction = (props: any) => {
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
           data.append('message_quote', messageQuote?.text);
           data.append('quote_message_id', messageQuote?.id);
           ids?.forEach((item: any) => {
@@ -427,7 +427,7 @@ export const useFunction = (props: any) => {
             const data = new FormData();
             data.append('room_id', idRoomChat);
             data.append('from_id', mes[0]?.user?._id);
-            data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+            data.append('message', mes[0]?.text?.split('\\n').join('<br>'));
             ids?.forEach((item: any) => {
               data.append('ids[]', item);
             });
@@ -622,11 +622,13 @@ export const useFunction = (props: any) => {
         // send files
         for (const item of chosenFiles) {
           let data = new FormData();
-          if (item?.sourceURL) {
+          if (item?.sourceURL || item?.path) {
             // in case of image
             let isHEIC =
               item?.sourceURL?.endsWith('.heic') ||
-              item?.sourceURL?.endsWith('.HEIC');
+              item?.sourceURL?.endsWith('.HEIC') ||
+              item?.path?.endsWith('.HEIC') ||
+              item?.path?.endsWith('.HEIC');
             data.append('attachment[]', {
               fileName: item?.path?.replace(/^.*[\\\/]/, ''),
               name: item?.path?.replace(/^.*[\\\/]/, ''),
@@ -637,10 +639,10 @@ export const useFunction = (props: any) => {
               type:
                 Platform.OS === 'ios'
                   ? `image/${
-                      isHEIC
-                        ? item?.path?.split('.')[0] + '.JPG'
-                        : item?.path?.split('.').pop()
-                    }}`
+                    isHEIC
+                      ? item?.path?.split('.')[0] + '.JPG'
+                      : item?.path?.split('.').pop()
+                  }}`
                   : item?.mime,
               height: item?.height,
             });
@@ -1060,7 +1062,13 @@ export const useFunction = (props: any) => {
   const deleteFile = useCallback(
     async sourceURL => {
       const chosenFilesDeleted = chosenFiles.filter(item => {
-        if (item.sourceURL !== sourceURL && item.uri !== sourceURL && typeof item !== 'undefined') {
+        if (
+          item.sourceURL &&
+          item.sourceURL !== sourceURL &&
+          item.uri !== sourceURL &&
+          item.path !== sourceURL &&
+          typeof item !== 'undefined'
+        ) {
           return item;
         }
       });
