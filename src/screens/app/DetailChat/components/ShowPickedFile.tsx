@@ -55,7 +55,7 @@ const ShowPickedFile = React.memo((prop: any) => {
                   </ImageBackground>
                 </>
               )}
-              {item?.path && (
+              {!item?.sourceURL && item?.path && (
                 <>
                   <ImageBackground
                     source={{
