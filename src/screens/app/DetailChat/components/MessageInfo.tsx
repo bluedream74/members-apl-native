@@ -140,7 +140,7 @@ export default function MessageInfo({
     text = text.replace(new RegExp('\\[hr\\]((.?\s?)*?)', 'gi'), '<deco-hr></deco-hr>$1');
     text = text.replace(new RegExp('\\[bold\\]((.?\s?)*?)\\[/bold\\]', 'gi'), '<deco-bold>$1</deco-bold>');
     text = text.replace(new RegExp('\\[red\\]((.?\s?)*?)\\[/red\\]', 'gi'), '<deco-red>$1</deco-red>');
-    text = '<p style="font-size:16px;">' + text + '</p>';
+    text = '<p style="font-size:16px;margin: 0px;">' + text + '</p>';
 
     return text;
   }, []);
