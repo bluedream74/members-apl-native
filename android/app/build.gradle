@@ -138,8 +138,8 @@ android {
         applicationId "jp.aidma_hd.members"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 40
-        versionName "1.1.28"
+        versionCode 45
+        versionName "1.1.31"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         vectorDrawables.useSupportLibrary = true
 
@@ -242,6 +242,7 @@ android {
             keyPassword '123456'
         }
     }
+    namespace 'jp.aidma_hd.members'
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -273,6 +274,9 @@ android {
 }
 
 dependencies {
+    // Firebase dependencies
+    implementation "com.google.android.gms:play-services-base:16.1.0"
+    implementation "com.google.firebase:firebase-core:16.0.9"
     implementation 'com.facebook.fresco:fresco:2.5.0'
     implementation 'com.facebook.fresco:animated-gif:2.5.0'
     implementation fileTree(dir: "libs", include: ["*.jar"])
