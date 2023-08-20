@@ -66,7 +66,7 @@ const ListChat = (props: any) => {
     useCallback(() => {
       dispatch(saveIdRoomChat(null));
       dispatch(saveMessageReply(null));
-      dispatch(resetDataChat());
+      // dispatch(resetDataChat());
       dispatch(
         getRoomList({
           key: key,
