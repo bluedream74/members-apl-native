@@ -31,6 +31,7 @@ import {ROUTE_NAME} from '@routeName';
 import {store} from '../store';
 import {convertArrUnique} from '@util';
 import {AppSocket} from '@util';
+import {isCached, setCached} from '../../util/CacheApi';
 
 interface ResponseGenerator {
   result?: any;
@@ -50,12 +51,30 @@ export function* getRoomListSaga(action: any) {
 
 export function* getDetailChatSaga(action: any) {
   try {
+    console.log('hosotanidebug000');
+    // first of all, we yield cache data.
+    // if (await isCached(typeChat.GET_DETAIL_LIST_CHAT)) {
+    console.log('hosotanidebug111');
+    const listChat = store.getState().chat?.detailChat;
+    // const listChat = store.getState().chat;
+    console.log(listChat);
+    console.log('hosotanidebug111xxxxx');
+    if (listChat.length > 0) {
+      console.log('hosotanidebug111xxxxxyyyy');
+      // yield put(getDetailListChatSuccess(listChat));
+    }
+    // }
+    // next we yield api response.
     const param = {
       id: action?.payload.id,
       page: action?.payload.page,
     };
+    console.log('hosotanidebug222aaaaa');
     const result: ResponseGenerator = yield getDetailChatApi(param);
+    console.log(result?.data);
+    console.log('hosotanidebug222aaaaabbbbb');
     yield put(getDetailListChatSuccess(result?.data));
+    // setCached(typeChat.GET_DETAIL_LIST_CHAT);
     if (action?.payload.page === 1) {
       const data = {
         id_room: action?.payload.id,

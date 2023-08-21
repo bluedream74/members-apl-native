@@ -240,7 +240,7 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
-  const getListChat = useCallback(() => {
+  const getListChat = useCallback(async () => {
     const data = {
       id: idRoomChat,
       page: page,
@@ -249,6 +249,7 @@ export const useFunction = (props: any) => {
   }, [page, idRoomChat]);
 
   useEffect(() => {
+    console.log('hosotanidebugyyy');
     getListChat();
   }, [page]);
 
@@ -261,6 +262,7 @@ export const useFunction = (props: any) => {
   };
 
   useEffect(() => {
+    console.log('hosotanidebugxxx');
     if (isGetInfoRoom === true) {
       getDetail();
     }

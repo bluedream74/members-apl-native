@@ -66,7 +66,9 @@ const ListChat = (props: any) => {
     useCallback(() => {
       dispatch(saveIdRoomChat(null));
       dispatch(saveMessageReply(null));
+      // we remove resetDataChat for speed up response.
       // dispatch(resetDataChat());
+      setPage(1);
       dispatch(
         getRoomList({
           key: key,
@@ -153,7 +155,7 @@ const ListChat = (props: any) => {
         category_id: categoryID_Filter,
       }),
     );
-  }, [page, idCompany, categoryID_Filter, type_Filter, key]);
+  }, [idCompany, categoryID_Filter, type_Filter, key]);
 
   const onChangeText = (text: any) => {
     setKey(text);
