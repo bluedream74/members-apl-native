@@ -67,6 +67,7 @@ const ListChat = (props: any) => {
       dispatch(saveIdRoomChat(null));
       dispatch(saveMessageReply(null));
       dispatch(resetDataChat());
+      setPage(1);
       dispatch(
         getRoomList({
           key: key,
