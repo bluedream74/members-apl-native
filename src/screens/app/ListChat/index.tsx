@@ -126,7 +126,7 @@ const ListChat = (props: any) => {
     }
   }, [page]);
 
-  const debounceText = useCallback(
+  const debounceText = useCallback(() => {
     debounce(
       text =>
         dispatch(
@@ -139,9 +139,8 @@ const ListChat = (props: any) => {
           }),
         ),
       500,
-    ),
-    [],
-  );
+    );
+  }, []);
 
   const onRefresh = useCallback(() => {
     setPage(1);
@@ -253,8 +252,12 @@ const ListChat = (props: any) => {
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<Text style={styles.txtEmpty}>データなし</Text>}
-          onEndReachedThreshold={0.01}
-          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            if (!isLoadMore) {
+              handleLoadMore();
+            }
+          }}
           ListFooterComponent={
             <>
               {isLoadMore === true ? (
