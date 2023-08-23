@@ -11,8 +11,8 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage,
-} from '@redux';
+  logMessage, setCacheChatMessage,
+} from "@redux";
 import {
   deleteMessageApi,
   GlobalService,
@@ -62,6 +62,7 @@ export const useFunction = (props: any) => {
   );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
+  const cachedListChat = useSelector((state: any) => state.chat?.cachedDetailChat);
 
   const dispatch = useDispatch();
   const {route} = props;
@@ -162,6 +163,10 @@ export const useFunction = (props: any) => {
         }),
       );
     }
+    // save listChat to cache
+    const cacheArray = [];
+    cacheArray[idRoomChat] = listChat;
+    dispatch(setCacheChatMessage(cacheArray));
   }, [listChat]);
 
   const navigateToMessage = useCallback(

@@ -191,6 +191,16 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         current_room_id: current_room_id,
         irregular_message_ids: irregular_message_ids,
       };
+    case typeChat.CACHE_CHAT_MESSAGE:
+      if (
+        state.detailChat.some(value => value === Object.keys(action.payload)[0])
+      ) {
+        delete state.detailChat[Object.keys(action.payload)[0]];
+      }
+      return {
+        ...state,
+        cachedDetailChat: action.payload.concat(state.detailChat),
+      };
     default:
       return state;
   }

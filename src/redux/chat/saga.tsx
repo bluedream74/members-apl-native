@@ -12,6 +12,7 @@ import {
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
   getUnreadMessageCountSuccess,
+  setCacheChatMessage,
 } from './action';
 
 import {typeChat} from './type';
@@ -23,7 +24,8 @@ import {
   registerLastMessage,
   getUnreadMessageCountApi,
   GlobalService,
-  detailRoomchat, logMessage,
+  detailRoomchat,
+  logMessage,
 } from "@services";
 
 import {NavigationUtils} from '@navigation';
@@ -31,7 +33,6 @@ import {ROUTE_NAME} from '@routeName';
 import {store} from '../store';
 import {convertArrUnique} from '@util';
 import {AppSocket} from '@util';
-import {isCached, setCached} from '../../util/CacheApi';
 
 interface ResponseGenerator {
   result?: any;
@@ -55,13 +56,13 @@ export function* getDetailChatSaga(action: any) {
     // first of all, we yield cache data.
     // if (await isCached(typeChat.GET_DETAIL_LIST_CHAT)) {
     console.log('hosotanidebug111');
-    const listChat = store.getState().chat?.detailChat;
+    const listChat = store.getState().chat?.cachedDetailChat;
     // const listChat = store.getState().chat;
     console.log(listChat);
     console.log('hosotanidebug111xxxxx');
-    if (listChat.length > 0) {
+    if (listChat.length > 0 && listChat[action?.payload.id]) {
       console.log('hosotanidebug111xxxxxyyyy');
-      // yield put(getDetailListChatSuccess(listChat));
+      yield put(getDetailListChatSuccess(listChat));
     }
     // }
     // next we yield api response.
@@ -388,6 +389,12 @@ export function* logMessageSaga(action: any) {
     GlobalService.hideLoading();
   }
 }
+export function* cacheChatMessage(action: any) {
+  try {
+    // const result: ResponseGenerator = yield detailRoomchat(action?.payload);
+    yield put(setCacheChatMessage(result?.data?.room));
+  } catch (error: any) {}
+}
 
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
@@ -421,4 +428,5 @@ export function* chatSaga() {
     getUnreadMessageCountSaga,
   );
   yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
+  yield takeEvery(typeChat.CACHE_CHAT_MESSAGE, cacheChatMessage);
 }

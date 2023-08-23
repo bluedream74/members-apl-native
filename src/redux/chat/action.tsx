@@ -191,3 +191,8 @@ export const logMessage = (payload: any) => ({
   type: typeChat.LOG_MESSAGE,
   payload,
 });
+
+export const setCacheChatMessage = (payload: any) => ({
+  type: typeChat.CACHE_CHAT_MESSAGE,
+  payload,
+});
