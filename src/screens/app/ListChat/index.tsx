@@ -24,7 +24,7 @@ import {
   saveMessageReply,
   resetDataChat,
   showHideModalFilterListChat,
-} from '@redux';
+} from "@redux";
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
 import {useNavigation} from '@react-navigation/native';
@@ -67,7 +67,7 @@ const ListChat = (props: any) => {
       dispatch(saveIdRoomChat(null));
       dispatch(saveMessageReply(null));
       // we remove resetDataChat for speed up response.
-      // dispatch(resetDataChat());
+      dispatch(resetDataChat());
       setPage(1);
       dispatch(
         getRoomList({
@@ -78,6 +78,7 @@ const ListChat = (props: any) => {
           category_id: categoryID_Filter,
         }),
       );
+      // dispatch(setCacheChatMessage([]));
     }, [type_Filter, categoryID_Filter]),
   );
 
@@ -254,8 +255,12 @@ const ListChat = (props: any) => {
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<Text style={styles.txtEmpty}>データなし</Text>}
-          onEndReachedThreshold={0.01}
-          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            if (!isLoadMore) {
+              handleLoadMore();
+            }
+          }}
           ListFooterComponent={
             <>
               {isLoadMore === true ? (

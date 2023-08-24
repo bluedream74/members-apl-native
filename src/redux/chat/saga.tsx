@@ -1,4 +1,4 @@
-import {put, takeLatest, select, takeEvery, call} from 'redux-saga/effects';
+import { put, takeLatest, select, takeEvery, call, fork } from "redux-saga/effects";
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
@@ -56,13 +56,18 @@ export function* getDetailChatSaga(action: any) {
     // first of all, we yield cache data.
     // if (await isCached(typeChat.GET_DETAIL_LIST_CHAT)) {
     console.log('hosotanidebug111');
-    const listChat = store.getState().chat?.cachedDetailChat;
+    const cachedListChat = store.getState().chat?.cachedDetailChat;
     // const listChat = store.getState().chat;
-    console.log(listChat);
+    console.log(cachedListChat);
     console.log('hosotanidebug111xxxxx');
-    if (listChat.length > 0 && listChat[action?.payload.id]) {
+    console.log(cachedListChat.length);
+    console.log(action?.payload.id);
+    console.log(cachedListChat[action?.payload.id]);
+
+    if (cachedListChat.length > 0 && cachedListChat[action?.payload.id]) {
       console.log('hosotanidebug111xxxxxyyyy');
-      yield put(getDetailListChatSuccess(listChat));
+      yield put(getDetailListChatSuccess({room_messages:{data: cachedListChat[action?.payload.id]}}));
+      // self.next();
     }
     // }
     // next we yield api response.
@@ -76,6 +81,7 @@ export function* getDetailChatSaga(action: any) {
     console.log('hosotanidebug222aaaaabbbbb');
     yield put(getDetailListChatSuccess(result?.data));
     // setCached(typeChat.GET_DETAIL_LIST_CHAT);
+    // yield put(setCacheChatMessage({idRoomChat: action?.payload.id, data: result?.data}));
     if (action?.payload.page === 1) {
       const data = {
         id_room: action?.payload.id,
@@ -389,12 +395,6 @@ export function* logMessageSaga(action: any) {
     GlobalService.hideLoading();
   }
 }
-export function* cacheChatMessage(action: any) {
-  try {
-    // const result: ResponseGenerator = yield detailRoomchat(action?.payload);
-    yield put(setCacheChatMessage(result?.data?.room));
-  } catch (error: any) {}
-}
 
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
@@ -428,5 +428,5 @@ export function* chatSaga() {
     getUnreadMessageCountSaga,
   );
   yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
-  yield takeEvery(typeChat.CACHE_CHAT_MESSAGE, cacheChatMessage);
+  // yield takeEvery(typeChat.CACHE_CHAT_MESSAGE, cacheChatMessage);
 }

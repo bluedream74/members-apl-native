@@ -163,10 +163,15 @@ export const useFunction = (props: any) => {
         }),
       );
     }
+    console.log('hosotanidebug999');
+    // dispatch(setCacheChatMessage([]));
     // save listChat to cache
     const cacheArray = [];
-    cacheArray[idRoomChat] = listChat;
-    dispatch(setCacheChatMessage(cacheArray));
+    console.log('hosotanidebug999111');
+    console.log(idRoomChat);
+    console.log(listChat);
+    // cacheArray[idRoomChat] = listChat;
+    // dispatch(setCacheChatMessage(cacheArray));
   }, [listChat]);
 
   const navigateToMessage = useCallback(
@@ -254,7 +259,6 @@ export const useFunction = (props: any) => {
   }, [page, idRoomChat]);
 
   useEffect(() => {
-    console.log('hosotanidebugyyy');
     getListChat();
   }, [page]);
 
@@ -267,7 +271,6 @@ export const useFunction = (props: any) => {
   };
 
   useEffect(() => {
-    console.log('hosotanidebugxxx');
     if (isGetInfoRoom === true) {
       getDetail();
     }

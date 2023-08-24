@@ -20,7 +20,15 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         pagingListRoom: action.payload.paging,
       };
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
+      console.log('hosotanidebugzzz');
+      console.log(action.payload.room_messages.data[0]?.room_id);
+      console.log(action.payload.room_messages.data[0]?.room_id);
+      console.log(action.payload.room_messages.data);
+      console.log('hosotanidebugzzz111');
       let page = action.payload.room_messages.paging?.current_page;
+      const room_id = action.payload.room_messages.data[0]?.room_id;
+      const cachedDetailChat = [];
+      cachedDetailChat[room_id] = page === 1 ? convertArrUnique(action.payload.room_messages.data, 'id') : convertArrUnique(state.detailChat.concat(action.payload.room_messages.data), 'id')
       return {
         ...state,
         detailChat:
@@ -34,6 +42,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
+        cachedDetailChat: cachedDetailChat,
       };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
@@ -94,6 +103,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       return {
         ...state,
         detailChat: [],
+        // cachedDetailChat: [],
         pagingDetail: null,
         id_messageSearch: null,
         redLineId: null,
@@ -192,6 +202,8 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         irregular_message_ids: irregular_message_ids,
       };
     case typeChat.CACHE_CHAT_MESSAGE:
+      console.log('hosotanidebugaaa');
+      console.log(action.payload);
       if (
         state.detailChat.some(value => value === Object.keys(action.payload)[0])
       ) {
@@ -199,7 +211,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       }
       return {
         ...state,
-        cachedDetailChat: action.payload.concat(state.detailChat),
+        cachedDetailChataaaaa: action.payload.concat(state.detailChat),
       };
     default:
       return state;
