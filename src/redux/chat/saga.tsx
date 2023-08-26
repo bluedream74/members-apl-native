@@ -52,22 +52,14 @@ export function* getRoomListSaga(action: any) {
 
 export function* getDetailChatSaga(action: any) {
   try {
-    console.log('hosotanidebug000');
     // first of all, we yield cache data.
-    // if (await isCached(typeChat.GET_DETAIL_LIST_CHAT)) {
-    console.log('hosotanidebug111');
     const cachedListChat = store.getState().chat?.cachedDetailChat;
-    // const listChat = store.getState().chat;
-    console.log(cachedListChat);
-    console.log('hosotanidebug111xxxxx');
-    console.log(cachedListChat.length);
-    console.log(action?.payload.id);
-    console.log(cachedListChat[action?.payload.id]);
-
-    if (cachedListChat.length > 0 && cachedListChat[action?.payload.id]) {
-      console.log('hosotanidebug111xxxxxyyyy');
-      yield put(getDetailListChatSuccess({room_messages:{data: cachedListChat[action?.payload.id]}}));
-      // self.next();
+    if (
+      cachedListChat.length > 0 &&
+      cachedListChat.find((x: {roomId: number}) => x.roomId === action?.payload.id)
+    ) {
+      const chatList = cachedListChat.find((x: {roomId: number}) => x.roomId === action?.payload.id).chatList;
+      yield put(getDetailListChatSuccess({room_messages:{data: chatList}}));
     }
     // }
     // next we yield api response.
@@ -75,13 +67,8 @@ export function* getDetailChatSaga(action: any) {
       id: action?.payload.id,
       page: action?.payload.page,
     };
-    console.log('hosotanidebug222aaaaa');
     const result: ResponseGenerator = yield getDetailChatApi(param);
-    console.log(result?.data);
-    console.log('hosotanidebug222aaaaabbbbb');
     yield put(getDetailListChatSuccess(result?.data));
-    // setCached(typeChat.GET_DETAIL_LIST_CHAT);
-    // yield put(setCacheChatMessage({idRoomChat: action?.payload.id, data: result?.data}));
     if (action?.payload.page === 1) {
       const data = {
         id_room: action?.payload.id,
@@ -428,5 +415,4 @@ export function* chatSaga() {
     getUnreadMessageCountSaga,
   );
   yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
-  // yield takeEvery(typeChat.CACHE_CHAT_MESSAGE, cacheChatMessage);
 }

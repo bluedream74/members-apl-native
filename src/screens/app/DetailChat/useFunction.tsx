@@ -163,15 +163,6 @@ export const useFunction = (props: any) => {
         }),
       );
     }
-    console.log('hosotanidebug999');
-    // dispatch(setCacheChatMessage([]));
-    // save listChat to cache
-    const cacheArray = [];
-    console.log('hosotanidebug999111');
-    console.log(idRoomChat);
-    console.log(listChat);
-    // cacheArray[idRoomChat] = listChat;
-    // dispatch(setCacheChatMessage(cacheArray));
   }, [listChat]);
 
   const navigateToMessage = useCallback(

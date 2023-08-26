@@ -20,15 +20,19 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         pagingListRoom: action.payload.paging,
       };
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
-      console.log('hosotanidebugzzz');
-      console.log(action.payload.room_messages.data[0]?.room_id);
-      console.log(action.payload.room_messages.data[0]?.room_id);
-      console.log(action.payload.room_messages.data);
-      console.log('hosotanidebugzzz111');
       let page = action.payload.room_messages.paging?.current_page;
       const room_id = action.payload.room_messages.data[0]?.room_id;
-      const cachedDetailChat = [];
-      cachedDetailChat[room_id] = page === 1 ? convertArrUnique(action.payload.room_messages.data, 'id') : convertArrUnique(state.detailChat.concat(action.payload.room_messages.data), 'id')
+      const cachedDetailChat: {roomId: number; chatList: any[]}[] = [];
+      cachedDetailChat.push({
+        roomId: room_id,
+        chatList:
+          page === 1
+            ? convertArrUnique(action.payload.room_messages.data, 'id')
+            : convertArrUnique(
+                state.detailChat.concat(action.payload.room_messages.data),
+                'id',
+              ),
+      });
       return {
         ...state,
         detailChat:
@@ -200,18 +204,6 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         current_room_id: current_room_id,
         irregular_message_ids: irregular_message_ids,
-      };
-    case typeChat.CACHE_CHAT_MESSAGE:
-      console.log('hosotanidebugaaa');
-      console.log(action.payload);
-      if (
-        state.detailChat.some(value => value === Object.keys(action.payload)[0])
-      ) {
-        delete state.detailChat[Object.keys(action.payload)[0]];
-      }
-      return {
-        ...state,
-        cachedDetailChataaaaa: action.payload.concat(state.detailChat),
       };
     default:
       return state;
