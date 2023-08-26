@@ -1,4 +1,4 @@
-import { put, takeLatest, select, takeEvery, call, fork } from "redux-saga/effects";
+import { put, takeEvery } from "redux-saga/effects";
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
@@ -12,7 +12,6 @@ import {
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
   getUnreadMessageCountSuccess,
-  setCacheChatMessage,
 } from './action';
 
 import {typeChat} from './type';
@@ -61,7 +60,6 @@ export function* getDetailChatSaga(action: any) {
       const chatList = cachedListChat.find((x: {roomId: number}) => x.roomId === action?.payload.id).chatList;
       yield put(getDetailListChatSuccess({room_messages:{data: chatList}}));
     }
-    // }
     // next we yield api response.
     const param = {
       id: action?.payload.id,

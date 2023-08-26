@@ -107,7 +107,6 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       return {
         ...state,
         detailChat: [],
-        // cachedDetailChat: [],
         pagingDetail: null,
         id_messageSearch: null,
         redLineId: null,

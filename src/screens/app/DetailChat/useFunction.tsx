@@ -11,8 +11,8 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage, setCacheChatMessage,
-} from "@redux";
+  logMessage,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -241,7 +241,7 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
-  const getListChat = useCallback(async () => {
+  const getListChat = useCallback(() => {
     const data = {
       id: idRoomChat,
       page: page,

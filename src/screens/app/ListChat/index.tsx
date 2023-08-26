@@ -24,7 +24,7 @@ import {
   saveMessageReply,
   resetDataChat,
   showHideModalFilterListChat,
-} from "@redux";
+} from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
 import {useNavigation} from '@react-navigation/native';
@@ -78,7 +78,6 @@ const ListChat = (props: any) => {
           category_id: categoryID_Filter,
         }),
       );
-      // dispatch(setCacheChatMessage([]));
     }, [type_Filter, categoryID_Filter]),
   );
 
