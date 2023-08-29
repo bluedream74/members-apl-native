@@ -126,7 +126,7 @@ const ListChat = (props: any) => {
     }
   }, [page]);
 
-  const debounceText = useCallback(() => {
+  const debounceText = useCallback(
     debounce(
       text =>
         dispatch(
@@ -139,8 +139,9 @@ const ListChat = (props: any) => {
           }),
         ),
       500,
-    );
-  }, []);
+    ),
+    [],
+  );
 
   const onRefresh = useCallback(() => {
     setPage(1);
