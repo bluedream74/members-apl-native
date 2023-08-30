@@ -36,6 +36,8 @@ function createAppSocket() {
   const onHanleEvent = (socket: any) => {
     socket.on(EVENT_SOCKET.CONNECT, () => {});
 
+    // 誰かがメッセージ送信&socketサーバに送信(NEW_MESSAGE_IND)->ここで受信
+    // ルームリストの更新
     socket.on(EVENT_SOCKET.NEW_MESSAGE_IND, (data: any) => {
       console.log(EVENT_SOCKET.NEW_MESSAGE_IND, data)
       const state = store.getState();
@@ -54,6 +56,8 @@ function createAppSocket() {
       }
     });
 
+    // 誰かがメッセージ送信&socketサーバに送信(MESSAGE_IND)->ここで受信
+    // ルーム詳細の更新
     socket.on(EVENT_SOCKET.MESSAGE_IND, (data: any) => {
       console.log(EVENT_SOCKET.MESSAGE_IND, data)
       const state = store.getState();
