@@ -21,6 +21,18 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       };
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
+      const room_id = action.payload.room_messages.data[0]?.room_id;
+      const cachedDetailChat: {roomId: number; chatList: any[]}[] = [];
+      cachedDetailChat.push({
+        roomId: room_id,
+        chatList:
+          page === 1
+            ? convertArrUnique(action.payload.room_messages.data, 'id')
+            : convertArrUnique(
+                state.detailChat.concat(action.payload.room_messages.data),
+                'id',
+              ),
+      });
       return {
         ...state,
         detailChat:
@@ -34,6 +46,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
+        cachedDetailChat: cachedDetailChat,
       };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
