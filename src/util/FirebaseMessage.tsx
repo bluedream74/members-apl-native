@@ -1,5 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
+import {colors} from '@stylesCommon';
 import {showMessage} from 'react-native-flash-message';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Platform} from 'react-native';
 import {getSystemVersion} from 'react-native-device-info';
 import {registerToken} from '@services';
@@ -59,6 +61,7 @@ function createAppNotification() {
         .incrementBadgeCount()
         .then(() => notifee.getBadgeCount())
         .then(count => {});
+      handleUserInteractionNotification(notification);
     });
   };
 
@@ -84,7 +87,7 @@ function createAppNotification() {
   };
 
   const handleNotiOnForeground = async (message: any) => {
-    let {notification} = message;
+    let {notification, data} = message;
     let title = '';
     let bodyMessage = '';
     const state = store.getState();
@@ -116,8 +119,12 @@ function createAppNotification() {
   };
 
   const handleUserInteractionNotification = async (message: any) => {
-    const {data} = message;
+    let {notification, data} = message;
+    let title = '';
+    let bodyMessage = '';
     try {
+      title = notification.title;
+      bodyMessage = convertString(notification?.title);
       await store.dispatch(saveIdRoomChat(data?.room_id));
       NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
         idRoomChat: data?.room_id,
