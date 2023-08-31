@@ -62,7 +62,6 @@ export const useFunction = (props: any) => {
   );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
-  const cachedListChat = useSelector((state: any) => state.chat?.cachedDetailChat);
 
   const dispatch = useDispatch();
   const {route} = props;

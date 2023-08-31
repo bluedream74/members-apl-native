@@ -1,4 +1,4 @@
-import { put, takeEvery } from "redux-saga/effects";
+import {put, takeLatest, select, takeEvery, call} from 'redux-saga/effects';
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
@@ -23,8 +23,7 @@ import {
   registerLastMessage,
   getUnreadMessageCountApi,
   GlobalService,
-  detailRoomchat,
-  logMessage,
+  detailRoomchat, logMessage,
 } from "@services";
 
 import {NavigationUtils} from '@navigation';
@@ -51,16 +50,6 @@ export function* getRoomListSaga(action: any) {
 
 export function* getDetailChatSaga(action: any) {
   try {
-    // first of all, we yield cache data.
-    const cachedListChat = store.getState().chat?.cachedDetailChat;
-    if (
-      cachedListChat.length > 0 &&
-      cachedListChat.find((x: {roomId: number}) => x.roomId === action?.payload.id)
-    ) {
-      const chatList = cachedListChat.find((x: {roomId: number}) => x.roomId === action?.payload.id).chatList;
-      yield put(getDetailListChatSuccess({room_messages:{data: chatList}}));
-    }
-    // next we yield api response.
     const param = {
       id: action?.payload.id,
       page: action?.payload.page,
