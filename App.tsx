@@ -11,6 +11,7 @@ import FlashMessage from 'react-native-flash-message';
 import {LogBox} from 'react-native';
 import VersionCheck from 'react-native-version-check';
 import RNExitApp from 'react-native-exit-app';
+import {BASEURL} from './src/services/api';
 
 //Disable yellow box warning
 LogBox.ignoreAllLogs();
@@ -45,7 +46,9 @@ const App = () => {
     }
   };
   useEffect(() => {
-    checkUpdateNeeded();
+    if (BASEURL.match(/stage/) === null) {
+      checkUpdateNeeded();
+    }
   }, []);
   return (
     <>

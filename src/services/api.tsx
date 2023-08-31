@@ -8,11 +8,11 @@ import {ROUTE_NAME} from '@routeName';
 const api = axios.create();
 
 //adamo api url
-// const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
+// export const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
 //member chat staging api url
-// const BASEURL = 'https://stage.mem-bers.jp/mobile';
+// export const BASEURL = 'https://stage.mem-bers.jp/mobile';
 //member chat live api url
-const BASEURL = 'https://mem-bers.jp/mobile';
+export const BASEURL = 'https://mem-bers.jp/mobile';
 
 api.interceptors.request.use(
   async (config: any) => {
