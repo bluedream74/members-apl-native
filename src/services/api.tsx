@@ -54,6 +54,9 @@ api.interceptors.response.use(
       NavigationUtils.navigate(ROUTE_NAME.NETWORK_ERR, {
         message: message ? message : '',
       });
+    } else if (error?.response?.status == 401) {
+      // if laravel passport token is expired.
+      NavigationUtils.navigate(ROUTE_NAME.LOGIN);
     } else {
       showMessage({
         message: message ? message : 'Network Error',
