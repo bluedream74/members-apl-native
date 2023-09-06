@@ -61,7 +61,7 @@ function createAppNotification() {
         .incrementBadgeCount()
         .then(() => notifee.getBadgeCount())
         .then(count => {});
-      handleUserInteractionNotification(notification);
+      // handleUserInteractionNotification(notification); An automatic redirection to the chat room will occur when opening the app from the background
     });
   };
 
@@ -94,27 +94,29 @@ function createAppNotification() {
     try {
       title = notification.title;
       bodyMessage = notification.body;
-      showMessage({
-        backgroundColor: 'rgba(139, 194, 39, 0.8)',
-        duration: 5000,
-        message: title,
-        description: convertString(bodyMessage),
-        color: '#FFFFFF',
-        //@ts-ignore
-        onPress: () => {
-          handleUserInteractionNotification(message);
-        },
-      });
-      // update list chat unread message count
-      store.dispatch(
-        getRoomList({
-          key: null,
-          company_id: state.chat.idCompany,
-          page: 1,
-          type: state.chat.type_Filter,
-          category_id: state.chat.categoryID_Filter,
-        }),
-      );
+      if (!!title || !!bodyMessage) {
+        showMessage({
+          backgroundColor: 'rgba(139, 194, 39, 0.8)',
+          duration: 5000,
+          message: title,
+          description: convertString(bodyMessage),
+          color: '#FFFFFF',
+          //@ts-ignore
+          onPress: () => {
+            handleUserInteractionNotification(message);
+          },
+        });
+        // update list chat unread message count
+        store.dispatch(
+          getRoomList({
+            key: null,
+            company_id: state.chat.idCompany,
+            page: 1,
+            type: state.chat.type_Filter,
+            category_id: state.chat.categoryID_Filter,
+          }),
+        );
+      }
     } catch (error) {}
   };
 
