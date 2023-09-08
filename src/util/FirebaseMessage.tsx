@@ -61,7 +61,6 @@ function createAppNotification() {
         .incrementBadgeCount()
         .then(() => notifee.getBadgeCount())
         .then(count => {});
-      // handleUserInteractionNotification(notification); An automatic redirection to the chat room will occur when opening the app from the background
     });
   };
 
