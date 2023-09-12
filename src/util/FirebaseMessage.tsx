@@ -54,7 +54,11 @@ function createAppNotification() {
       if (notification.messageId !== lastMessageId) {
         lastMessageId = notification.messageId || '';
       }
-      // バックグラウンド時のiOSバッチ表示は PHP側で件数を指定される
+      // バックグラウンド時になったら　iOSバッチ表示は PHP側で件数を指定される
+      if (notification.data && notification.data.badge_update_numflag !== '1') {
+        console.log(notification.data.badge_update_numflag);
+        await notifee.incrementBadgeCount();
+      }
 
       handleUserInteractionNotification(notification);
     });
