@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
 } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
@@ -37,7 +38,6 @@ const ModalTask = React.memo((prop: any) => {
     selected,
     setSelected,
     showTaskForm,
-    keyboardHeight,
   } = prop;
   const [taskName, setTaskName] = React.useState('');
   const [taskDescription, setTaskDescription] = React.useState('');
@@ -65,7 +65,7 @@ const ModalTask = React.memo((prop: any) => {
       '-' +
       ('0' + currentDate.getDate()).slice(-2);
     setDate(formartedDate);
-    setShow1(false);
+    setShow1(Platform.OS === 'ios');
   };
   const onChange2 = (event, selectedDate) => {
     const currentDate = selectedDate || date2;
@@ -75,7 +75,7 @@ const ModalTask = React.memo((prop: any) => {
       ('0' + currentDate.getMinutes()).slice(-2) +
       ':00';
     setTime(formartedTime);
-    setShow2(false);
+    setShow2(Platform.OS === 'ios');
   };
 
   const showDatepicker = () => {
