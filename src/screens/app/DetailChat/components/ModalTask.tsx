@@ -10,7 +10,6 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
-  Platform,
 } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
@@ -58,7 +57,6 @@ const ModalTask = React.memo((prop: any) => {
 
   const onChange1 = (event, selectedDate) => {
     const currentDate = selectedDate || date1;
-    setShow1(Platform.OS === 'ios');
     setDate1(currentDate);
     const formartedDate =
       currentDate.getFullYear() +
@@ -67,16 +65,17 @@ const ModalTask = React.memo((prop: any) => {
       '-' +
       ('0' + currentDate.getDate()).slice(-2);
     setDate(formartedDate);
+    setShow1(false);
   };
   const onChange2 = (event, selectedDate) => {
     const currentDate = selectedDate || date2;
-    setShow2(Platform.OS === 'ios');
     setDate2(currentDate);
     const formartedTime = ('0' + currentDate.getHours()).slice(-2) +
       ':' +
       ('0' + currentDate.getMinutes()).slice(-2) +
       ':00';
     setTime(formartedTime);
+    setShow2(false);
   };
 
   const showDatepicker = () => {
@@ -277,11 +276,13 @@ const ModalTask = React.memo((prop: any) => {
                     終了
                   </Text>
                   <View style={styles.periodBox}>
-                    <View>
-                      <TouchableOpacity onPress={() => showDatepicker()}>
-                        <Text>{date}</Text>
-                      </TouchableOpacity>
-                    </View>
+                    {!show1 && (
+                      <View>
+                        <TouchableOpacity onPress={() => showDatepicker()}>
+                          <Text>{date}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                     {show1 && (
                       <DateTimePicker
                         testID="dateTimePicker"
@@ -297,11 +298,13 @@ const ModalTask = React.memo((prop: any) => {
                     )}
                   </View>
                   <View style={styles.periodBox}>
-                    <View>
-                      <TouchableOpacity onPress={() => showTimepicker()}>
-                        <Text>{time}</Text>
-                      </TouchableOpacity>
-                    </View>
+                    {!show2 && (
+                      <View>
+                        <TouchableOpacity onPress={() => showTimepicker()}>
+                          <Text>{time}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                     {show2 && (
                       <DateTimePicker
                         testID="dateTimePicker"
