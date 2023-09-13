@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
 } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
@@ -18,7 +19,7 @@ import {getBottomSpace} from 'react-native-iphone-x-helper';
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {HITSLOP} from '@util';
-import DatePicker from 'react-native-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {MultiSelect} from 'react-native-element-dropdown';
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
@@ -49,6 +50,42 @@ const ModalTask = React.memo((prop: any) => {
   const [focusDescription, setFocusDescription] = useState(false);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
   const inputRef = useRef();
+
+  const [date1, setDate1] = useState(new Date());
+  const [date2, setDate2] = useState(new Date());
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+
+  const onChange1 = (event, selectedDate) => {
+    const currentDate = selectedDate || date1;
+    setShow1(Platform.OS === 'ios');
+    setDate1(currentDate);
+    const formartedDate =
+      currentDate.getFullYear() +
+      '-' +
+      ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + currentDate.getDate()).slice(-2);
+    setDate(formartedDate);
+  };
+  const onChange2 = (event, selectedDate) => {
+    const currentDate = selectedDate || date2;
+    setShow2(Platform.OS === 'ios');
+    setDate2(currentDate);
+    const formartedTime = ('0' + currentDate.getHours()).slice(-2) +
+      ':' +
+      ('0' + currentDate.getMinutes()).slice(-2) +
+      ':00';
+    setTime(formartedTime);
+  };
+
+  const showDatepicker = () => {
+    setShow1(true);
+  };
+
+  const showTimepicker = () => {
+    setShow2(true);
+  };
 
   useEffect(() => {
     getListUserApi();
@@ -240,80 +277,44 @@ const ModalTask = React.memo((prop: any) => {
                     終了
                   </Text>
                   <View style={styles.periodBox}>
-                    <DatePicker
-                      style={styles.datePickerStyle}
-                      date={date}
-                      mode="date"
-                      placeholder="終了日を入力"
-                      format="YYYY/MM/DD"
-                      confirmBtnText="決定"
-                      cancelBtnText="キャンセル"
-                      customStyles={{
-                        dateIcon: {
-                          position: 'absolute',
-                          right: -5,
-                          top: 4,
-                          marginLeft: 0,
-                          display: 'none',
-                        },
-                        dateInput: {
-                          borderColor: 'gray',
-                          alignItems: 'flex-start',
-                          borderWidth: 1,
-                          borderRadius: moderateScale(10),
-                          padding: 5,
-                          paddingLeft: 15,
-                        },
-                        placeholderText: {
-                          fontSize: 12,
-                          color: 'gray',
-                        },
-                        dateText: {
-                          fontSize: 12,
-                        },
-                      }}
-                      onDateChange={date => {
-                        setDate(date);
-                      }}
-                    />
+                    <View>
+                      <TouchableOpacity onPress={() => showDatepicker()}>
+                        <Text>{date}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    {show1 && (
+                      <DateTimePicker
+                        testID="dateTimePicker"
+                        timeZoneOffsetInMinutes={
+                          -new Date().getTimezoneOffset()
+                        }
+                        value={date1}
+                        mode={'date'}
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChange1}
+                      />
+                    )}
                   </View>
                   <View style={styles.periodBox}>
-                    <DatePicker
-                      style={styles.datePickerStyle}
-                      date={time}
-                      mode="time"
-                      placeholder="終了時刻を選択"
-                      // format="HH:II"
-                      confirmBtnText="決定"
-                      cancelBtnText="キャンセル"
-                      customStyles={{
-                        dateIcon: {
-                          position: 'absolute',
-                          right: -5,
-                          top: 4,
-                          marginLeft: 0,
-                          display: 'none',
-                        },
-                        dateInput: {
-                          borderColor: 'gray',
-                          alignItems: 'flex-start',
-                          borderWidth: 1,
-                          borderRadius: moderateScale(10),
-                          padding: 5,
-                          paddingLeft: 15,
-                        },
-                        placeholderText: {
-                          fontSize: 12,
-                          color: 'gray',
-                        },
-                        dateText: {
-                          fontSize: 12,
-                        },
-                      }}
-                      onDateChange={time => {
-                        setTime(time + ':00');
-                      }}
-                    />
+                    <View>
+                      <TouchableOpacity onPress={() => showTimepicker()}>
+                        <Text>{time}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    {show2 && (
+                      <DateTimePicker
+                        testID="dateTimePicker"
+                        timeZoneOffsetInMinutes={
+                          -new Date().getTimezoneOffset()
+                        }
+                        value={date2}
+                        mode={'time'}
+                        is24Hour={false}
+                        display="default"
+                        onChange={onChange2}
+                      />
+                    )}
                   </View>
                 </View>
                 <View style={styles.checkboxContainer}>
@@ -516,6 +517,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dropdown: {
+    width: 200,
     height: 35,
     backgroundColor: 'white',
     borderRadius: 12,
