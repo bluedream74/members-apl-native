@@ -9,6 +9,8 @@ import {Item} from './component/Item';
 import {getDetailChatApi} from '@services';
 import {useDispatch} from 'react-redux';
 import {fetchResultMessageAction} from '@redux';
+import {ROUTE_NAME} from "@routeName";
+import {useNavigation} from "@react-navigation/native";
 
 const SearchMessage = (props: any) => {
   const idCompany = useSelector((state: any) => state.chat.idCompany);
@@ -20,6 +22,7 @@ const SearchMessage = (props: any) => {
   const [total, setTotal] = useState(null);
   const [lastPage, setLastPage] = useState(null);
   const [page, setPage] = useState(1);
+  const navigation = useNavigation<any>();
 
   const callApiSearch = async (params: any) => {
     try {
@@ -84,6 +87,10 @@ const SearchMessage = (props: any) => {
       id_message: value?.id,
     };
     dispatch(fetchResultMessageAction(body));
+    navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
+      idRoomChat: idRoomChat,
+      idMessageSearchListChat: value?.id,
+    });
   };
 
   const renderItem = ({item}: any) => (
