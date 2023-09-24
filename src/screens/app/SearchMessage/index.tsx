@@ -90,6 +90,7 @@ const SearchMessage = (props: any) => {
     navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
       idRoomChat: idRoomChat,
       idMessageSearchListChat: value?.id,
+      searchingFlg: Math.random(),
     });
   };
 
