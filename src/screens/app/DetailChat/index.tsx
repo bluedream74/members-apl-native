@@ -366,8 +366,11 @@ const DetailChat = (props: any) => {
                           if (value) {
                             mentionedUsers.push('@' + value + title);
                             mentionedUsers.push('@' + value);
+                            const wordBeforeMention = getText(formattedText)
+                              ? getText(formattedText)
+                              : ' ';
                             formatText(
-                              getText(formattedText) + '' + '@' + value + title,
+                              `${wordBeforeMention}@${value}${title}`,
                               true,
                             );
                           }
