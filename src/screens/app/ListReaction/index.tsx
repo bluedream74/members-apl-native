@@ -65,6 +65,12 @@ const ListReaction = (props: any) => {
         return icon5;
       case 6:
         return icon6;
+      case 7:
+        return understand;
+      case 8:
+        return bow;
+      case 9:
+        return congrats;
     }
   }, []);
 
