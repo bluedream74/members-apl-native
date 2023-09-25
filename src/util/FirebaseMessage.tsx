@@ -8,7 +8,10 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
-import {getRoomList} from "@redux";
+import {getRoomList} from '@redux';
+import {ROUTE_NAME} from '@routeName';
+import {saveIdRoomChat} from '@redux';
+import {NavigationUtils} from '@navigation';
 
 function createAppNotification() {
   let fcmToken = '';
@@ -99,7 +102,9 @@ function createAppNotification() {
         description: convertString(bodyMessage),
         color: '#FFFFFF',
         //@ts-ignore
-        onPress: async () => {},
+        onPress: () => {
+          handleUserInteractionNotification(message);
+        },
       });
       // update list chat unread message count
       store.dispatch(
@@ -114,13 +119,18 @@ function createAppNotification() {
     } catch (error) {}
   };
 
-  const handleUserInteractionNotification = (message: any) => {
+  const handleUserInteractionNotification = async (message: any) => {
     let {notification, data} = message;
     let title = '';
     let bodyMessage = '';
     try {
       title = notification.title;
       bodyMessage = convertString(notification?.title);
+      await store.dispatch(saveIdRoomChat(data?.room_id));
+      NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+        idRoomChat: data?.room_id,
+        idMessageSearchListChat: null,
+      });
     } catch (error) {}
   };
 
