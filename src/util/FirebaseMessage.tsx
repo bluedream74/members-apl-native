@@ -62,6 +62,7 @@ function createAppNotification() {
         .then(() => notifee.getBadgeCount())
         .then(count => {});
     });
+    
   };
 
   notifee.onBackgroundEvent(async ({type, detail}: any) => {
