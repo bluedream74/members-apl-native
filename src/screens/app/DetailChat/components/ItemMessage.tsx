@@ -184,7 +184,7 @@ const ItemMessage = React.memo((props: any) => {
             return;
           }
           const formattedText1: (string | JSX.Element)[] = [];
-          const word = '@' + user.name + 'さん ';
+          const word = '@' + user.name + 'さん';
           const word_no_title = '@' + user.name + ' ';
           mentionedUsers.push(word.trim());
           mentionedUsers.push(word_no_title.trim());
@@ -199,8 +199,18 @@ const ItemMessage = React.memo((props: any) => {
               {word}
             </Text>
           );
+          const emptyText = (
+            <Text
+              key={parseInt(index, 10) + 1}
+              style={{
+                alignSelf: 'flex-start',
+                color: 'black',
+              }}>
+              {''}
+            </Text>
+          );
           formattedText1.push(mention);
-          setFormattedText([...formattedText1]);
+          setFormattedText([' ', ...formattedText1, ' ', emptyText]);
           break;
         case 10:
           pinMsg(_id);
