@@ -73,7 +73,9 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
       return {
         ...state,
-        detailChat: action.payload.concat(state.detailChat),
+        detailChat: action.payload
+          .concat(state.detailChat)
+          .sort((a: {id: number}, b: {id: number}) => b.id - a.id),
       };
     case typeChat.SAVE_MESSAGE_REPLY:
       return {

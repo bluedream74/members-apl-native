@@ -8,11 +8,11 @@ import {ROUTE_NAME} from '@routeName';
 const api = axios.create();
 
 //adamo api url
-// const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
+// export const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
 //member chat staging api url
-// const BASEURL = 'https://stage.mem-bers.jp/mobile';
+// export const BASEURL = 'https://stage.mem-bers.jp/mobile';
 //member chat live api url
-const BASEURL = 'https://mem-bers.jp/mobile';
+export const BASEURL = 'https://mem-bers.jp/mobile';
 
 api.interceptors.request.use(
   async (config: any) => {
@@ -54,6 +54,9 @@ api.interceptors.response.use(
       NavigationUtils.navigate(ROUTE_NAME.NETWORK_ERR, {
         message: message ? message : '',
       });
+    } else if (error?.response?.status == 401) {
+      // if laravel passport token is expired.
+      NavigationUtils.navigate(ROUTE_NAME.LOGIN);
     } else {
       showMessage({
         message: message ? message : 'Network Error',
