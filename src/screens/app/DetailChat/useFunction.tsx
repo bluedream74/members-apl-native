@@ -228,6 +228,48 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
+  const generateDatabaseDateTime = useCallback(date => {
+    return date.toLocaleString().replace('T', ' ').substring(0, 19);
+  }, []);
+  const makeTemporallyDataMessage = useCallback((tempData: any) => {
+    let dateNow = new Date();
+    const currentDatetime = generateDatabaseDateTime(dateNow);
+    return [
+      {
+        id: 9999999999,
+        room_id: tempData.room_id,
+        from_id: tempData.from_id,
+        user_send: {},
+        message: tempData.message,
+        type: null,
+        msg_level: 0,
+        msg_type: 0,
+        message_quote: null,
+        quote_message_id: null,
+        quote_message_user: null,
+        method: 0,
+        stamp_no: null,
+        stamp_icon: '',
+        medthod: 0,
+        created_at: currentDatetime,
+        updated_at: currentDatetime,
+        reactions: [],
+        del_flag: '0',
+        reply_to_message_id: tempData.reply_to_message_id,
+        reply_to_message_text: null,
+        reply_to_message_user: null,
+        reply_to_message_user_id: null,
+        reply_to_message_files: [],
+        reply_to_message_stamp: {stamp_no: null, stamp_icon: null},
+        task: null,
+        task_link: null,
+        attachment_files: [],
+        users_seen: [],
+        guest: null,
+      },
+    ];
+  }, []);
+
   const getConvertedMessages = useCallback((msgs: any) => {
     return msgs?.map((item: any, index: any) => {
       return convertDataMessage(item, index);
@@ -340,6 +382,17 @@ export const useFunction = (props: any) => {
           ids?.forEach((item: any) => {
             data.append('ids[]', item);
           });
+          // at first show temporally data
+          const tempData = {
+            room_id: idRoomChat,
+            from_id: user_id,
+            message: mes[0]?.text?.split('\n').join('<br>'),
+            reply_to_message_id: messageReply?.id,
+          };
+          dispatch(saveMessageReply(null));
+          dispatch(
+            getDetailMessageSocketSuccess(makeTemporallyDataMessage(tempData)),
+          );
           const res = await replyMessageApi(data);
           socket.emit('message_ind2', {
             user_id: mes[0]?.user?._id,
@@ -358,6 +411,7 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
           });
           dispatch(saveMessageReply(null));
+          // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
         } catch (error: any) {}
       } else if (message_edit) {
@@ -458,7 +512,9 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       }
       // send files
-      await sendFile();
+      if (chosenFiles?.length > 0) {
+        await sendFile();
+      }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,

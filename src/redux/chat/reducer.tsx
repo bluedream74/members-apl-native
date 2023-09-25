@@ -71,10 +71,13 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         id_roomChat: action.payload,
       };
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
+      const filteredStateDetailChat = state.detailChat.filter(function (el) {
+        return el.id != 9999999999;
+      }); // delete dummy data id=9999999999
       return {
         ...state,
         detailChat: action.payload
-          .concat(state.detailChat)
+          .concat(filteredStateDetailChat)
           .sort((a: {id: number}, b: {id: number}) => b.id - a.id),
       };
     case typeChat.SAVE_MESSAGE_REPLY:
