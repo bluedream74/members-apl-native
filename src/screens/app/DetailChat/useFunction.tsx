@@ -65,7 +65,7 @@ export const useFunction = (props: any) => {
 
   const dispatch = useDispatch();
   const {route} = props;
-  const {idRoomChat, idMessageSearchListChat} = route?.params;
+  const {idRoomChat, idMessageSearchListChat, searchingFlg} = route?.params;
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<any>(1);
@@ -134,7 +134,7 @@ export const useFunction = (props: any) => {
 
   useEffect(() => {
     //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
-    if (idMessageSearchListChat) {
+    if (idMessageSearchListChat > 0) {
       setTimeout(() => {
         const body = {
           id_room: idRoomChat,
@@ -143,7 +143,7 @@ export const useFunction = (props: any) => {
         dispatch(fetchResultMessageActionListRoom(body));
       }, 1000);
     }
-  }, [idMessageSearchListChat]);
+  }, [idMessageSearchListChat, searchingFlg]);
 
   // check if messages belongs to this room
   useEffect(() => {
