@@ -142,7 +142,7 @@ const MenuFeature = React.memo((props: any) => {
       id: 7,
       sourceImage: understand,
       style: {
-        width: 20,
+        width: 21,
         height: 20,
       },
     },
