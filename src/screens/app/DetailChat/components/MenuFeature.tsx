@@ -142,24 +142,24 @@ const MenuFeature = React.memo((props: any) => {
       id: 7,
       sourceImage: understand,
       style: {
-        width: 22,
-        height: 25,
+        width: 21,
+        height: 20,
       },
     },
     {
       id: 8,
       sourceImage: bow,
       style: {
-        width: 22,
-        height: 25,
+        width: 20,
+        height: 20,
       },
     },
     {
       id: 9,
       sourceImage: congrats,
       style: {
-        width: 22,
-        height: 25,
+        width: 20,
+        height: 20,
       },
     },
   ];

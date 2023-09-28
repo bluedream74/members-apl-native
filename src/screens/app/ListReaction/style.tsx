@@ -52,16 +52,16 @@ const styles = StyleSheet.create({
     height: moderateScale(23),
   },
   imageIconUnderstand: {
-    width: moderateScale(20),
-    height: moderateScale(23),
+    width: moderateScale(22),
+    height: moderateScale(20),
   },
   imageIconBow: {
-    width: moderateScale(20),
-    height: moderateScale(23),
+    width: moderateScale(22),
+    height: moderateScale(20),
   },
   imageIconCongrats: {
-    width: moderateScale(20),
-    height: moderateScale(23),
+    width: moderateScale(22),
+    height: moderateScale(20),
   },
 });
 
