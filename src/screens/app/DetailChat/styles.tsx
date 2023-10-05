@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '75%',
+    top: '68%',
   },
   viewTaskWithKeyboard: {
     justifyContent: 'center',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    top: '60%',
+    top: '57%',
   },
   viewTaskWithKeyboardFiles: {
     justifyContent: 'center',
