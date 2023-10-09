@@ -568,6 +568,13 @@ export const useFunction = (props: any) => {
       null;
     }
   }, [page, pagging]);
+  const onLoadMoreDown = useCallback(() => {
+    if (page > 0) {
+      setPage((prevPage: any) => prevPage - 1);
+    } else {
+      null;
+    }
+  }, [page, pagging]);
 
   const replyMessage = useCallback((data: any) => {
     dispatch(saveMessageReply(data));
@@ -1158,6 +1165,7 @@ export const useFunction = (props: any) => {
     message_pinned,
     updateGimMessage,
     onLoadMore,
+    onLoadMoreDown,
     replyMessage,
     messageReply,
     removeReplyMessage,
