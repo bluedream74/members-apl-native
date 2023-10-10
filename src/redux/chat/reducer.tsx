@@ -21,12 +21,20 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       };
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
+      const currentPage = state.pagingDetail?.current_page;
       return {
         ...state,
         detailChat:
           //Load more list message detail
+          // in case of currentPage > page: add new data after current data
+          // in case of currentPage <= page: add new data before current data
           page === 1
             ? convertArrUnique(action.payload.room_messages.data, 'id')
+            : currentPage && currentPage > page
+            ? convertArrUnique(
+                action.payload.room_messages.data.concat(state.detailChat),
+                'id',
+              )
             : convertArrUnique(
                 state.detailChat.concat(action.payload.room_messages.data),
                 'id',

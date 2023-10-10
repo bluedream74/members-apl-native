@@ -38,6 +38,7 @@ const DetailChat = (props: any) => {
     message_pinned,
     updateGimMessage,
     onLoadMore,
+    onLoadMoreDown,
     replyMessage,
     messageReply,
     editMessage,
@@ -291,6 +292,7 @@ const DetailChat = (props: any) => {
               if (isCloseToTop(nativeEvent)) {
                 onLoadMore();
               } else if (nativeEvent?.contentOffset?.y === 0) {
+                onLoadMoreDown();
               }
             },
 
