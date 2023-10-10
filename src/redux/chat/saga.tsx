@@ -174,7 +174,7 @@ export function* fetchResultMessageRedLine(action: any) {
       id_message: action.payload.id_message,
     };
     const res: ResponseGenerator = yield getResultSearchMessage(body);
-    if (res?.code === 200) {
+    if (res?.code === 200 && res?.data?.room_messages) {
       const param = {
         id: action.payload.id_room,
         page: res?.data.pages,
