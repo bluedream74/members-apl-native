@@ -11,8 +11,8 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage,
-} from '@redux';
+  logMessage, saveIdMessageSearch,
+} from "@redux";
 import {
   deleteMessageApi,
   GlobalService,
@@ -135,6 +135,8 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
     if (idMessageSearchListChat > 0) {
+      // idMessageSearchを0に初期化
+      dispatch(saveIdMessageSearch(0));
       setTimeout(() => {
         const body = {
           id_room: idRoomChat,
@@ -167,7 +169,7 @@ export const useFunction = (props: any) => {
   const navigateToMessage = useCallback(
     idMessageSearch => {
       const index = listChat.findIndex(
-        (element: any) => element?.id == idMessageSearch,
+        (element: any) => element?.id === idMessageSearch,
       );
       if (index && index >= 0) {
         giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
@@ -179,12 +181,15 @@ export const useFunction = (props: any) => {
     [listChat],
   );
 
+  // チャット検索した後、idMessageSearchが変更があれば実行される
   useEffect(() => {
     //Logic khi có id message tìm kiếm thì tiến hành scroll đển tin nhắn đó
-    if (idMessageSearch) {
+    if (idMessageSearch && idMessageSearch > 0) {
       setPage(pagging?.current_page);
       navigateToMessage(idMessageSearch);
     }
+    // idMessageSearchを0に初期化
+    dispatch(saveIdMessageSearch(0));
   }, [idMessageSearch]);
 
   const navigateToDetail = useCallback(() => {
@@ -559,6 +564,13 @@ export const useFunction = (props: any) => {
   const onLoadMore = useCallback(() => {
     if (page !== pagging?.last_page) {
       setPage((prevPage: any) => prevPage + 1);
+    } else {
+      null;
+    }
+  }, [page, pagging]);
+  const onLoadMoreDown = useCallback(() => {
+    if (page > 0) {
+      setPage((prevPage: any) => prevPage - 1);
     } else {
       null;
     }
@@ -1153,6 +1165,7 @@ export const useFunction = (props: any) => {
     message_pinned,
     updateGimMessage,
     onLoadMore,
+    onLoadMoreDown,
     replyMessage,
     messageReply,
     removeReplyMessage,
