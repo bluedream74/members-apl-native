@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     height: moderateScale(20),
   },
   imageIconBow: {
-    width: moderateScale(22),
+    width: moderateScale(20),
     height: moderateScale(20),
   },
   imageIconCongrats: {
