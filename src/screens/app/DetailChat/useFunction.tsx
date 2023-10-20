@@ -1090,7 +1090,7 @@ export const useFunction = (props: any) => {
       task_name: input.taskName,
       actual_start_date: moment().format('YYYY/MM/DD'),
       actual_start_time: '00:00:00',
-      actual_end_date: null,
+      actual_end_date: input.date,
       plans_end_date: input.date,
       plans_end_time: input.time,
       plans_time: 0,
