@@ -162,13 +162,7 @@ const ListUser = (props: any) => {
   const getListUserOfRoom = async () => {
     try {
       const result = await getListUserOfRoomApi(idRoomChat);
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-        };
-      });
-      setListUser(result?.data?.users?.concat(guest));
+      setListUser(result?.data?.users);
     } catch (error) {}
   };
 
