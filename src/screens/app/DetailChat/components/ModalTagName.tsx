@@ -29,12 +29,6 @@ const ModalTagName = React.memo((props: any) => {
   const getListUserApi = async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-        };
-      });
       const dataAll: any = [
         {
           id: 'All',
@@ -43,7 +37,7 @@ const ModalTagName = React.memo((props: any) => {
           value: 'all',
         },
       ];
-      const dataUser = result?.data?.users?.data?.concat(guest);
+      const dataUser = result?.data?.users?.data;
       const dataAddAll = dataAll?.concat(dataUser);
       const dataConvert = dataAddAll?.map((item: any) => {
         return {
