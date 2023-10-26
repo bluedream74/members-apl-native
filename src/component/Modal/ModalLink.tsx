@@ -107,19 +107,6 @@ const ModalLink = React.memo((prop: any) => {
                   <Text style={styles.txtButton}>コピー</Text>
                 </TouchableOpacity>
               </View>
-              <Text style={styles.txtTitleContent}>ゲスト招待用</Text>
-              <View style={styles.viewItem}>
-                <View style={styles.viewInput}>
-                  <Text numberOfLines={1} style={styles.content}>
-                    {dataLink?.url_guest}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => copyLink(dataLink?.url_guest)}>
-                  <Text style={styles.txtButton}>コピー</Text>
-                </TouchableOpacity>
-              </View>
             </View>
           ) : (
             <View style={styles.viewLoading}>
