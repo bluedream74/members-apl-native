@@ -32,7 +32,6 @@ const DELETE_BOOKMARK = 'user/chat/room/unbookmark';
 const LIST_IMAGE_INROOM = 'user/chat/room';
 const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
-const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 const DELETE_ROOM = 'user/chat/room';
 const CHANGE_ROLE = 'user/chat/room/role-user';
 const USER_OF_ROOM = 'user/chat/room';
@@ -87,11 +86,6 @@ export const createRoom: any = async (body: any) => {
 
 export const removeUser: any = async (body: any) => {
   const response = api.post(REMOVE_USER, body);
-  return response;
-};
-
-export const removeGuest: any = async (body: any) => {
-  const response = api.post(REMOVE_GUEST, body);
   return response;
 };
 

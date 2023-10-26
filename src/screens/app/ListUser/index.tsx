@@ -13,7 +13,6 @@ import {
   getListUserOfRoomApi,
   GlobalService,
   removeUser,
-  removeGuest,
   changeRole,
 } from '@services';
 
@@ -109,49 +108,6 @@ const ListUser = (props: any) => {
     }
   };
 
-  const deleGuest = async () => {
-    try {
-      GlobalService.showLoading();
-      const body = {
-        room_id: idRoomChat,
-        guest_id: Number(idUser) * -1,
-      };
-      const result = await removeGuest(body);
-      socket.emit('message_ind2', {
-        user_id: user_id,
-        room_id: idRoomChat,
-        task_id: null,
-        to_info: null,
-        level: result?.data?.data?.msg_level,
-        message_id: result?.data?.data?.id,
-        message_type: result?.data?.data?.msg_type,
-        method: result?.data?.data?.method,
-        // attachment_files: res?.data?.attachmentFiles,
-        stamp_no: result?.data?.data?.stamp_no,
-        relation_message_id: result?.data?.data?.reply_to_message_id,
-        text: result?.data?.data?.message,
-        text2: null,
-        time: result?.data?.data?.created_at,
-      });
-      socket.emit('ChatGroup_update_ind2', {
-        user_id: user_id,
-        room_id: idRoomChat,
-        member_info: {
-          type: 1,
-          ids: [user_id],
-        },
-        method: 12,
-        room_name: null,
-        task_id: null,
-      });
-      dispatch(getDetailMessageSocketSuccess([result?.data?.data]));
-      getListUserOfRoom();
-      GlobalService.hideLoading();
-    } catch (error) {
-      GlobalService.hideLoading();
-    }
-  };
-
   const onCreate = useCallback(() => {
     navigation.navigate(ROUTE_NAME.CREATE_ROOM_CHAT, {
       typeScreen: 'ADD_NEW_USER',
@@ -178,9 +134,7 @@ const ListUser = (props: any) => {
 
   const onConfirm = useCallback(() => {
     onCancelModal();
-    if (idUser < 0) {
-      deleGuest();
-    } else {
+    if (idUser > 0) {
       deleteUser();
     }
   }, [modal, idUser]);
