@@ -176,6 +176,7 @@ const ItemMessage = React.memo((props: any) => {
             text: text,
             attachment_files: attachment_files,
             stamp_no: stamp_no,
+            roomId: idRoomChat,
           };
           replyMsg(dataMessageReply);
           // add mention to textbox
@@ -226,6 +227,7 @@ const ItemMessage = React.memo((props: any) => {
             id: _id,
             user: user,
             text: text,
+            roomId: idRoomChat,
           };
           quoteMsg(dataQuote);
           break;
