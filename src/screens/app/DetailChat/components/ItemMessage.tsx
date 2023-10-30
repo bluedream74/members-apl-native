@@ -441,14 +441,14 @@ const ItemMessage = React.memo((props: any) => {
                 </View>
               ) : null}
               {msg_type == 8 ? (
-              <View style={styles.viewInvite}>
-                <FastImage source={defaultAvatar} style={styles.image} />
-                <ViewInvite
-                  data={guest}
-                  idRoomChat={idRoomChat}
-                  idMessage={_id}
-                />
-              </View>
+                <View style={styles.viewInvite}>
+                  <FastImage source={defaultAvatar} style={styles.image} />
+                  <ViewInvite
+                    data={guest}
+                    idRoomChat={idRoomChat}
+                    idMessage={_id}
+                  />
+                </View>
               ) : null}
               <TouchableOpacity
                 style={styles.chat}
