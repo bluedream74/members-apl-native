@@ -43,7 +43,6 @@ import HighlightText from '@sanar/react-native-highlight-text';
 import {ViewUserSeen} from './viewUserSeen';
 import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
-import {ViewInvite} from './ViewInvite';
 import {decode} from 'html-entities';
 import {MenuOption} from './MenuOption';
 
@@ -106,7 +105,6 @@ const ItemMessage = React.memo((props: any) => {
     users_seen,
     stamp_no,
     task,
-    guest,
     task_link,
     message_quote,
     quote_message_id,
@@ -247,7 +245,7 @@ const ItemMessage = React.memo((props: any) => {
   }, 0);
 
   const renderTxtName = () => {
-    return <Text style={styles.txtNameSend}>{user?.name || guest?.name}</Text>;
+    return <Text style={styles.txtNameSend}>{user?.name}</Text>;
   };
 
   const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
@@ -394,6 +392,7 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 9 ||
       msg_type == 10 ||
       msg_type == 9 ||
+      msg_type == 8 ||
       msg_type == 12 ? (
         <TouchableOpacity
           style={styles.viewCenter}
@@ -401,9 +400,11 @@ const ItemMessage = React.memo((props: any) => {
           disabled={isAdmin === 1 ? false : true}>
           <Text style={styles.txtCenter} numberOfLines={2}>
             {msg_type === 9
-              ? `${guest?.name}さんが参加しました。`
+              ? 'ゲストが参加しました。'
               : msg_type === 5
               ? `${user?.name}さんが参加しました。`
+              : msg_type === 8
+              ? 'グストを招待しました。'
               : text}
           </Text>
           <Menu
@@ -438,16 +439,6 @@ const ItemMessage = React.memo((props: any) => {
                 <View style={styles.viewTask}>
                   <FastImage source={defaultAvatar} style={styles.image} />
                   <ViewTask data={task} mess={text} task_link={task_link} />
-                </View>
-              ) : null}
-              {msg_type == 8 ? (
-                <View style={styles.viewInvite}>
-                  <FastImage source={defaultAvatar} style={styles.image} />
-                  <ViewInvite
-                    data={guest}
-                    idRoomChat={idRoomChat}
-                    idMessage={_id}
-                  />
                 </View>
               ) : null}
               <TouchableOpacity
