@@ -23,8 +23,8 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
-  showHideModalFilterListChat,
-} from '@redux';
+  showHideModalFilterListChat, getDetailRoomSocket, getUnreadMessageCount,
+} from "@redux";
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
 import {useNavigation} from '@react-navigation/native';
@@ -33,6 +33,7 @@ import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
 import {FilterListChat} from '../FilterListChat';
+import { store } from "../../../redux/store";
 
 const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
@@ -54,6 +55,7 @@ const ListChat = (props: any) => {
 
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const user = useSelector((state: any) => state.auth.userInfo);
+  const unReadMessageCount = useSelector((state: any) => state.chat.unReadMessageCount);
   const [key, setKey] = useState<string>('');
   const [page, setPage] = useState(1);
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -80,11 +82,6 @@ const ListChat = (props: any) => {
     }, [type_Filter, categoryID_Filter]),
   );
 
-  //Logic tính tổng các tin nhắn chưa đọc
-  var countMessage = listRoom?.reduce(function (total: any, course: any) {
-    return total + parseInt(course.message_unread);
-  }, 0);
-
   useEffect(() => {
     setIsLoadMore(false);
   }, [listRoom]);
@@ -92,18 +89,19 @@ const ListChat = (props: any) => {
   //Đây là hàm logic lắng nghe tổng các tin nhắn chưa đọc, nếu có kết quả thì set lại badge noti
   // これは、未読メッセージの合計をリッスンする論理関数です。結果がある場合は、バッジ通知をリセットします
   useEffect(() => {
-    if (countMessage > 0) {
-      notifee.setBadgeCount(countMessage);
+    if (unReadMessageCount > 0) {
+      notifee.setBadgeCount(unReadMessageCount);
     } else {
       notifee.setBadgeCount(0);
     }
-  }, [countMessage]);
+  }, [unReadMessageCount]);
 
   useEffect(() => {
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
       dispatch(showHideModalFilterListChat(false));
+      dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
     }
   }, []);
 
