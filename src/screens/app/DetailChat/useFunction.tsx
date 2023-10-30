@@ -299,6 +299,13 @@ export const useFunction = (props: any) => {
     getListChat();
   }, [page]);
 
+  // route?.paramsが変わったら実行
+  // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
+  // push通知をクリックした時に、route?.params.idRoomChatが変更になりこちらが実行される
+  useEffect(() => {
+    getListChat();
+  }, [route]);
+
   const getDetail = async () => {
     try {
       const response = await detailRoomchat(idRoomChat);
