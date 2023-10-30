@@ -134,10 +134,8 @@ const ListUser = (props: any) => {
 
   const onConfirm = useCallback(() => {
     onCancelModal();
-    if (idUser > 0) {
-      deleteUser();
-    }
-  }, [modal, idUser]);
+    deleteUser();
+  }, [modal]);
 
   return (
     <View style={styles.container}>
