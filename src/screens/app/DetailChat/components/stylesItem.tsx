@@ -222,6 +222,11 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10),
     ...stylesCommon.fontWeight500,
   },
+  viewInvite: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
   viewTask: {
     width: '100%',
     flexDirection: 'row',

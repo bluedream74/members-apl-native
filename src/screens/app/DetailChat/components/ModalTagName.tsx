@@ -37,8 +37,7 @@ const ModalTagName = React.memo((props: any) => {
           value: 'all',
         },
       ];
-      const dataUser = result?.data?.users?.data;
-      const dataAddAll = dataAll?.concat(dataUser);
+      const dataAddAll = dataAll?.concat(result?.data?.users?.data);
       const dataConvert = dataAddAll?.map((item: any) => {
         return {
           ...item,

@@ -43,6 +43,7 @@ import HighlightText from '@sanar/react-native-highlight-text';
 import {ViewUserSeen} from './viewUserSeen';
 import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
+import {ViewInvite} from './ViewInvite';
 import {decode} from 'html-entities';
 import {MenuOption} from './MenuOption';
 
@@ -438,6 +439,16 @@ const ItemMessage = React.memo((props: any) => {
                   <FastImage source={defaultAvatar} style={styles.image} />
                   <ViewTask data={task} mess={text} task_link={task_link} />
                 </View>
+              ) : null}
+              {msg_type == 8 ? (
+              <View style={styles.viewInvite}>
+                <FastImage source={defaultAvatar} style={styles.image} />
+                <ViewInvite
+                  data={guest}
+                  idRoomChat={idRoomChat}
+                  idMessage={_id}
+                />
+              </View>
               ) : null}
               <TouchableOpacity
                 style={styles.chat}
