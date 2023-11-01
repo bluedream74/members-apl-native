@@ -51,6 +51,7 @@ const EditRoomChat = (props: any) => {
   const getListUserOfRoom = async () => {
     try {
       if(!idRoomChat) return;
+      const result = await getListUser({room_id: idRoomChat, all: true});
       setListUser(result?.data?.users?.data);
     } catch (error) {}
   };
