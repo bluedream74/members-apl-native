@@ -50,7 +50,7 @@ const EditRoomChat = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      if(!idRoomChat) return;
       setListUser(result?.data?.users?.data);
     } catch (error) {}
   };

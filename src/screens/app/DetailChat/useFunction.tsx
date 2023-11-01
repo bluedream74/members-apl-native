@@ -836,6 +836,7 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
+      if(!idRoomChat) return;
       const result = await getListUser({room_id: idRoomChat, all: true});
       const guest = result?.data?.guests?.map((item: any) => {
         return {

@@ -115,6 +115,7 @@ const ModalTask = React.memo((prop: any) => {
 
   const getListUserApi = async () => {
     try {
+      if(!idRoomChat) return;
       const result = await getListUser({room_id: idRoomChat, all: true});
 
       const dataUser = result?.data?.users?.data;
