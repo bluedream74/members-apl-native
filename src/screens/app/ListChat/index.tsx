@@ -153,7 +153,7 @@ const ListChat = (props: any) => {
       }),
     );
     dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
-  }, [page, idCompany, categoryID_Filter, type_Filter, key]);
+  }, [key, idCompany, type_Filter, categoryID_Filter, user?.id]);
 
   const onChangeText = (text: any) => {
     setKey(text);
