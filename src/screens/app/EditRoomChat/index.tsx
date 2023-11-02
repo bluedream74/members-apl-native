@@ -53,7 +53,11 @@ const EditRoomChat = (props: any) => {
       if(!idRoomChat) return;
       const result = await getListUser({room_id: idRoomChat, all: true});
       setListUser(result?.data?.users?.data);
-    } catch (error) {}
+    } catch {
+      (error: any) => {
+        console.error(error.message);
+      };
+    }
   };
 
   useEffect(() => {

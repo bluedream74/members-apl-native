@@ -58,6 +58,7 @@ const ModalTagName = React.memo((props: any) => {
       setLoading(false);
     } catch {
       (error: any) => {
+        console.error(error.message);
         setLoading(false);
       };
     }
