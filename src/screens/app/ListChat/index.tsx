@@ -23,7 +23,8 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
-  showHideModalFilterListChat, getDetailRoomSocket, getUnreadMessageCount,
+  showHideModalFilterListChat,
+  getUnreadMessageCount,
 } from "@redux";
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
@@ -33,7 +34,6 @@ import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
 import notifee, {EventType} from '@notifee/react-native';
 import {FilterListChat} from '../FilterListChat';
-import { store } from "../../../redux/store";
 
 const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
@@ -152,6 +152,7 @@ const ListChat = (props: any) => {
         category_id: categoryID_Filter,
       }),
     );
+    dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
   }, [page, idCompany, categoryID_Filter, type_Filter, key]);
 
   const onChangeText = (text: any) => {
