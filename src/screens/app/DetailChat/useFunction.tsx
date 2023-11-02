@@ -304,6 +304,7 @@ export const useFunction = (props: any) => {
   // push通知をクリックした時に、route?.params.idRoomChatが変更になりこちらが実行される
   useEffect(() => {
     getListChat();
+    getDetail();
   }, [route]);
 
   const getDetail = async () => {
