@@ -383,6 +383,23 @@ const ItemMessage = React.memo((props: any) => {
 
     return isSelfMention;
   };
+  /**
+   * 条件分岐でシステムメッセージ
+   * @param msgtype
+   * @returns メッセージ
+   */
+  const centerTxt = (msgtype: Number) => {
+    switch (msgtype) {
+      case 9:
+        return 'ゲストが参加しました。';
+      case 5:
+        return `${user?.name}さんが参加しました。`;
+      case 8:
+        return 'グストを招待しました。';
+      default:
+        return text;
+    }
+  };
 
   return (
     <>
@@ -399,13 +416,7 @@ const ItemMessage = React.memo((props: any) => {
           onPress={onShowModalDelete}
           disabled={isAdmin === 1 ? false : true}>
           <Text style={styles.txtCenter} numberOfLines={2}>
-            {msg_type === 9
-              ? 'ゲストが参加しました。'
-              : msg_type === 5
-              ? `${user?.name}さんが参加しました。`
-              : msg_type === 8
-              ? 'グストを招待しました。'
-              : text}
+            　{centerTxt(msg_type)}
           </Text>
           <Menu
             style={styles.containerMenuDelete}
