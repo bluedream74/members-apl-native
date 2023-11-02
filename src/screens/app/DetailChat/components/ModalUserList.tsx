@@ -34,7 +34,9 @@ const ModalUserList = React.memo((prop: any) => {
 
   const getListUserApi = async () => {
     try {
-      if(!idRoomChat) return;
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
       const result = await getListUser({room_id: idRoomChat, all: true});
       const dataUser = result?.data?.users?.data;
       const dataConvert = dataUser?.map((element: any) => {

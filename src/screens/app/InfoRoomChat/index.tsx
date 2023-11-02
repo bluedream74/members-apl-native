@@ -131,7 +131,9 @@ const InfoRoomChat = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      if(!idRoomChat) return;
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
       const result = await getListUser({room_id: idRoomChat, all: true});
       setListUser(result?.data?.users?.data);
     } catch (error) {
