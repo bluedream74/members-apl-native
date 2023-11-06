@@ -850,10 +850,8 @@ export const useFunction = (props: any) => {
       });
       setListUser(result?.data?.users?.data?.concat(guest));
       setListUserRoot(result?.data?.users?.data);
-    } catch {
-      (error: any) => {
-        console.error(error.message);
-      };
+    } catch (error) {
+      console.error(error);
     }
   }, [idRoomChat]);
 

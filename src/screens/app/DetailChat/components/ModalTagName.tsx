@@ -58,11 +58,9 @@ const ModalTagName = React.memo((props: any) => {
       setDataLocal(dataConvert);
       setListUser(dataConvert);
       setLoading(false);
-    } catch {
-      (error: any) => {
-        console.error(error.message);
-        setLoading(false);
-      };
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
     }
   };
 

@@ -74,14 +74,12 @@ const ModalUserList = React.memo((prop: any) => {
             },
           ]),
       );
-    } catch {
-      (error: any) => {
-        console.error(error.message);
-        showMessage({
-          message: '処理中にエラーが発生しました',
-          type: 'danger',
-        });
-      };
+    } catch (error) {
+      console.error(error);
+      showMessage({
+        message: '処理中にエラーが発生しました',
+        type: 'danger',
+      });
     }
   };
 

@@ -137,9 +137,7 @@ const InfoRoomChat = (props: any) => {
       const result = await getListUser({room_id: idRoomChat, all: true});
       setListUser(result?.data?.users?.data);
     } catch (error) {
-      (error: any) => {
-        console.error(error.message);
-      };
+      console.error(error);
     }
   };
 
