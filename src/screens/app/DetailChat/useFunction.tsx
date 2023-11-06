@@ -379,6 +379,14 @@ export const useFunction = (props: any) => {
       setShowRedLine(false);
       if (messageReply) {
         try {
+          // 現在表示中のルームIDと返信元のルームIDが違う場合はエラー
+          if (messageReply?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
@@ -451,6 +459,14 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       } else if (messageQuote) {
         try {
+          // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
+          if (messageQuote?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
