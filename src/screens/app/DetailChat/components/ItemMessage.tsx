@@ -1,14 +1,6 @@
-import {colors, stylesCommon} from '@stylesCommon';
-import React, {useState, useCallback, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Image,
-  Linking,
-} from 'react-native';
+import {colors} from '@stylesCommon';
+import React, {useState, useCallback} from 'react';
+import {View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import {
@@ -32,18 +24,10 @@ import {Reaction} from './Reaction';
 import {ROUTE_NAME} from '@routeName';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from './stylesItem';
-import {
-  scale,
-  verticalScale,
-  moderateVerticalScale,
-} from 'react-native-size-matters';
+import {scale, moderateVerticalScale} from 'react-native-size-matters';
 import {MsgFile} from './MsgFile';
-import {isSameDay, validateLink, convertString} from '@util';
-import HighlightText from '@sanar/react-native-highlight-text';
 import {ViewUserSeen} from './viewUserSeen';
-import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
-import {decode} from 'html-entities';
 import {MenuOption} from './MenuOption';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
@@ -52,19 +36,10 @@ const colorSelfMention = ['#FDE3E3', '#FDE3E3'];
 const colorReplyQuote = ['#DCDCDC', '#DCDCDC'];
 const width = Dimensions.get('window').width;
 
-const dataAll: any = [
-  {
-    id: 'All',
-    last_name: 'a',
-    first_name: 'll',
-  },
-];
-
 const ItemMessage = React.memo((props: any) => {
   const navigation = useNavigation<any>();
 
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
-  const listChat = useSelector((state: any) => state.chat?.detailChat);
 
   const {
     deleteMsg,
@@ -76,7 +51,6 @@ const ItemMessage = React.memo((props: any) => {
     navigatiteToListReaction,
     listUser,
     onAddMember,
-    idRoomChat,
     newIndexArray,
     quoteMsg,
     me,
@@ -109,7 +83,6 @@ const ItemMessage = React.memo((props: any) => {
     message_quote,
     quote_message_id,
     quote_message_user,
-    quote_message_user_id,
     index,
     updated_at,
     reply_to_message_id,

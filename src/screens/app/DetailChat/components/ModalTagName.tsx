@@ -12,12 +12,12 @@ import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 import {getListUser} from '@services';
 import {colors, stylesCommon} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
-import {defaultAvatar, iconTagAll} from '@images';
+import {defaultAvatar} from '@images';
 
 const width = Dimensions.get('window').width;
 
 const ModalTagName = React.memo((props: any) => {
-  const {idRoomChat, choseUser, text} = props;
+  const {idRoomChat, choseUser} = props;
   const [listUser, setListUser] = useState([]);
   const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,8 +41,7 @@ const ModalTagName = React.memo((props: any) => {
       const dataConvert = dataAddAll?.map((item: any) => {
         return {
           ...item,
-          nameUser:
-            item?.id < 0 ? item?.name : `${item?.last_name}${item?.first_name}`,
+          nameUser: `${item?.last_name}${item?.first_name}`,
         };
       });
       setDataLocal(dataConvert);
@@ -58,14 +57,11 @@ const ModalTagName = React.memo((props: any) => {
   const onChoseUser = (item: any) => {
     const title = 'さん';
     if (item?.id === 'All') {
-      const valueName = item?.id < 0 ? `${item?.name}` : `${item?.value}`;
+      const valueName = `${item?.value}`;
       const id = item?.id;
       choseUser(valueName?.replace(' ', ''), title, id, item);
     } else {
-      const valueName =
-        item?.id < 0
-          ? `${item?.name}`
-          : `${item?.last_name}${item?.first_name}`;
+      const valueName = `${item?.last_name}${item?.first_name}`;
       const id = item?.id;
       choseUser(valueName?.replace(' ', ''), title, id, item);
     }
