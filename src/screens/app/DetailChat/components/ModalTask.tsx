@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
-} from "react-native";
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
 import {iconClose} from '@images';
@@ -70,7 +70,8 @@ const ModalTask = React.memo((prop: any) => {
   const onChange2 = (event, selectedDate) => {
     const currentDate = selectedDate || date2;
     setDate2(currentDate);
-    const formartedTime = ('0' + currentDate.getHours()).slice(-2) +
+    const formartedTime =
+      ('0' + currentDate.getHours()).slice(-2) +
       ':' +
       ('0' + currentDate.getMinutes()).slice(-2) +
       ':00';
@@ -268,12 +269,18 @@ const ModalTask = React.memo((prop: any) => {
                   styleContainer={styles.containerSearch}
                   styleInput={styles.input}
                 />
-                <Text style={[styles.textTitleInput, {paddingTop: 10}]}>期間</Text>
+                <Text style={[styles.textTitleInput, {paddingTop: 10}]}>
+                  期間
+                </Text>
                 <View style={styles.row}>
                   <Text
                     style={[
                       styles.textTitleInput,
-                      {width: '10%', color: '#777777', ...stylesCommon.fontWeight500},
+                      {
+                        width: '10%',
+                        color: '#777777',
+                        ...stylesCommon.fontWeight500,
+                      },
                     ]}>
                     終了
                   </Text>
@@ -330,7 +337,9 @@ const ModalTask = React.memo((prop: any) => {
                     boxType={'square'}
                     hideBox={false}
                   />
-                  <Text style={styles.checkboxLabel}>Googleカレンダーに表示</Text>
+                  <Text style={styles.checkboxLabel}>
+                    Googleカレンダーに表示
+                  </Text>
                   <CheckBox
                     value={isAllDay}
                     onValueChange={setIsAllDay}
@@ -367,20 +376,23 @@ const ModalTask = React.memo((prop: any) => {
                     renderLeftIcon={() => {}}
                     renderItem={renderDataItem}
                     renderSelectedItem={(item, unSelect) => (
-                      <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                      <TouchableOpacity
+                        onPress={() => unSelect && unSelect(item)}>
                         <View style={styles.selectedStyle}>
-                          <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                          <Text style={styles.textSelectedStyle}>
+                            {item.label}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     )}
                   />
                   <StatusBar />
                 </View>
-            </View>)}
+              </View>
+            )}
             <Text style={[styles.textTitleInput, {paddingTop: 10}]}>説明</Text>
             <View style={styles.containerDescriptionModal}>
-              <View
-                style={styles.viewContent}>
+              <View style={styles.viewContent}>
                 <TouchableOpacity
                   style={{
                     height: '90%',
@@ -398,8 +410,8 @@ const ModalTask = React.memo((prop: any) => {
                     onChangeText={text => setTaskDescription(text)}
                     value={taskDescription}
                     style={{padding: 10}}
-                    onFocus={() =>setFocusDescription(true) }
-                    onBlur={() => setFocusDescription(false) }
+                    onFocus={() => setFocusDescription(true)}
+                    onBlur={() => setFocusDescription(false)}
                   />
                 </TouchableOpacity>
               </View>

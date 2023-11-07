@@ -11,8 +11,9 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage, saveIdMessageSearch,
-} from "@redux";
+  logMessage,
+  saveIdMessageSearch,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -543,7 +544,7 @@ export const useFunction = (props: any) => {
       idRoomChat,
       listUserRoot,
       listUser,
-      chosenFiles
+      chosenFiles,
     ],
   );
 
@@ -683,7 +684,7 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async() => {
+  const sendFile = useCallback(async () => {
     try {
       if (chosenFiles?.length > 0) {
         GlobalService.showLoading();
@@ -707,10 +708,10 @@ export const useFunction = (props: any) => {
               type:
                 Platform.OS === 'ios'
                   ? `image/${
-                    isHEIC
-                      ? item?.path?.split('.')[0] + '.JPG'
-                      : item?.path?.split('.').pop()
-                  }}`
+                      isHEIC
+                        ? item?.path?.split('.')[0] + '.JPG'
+                        : item?.path?.split('.').pop()
+                    }}`
                   : item?.mime,
               height: item?.height,
             });
