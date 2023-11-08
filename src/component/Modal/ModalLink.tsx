@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import {AppButton} from '../AppButton';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 import {iconClose} from '@images';
 import {HITSLOP} from '@util';
@@ -20,7 +19,7 @@ import {showMessage} from 'react-native-flash-message';
 
 const width = Dimensions.get('window').width;
 const ModalLink = React.memo((prop: any) => {
-  const {titleHeader, onCancel, onConfirm, visible, idRoomChat} = prop;
+  const {titleHeader, onCancel, visible, idRoomChat} = prop;
   const [loading, setLoading] = useState(true);
   const [dataLink, setDataLink] = useState<any>(null);
 

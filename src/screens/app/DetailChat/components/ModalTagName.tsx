@@ -18,7 +18,6 @@ const width = Dimensions.get('window').width;
 
 const ModalTagName = React.memo((props: any) => {
   const {idRoomChat, choseUser} = props;
-  const [listUser, setListUser] = useState([]);
   const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,15 +28,13 @@ const ModalTagName = React.memo((props: any) => {
   const getListUserApi = async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      const dataAll: any = [
-        {
-          id: 'All',
-          last_name: '@all このグループ全員に',
-          first_name: '通知が送信されます',
-          value: 'all',
-        },
-      ];
-      const dataAddAll = dataAll?.concat(result?.data?.users?.data);
+      const dataAddAll = result?.data?.users?.data || [];
+      dataAddAll.unshift({
+        id: 'All',
+        last_name: '@all このグループ全員に',
+        first_name: '通知が送信されます',
+        value: 'all',
+      });
       const dataConvert = dataAddAll?.map((item: any) => {
         return {
           ...item,
@@ -45,7 +42,6 @@ const ModalTagName = React.memo((props: any) => {
         };
       });
       setDataLocal(dataConvert);
-      setListUser(dataConvert);
       setLoading(false);
     } catch {
       (error: any) => {

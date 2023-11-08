@@ -364,11 +364,9 @@ const ItemMessage = React.memo((props: any) => {
   const centerTxt = (msgtype: Number) => {
     switch (msgtype) {
       case 9:
-        return 'ゲストが参加しました。';
+        return 'ゲストが参加しました';
       case 5:
         return `${user?.name}さんが参加しました。`;
-      case 8:
-        return 'グストを招待しました。';
       default:
         return text;
     }
@@ -381,8 +379,6 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 5 ||
       msg_type == 9 ||
       msg_type == 10 ||
-      msg_type == 9 ||
-      msg_type == 8 ||
       msg_type == 12 ? (
         <TouchableOpacity
           style={styles.viewCenter}
@@ -424,6 +420,11 @@ const ItemMessage = React.memo((props: any) => {
                   <FastImage source={defaultAvatar} style={styles.image} />
                   <ViewTask data={task} mess={text} task_link={task_link} />
                 </View>
+              ) : null}
+              {msg_type == 8 ? (
+                <Text style={styles.txtCenter} numberOfLines={2}>
+                  'グストを招待しました。'
+                </Text>
               ) : null}
               <TouchableOpacity
                 style={styles.chat}
