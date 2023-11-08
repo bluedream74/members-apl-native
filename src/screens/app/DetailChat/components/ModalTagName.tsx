@@ -31,7 +31,7 @@ const ModalTagName = React.memo((props: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      const result = await getListUser({room_id: idRoomChat, all: 1});
       const guest = result?.data?.guests?.map((item: any) => {
         return {
           ...item,

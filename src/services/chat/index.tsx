@@ -72,13 +72,7 @@ export const getRoomListApi: any = async (params: any) => {
 };
 
 export const getListUser: any = async (params: any) => {
-  const processingParams = Object.assign({}, params);
-  delete processingParams.all;
-  const processedParams = params.all ? {
-    all: params.all ? 1 : 0,
-    ...processingParams,
-  } : params;
-  const response = api.get(GET_LIST_USER, processedParams);
+  const response = api.get(GET_LIST_USER, params);
   return response;
 };
 

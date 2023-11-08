@@ -45,7 +45,7 @@ const ModalUserList = React.memo((prop: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      const result = await getListUser({room_id: idRoomChat, all: 1});
       const dataUser = result?.data?.users?.data;
       const dataConvert = dataUser?.map((element: any) => {
         return {
