@@ -72,7 +72,7 @@ export const getRoomListApi: any = async (params: any) => {
 };
 
 export const getListUser: any = async (params: any) => {
-  const response = api.get(GET_LIST_USER, params);
+  const response = api.get(GET_LIST_USER, {params});
   return response;
 };
 
