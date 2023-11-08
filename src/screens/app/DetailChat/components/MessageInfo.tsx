@@ -5,8 +5,8 @@ import { styles } from './stylesItem';
 
 export type MessageInfoProps = {
   text: string;
-  joinedUsers: any;
-  textSetting: any;
+  joinedUsers?: any;
+  textSetting?: any;
 };
 
 export default function MessageInfo({

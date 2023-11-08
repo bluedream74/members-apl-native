@@ -252,10 +252,6 @@ const ItemMessage = React.memo((props: any) => {
     navigation.navigate(ROUTE_NAME.USER_SEEN, {id: _id});
   }, []);
 
-  const onConfirm = useCallback(() => {
-    onAddMember(1);
-  }, []);
-
   const onReject = useCallback(() => {
     onAddMember(2);
   }, []);
