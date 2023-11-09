@@ -1,7 +1,10 @@
-import React, { useCallback } from 'react';
-import { useWindowDimensions } from 'react-native';
-import RenderHtml, { HTMLElementModel, HTMLContentModel } from 'react-native-render-html';
-import { styles } from './stylesItem';
+import React, {useCallback} from 'react';
+import {useWindowDimensions} from 'react-native';
+import RenderHtml, {
+  HTMLElementModel,
+  HTMLContentModel,
+} from 'react-native-render-html';
+import {styles} from './stylesItem';
 
 export type MessageInfoProps = {
   text: string;
@@ -64,7 +67,7 @@ export default function MessageInfo({
         color: '#E44122',
       },
       contentModel: HTMLContentModel.textual
-    })
+    }),
   };
 
   const { width } = useWindowDimensions();

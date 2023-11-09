@@ -221,20 +221,6 @@ const ItemMessage = React.memo((props: any) => {
     return <Text style={styles.txtNameSend}>{user?.name}</Text>;
   };
 
-  const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
-    let textBold: any = [];
-    joinedUsers.forEach((joinedUser: any) => {
-      let mentionText = `@${joinedUser?.last_name.replace(
-        ' ',
-        '',
-      )}${joinedUser?.first_name?.replace(' ', '')}`;
-      if (text?.includes(mentionText)) {
-        textBold = textBold?.concat(mentionText);
-      }
-    });
-    return textBold;
-  }, []);
-
   const renderImgaeFile = useCallback((typeFile: any) => {
     switch (typeFile) {
       case '2':
