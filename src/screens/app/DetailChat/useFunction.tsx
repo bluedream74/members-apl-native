@@ -11,8 +11,9 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage, saveIdMessageSearch,
-} from "@redux";
+  logMessage,
+  saveIdMessageSearch,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -818,7 +819,7 @@ export const useFunction = (props: any) => {
 
   const searchMessage = useCallback(() => {
     navigation.navigate(ROUTE_NAME.SEARCH_MESSAGE, {idRoomChat: idRoomChat});
-  }, [idRoomChat]);
+  }, [idRoomChat, navigation]);
 
   const showModalStamp = useCallback(() => {
     setShowModalStamp(!modalStamp);
@@ -837,9 +838,7 @@ export const useFunction = (props: any) => {
       const result = await getListUser({room_id: idRoomChat, all: true});
       setListUser(result?.data?.users?.data);
       setListUserRoot(result?.data?.users?.data);
-    } catch {
-      (error: any) => {};
-    }
+    } catch {}
   }, [idRoomChat]);
 
   useEffect(() => {

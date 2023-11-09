@@ -34,13 +34,13 @@ const ModalLink = React.memo((prop: any) => {
     } catch (error: any) {
       setLoading(false);
     }
-  }, []);
+  }, [idRoomChat]);
 
   useEffect(() => {
     if (visible === true) {
       getData();
     }
-  }, [visible]);
+  }, [getData, visible]);
 
   const closeModal = () => {
     onCancel();

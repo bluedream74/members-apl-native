@@ -287,7 +287,9 @@ export const deleteCategory: any = async (id: any) => {
 };
 
 export const getUnreadMessageCountApi: any = async (user_id: any) => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
+  const response = await api.get(
+    `${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`,
+  );
   return response;
 };
 

@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
+import {View, FlatList} from 'react-native';
 import {styles} from './styles';
 import {Header, ModalRemoveUser} from '@component';
 import {iconAddUser} from '@images';
@@ -7,7 +7,7 @@ import {Item} from './components/Item';
 import {useFocusEffect} from '@react-navigation/native';
 import {AppSocket} from '@util';
 
-import {getRoomList, getDetailMessageSocketSuccess} from '@redux';
+import {getDetailMessageSocketSuccess} from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getListUserOfRoomApi,
@@ -25,7 +25,7 @@ const ListUser = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
   const {route} = props;
-  const {idRoomChat, dataDetail, is_admin} = route?.params;
+  const {idRoomChat, is_admin} = route?.params;
   const navigation = useNavigation<any>();
   const [listUser, setListUser] = useState([]);
   const [nameUser, setNameUser] = useState<any>(null);

@@ -50,7 +50,6 @@ const ItemMessage = React.memo((props: any) => {
     onReaction,
     navigatiteToListReaction,
     listUser,
-    onAddMember,
     newIndexArray,
     quoteMsg,
     me,
@@ -236,10 +235,6 @@ const ItemMessage = React.memo((props: any) => {
 
   const onClickDetailSeen = useCallback(() => {
     navigation.navigate(ROUTE_NAME.USER_SEEN, {id: _id});
-  }, []);
-
-  const onReject = useCallback(() => {
-    onAddMember(2);
   }, []);
 
   const formatText = (inputText: string) => {

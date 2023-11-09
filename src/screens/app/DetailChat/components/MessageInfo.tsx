@@ -70,7 +70,7 @@ export default function MessageInfo({
     }),
   };
 
-  const { width } = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const tagsStyles = {
     body: styles.txtMessage,
     a: {
