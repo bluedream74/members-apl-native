@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {TouchableOpacity, StyleSheet, View, Image, Text} from 'react-native';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import LinearGradient from 'react-native-linear-gradient';
 import {colors, stylesCommon} from '@stylesCommon';
 import {
   iconNext,
@@ -22,7 +21,7 @@ import {saveIdRoomChat, getRoomList} from '@redux';
 import {showMessage} from 'react-native-flash-message';
 import {useSelector, useDispatch} from 'react-redux';
 import {decode} from 'html-entities';
-import notifee, {EventType} from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 
 const Item = React.memo((props: any) => {
   const idCompany = useSelector((state: any) => state.chat.idCompany);
@@ -33,7 +32,7 @@ const Item = React.memo((props: any) => {
     (state: any) => state.chat.categoryID_Filter,
   );
   const navigation = useNavigation<any>();
-  const {item, index, idRoomChat} = props;
+  const {item, idRoomChat} = props;
   const [pin, setStatusPin] = useState<any>(null);
 
   let count_user =
@@ -228,7 +227,7 @@ const Item = React.memo((props: any) => {
             item?.lastMessageJoin?.message !== 'null' ? (
               <Text style={styles.txtTitle} numberOfLines={2}>
                 {item?.lastMessageJoin?.msg_type == 9
-                  ? `${item?.lastMessageJoin?.guest?.name}さんが参加しました`
+                  ? 'ゲストが参加しました。'
                   : convertString(
                       //Check logic xuống dòng khi thông tin được sửa từ trên app
                       decode(

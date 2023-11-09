@@ -1,7 +1,10 @@
-import React, { useCallback } from 'react';
-import { useWindowDimensions } from 'react-native';
-import RenderHtml, { HTMLElementModel, HTMLContentModel } from 'react-native-render-html';
-import { styles } from './stylesItem';
+import React, {useCallback} from 'react';
+import {useWindowDimensions} from 'react-native';
+import RenderHtml, {
+  HTMLElementModel,
+  HTMLContentModel,
+} from 'react-native-render-html';
+import {styles} from './stylesItem';
 
 export type MessageInfoProps = {
   text: string;
@@ -11,8 +14,8 @@ export type MessageInfoProps = {
 
 export default function MessageInfo({
   text,
-  joinedUsers,
-  textSetting,
+  joinedUsers = [],
+  textSetting = {},
 }: MessageInfoProps) {
   const customHTMLElementModels = {
     'deco-info': HTMLElementModel.fromCustomModel({
@@ -64,10 +67,10 @@ export default function MessageInfo({
         color: '#E44122',
       },
       contentModel: HTMLContentModel.textual
-    })
+    }),
   };
 
-  const { width } = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const tagsStyles = {
     body: styles.txtMessage,
     a: {
@@ -160,8 +163,3 @@ export default function MessageInfo({
     </>
   );
 }
-
-MessageInfo.defaultProps = {
-  joinedUsers: [],
-  textSetting: {},
-};

@@ -32,8 +32,6 @@ const DELETE_BOOKMARK = 'user/chat/room/unbookmark';
 const LIST_IMAGE_INROOM = 'user/chat/room';
 const LIST_FILE_INROOM = 'user/chat/room';
 const LIST_LINK_INROOM = 'user/chat/room';
-const ADD_USER_FROM_MESSAGE = 'user/chat/room/update-guest-status';
-const REMOVE_GUEST = 'user/chat/room/farewell-to-guest';
 const DELETE_ROOM = 'user/chat/room';
 const CHANGE_ROLE = 'user/chat/room/role-user';
 const USER_OF_ROOM = 'user/chat/room';
@@ -88,11 +86,6 @@ export const createRoom: any = async (body: any) => {
 
 export const removeUser: any = async (body: any) => {
   const response = api.post(REMOVE_USER, body);
-  return response;
-};
-
-export const removeGuest: any = async (body: any) => {
-  const response = api.post(REMOVE_GUEST, body);
   return response;
 };
 
@@ -253,11 +246,6 @@ export const getListLinkInRoom: any = async (id: any, page: any) => {
   return response;
 };
 
-export const addUserMessage: any = async (body: any) => {
-  const response = api.post(ADD_USER_FROM_MESSAGE, body);
-  return response;
-};
-
 export const callApiChatBot: any = async (body: any) => {
   const response = api.post(`${CALL_CHAT_BOT}`, body);
   return response;
@@ -299,7 +287,9 @@ export const deleteCategory: any = async (id: any) => {
 };
 
 export const getUnreadMessageCountApi: any = async (user_id: any) => {
-  const response = await api.get(`${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`);
+  const response = await api.get(
+    `${GET_UNREAD_MESSAGE_COUNT_ALL}?user_id=${user_id}`,
+  );
   return response;
 };
 
