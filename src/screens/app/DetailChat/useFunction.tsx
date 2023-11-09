@@ -547,7 +547,7 @@ export const useFunction = (props: any) => {
       idRoomChat,
       listUserRoot,
       listUser,
-      chosenFiles
+      chosenFiles,
     ],
   );
 
@@ -687,7 +687,7 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async() => {
+  const sendFile = useCallback(async () => {
     try {
       if (chosenFiles?.length > 0) {
         GlobalService.showLoading();
@@ -711,10 +711,10 @@ export const useFunction = (props: any) => {
               type:
                 Platform.OS === 'ios'
                   ? `image/${
-                    isHEIC
-                      ? item?.path?.split('.')[0] + '.JPG'
-                      : item?.path?.split('.').pop()
-                  }}`
+                      isHEIC
+                        ? item?.path?.split('.')[0] + '.JPG'
+                        : item?.path?.split('.').pop()
+                    }}`
                   : item?.mime,
               height: item?.height,
             });
@@ -840,10 +840,23 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
+      const guest = result?.data?.guests?.map((item: any) => {
+        return {
+          ...item,
+          id: Number(item?.id) * -1,
+          last_name: item?.name,
+          first_name: '',
+        };
+      });
       setListUser(result?.data?.users?.data);
       setListUserRoot(result?.data?.users?.data);
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   }, [idRoomChat]);
 
   useEffect(() => {

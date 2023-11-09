@@ -27,7 +27,10 @@ const ModalTagName = React.memo((props: any) => {
 
   const getListUserApi = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
       const dataAddAll = result?.data?.users?.data || [];
       dataAddAll.unshift({
         id: 'All',
@@ -43,10 +46,9 @@ const ModalTagName = React.memo((props: any) => {
       });
       setDataLocal(dataConvert);
       setLoading(false);
-    } catch {
-      (error: any) => {
-        setLoading(false);
-      };
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
     }
   };
 
