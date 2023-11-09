@@ -50,6 +50,7 @@ const ItemMessage = React.memo((props: any) => {
     onReaction,
     navigatiteToListReaction,
     listUser,
+    idRoomChat,
     newIndexArray,
     quoteMsg,
     me,
