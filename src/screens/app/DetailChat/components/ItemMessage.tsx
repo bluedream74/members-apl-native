@@ -306,7 +306,7 @@ const ItemMessage = React.memo((props: any) => {
   };
 
   const formatColor = () => {
-    if (user?._id == user_id) {
+    if (user?._id === user_id) {
       return colorCurrent;
     } else if (checkMessageToSelfMention()) {
       return colorSelfMention;

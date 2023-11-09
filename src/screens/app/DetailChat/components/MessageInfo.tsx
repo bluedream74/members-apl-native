@@ -163,8 +163,3 @@ export default function MessageInfo({
     </>
   );
 }
-
-MessageInfo.defaultProps = {
-  joinedUsers: [],
-  textSetting: {},
-};
