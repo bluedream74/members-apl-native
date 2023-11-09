@@ -12,13 +12,12 @@ import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
 import {getListUser} from '@services';
 import {colors, stylesCommon} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
-import {defaultAvatar, iconTagAll} from '@images';
+import {defaultAvatar} from '@images';
 
 const width = Dimensions.get('window').width;
 
 const ModalTagName = React.memo((props: any) => {
-  const {idRoomChat, choseUser, text} = props;
-  const [listUser, setListUser] = useState([]);
+  const {idRoomChat, choseUser} = props;
   const [dataLocal, setDataLocal] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,31 +28,20 @@ const ModalTagName = React.memo((props: any) => {
   const getListUserApi = async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-        };
+      const dataAddAll = result?.data?.users?.data || [];
+      dataAddAll.unshift({
+        id: 'All',
+        last_name: '@all このグループ全員に',
+        first_name: '通知が送信されます',
+        value: 'all',
       });
-      const dataAll: any = [
-        {
-          id: 'All',
-          last_name: '@all このグループ全員に',
-          first_name: '通知が送信されます',
-          value: 'all',
-        },
-      ];
-      const dataUser = result?.data?.users?.data?.concat(guest);
-      const dataAddAll = dataAll?.concat(dataUser);
       const dataConvert = dataAddAll?.map((item: any) => {
         return {
           ...item,
-          nameUser:
-            item?.id < 0 ? item?.name : `${item?.last_name}${item?.first_name}`,
+          nameUser: `${item?.last_name}${item?.first_name}`,
         };
       });
       setDataLocal(dataConvert);
-      setListUser(dataConvert);
       setLoading(false);
     } catch {
       (error: any) => {
@@ -65,14 +53,11 @@ const ModalTagName = React.memo((props: any) => {
   const onChoseUser = (item: any) => {
     const title = 'さん';
     if (item?.id === 'All') {
-      const valueName = item?.id < 0 ? `${item?.name}` : `${item?.value}`;
+      const valueName = `${item?.value}`;
       const id = item?.id;
       choseUser(valueName?.replace(' ', ''), title, id, item);
     } else {
-      const valueName =
-        item?.id < 0
-          ? `${item?.name}`
-          : `${item?.last_name}${item?.first_name}`;
+      const valueName = `${item?.last_name}${item?.first_name}`;
       const id = item?.id;
       choseUser(valueName?.replace(' ', ''), title, id, item);
     }

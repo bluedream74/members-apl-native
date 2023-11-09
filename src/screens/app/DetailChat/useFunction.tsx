@@ -11,8 +11,9 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage, saveIdMessageSearch,
-} from "@redux";
+  logMessage,
+  saveIdMessageSearch,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -204,7 +205,6 @@ export const useFunction = (props: any) => {
       index: index,
       users_seen: message?.users_seen,
       task: message?.task,
-      guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
       updated_at: message?.updated_at,
@@ -251,7 +251,6 @@ export const useFunction = (props: any) => {
         task_link: null,
         attachment_files: [],
         users_seen: [],
-        guest: null,
       },
     ];
   }, []);
@@ -825,7 +824,7 @@ export const useFunction = (props: any) => {
 
   const searchMessage = useCallback(() => {
     navigation.navigate(ROUTE_NAME.SEARCH_MESSAGE, {idRoomChat: idRoomChat});
-  }, [idRoomChat]);
+  }, [idRoomChat, navigation]);
 
   const showModalStamp = useCallback(() => {
     setShowModalStamp(!modalStamp);
@@ -842,19 +841,9 @@ export const useFunction = (props: any) => {
   const getUserListChat = useCallback(async () => {
     try {
       const result = await getListUser({room_id: idRoomChat, all: true});
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-          last_name: item?.name,
-          first_name: '',
-        };
-      });
-      setListUser(result?.data?.users?.data?.concat(guest));
+      setListUser(result?.data?.users?.data);
       setListUserRoot(result?.data?.users?.data);
-    } catch {
-      (error: any) => {};
-    }
+    } catch {}
   }, [idRoomChat]);
 
   useEffect(() => {
