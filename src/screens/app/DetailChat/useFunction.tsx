@@ -147,25 +147,6 @@ export const useFunction = (props: any) => {
     }
   }, [idMessageSearchListChat, searchingFlg]);
 
-  // check if messages belongs to this room
-  useEffect(() => {
-    const irregular_message_ids = [];
-    for (let i = 0; i < listChat.length; i++) {
-      if (idRoomChat !== listChat[i].room_id) {
-        irregular_message_ids.push(listChat[i].id);
-      }
-    }
-    if (irregular_message_ids.length > 0) {
-      getListChat();
-      dispatch(
-        logMessage({
-          current_room_id: idRoomChat,
-          irregular_message_ids: irregular_message_ids,
-        }),
-      );
-    }
-  }, [listChat]);
-
   const navigateToMessage = useCallback(
     idMessageSearch => {
       const index = listChat.findIndex(
