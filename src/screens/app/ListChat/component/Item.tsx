@@ -228,7 +228,7 @@ const Item = React.memo((props: any) => {
             item?.lastMessageJoin?.message !== 'null' ? (
               <Text style={styles.txtTitle} numberOfLines={2}>
                 {item?.lastMessageJoin?.msg_type == 9
-                  ? `${item?.lastMessageJoin?.guest?.name}さんが参加しました`
+                  ? 'ゲストが参加しました。'
                   : convertString(
                       //Check logic xuống dòng khi thông tin được sửa từ trên app
                       decode(
