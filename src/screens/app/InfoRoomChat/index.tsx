@@ -131,9 +131,14 @@ const InfoRoomChat = (props: any) => {
 
   const getListUserOfRoom = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat});
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
       setListUser(result?.data?.users?.data);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useFocusEffect(
@@ -420,7 +425,7 @@ const InfoRoomChat = (props: any) => {
         visible={modal}
         onCancel={onCancelModal}
         titleHeader="グループを退出する"
-        contentHeader = "退出すると新しいメッセージが届かなくなります。"
+        contentHeader="退出すると新しいメッセージが届かなくなります。"
         onConfirm={onLeave}
       />
       <ModalLink

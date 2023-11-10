@@ -1,14 +1,6 @@
-import {colors, stylesCommon} from '@stylesCommon';
-import React, {useState, useCallback, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Image,
-  Linking,
-} from 'react-native';
+import {colors} from '@stylesCommon';
+import React, {useState, useCallback} from 'react';
+import {View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import {
@@ -32,19 +24,10 @@ import {Reaction} from './Reaction';
 import {ROUTE_NAME} from '@routeName';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from './stylesItem';
-import {
-  scale,
-  verticalScale,
-  moderateVerticalScale,
-} from 'react-native-size-matters';
+import {scale, moderateVerticalScale} from 'react-native-size-matters';
 import {MsgFile} from './MsgFile';
-import {isSameDay, validateLink, convertString} from '@util';
-import HighlightText from '@sanar/react-native-highlight-text';
 import {ViewUserSeen} from './viewUserSeen';
-import Autolink from 'react-native-autolink';
 import {ViewTask} from './ViewTask';
-import {ViewInvite} from './ViewInvite';
-import {decode} from 'html-entities';
 import {MenuOption} from './MenuOption';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
@@ -53,19 +36,10 @@ const colorSelfMention = ['#FDE3E3', '#FDE3E3'];
 const colorReplyQuote = ['#DCDCDC', '#DCDCDC'];
 const width = Dimensions.get('window').width;
 
-const dataAll: any = [
-  {
-    id: 'All',
-    last_name: 'a',
-    first_name: 'll',
-  },
-];
-
 const ItemMessage = React.memo((props: any) => {
   const navigation = useNavigation<any>();
 
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
-  const listChat = useSelector((state: any) => state.chat?.detailChat);
 
   const {
     deleteMsg,
@@ -76,7 +50,6 @@ const ItemMessage = React.memo((props: any) => {
     onReaction,
     navigatiteToListReaction,
     listUser,
-    onAddMember,
     idRoomChat,
     newIndexArray,
     quoteMsg,
@@ -106,12 +79,10 @@ const ItemMessage = React.memo((props: any) => {
     users_seen,
     stamp_no,
     task,
-    guest,
     task_link,
     message_quote,
     quote_message_id,
     quote_message_user,
-    quote_message_user_id,
     index,
     updated_at,
     reply_to_message_id,
@@ -176,6 +147,7 @@ const ItemMessage = React.memo((props: any) => {
             text: text,
             attachment_files: attachment_files,
             stamp_no: stamp_no,
+            roomId: idRoomChat,
           };
           replyMsg(dataMessageReply);
           // add mention to textbox
@@ -226,6 +198,7 @@ const ItemMessage = React.memo((props: any) => {
             id: _id,
             user: user,
             text: text,
+            roomId: idRoomChat,
           };
           quoteMsg(dataQuote);
           break;
@@ -247,22 +220,8 @@ const ItemMessage = React.memo((props: any) => {
   }, 0);
 
   const renderTxtName = () => {
-    return <Text style={styles.txtNameSend}>{user?.name || guest?.name}</Text>;
+    return <Text style={styles.txtNameSend}>{user?.name}</Text>;
   };
-
-  const convertMentionToLink = useCallback((text: any, joinedUsers: any) => {
-    let textBold: any = [];
-    joinedUsers.forEach((joinedUser: any) => {
-      let mentionText = `@${joinedUser?.last_name.replace(
-        ' ',
-        '',
-      )}${joinedUser?.first_name?.replace(' ', '')}`;
-      if (text?.includes(mentionText)) {
-        textBold = textBold?.concat(mentionText);
-      }
-    });
-    return textBold;
-  }, []);
 
   const renderImgaeFile = useCallback((typeFile: any) => {
     switch (typeFile) {
@@ -279,14 +238,6 @@ const ItemMessage = React.memo((props: any) => {
 
   const onClickDetailSeen = useCallback(() => {
     navigation.navigate(ROUTE_NAME.USER_SEEN, {id: _id});
-  }, []);
-
-  const onConfirm = useCallback(() => {
-    onAddMember(1);
-  }, []);
-
-  const onReject = useCallback(() => {
-    onAddMember(2);
   }, []);
 
   const formatText = (inputText: string) => {
@@ -353,7 +304,7 @@ const ItemMessage = React.memo((props: any) => {
   };
 
   const formatColor = () => {
-    if (user?._id == user_id) {
+    if (user?._id === user_id) {
       return colorCurrent;
     } else if (checkMessageToSelfMention()) {
       return colorSelfMention;
@@ -385,6 +336,23 @@ const ItemMessage = React.memo((props: any) => {
 
     return isSelfMention;
   };
+  /**
+   * 条件分岐でシステムメッセージ
+   * @param msgtype
+   * @returns メッセージ
+   */
+  const centerTxt = () => {
+    switch (msg_type) {
+      case 9:
+        return 'ゲストが参加しました。';
+      case 5:
+        return `${user?.name}さんが参加しました。`;
+      case 8:
+        return 'グストを招待しました。';
+      default:
+        return text;
+    }
+  };
 
   return (
     <>
@@ -392,19 +360,15 @@ const ItemMessage = React.memo((props: any) => {
       msg_type == 4 ||
       msg_type == 5 ||
       msg_type == 9 ||
+      msg_type == 8 ||
       msg_type == 10 ||
-      msg_type == 9 ||
       msg_type == 12 ? (
         <TouchableOpacity
           style={styles.viewCenter}
           onPress={onShowModalDelete}
           disabled={isAdmin === 1 ? false : true}>
           <Text style={styles.txtCenter} numberOfLines={2}>
-            {msg_type === 9
-              ? `${guest?.name}さんが参加しました。`
-              : msg_type === 5
-              ? `${user?.name}さんが参加しました。`
-              : text}
+            　{centerTxt()}
           </Text>
           <Menu
             style={styles.containerMenuDelete}
@@ -438,16 +402,6 @@ const ItemMessage = React.memo((props: any) => {
                 <View style={styles.viewTask}>
                   <FastImage source={defaultAvatar} style={styles.image} />
                   <ViewTask data={task} mess={text} task_link={task_link} />
-                </View>
-              ) : null}
-              {msg_type == 8 ? (
-                <View style={styles.viewInvite}>
-                  <FastImage source={defaultAvatar} style={styles.image} />
-                  <ViewInvite
-                    data={guest}
-                    idRoomChat={idRoomChat}
-                    idMessage={_id}
-                  />
                 </View>
               ) : null}
               <TouchableOpacity
