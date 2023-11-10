@@ -844,14 +844,6 @@ export const useFunction = (props: any) => {
         throw new Error('idRoomChat is undefined.');
       }
       const result = await getListUser({room_id: idRoomChat, all: 1});
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-          last_name: item?.name,
-          first_name: '',
-        };
-      });
       setListUser(result?.data?.users?.data);
       setListUserRoot(result?.data?.users?.data);
     } catch (error) {
