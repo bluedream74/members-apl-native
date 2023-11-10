@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
-} from "react-native";
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
 import {iconClose} from '@images';
@@ -70,7 +70,8 @@ const ModalTask = React.memo((prop: any) => {
   const onChange2 = (event, selectedDate) => {
     const currentDate = selectedDate || date2;
     setDate2(currentDate);
-    const formartedTime = ('0' + currentDate.getHours()).slice(-2) +
+    const formartedTime =
+      ('0' + currentDate.getHours()).slice(-2) +
       ':' +
       ('0' + currentDate.getMinutes()).slice(-2) +
       ':00';
@@ -115,7 +116,10 @@ const ModalTask = React.memo((prop: any) => {
 
   const getListUserApi = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
 
       const dataUser = result?.data?.users?.data;
       const dataConvert = dataUser?.map((element: any) => {
@@ -139,13 +143,12 @@ const ModalTask = React.memo((prop: any) => {
             },
           ]),
       );
-    } catch {
-      () => {
-        showMessage({
-          message: '処理中にエラーが発生しました',
-          type: 'danger',
-        });
-      };
+    } catch (error) {
+      console.error(error);
+      showMessage({
+        message: '処理中にエラーが発生しました',
+        type: 'danger',
+      });
     }
   };
 
@@ -177,7 +180,9 @@ const ModalTask = React.memo((prop: any) => {
         task_id: item.id,
         task_name: taskName,
         actual_start_date: item.actual_start_date,
+        actual_start_time: item.actual_start_time,
         actual_end_date: item.actual_end_date,
+        actual_end_time: item.actual_end_time,
         plans_end_date: date,
         plans_end_time: time,
         plans_time: item.plans_time,
@@ -266,12 +271,18 @@ const ModalTask = React.memo((prop: any) => {
                   styleContainer={styles.containerSearch}
                   styleInput={styles.input}
                 />
-                <Text style={[styles.textTitleInput, {paddingTop: 10}]}>期間</Text>
+                <Text style={[styles.textTitleInput, {paddingTop: 10}]}>
+                  期間
+                </Text>
                 <View style={styles.row}>
                   <Text
                     style={[
                       styles.textTitleInput,
-                      {width: '10%', color: '#777777', ...stylesCommon.fontWeight500},
+                      {
+                        width: '10%',
+                        color: '#777777',
+                        ...stylesCommon.fontWeight500,
+                      },
                     ]}>
                     終了
                   </Text>
@@ -328,7 +339,9 @@ const ModalTask = React.memo((prop: any) => {
                     boxType={'square'}
                     hideBox={false}
                   />
-                  <Text style={styles.checkboxLabel}>Googleカレンダーに表示</Text>
+                  <Text style={styles.checkboxLabel}>
+                    Googleカレンダーに表示
+                  </Text>
                   <CheckBox
                     value={isAllDay}
                     onValueChange={setIsAllDay}
@@ -365,20 +378,23 @@ const ModalTask = React.memo((prop: any) => {
                     renderLeftIcon={() => {}}
                     renderItem={renderDataItem}
                     renderSelectedItem={(item, unSelect) => (
-                      <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                      <TouchableOpacity
+                        onPress={() => unSelect && unSelect(item)}>
                         <View style={styles.selectedStyle}>
-                          <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                          <Text style={styles.textSelectedStyle}>
+                            {item.label}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     )}
                   />
                   <StatusBar />
                 </View>
-            </View>)}
+              </View>
+            )}
             <Text style={[styles.textTitleInput, {paddingTop: 10}]}>説明</Text>
             <View style={styles.containerDescriptionModal}>
-              <View
-                style={styles.viewContent}>
+              <View style={styles.viewContent}>
                 <TouchableOpacity
                   style={{
                     height: '90%',
@@ -396,8 +412,8 @@ const ModalTask = React.memo((prop: any) => {
                     onChangeText={text => setTaskDescription(text)}
                     value={taskDescription}
                     style={{padding: 10}}
-                    onFocus={() =>setFocusDescription(true) }
-                    onBlur={() => setFocusDescription(false) }
+                    onFocus={() => setFocusDescription(true)}
+                    onBlur={() => setFocusDescription(false)}
                   />
                 </TouchableOpacity>
               </View>

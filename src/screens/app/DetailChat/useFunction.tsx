@@ -11,8 +11,9 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage, saveIdMessageSearch,
-} from "@redux";
+  logMessage,
+  saveIdMessageSearch,
+} from '@redux';
 import {
   deleteMessageApi,
   GlobalService,
@@ -147,25 +148,6 @@ export const useFunction = (props: any) => {
     }
   }, [idMessageSearchListChat, searchingFlg]);
 
-  // check if messages belongs to this room
-  useEffect(() => {
-    const irregular_message_ids = [];
-    for (let i = 0; i < listChat.length; i++) {
-      if (idRoomChat !== listChat[i].room_id) {
-        irregular_message_ids.push(listChat[i].id);
-      }
-    }
-    if (irregular_message_ids.length > 0) {
-      getListChat();
-      dispatch(
-        logMessage({
-          current_room_id: idRoomChat,
-          irregular_message_ids: irregular_message_ids,
-        }),
-      );
-    }
-  }, [listChat]);
-
   const navigateToMessage = useCallback(
     idMessageSearch => {
       const index = listChat.findIndex(
@@ -223,7 +205,6 @@ export const useFunction = (props: any) => {
       index: index,
       users_seen: message?.users_seen,
       task: message?.task,
-      guest: message?.guest,
       task_link: message?.task_link,
       message_quote: message?.message_quote,
       updated_at: message?.updated_at,
@@ -270,7 +251,6 @@ export const useFunction = (props: any) => {
         task_link: null,
         attachment_files: [],
         users_seen: [],
-        guest: null,
       },
     ];
   }, []);
@@ -298,6 +278,14 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     getListChat();
   }, [page]);
+
+  // route?.paramsが変わったら実行
+  // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
+  // push通知をクリックした時に、route?.params.idRoomChatが変更になりこちらが実行される
+  useEffect(() => {
+    getListChat();
+    getDetail();
+  }, [route]);
 
   const getDetail = async () => {
     try {
@@ -379,6 +367,14 @@ export const useFunction = (props: any) => {
       setShowRedLine(false);
       if (messageReply) {
         try {
+          // 現在表示中のルームIDと返信元のルームIDが違う場合はエラー
+          if (messageReply?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
@@ -451,6 +447,14 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       } else if (messageQuote) {
         try {
+          // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
+          if (messageQuote?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
           const data = new FormData();
           data.append('room_id', idRoomChat);
           data.append('from_id', user_id);
@@ -543,7 +547,7 @@ export const useFunction = (props: any) => {
       idRoomChat,
       listUserRoot,
       listUser,
-      chosenFiles
+      chosenFiles,
     ],
   );
 
@@ -683,7 +687,7 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async() => {
+  const sendFile = useCallback(async () => {
     try {
       if (chosenFiles?.length > 0) {
         GlobalService.showLoading();
@@ -707,10 +711,10 @@ export const useFunction = (props: any) => {
               type:
                 Platform.OS === 'ios'
                   ? `image/${
-                    isHEIC
-                      ? item?.path?.split('.')[0] + '.JPG'
-                      : item?.path?.split('.').pop()
-                  }}`
+                      isHEIC
+                        ? item?.path?.split('.')[0] + '.JPG'
+                        : item?.path?.split('.').pop()
+                    }}`
                   : item?.mime,
               height: item?.height,
             });
@@ -820,7 +824,7 @@ export const useFunction = (props: any) => {
 
   const searchMessage = useCallback(() => {
     navigation.navigate(ROUTE_NAME.SEARCH_MESSAGE, {idRoomChat: idRoomChat});
-  }, [idRoomChat]);
+  }, [idRoomChat, navigation]);
 
   const showModalStamp = useCallback(() => {
     setShowModalStamp(!modalStamp);
@@ -836,19 +840,14 @@ export const useFunction = (props: any) => {
 
   const getUserListChat = useCallback(async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
-      const guest = result?.data?.guests?.map((item: any) => {
-        return {
-          ...item,
-          id: Number(item?.id) * -1,
-          last_name: item?.name,
-          first_name: '',
-        };
-      });
-      setListUser(result?.data?.users?.data?.concat(guest));
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
+      setListUser(result?.data?.users?.data);
       setListUserRoot(result?.data?.users?.data);
-    } catch {
-      (error: any) => {};
+    } catch (error) {
+      console.error(error);
     }
   }, [idRoomChat]);
 
@@ -1090,7 +1089,8 @@ export const useFunction = (props: any) => {
       task_name: input.taskName,
       actual_start_date: moment().format('YYYY/MM/DD'),
       actual_start_time: '00:00:00',
-      actual_end_date: null,
+      actual_end_date: moment(input.date).format('YYYY/MM/DD'),
+      actual_end_time: input.time,
       plans_end_date: input.date,
       plans_end_time: input.time,
       plans_time: 0,

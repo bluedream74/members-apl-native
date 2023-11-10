@@ -18,11 +18,19 @@ import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
 import {ItemUser} from '../../DetailChat/components/ItemUser';
-import { useSelector } from "react-redux";
-import { AppInput } from "@component";
+import {useSelector} from 'react-redux';
+import {AppInput} from '@component';
 
 const ModalUserList = React.memo((prop: any) => {
-  const {onCancel, visible, idRoomChat, setShowTaskForm, setShowUserList, setSelected, keyboardHeight} = prop;
+  const {
+    onCancel,
+    visible,
+    idRoomChat,
+    setShowTaskForm,
+    setShowUserList,
+    setSelected,
+    keyboardHeight,
+  } = prop;
   const [listUser, setListUser] = useState<any>([]);
   const [allListUser, setAllListUser] = useState<any>([]);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
@@ -34,7 +42,10 @@ const ModalUserList = React.memo((prop: any) => {
 
   const getListUserApi = async () => {
     try {
-      const result = await getListUser({room_id: idRoomChat, all: true});
+      if (!idRoomChat) {
+        throw new Error('idRoomChat is undefined.');
+      }
+      const result = await getListUser({room_id: idRoomChat, all: 1});
       const dataUser = result?.data?.users?.data;
       const dataConvert = dataUser?.map((element: any) => {
         return {
@@ -48,7 +59,11 @@ const ModalUserList = React.memo((prop: any) => {
       setListUser(
         dataConvert
           .map(user => {
-            return {label: user.label, value: user.id, icon_image: user.icon_image};
+            return {
+              label: user.label,
+              value: user.id,
+              icon_image: user.icon_image,
+            };
           })
           .concat([
             {
@@ -61,7 +76,11 @@ const ModalUserList = React.memo((prop: any) => {
       setAllListUser(
         dataConvert
           .map(user => {
-            return {label: user.label, value: user.id, icon_image: user.icon_image};
+            return {
+              label: user.label,
+              value: user.id,
+              icon_image: user.icon_image,
+            };
           })
           .concat([
             {
@@ -71,13 +90,12 @@ const ModalUserList = React.memo((prop: any) => {
             },
           ]),
       );
-    } catch {
-      () => {
-        showMessage({
-          message: '処理中にエラーが発生しました',
-          type: 'danger',
-        });
-      };
+    } catch (error) {
+      console.error(error);
+      showMessage({
+        message: '処理中にエラーが発生しました',
+        type: 'danger',
+      });
     }
   };
 
@@ -99,18 +117,32 @@ const ModalUserList = React.memo((prop: any) => {
       transparent={true}
       visible={visible}
       onRequestClose={() => {}}
-      style={{ width: '100%', alignSelf: 'center', height: '100%', justifyContent: 'flex-start', backgroundColor: 'green' }}
+      style={{
+        width: '100%',
+        alignSelf: 'center',
+        height: '100%',
+        justifyContent: 'flex-start',
+        backgroundColor: 'green',
+      }}
       animationType="fade">
-      <TouchableWithoutFeedback onPress={() => {
-        closeModal();
-      }}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          closeModal();
+        }}>
         <View style={styles.containerModal}>
-          <View style={keyboardHeight === 0 ? styles.viewContent : styles.viewContentWithKeyboard}>
+          <View
+            style={
+              keyboardHeight === 0
+                ? styles.viewContent
+                : styles.viewContentWithKeyboard
+            }>
             <AppInput
               onChange={(text: any) => {
                 setSearchWord(text);
                 if (text !== '') {
-                  setListUser(allListUser.filter((user) => user.label.includes(text)));
+                  setListUser(
+                    allListUser.filter(user => user.label.includes(text)),
+                  );
                 } else {
                   setListUser(allListUser);
                 }
