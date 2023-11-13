@@ -512,11 +512,11 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            // callApiChatBotRequest(
-            //   res?.data?.data?.message,
-            //   res?.data?.data?.id,
-            //   `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
-            // );
+            callApiChatBotRequest(
+              res?.data?.data?.message,
+              res?.data?.data?.id,
+              `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+            );
           }
         } catch (error: any) {}
       }
@@ -1037,6 +1037,11 @@ export const useFunction = (props: any) => {
       } else if (numberOfMember > 1) {
         // Nothing Done.
       }
+      const sendInfoNew = sendInfo.map(el => {
+        el.userId = el.id;
+        el.userName = el.last_name + el.first_name;
+        return el;
+      });
       let formData = new FormData();
       formData.append('from_user_name', useName);
       formData.append(
@@ -1049,7 +1054,8 @@ export const useFunction = (props: any) => {
       formData.append('message_id', messageId);
       formData.append('room_id', idRoomChat);
       const res = await callApiChatBot(formData);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
 
   const onDecoSelected = (tagName: string) => {
