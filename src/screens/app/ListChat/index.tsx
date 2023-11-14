@@ -24,7 +24,8 @@ import {
   saveMessageReply,
   resetDataChat,
   showHideModalFilterListChat,
-} from '@redux';
+  getUnreadMessageCount,
+} from "@redux";
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
 import {useNavigation} from '@react-navigation/native';
@@ -54,6 +55,7 @@ const ListChat = (props: any) => {
 
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const user = useSelector((state: any) => state.auth.userInfo);
+  const unReadMessageCount = useSelector((state: any) => state.chat.unReadMessageCount);
   const [key, setKey] = useState<string>('');
   const [page, setPage] = useState(1);
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -80,11 +82,6 @@ const ListChat = (props: any) => {
     }, [type_Filter, categoryID_Filter]),
   );
 
-  //Logic tính tổng các tin nhắn chưa đọc
-  var countMessage = listRoom?.reduce(function (total: any, course: any) {
-    return total + parseInt(course.message_unread);
-  }, 0);
-
   useEffect(() => {
     setIsLoadMore(false);
   }, [listRoom]);
@@ -92,18 +89,19 @@ const ListChat = (props: any) => {
   //Đây là hàm logic lắng nghe tổng các tin nhắn chưa đọc, nếu có kết quả thì set lại badge noti
   // これは、未読メッセージの合計をリッスンする論理関数です。結果がある場合は、バッジ通知をリセットします
   useEffect(() => {
-    if (countMessage > 0) {
-      notifee.setBadgeCount(countMessage);
+    if (unReadMessageCount > 0) {
+      notifee.setBadgeCount(unReadMessageCount);
     } else {
       notifee.setBadgeCount(0);
     }
-  }, [countMessage]);
+  }, [unReadMessageCount]);
 
   useEffect(() => {
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
       dispatch(showHideModalFilterListChat(false));
+      dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
     }
   }, []);
 
@@ -154,7 +152,8 @@ const ListChat = (props: any) => {
         category_id: categoryID_Filter,
       }),
     );
-  }, [page, idCompany, categoryID_Filter, type_Filter, key]);
+    dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
+  }, [key, idCompany, type_Filter, categoryID_Filter, user?.id]);
 
   const onChangeText = (text: any) => {
     setKey(text);

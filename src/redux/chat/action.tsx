@@ -182,6 +182,11 @@ export const saveStatusFilter = (payload: any) => ({
   payload,
 });
 
+export const getUnreadMessageCount = (payload: any) => ({
+  type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
+  payload,
+});
+
 export const getUnreadMessageCountSuccess = (payload: any) => ({
   type: typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS,
   payload,
