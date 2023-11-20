@@ -12,9 +12,9 @@ import {store} from '../redux/store';
 import {EVENT_SOCKET} from '@util';
 
 //socket stagging
-// const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
+const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
 //socket product
-const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
+// const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
 
 let socket = io('', {
   autoConnect: false,
@@ -39,8 +39,9 @@ function createAppSocket() {
     // 誰かがメッセージ送信&socketサーバに送信(NEW_MESSAGE_IND)->ここで受信
     // ルームリストの更新
     socket.on(EVENT_SOCKET.NEW_MESSAGE_IND, (data: any) => {
-      console.log(EVENT_SOCKET.NEW_MESSAGE_IND, data)
+      console.log("こんにちわー", data)
       const state = store.getState();
+      console.log("こんにちわわわわー", state?.chat?.id_roomChat)
       if (data?.room_id == state?.chat?.id_roomChat) {
         return null;
       } else {
@@ -49,6 +50,7 @@ function createAppSocket() {
           const index = dataList.findIndex(
             (element: any) => element?.id == data?.room_id,
           );
+          console.log("こんぺぺペッペにちわー", index)
           if (index > -1) {
             store.dispatch(getDetailRoomSocket(data?.room_id));
           }
@@ -132,7 +134,7 @@ function createAppSocket() {
     });
 
     socket.on(EVENT_SOCKET.NEW_MESSAGE_CONF, async (data: any) => {
-      console.log(EVENT_SOCKET.NEW_MESSAGE_CONF, data)
+      console.log(EVENT_SOCKET.NEW_MESSAGE_CONF, data);
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
         if (data?.room_id == state?.chat?.id_roomChat) {
