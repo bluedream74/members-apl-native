@@ -8,9 +8,8 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
-import {getRoomList} from '@redux';
+import {getRoomList, saveIdRoomChat, getDetailRoomSocket} from '@redux';
 import {ROUTE_NAME} from '@routeName';
-import {saveIdRoomChat} from '@redux';
 import {NavigationUtils} from '@navigation';
 
 function createAppNotification() {
@@ -67,6 +66,23 @@ function createAppNotification() {
       } else {
         // badge_update_numflagなしの通知を受け取ったらiOSバッチ表示は+1
         await notifee.incrementBadgeCount();
+      }
+
+      // roomidの指定があれば更新をする
+      const state = store.getState();
+      if (notification.data?.room_id == state?.chat?.id_roomChat) {
+        return null;
+      } else {
+        if (state?.chat?.roomList?.length > 0) {
+          const dataList = [...state?.chat?.roomList];
+          const index = dataList.findIndex(
+            (element: any) => element?.id == notification.data?.room_id,
+          );
+          console.log(index);
+          if (index > -1) {
+            store.dispatch(getDetailRoomSocket(notification.data?.room_id));
+          }
+        }
       }
 
       handleUserInteractionNotification(notification);
