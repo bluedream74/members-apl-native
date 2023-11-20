@@ -69,6 +69,31 @@ function createAppNotification() {
         await notifee.incrementBadgeCount();
       }
 
+      // roomidの指定があれば更新をする
+      const state = store.getState();
+      console.log(state?.chat?.roomList);
+      if (notification.data?.room_id == state?.chat?.id_roomChat) {
+        return null;
+      } else {
+        if (state?.chat?.roomList?.length > 0) {
+          const dataList = [...state?.chat?.roomList];
+          const index = dataList.findIndex(
+            (element: any) => element?.id == notification.data?.room_id,
+          );
+          console.log(index);
+          if (index > -1) {
+            store.dispatch(
+              getRoomList({
+                company_id: state?.chat?.idCompany,
+                search: null,
+                type: state?.chat?.type_Filter,
+                category_id: state?.chat?.categoryID_Filter,
+              }),
+            );
+          }
+        }
+      }
+
       handleUserInteractionNotification(notification);
     });
   };
