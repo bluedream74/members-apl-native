@@ -8,9 +8,8 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
-import {getRoomList} from '@redux';
+import {getRoomList, saveIdRoomChat, getDetailRoomSocket} from '@redux';
 import {ROUTE_NAME} from '@routeName';
-import {saveIdRoomChat} from '@redux';
 import {NavigationUtils} from '@navigation';
 
 function createAppNotification() {
@@ -71,7 +70,6 @@ function createAppNotification() {
 
       // roomidの指定があれば更新をする
       const state = store.getState();
-      console.log(state?.chat?.roomList);
       if (notification.data?.room_id == state?.chat?.id_roomChat) {
         return null;
       } else {
@@ -82,14 +80,7 @@ function createAppNotification() {
           );
           console.log(index);
           if (index > -1) {
-            store.dispatch(
-              getRoomList({
-                company_id: state?.chat?.idCompany,
-                search: null,
-                type: state?.chat?.type_Filter,
-                category_id: state?.chat?.categoryID_Filter,
-              }),
-            );
+            store.dispatch(getDetailRoomSocket(notification.data?.room_id));
           }
         }
       }
