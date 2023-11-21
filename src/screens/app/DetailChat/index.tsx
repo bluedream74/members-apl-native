@@ -233,7 +233,7 @@ const DetailChat = (props: any) => {
                     : ''
                 } ${
                   dataDetail?.one_one_check &&
-                  dataDetail?.one_one_check[0]?.length > 0
+                  dataDetail?.one_one_check?.length > 0
                     ? dataDetail?.one_one_check[0]?.first_name
                     : ''
                 }`
