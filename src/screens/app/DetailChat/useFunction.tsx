@@ -515,7 +515,7 @@ export const useFunction = (props: any) => {
             callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           }
         } catch (error: any) {}
