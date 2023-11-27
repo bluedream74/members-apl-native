@@ -92,6 +92,8 @@ export const useFunction = (props: any) => {
   const [inputText, setInputText] = useState<string>('');
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+
   useEffect(() => {
     function onKeyboardDidShow(e: KeyboardEvent) {
       // Remove type here if not using TypeScript
@@ -148,6 +150,22 @@ export const useFunction = (props: any) => {
     }
   }, [idMessageSearchListChat, searchingFlg]);
 
+  // check if messages belongs to this room
+  useEffect(() => {
+    const irregular_message_ids: number[] = [];
+    if (idRoomChat && listChat.length > 0) {
+      for (let i = 0; i < listChat.length; i++) {
+        if (idRoomChat !== listChat[i].room_id) {
+          irregular_message_ids.push(listChat[i].id);
+        }
+      }
+      console.log('hosotanidebug111xxxx');
+      console.log(irregular_message_ids);
+      if (irregular_message_ids.length > 0) {
+        setIrregularMessageIds(irregular_message_ids);
+      }
+    }
+  }, [listChat]);
   const navigateToMessage = useCallback(
     idMessageSearch => {
       const index = listChat.findIndex(
@@ -256,6 +274,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const getConvertedMessages = useCallback((msgs: any) => {
+    msgs = msgs.filter(el => !irregularMessageIds.includes(el.id));
     return msgs?.map((item: any, index: any) => {
       return convertDataMessage(item, index);
     });
