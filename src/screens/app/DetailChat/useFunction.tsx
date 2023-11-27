@@ -70,6 +70,8 @@ export const useFunction = (props: any) => {
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<any>(1);
+  const [startPage, setStartPage] = useState<any>(null);
+  const [minPage, setMinPage] = useState<any>(null);
   const [pickFile, setPickFile] = useState(false);
   const [chosenFiles, setchosenFiles] = useState<any>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
@@ -181,6 +183,8 @@ export const useFunction = (props: any) => {
     //Logic khi có id message tìm kiếm thì tiến hành scroll đển tin nhắn đó
     if (idMessageSearch && idMessageSearch > 0) {
       setPage(pagging?.current_page);
+      setStartPage(pagging?.current_page);
+      setMinPage(pagging?.current_page);
       navigateToMessage(idMessageSearch);
     }
     // idMessageSearchを0に初期化
@@ -282,6 +286,10 @@ export const useFunction = (props: any) => {
   }, []);
 
   const getListChat = useCallback(() => {
+    if (!startPage) {
+      setStartPage(page);
+      setMinPage(page);
+    }
     const data = {
       id: idRoomChat,
       page: page,
@@ -579,16 +587,17 @@ export const useFunction = (props: any) => {
     [message_pinned?.id],
   );
 
-  const onLoadMore = useCallback(() => {
-    if (page !== pagging?.last_page) {
-      setPage((prevPage: any) => prevPage + 1);
+  const onLoadMore = useCallback(async () => {
+    if (page < pagging?.last_page) {
+      await setPage((prevPage: any) => startPage < prevPage ? prevPage + 1 : startPage + 1);
     } else {
       null;
     }
   }, [page, pagging]);
   const onLoadMoreDown = useCallback(() => {
-    if (page > 0) {
-      setPage((prevPage: any) => prevPage - 1);
+    if (startPage - 1 > 0 && minPage - 1 > 0) {
+      setPage(startPage < minPage ? startPage - 1 : minPage - 1);
+      setMinPage((prevMinPage: any) => prevMinPage - 1);
     } else {
       null;
     }

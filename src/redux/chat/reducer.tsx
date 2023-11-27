@@ -22,23 +22,26 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
       const currentPage = state.pagingDetail?.current_page;
+      const messages = () => {
+        if (page === 1 && Object.keys(state.detailChat).length  === 0) {
+          return convertArrUnique(action.payload.room_messages.data, 'id');
+        } else if (currentPage && currentPage < page) {
+          return convertArrUnique(
+            state.detailChat.concat(action.payload.room_messages.data),
+            'id',
+          );
+        } else if (currentPage && currentPage > page) {
+          return convertArrUnique(
+            action.payload.room_messages.data.concat(state.detailChat),
+            'id',
+          );
+        } else {
+          return state.detailChat;
+        }
+      }
       return {
         ...state,
-        detailChat:
-          //Load more list message detail
-          // in case of currentPage > page: add new data after current data
-          // in case of currentPage <= page: add new data before current data
-          page === 1
-            ? convertArrUnique(action.payload.room_messages.data, 'id')
-            : currentPage && currentPage > page
-            ? convertArrUnique(
-                action.payload.room_messages.data.concat(state.detailChat),
-                'id',
-              )
-            : convertArrUnique(
-                state.detailChat.concat(action.payload.room_messages.data),
-                'id',
-              ),
+        detailChat: messages(),
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
