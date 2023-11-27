@@ -6,6 +6,66 @@ import RenderHtml, {
 } from 'react-native-render-html';
 import {styles} from './stylesItem';
 
+const customHTMLElementModels = {
+  'deco-info': HTMLElementModel.fromCustomModel({
+    tagName: 'deco-info',
+    mixedUAStyles: {
+      borderColor: '#8D8D8D',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderRadius: 3,
+      padding: 10,
+      marginTop: 10,
+      marginBottom: 10,
+    },
+    contentModel: HTMLContentModel.block
+  }),
+  'deco-title': HTMLElementModel.fromCustomModel({
+    tagName: 'deco-title',
+    mixedUAStyles: {
+      fontWeight: 'bold',
+      borderStyle: 'solid',
+      borderLeftWidth: 4,
+      borderLeftColor: '#19A2AA',
+      marginBottom: 5,
+      paddingLeft: 10,
+    },
+    contentModel: HTMLContentModel.block
+  }),
+  'deco-hr': HTMLElementModel.fromCustomModel({
+    tagName: 'deco-hr',
+    mixedUAStyles: {
+      borderBottomWidth: 1,
+      borderStyle: 'solid',
+      borderBottomColor: '#707070',
+      marginTop: 10,
+      marginBottom: 10,
+    },
+    contentModel: HTMLContentModel.block
+  }),
+  'deco-bold': HTMLElementModel.fromCustomModel({
+    tagName: 'deco-bold',
+    mixedUAStyles: {
+      fontWeight: 'bold'
+    },
+    contentModel: HTMLContentModel.textual
+  }),
+  'deco-red': HTMLElementModel.fromCustomModel({
+    tagName: 'deco-red',
+    mixedUAStyles: {
+      color: '#E44122',
+    },
+    contentModel: HTMLContentModel.textual
+  }),
+};
+
+const tagsStyles = {
+  body: styles.txtMessage,
+  a: {
+    textDecorationLine: "none",
+  },
+};
+
 export type MessageInfoProps = {
   text: string;
   joinedUsers: any;
@@ -17,66 +77,8 @@ export default function MessageInfo({
   joinedUsers = [],
   textSetting = {},
 }: MessageInfoProps) {
-  const customHTMLElementModels = {
-    'deco-info': HTMLElementModel.fromCustomModel({
-      tagName: 'deco-info',
-      mixedUAStyles: {
-        borderColor: '#8D8D8D',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderRadius: 3,
-        padding: 10,
-        marginTop: 10,
-        marginBottom: 10,
-      },
-      contentModel: HTMLContentModel.block
-    }),
-    'deco-title': HTMLElementModel.fromCustomModel({
-      tagName: 'deco-title',
-      mixedUAStyles: {
-        fontWeight: 'bold',
-        borderStyle: 'solid',
-        borderLeftWidth: 4,
-        borderLeftColor: '#19A2AA',
-        marginBottom: 5,
-        paddingLeft: 10,
-      },
-      contentModel: HTMLContentModel.block
-    }),
-    'deco-hr': HTMLElementModel.fromCustomModel({
-      tagName: 'deco-hr',
-      mixedUAStyles: {
-        borderBottomWidth: 1,
-        borderStyle: 'solid',
-        borderBottomColor: '#707070',
-        marginTop: 10,
-        marginBottom: 10,
-      },
-      contentModel: HTMLContentModel.block
-    }),
-    'deco-bold': HTMLElementModel.fromCustomModel({
-      tagName: 'deco-bold',
-      mixedUAStyles: {
-        fontWeight: 'bold'
-      },
-      contentModel: HTMLContentModel.textual
-    }),
-    'deco-red': HTMLElementModel.fromCustomModel({
-      tagName: 'deco-red',
-      mixedUAStyles: {
-        color: '#E44122',
-      },
-      contentModel: HTMLContentModel.textual
-    }),
-  };
 
   const {width} = useWindowDimensions();
-  const tagsStyles = {
-    body: styles.txtMessage,
-    a: {
-      textDecorationLine: "none",
-    },
-  };
 
   /**
    * "@xxxxxx"の文字列で実在するユーザーをリンク文字に置き換え
