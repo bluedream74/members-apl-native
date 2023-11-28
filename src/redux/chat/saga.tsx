@@ -401,5 +401,5 @@ export function* chatSaga() {
     typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
     getUnreadMessageCountSaga,
   );
-  yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
+  // yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
 }

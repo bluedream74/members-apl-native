@@ -159,8 +159,6 @@ export const useFunction = (props: any) => {
           irregular_message_ids.push(listChat[i].id);
         }
       }
-      console.log('hosotanidebug111xxxx');
-      console.log(irregular_message_ids);
       if (irregular_message_ids.length > 0) {
         setIrregularMessageIds(irregular_message_ids);
       }
