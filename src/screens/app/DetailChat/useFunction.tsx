@@ -180,16 +180,18 @@ export const useFunction = (props: any) => {
 
   // チャット検索した後、idMessageSearchが変更があれば実行される
   useEffect(() => {
-    //Logic khi có id message tìm kiếm thì tiến hành scroll đển tin nhắn đó
-    if (idMessageSearch && idMessageSearch > 0) {
-      setPage(pagging?.current_page);
-      setStartPage(pagging?.current_page);
-      setMinPage(pagging?.current_page);
-      navigateToMessage(idMessageSearch);
-    }
-    // idMessageSearchを0に初期化
-    dispatch(saveIdMessageSearch(0));
-  }, [idMessageSearch]);
+    (async() => {
+      if (idMessageSearch && idMessageSearch > 0) {
+        setPage(pagging?.current_page);
+        setStartPage(pagging?.current_page);
+        setMinPage(pagging?.current_page);
+        await getListChat(page);
+        navigateToMessage(idMessageSearch);
+      }
+      // idMessageSearchを0に初期化
+      dispatch(saveIdMessageSearch(0));
+    })()
+  }, [idMessageSearch, page, pagging]);
 
   const navigateToDetail = useCallback(() => {
     navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, {idRoomChat: idRoomChat});
@@ -285,27 +287,23 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
-  const getListChat = useCallback(() => {
+  const getListChat = useCallback(async (page) => {
     if (!startPage) {
       setStartPage(page);
-      setMinPage(page);
+      setMinPage((prevMinPage: any) => Math.min(page, prevMinPage));
     }
     const data = {
       id: idRoomChat,
       page: page,
     };
-    dispatch(getDetailListChat(data));
-  }, [page, idRoomChat]);
-
-  useEffect(() => {
-    getListChat();
-  }, [page]);
+    await dispatch(getDetailListChat(data));
+  }, [idRoomChat]);
 
   // route?.paramsが変わったら実行
   // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
   // push通知をクリックした時に、route?.params.idRoomChatが変更になりこちらが実行される
   useEffect(() => {
-    getListChat();
+    getListChat(page);
     getDetail();
   }, [route]);
 
@@ -580,28 +578,29 @@ export const useFunction = (props: any) => {
         if (status === 0) {
           dispatch(pinMessage(null));
         } else {
-          getListChat();
+          getListChat(page);
         }
       } catch (error: any) {}
     },
-    [message_pinned?.id],
+    [page, message_pinned?.id],
   );
 
   const onLoadMore = useCallback(async () => {
     if (page < pagging?.last_page) {
-      await setPage((prevPage: any) => startPage < prevPage ? prevPage + 1 : startPage + 1);
-    } else {
-      null;
+      const nextPage = startPage < page ? page + 1 : startPage + 1;
+      await setPage(nextPage);
+      await getListChat(nextPage);
     }
-  }, [page, pagging]);
-  const onLoadMoreDown = useCallback(() => {
+  }, [page, pagging, startPage]);
+
+  const onLoadMoreDown = useCallback(async () => {
     if (startPage - 1 > 0 && minPage - 1 > 0) {
-      setPage(startPage < minPage ? startPage - 1 : minPage - 1);
-      setMinPage((prevMinPage: any) => prevMinPage - 1);
-    } else {
-      null;
+      const nextPage = startPage < minPage ? startPage - 1 : minPage - 1;
+      await setPage(nextPage);
+      await setMinPage((prevMinPage: any) => prevMinPage - 1);
+      await getListChat(nextPage);
     }
-  }, [page, pagging]);
+  }, [startPage, minPage]);
 
   const replyMessage = useCallback((data: any) => {
     dispatch(saveMessageReply(data));
