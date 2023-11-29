@@ -423,25 +423,29 @@ const DetailChat = (props: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ModalTask
-        visible={showTaskForm}
-        onCancel={() => setShowTaskForm(false)}
-        onSaveTask={onSaveTask}
-        idRoomChat={idRoomChat}
-        selected={selected}
-        setSelected={setSelected}
-        showTaskForm={showTaskForm}
-        keyboardHeight={keyboardHeight}
-      />
-      <ModalUserList
-        visible={showUserList}
-        onCancel={() => setShowUserList(false)}
-        idRoomChat={idRoomChat}
-        setShowTaskForm={setShowTaskForm}
-        setShowUserList={setShowUserList}
-        setSelected={setSelected}
-        keyboardHeight={keyboardHeight}
-      />
+      {showTaskForm && (
+        <ModalTask
+          visible={showTaskForm}
+          onCancel={() => setShowTaskForm(false)}
+          onSaveTask={onSaveTask}
+          idRoomChat={idRoomChat}
+          selected={selected}
+          setSelected={setSelected}
+          showTaskForm={showTaskForm}
+          keyboardHeight={keyboardHeight}
+        />
+      )}
+      {showUserList && (
+        <ModalUserList
+          visible={showUserList}
+          onCancel={() => setShowUserList(false)}
+          idRoomChat={idRoomChat}
+          setShowTaskForm={setShowTaskForm}
+          setShowUserList={setShowUserList}
+          setSelected={setSelected}
+          keyboardHeight={keyboardHeight}
+        />
+      )}
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile
         visible={pickFile}
