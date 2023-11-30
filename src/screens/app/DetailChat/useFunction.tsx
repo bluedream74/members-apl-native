@@ -92,6 +92,8 @@ export const useFunction = (props: any) => {
   const [inputText, setInputText] = useState<string>('');
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+
   useEffect(() => {
     function onKeyboardDidShow(e: KeyboardEvent) {
       // Remove type here if not using TypeScript
@@ -148,6 +150,17 @@ export const useFunction = (props: any) => {
     }
   }, [idMessageSearchListChat, searchingFlg]);
 
+  // check if messages belongs to this room
+  useEffect(() => {
+    if (idRoomChat && listChat.length > 0) {
+      let irregular_message_ids: number[] = listChat.map(el => {
+        return idRoomChat !== el.room_id;
+      });
+      if (irregular_message_ids.length > 0) {
+        setIrregularMessageIds(irregular_message_ids);
+      }
+    }
+  }, [listChat]);
   const navigateToMessage = useCallback(
     idMessageSearch => {
       const index = listChat.findIndex(
@@ -256,6 +269,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const getConvertedMessages = useCallback((msgs: any) => {
+    msgs = msgs.filter(el => !irregularMessageIds.includes(el.id));
     return msgs?.map((item: any, index: any) => {
       return convertDataMessage(item, index);
     });
@@ -515,7 +529,7 @@ export const useFunction = (props: any) => {
             callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.first_name}${res?.data?.data?.user_send?.last_name}`,
+              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           }
         } catch (error: any) {}
