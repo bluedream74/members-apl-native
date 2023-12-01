@@ -1,4 +1,5 @@
 import React, {useMemo, useEffect, useState, useCallback, useRef} from 'react';
+import {store} from '../../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getDetailListChat,
@@ -11,7 +12,6 @@ import {
   editMessageAction,
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
-  logMessage,
   saveIdMessageSearch,
 } from '@redux';
 import {
@@ -30,7 +30,7 @@ import {
   saveTask,
   updateTask,
 } from '@services';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {AppSocket} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -45,40 +45,37 @@ export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
 
-  const giftedChatRef = useRef<any>(null);
   const navigation = useNavigation<any>();
+  const dispatch = useDispatch();
+
+  const {route} = props;
+  const {idRoomChat, idMessageSearchListChat} = route?.params;
+
+  const giftedChatRef = useRef<any>(null);
+
   const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
-  const pagging = useSelector((state: any) => state.chat?.pagingDetail);
-
-  const message_pinned = useSelector(
-    (state: any) => state.chat?.message_pinned,
-  );
+  const paging = useSelector((state: any) => state.chat?.pagingDetail);
+  const message_pinned = useSelector((state: any) => state.chat?.message_pinned);
   const message_edit = useSelector((state: any) => state.chat?.messageEdit);
   const messageReply = useSelector((state: any) => state.chat?.messageReply);
   const messageQuote = useSelector((state: any) => state.chat?.messageQuote);
-  const idMessageSearch = useSelector(
-    (state: any) => state.chat?.id_messageSearch,
-  );
+  const idMessageSearch = useSelector((state: any) => state.chat?.id_messageSearch);
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
-  const dispatch = useDispatch();
-  const {route} = props;
-  const {idRoomChat, idMessageSearchListChat, searchingFlg} = route?.params;
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
-  const [page, setPage] = useState<any>(1);
-  const [startPage, setStartPage] = useState<any>(null);
-  const [minPage, setMinPage] = useState<any>(null);
+  const [page, setPage] = useState<number | null>(null);
+  const [topPage, setTopPage] = useState<number | null>(null);
+  const [bottomPage, setBottomPage] = useState<number | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
   const [pickFile, setPickFile] = useState(false);
   const [chosenFiles, setchosenFiles] = useState<any>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
-  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
-    [],
-  );
+  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
@@ -101,11 +98,9 @@ export const useFunction = (props: any) => {
       // Remove type here if not using TypeScript
       setKeyboardHeight(e.endCoordinates.height);
     }
-
     function onKeyboardDidHide() {
       setKeyboardHeight(0);
     }
-
     const showSubscription = Keyboard.addListener(
       'keyboardDidShow',
       onKeyboardDidShow,
@@ -120,6 +115,64 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!pageLoading) return;
+    if (!idMessageSearch) {
+      // 通常画面遷移/onLoadMore/onLoadMoreDown
+      if (!paging?.current_page || page !== paging?.current_page) {
+        getListChat(page);
+        getDetail();
+      }
+      setPageLoading(false);
+    } else if (idMessageSearch > 0) {
+      const index = listChat.findIndex(
+        (element: any) => element?.id === idMessageSearch,
+      );
+      // メッセージが存在する場合、メッセージへスクロール
+      if (index && index >= 0) {
+        giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+          animated: true,
+          index: Math.max(index - 1, 0),
+        });
+        dispatch(saveIdMessageSearch(0));
+        setPageLoading(false);
+      // メッセージが存在するページをloadしていない場合、fetch
+      } else {
+        fetchMessageSearch(idMessageSearch);
+        dispatch(saveIdMessageSearch(0));
+        setPageLoading(false);
+      }
+    }
+  }, [route, page, pageLoading]);
+
+  // 返信・引用のオリジナルメッセージのタップ
+  const navigateToMessage = useCallback((id_messageSearch) => {
+    dispatch(saveIdMessageSearch(id_messageSearch));
+    setPageLoading(true);
+  }, []);
+
+  // メッセージが存在するページをfetch
+  const fetchMessageSearch = useCallback((id_MessageSearch) => {
+    setTimeout(() => {
+      const body = {
+        id_room: idRoomChat,
+        id_message: id_MessageSearch,
+      };
+      dispatch(fetchResultMessageActionListRoom(body));
+    }, 1000);
+  }, []);
+
+  // 他画面からの遷移、メッセージへスクロール
+  useEffect(() => {
+    if (idMessageSearchListChat > 0) {
+      setTimeout(() => {
+        dispatch(saveIdMessageSearch(idMessageSearchListChat));
+        setPageLoading(true);
+      }, 1000);
+    }
+  }, [idMessageSearchListChat]);
+
+  // 未読メッセージが存在するページをfetch
   useEffect(() => {
     if (redLineId) {
       const index = listChat.findIndex(
@@ -137,25 +190,17 @@ export const useFunction = (props: any) => {
     }
   }, [redLineId]);
 
+  // WebSocket
   useEffect(() => {
-    //Logic xem xét khi vào màn này có phải dạng message được tìm kiếm không
-    if (idMessageSearchListChat > 0) {
-      // idMessageSearchを0に初期化
-      dispatch(saveIdMessageSearch(0));
-      setTimeout(() => {
-        const body = {
-          id_room: idRoomChat,
-          id_message: idMessageSearchListChat,
-        };
-        dispatch(fetchResultMessageActionListRoom(body));
-      }, 1000);
+    if (isGetInfoRoom) {
+      getDetail();
     }
-  }, [idMessageSearchListChat, searchingFlg]);
+  }, [isGetInfoRoom]);
 
   // check if messages belongs to this room
   useEffect(() => {
     if (idRoomChat && listChat.length > 0) {
-      let irregular_message_ids: number[] = listChat.map(el => {
+      const irregular_message_ids: number[] = listChat.map((el: any) => {
         return idRoomChat !== el.room_id;
       });
       if (irregular_message_ids.length > 0) {
@@ -163,35 +208,65 @@ export const useFunction = (props: any) => {
       }
     }
   }, [listChat]);
-  const navigateToMessage = useCallback(
-    idMessageSearch => {
-      const index = listChat.findIndex(
-        (element: any) => element?.id === idMessageSearch,
-      );
-      if (index && index >= 0) {
-        giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-          animated: true,
-          index: index - 1 >= 0 ? index - 1 : 0,
-        });
-      }
-    },
-    [listChat],
-  );
 
-  // チャット検索した後、idMessageSearchが変更があれば実行される
+  // showTagModal
   useEffect(() => {
-    (async() => {
-      if (idMessageSearch && idMessageSearch > 0) {
-        setPage(pagging?.current_page);
-        setStartPage(pagging?.current_page);
-        setMinPage(pagging?.current_page);
-        await getListChat(page);
-        navigateToMessage(idMessageSearch);
+    if (showTagModal) {
+      getUserListChat();
+    }
+  }, [showTagModal]);
+
+  // 画面にFocusがあたった/外れた、他依存の際に発火
+  // 必要な処理か不明なので無効化
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (idRoomChat) {
+  //       getDetail();
+  //     }
+  //   }, []),
+  // );
+
+  useEffect(() => {
+    if (message_edit || messageReply || messageQuote) {
+      setShowModalStamp(false);
+    }
+  }, [message_edit, messageReply, messageQuote]);
+
+  useEffect(() => {
+    if (!message_edit) {
+      setText('');
+    }
+  }, [message_edit]);
+
+  useEffect(() => {
+    if (message_edit) {
+      dispatch(saveMessageReply(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageReply) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageQuote) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageReply(null));
+    }
+  }, [message_edit, messageReply, messageQuote]);
+
+  useEffect(() => {
+    if (modalStamp === true) {
+      removeReplyMessage();
+      removeEditMessage();
+      removeQuoteMessage();
+    }
+  }, [modalStamp]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (formattedText[0]?.props?.children === '') {
+        formattedText.shift();
+        setFormattedText([...formattedText]);
       }
-      // idMessageSearchを0に初期化
-      dispatch(saveIdMessageSearch(0));
-    })()
-  }, [idMessageSearch, page, pagging]);
+    }, 10);
+  }, [formattedText]);
 
   const navigateToDetail = useCallback(() => {
     navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, {idRoomChat: idRoomChat});
@@ -236,6 +311,7 @@ export const useFunction = (props: any) => {
   const generateDatabaseDateTime = useCallback(date => {
     return date.toLocaleString().replace('T', ' ').substring(0, 19);
   }, []);
+
   const makeTemporallyDataMessage = useCallback((tempData: any) => {
     let dateNow = new Date();
     const currentDatetime = generateDatabaseDateTime(dateNow);
@@ -287,25 +363,14 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
-  const getListChat = useCallback(async (page) => {
-    if (!startPage) {
-      setStartPage(page);
-      setMinPage((prevMinPage: any) => Math.min(page, prevMinPage));
-    }
+  const getListChat = useCallback(async (nextPage) => {
     const data = {
       id: idRoomChat,
-      page: page,
+      page: nextPage,
     };
     await dispatch(getDetailListChat(data));
-  }, [idRoomChat]);
-
-  // route?.paramsが変わったら実行
-  // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
-  // push通知をクリックした時に、route?.params.idRoomChatが変更になりこちらが実行される
-  useEffect(() => {
-    getListChat(page);
-    getDetail();
-  }, [route]);
+    setPage(nextPage);
+  }, [idRoomChat, paging]);
 
   const getDetail = async () => {
     try {
@@ -314,32 +379,6 @@ export const useFunction = (props: any) => {
       dispatch(isGetInfoRoom(false));
     } catch {}
   };
-
-  useEffect(() => {
-    if (isGetInfoRoom === true) {
-      getDetail();
-    }
-  }, [isGetInfoRoom]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (idRoomChat) {
-        getDetail();
-      }
-    }, []),
-  );
-
-  useEffect(() => {
-    if (message_edit || messageReply || messageQuote) {
-      setShowModalStamp(false);
-    }
-  }, [message_edit, messageReply, messageQuote]);
-
-  useEffect(() => {
-    if (!message_edit) {
-      setText('');
-    }
-  }, [message_edit]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -582,25 +621,41 @@ export const useFunction = (props: any) => {
         }
       } catch (error: any) {}
     },
-    [page, message_pinned?.id],
+    [message_pinned?.id],
   );
 
-  const onLoadMore = useCallback(async () => {
-    if (page < pagging?.last_page) {
-      const nextPage = startPage < page ? page + 1 : startPage + 1;
-      await setPage(nextPage);
-      await getListChat(nextPage);
+  const getCurrentPage = useCallback(() => {
+    const res = store.getState();
+    const currentPage = res.chat.pagingDetail.current_page;
+    if (!page) {
+      setPage(currentPage);
     }
-  }, [page, pagging, startPage]);
+    if (!topPage) {
+      setTopPage(currentPage);
+    }
+    if (!bottomPage) {
+      setBottomPage(currentPage);
+    }
+    return currentPage;
+  }, [page, topPage, bottomPage]);
 
-  const onLoadMoreDown = useCallback(async () => {
-    if (startPage - 1 > 0 && minPage - 1 > 0) {
-      const nextPage = startPage < minPage ? startPage - 1 : minPage - 1;
-      await setPage(nextPage);
-      await setMinPage((prevMinPage: any) => prevMinPage - 1);
-      await getListChat(nextPage);
-    }
-  }, [startPage, minPage]);
+  const onLoadMore = useCallback(() => {
+    const currentPage = getCurrentPage();
+    const nextPage = topPage ? topPage + 1 : currentPage + 1;
+    if (nextPage > paging?.last_page) return;
+    setPage(nextPage);
+    setTopPage(nextPage);
+    setPageLoading(true);
+  }, [topPage, paging]);
+
+  const onLoadMoreDown = useCallback(() => {
+    if (bottomPage === 1) return;
+    const currentPage = getCurrentPage();
+    const nextPage = bottomPage ? Math.max(bottomPage - 1, 1) : Math.max(currentPage - 1, 1);
+    setPage(nextPage);
+    setBottomPage(nextPage);
+    setPageLoading(true);
+  }, [bottomPage]);
 
   const replyMessage = useCallback((data: any) => {
     dispatch(saveMessageReply(data));
@@ -653,19 +708,6 @@ export const useFunction = (props: any) => {
       editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
     );
   }, []);
-
-  useEffect(() => {
-    if (message_edit) {
-      dispatch(saveMessageReply(null));
-      dispatch(saveMessageQuote(null));
-    } else if (messageReply) {
-      dispatch(saveMessageEdit(null));
-      dispatch(saveMessageQuote(null));
-    } else if (messageQuote) {
-      dispatch(saveMessageEdit(null));
-      dispatch(saveMessageReply(null));
-    }
-  }, [message_edit, messageReply, messageQuote]);
 
   const navigatiteToListReaction = useCallback(idMsg => {
     navigation.navigate(ROUTE_NAME.LIST_REACTION, {
@@ -852,14 +894,6 @@ export const useFunction = (props: any) => {
     setShowModalStamp(!modalStamp);
   }, [modalStamp]);
 
-  useEffect(() => {
-    if (modalStamp === true) {
-      removeReplyMessage();
-      removeEditMessage();
-      removeQuoteMessage();
-    }
-  }, [modalStamp]);
-
   const getUserListChat = useCallback(async () => {
     try {
       if (!idRoomChat) {
@@ -872,19 +906,6 @@ export const useFunction = (props: any) => {
       console.error(error);
     }
   }, [idRoomChat]);
-
-  useEffect(() => {
-    getUserListChat();
-  }, [showTagModal]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (formattedText[0]?.props?.children === '') {
-        formattedText.shift();
-        setFormattedText([...formattedText]);
-      }
-    }, 10);
-  }, [formattedText]);
 
   const bookmarkMessage = useCallback((data: any) => {
     try {
@@ -1104,6 +1125,7 @@ export const useFunction = (props: any) => {
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);
   }, []);
+
   const onSaveTask = useCallback(async input => {
     const data = {
       project_id: 1,
@@ -1145,10 +1167,12 @@ export const useFunction = (props: any) => {
     }
     setShowTaskForm(false);
   }, []);
+
   const onUpdateTask = useCallback(async data => {
     const res = await updateTask(data);
     setShowTaskForm(false);
   }, []);
+
   const deleteFile = useCallback(
     async sourceURL => {
       const chosenFilesDeleted = chosenFiles.filter(item => {
