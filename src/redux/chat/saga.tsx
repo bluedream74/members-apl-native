@@ -7,7 +7,6 @@ import {
   editMessageAction,
   getRoomList,
   fetchResultMessageSuccess,
-  saveIdMessageSearch,
   updateMessageSeen,
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
@@ -190,7 +189,6 @@ export function* fetchResultMessageRedLine(action: any) {
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
     }
   } catch (error) {
   } finally {
@@ -221,7 +219,6 @@ export function* fetchResultMessage(action: any) {
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
       NavigationUtils.goBack();
     }
   } catch (error) {
@@ -252,7 +249,6 @@ export function* fetchResultMessageListFile(action: any) {
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
       NavigationUtils.pop(2);
     }
   } catch (error) {
@@ -283,7 +279,6 @@ export function* fetchResultMessageListRoom(action: any) {
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
     }
   } catch (error) {
   } finally {
