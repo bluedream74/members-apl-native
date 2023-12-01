@@ -51,6 +51,7 @@ export default function DecoButton({ onDecoSelected }: DecoButtonProps) {
         decoButtonArr.map((item) => {
           return (
             <AppButton
+              key={item.tag}
               title={item.text}
               onPress={() => onDecoSelected(item.tag)}
               styleButton={[styles.decoButton, item.width ? { width: item?.width } : '']}
