@@ -116,11 +116,11 @@ export const useFunction = (props: any) => {
   }, []);
 
   // メッセージが存在するページをfetch
-  const fetchMessageSearch = useCallback((id_MessageSearch) => {
+  const fetchMessageSearch = useCallback((idMessage) => {
     setTimeout(() => {
       const body = {
         id_room: idRoomChat,
-        id_message: id_MessageSearch,
+        id_message: idMessage,
       };
       dispatch(fetchResultMessageActionListRoom(body));
     }, 1000);
@@ -156,8 +156,8 @@ export const useFunction = (props: any) => {
   }, [route, page, pageLoading]);
 
   // 返信・引用のオリジナルメッセージのタップ
-  const navigateToMessage = useCallback((id_messageSearch) => {
-    dispatch(saveIdMessageSearch(id_messageSearch));
+  const navigateToMessage = useCallback((idMessage) => {
+    dispatch(saveIdMessageSearch(idMessage));
     setPageLoading(true);
   }, []);
 
