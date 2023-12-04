@@ -4,16 +4,14 @@ import {styles} from './style';
 import {Header, AppInput} from '@component';
 import {iconSearch} from '@images';
 import {debounce} from 'lodash';
-import {useSelector} from 'react-redux';
 import {Item} from './component/Item';
 import {getDetailChatApi} from '@services';
 import {useDispatch} from 'react-redux';
 import {fetchResultMessageAction} from '@redux';
-import {ROUTE_NAME} from "@routeName";
-import {useNavigation} from "@react-navigation/native";
+import {ROUTE_NAME} from '@routeName';
+import {useNavigation} from '@react-navigation/native';
 
 const SearchMessage = (props: any) => {
-  const idCompany = useSelector((state: any) => state.chat.idCompany);
   const dispatch = useDispatch();
   const {route} = props;
   const {idRoomChat} = route?.params;
@@ -24,27 +22,30 @@ const SearchMessage = (props: any) => {
   const [page, setPage] = useState(1);
   const navigation = useNavigation<any>();
 
-  const callApiSearch = async (params: any) => {
-    try {
-      if (params?.key?.length > 0) {
-        const res = await getDetailChatApi(params);
-        setTotal(res?.data?.room_messages?.paging?.total);
-        setLastPage(res?.data?.room_messages?.paging?.last_page);
-        setList(
-          params?.page === 1
-            ? res?.data?.room_messages?.data
-            : listMessage.concat(res?.data?.room_messages?.data),
-        );
-      } else {
-        setLastPage(null);
-        setList([]);
-        setPage(1);
-        setTotal(null);
-      }
-    } catch (error: any) {}
-  };
+  const callApiSearch = useCallback(
+    async (params: any) => {
+      try {
+        if (params?.key?.length > 0) {
+          const res = await getDetailChatApi(params);
+          setTotal(res?.data?.room_messages?.paging?.total);
+          setLastPage(res?.data?.room_messages?.paging?.last_page);
+          setList(
+            params?.page === 1
+              ? res?.data?.room_messages?.data
+              : listMessage.concat(res?.data?.room_messages?.data),
+          );
+        } else {
+          setLastPage(null);
+          setList([]);
+          setPage(1);
+          setTotal(null);
+        }
+      } catch (error: any) {}
+    },
+    [listMessage],
+  );
 
-  const debounceText = useCallback(
+  const debounceText = () => {
     debounce(text => {
       setPage(1);
       const params = {
@@ -53,9 +54,8 @@ const SearchMessage = (props: any) => {
         key: text,
       };
       callApiSearch(params);
-    }, 500),
-    [],
-  );
+    }, 500);
+  };
 
   const onChangeText = (text: any) => {
     setKey(text);
@@ -71,7 +71,7 @@ const SearchMessage = (props: any) => {
       };
       callApiSearch(params);
     }
-  }, [page]);
+  }, [page, callApiSearch, idRoomChat, key]);
 
   const handleLoadMore = useCallback(() => {
     if (page !== lastPage) {

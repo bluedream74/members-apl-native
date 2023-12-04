@@ -209,7 +209,7 @@ export const useFunction = (props: any) => {
 
   const getConvertedMessages = useCallback(
     (msgs: any) => {
-      msgs = msgs.filter(el => !irregularMessageIds.includes(el.id));
+      msgs = msgs.filter((el: any) => !irregularMessageIds.includes(el.id));
       return msgs?.map((item: any, index: any) => {
         return convertDataMessage(item, index);
       });
@@ -355,6 +355,131 @@ export const useFunction = (props: any) => {
     dispatch(saveMessageQuote(null));
   }, [dispatch]);
 
+  /**
+   * format method
+   * @param inputText
+   * @param fromTagFlg
+   */
+  const formatText = useCallback(
+    (input: string, fromTagFlg: boolean) => {
+      if (input.length === 0) {
+        setFormattedText([]);
+        return;
+      }
+      const words = input.split(' ');
+      const newWords: string[] = [];
+      words.forEach(word => {
+        if (word.match('.+\n.+')) {
+          const splitNewWord = word.split('\n');
+          splitNewWord.forEach((s, index) => {
+            if (index > 0) {
+              newWords.push('\n');
+            }
+            newWords.push(s);
+          });
+        } else if (word.match('.+\n')) {
+          const splitNewWord = word.split('\n');
+          splitNewWord.forEach(s => {
+            if (s !== '') {
+              newWords.push(s);
+            } else {
+              newWords.push('\n');
+            }
+          });
+        } else if (word.match('\n.+')) {
+          newWords.push(word);
+        } else if (word.match('　')) {
+          const splitNewWord = word.split('　');
+          splitNewWord.forEach((s, index) => {
+            if (index > 0) {
+              newWords.push(' ');
+            }
+            newWords.push(s);
+          });
+        } else {
+          newWords.push(word);
+        }
+      });
+      const formattedText1: (string | JSX.Element)[] = [];
+      words.forEach((word, index) => {
+        const isLastWord = index === words.length - 1;
+        const includingList = mentionedUsers.filter((el: string) => {
+          var re = new RegExp('^' + el + '', 'gi');
+          var result = re.test(word);
+          if (result) {
+            return true;
+          }
+          return false;
+        });
+        if (!word.startsWith('@') || includingList.length === 0) {
+          const nonmention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: 'black',
+              }}>
+              {word}
+            </Text>
+          );
+          return isLastWord
+            ? formattedText1.push(nonmention)
+            : formattedText1.push(nonmention, ' ');
+        } else {
+          const mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: '#3366CC',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+          if (word === '@') {
+            formattedText1.push(mention);
+          } else {
+            if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
+              isLastWord
+                ? formattedText1.push(mention)
+                : formattedText1.push(mention, ' ');
+            } else {
+              isLastWord
+                ? formattedText1.push(mention, ' ')
+                : formattedText1.push(mention, ' ');
+            }
+          }
+        }
+      });
+      if (checkDeletedMension(formattedText1)) {
+        formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
+      }
+      setFormattedText(formattedText1);
+    },
+    [checkDeletedMension, mentionedUsers],
+  );
+
+  const getText = (formattedtext: (string | JSX.Element)[]) => {
+    let context: string = '';
+    formattedtext.forEach(element => {
+      let word = '';
+      if (typeof element === 'string') {
+        word = element;
+      } else {
+        word = element.props.children;
+      }
+      if (word !== '@') {
+        if (word.slice(-1) === '@') {
+          context = context + word.slice(0, -1) + ' ';
+        } else {
+          context = context + word;
+        }
+      }
+    });
+    return context;
+  };
+
   const editMessage = useCallback(
     (data: any) => {
       // setText(data?.text);
@@ -459,8 +584,8 @@ export const useFunction = (props: any) => {
               item?.path?.endsWith('.HEIC') ||
               item?.path?.endsWith('.HEIC');
             data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\]/, ''),
-              name: item?.path?.replace(/^.*[\\]/, ''),
+              fileName: item?.path?.replace(/^.*[\\/]/, ''),
+              name: item?.path?.replace(/^.*[\\/]/, ''),
               width: item?.width,
               uri: item?.path,
               path: item?.path,
@@ -631,131 +756,6 @@ export const useFunction = (props: any) => {
     },
     [formattedText],
   );
-
-  /**
-   * format method
-   * @param inputText
-   * @param fromTagFlg
-   */
-  const formatText = useCallback(
-    (input: string, fromTagFlg: boolean) => {
-      if (input.length === 0) {
-        setFormattedText([]);
-        return;
-      }
-      const words = input.split(' ');
-      const newWords: string[] = [];
-      words.forEach(word => {
-        if (word.match('.+\n.+')) {
-          const splitNewWord = word.split('\n');
-          splitNewWord.forEach((s, index) => {
-            if (index > 0) {
-              newWords.push('\n');
-            }
-            newWords.push(s);
-          });
-        } else if (word.match('.+\n')) {
-          const splitNewWord = word.split('\n');
-          splitNewWord.forEach(s => {
-            if (s !== '') {
-              newWords.push(s);
-            } else {
-              newWords.push('\n');
-            }
-          });
-        } else if (word.match('\n.+')) {
-          newWords.push(word);
-        } else if (word.match('　')) {
-          const splitNewWord = word.split('　');
-          splitNewWord.forEach((s, index) => {
-            if (index > 0) {
-              newWords.push(' ');
-            }
-            newWords.push(s);
-          });
-        } else {
-          newWords.push(word);
-        }
-      });
-      const formattedText1: (string | JSX.Element)[] = [];
-      words.forEach((word, index) => {
-        const isLastWord = index === words.length - 1;
-        const includingList = mentionedUsers.filter((el: string) => {
-          var re = new RegExp('^' + el + '', 'gi');
-          var result = re.test(word);
-          if (result) {
-            return true;
-          }
-          return false;
-        });
-        if (!word.startsWith('@') || includingList.length === 0) {
-          const nonmention = (
-            <Text
-              key={word + index}
-              style={{
-                alignSelf: 'flex-start',
-                color: 'black',
-              }}>
-              {word}
-            </Text>
-          );
-          return isLastWord
-            ? formattedText1.push(nonmention)
-            : formattedText1.push(nonmention, ' ');
-        } else {
-          const mention = (
-            <Text
-              key={word + index}
-              style={{
-                alignSelf: 'flex-start',
-                color: '#3366CC',
-                fontWeight: 'bold',
-              }}>
-              {word}
-            </Text>
-          );
-          if (word === '@') {
-            formattedText1.push(mention);
-          } else {
-            if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
-              isLastWord
-                ? formattedText1.push(mention)
-                : formattedText1.push(mention, ' ');
-            } else {
-              isLastWord
-                ? formattedText1.push(mention, ' ')
-                : formattedText1.push(mention, ' ');
-            }
-          }
-        }
-      });
-      if (checkDeletedMension(formattedText1)) {
-        formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
-      }
-      setFormattedText(formattedText1);
-    },
-    [checkDeletedMension, mentionedUsers],
-  );
-
-  const getText = (formattedtext: (string | JSX.Element)[]) => {
-    let context: string = '';
-    formattedtext.forEach(element => {
-      let word = '';
-      if (typeof element === 'string') {
-        word = element;
-      } else {
-        word = element.props.children;
-      }
-      if (word !== '@') {
-        if (word.slice(-1) === '@') {
-          context = context + word.slice(0, -1) + ' ';
-        } else {
-          context = context + word;
-        }
-      }
-    });
-    return context;
-  };
 
   const callApiChatBotRequest = useCallback(
     async (message: any, messageId: any, useName: any) => {

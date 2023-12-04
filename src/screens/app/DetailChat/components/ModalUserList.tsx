@@ -4,8 +4,6 @@ import {
   StyleSheet,
   Modal,
   Text,
-  TouchableOpacity,
-  Image,
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -34,11 +32,7 @@ const ModalUserList = React.memo((prop: any) => {
   const loginUser = useSelector((state: any) => state.auth.userInfo);
   const [searchWord, setSearchWord] = useState<any>('');
 
-  useEffect(() => {
-    getListUserApi();
-  }, []);
-
-  const getListUserApi = async () => {
+  const getListUserApi = useCallback(async () => {
     try {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
@@ -95,7 +89,13 @@ const ModalUserList = React.memo((prop: any) => {
         type: 'danger',
       });
     }
-  };
+  }, [
+    idRoomChat,
+    loginUser.first_name,
+    loginUser.icon_image,
+    loginUser.id,
+    loginUser.last_name,
+  ]);
 
   const closeModal = () => {
     onCancel();
@@ -109,6 +109,10 @@ const ModalUserList = React.memo((prop: any) => {
       setSelected={setSelected}
     />
   );
+
+  useEffect(() => {
+    getListUserApi();
+  }, [getListUserApi]);
 
   return (
     <Modal

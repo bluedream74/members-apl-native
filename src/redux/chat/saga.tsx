@@ -1,4 +1,4 @@
-import {put, takeLatest, select, takeEvery, call} from 'redux-saga/effects';
+import {put, takeEvery} from 'redux-saga/effects';
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
@@ -22,8 +22,9 @@ import {
   registerLastMessage,
   getUnreadMessageCountApi,
   GlobalService,
-  detailRoomchat, logMessage,
-} from "@services";
+  detailRoomchat,
+  logMessage,
+} from '@services';
 
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
@@ -80,7 +81,7 @@ export function* getDetailMessageSaga(action: any) {
     };
     yield put(updateMessageSeen(data));
     //Check xoá tin nhắn
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
       //Chỉnh sửa tin nhắn
@@ -130,7 +131,7 @@ export function* editMessageReaction(action: any) {
       id_message: action.payload?.id_message,
     };
     yield put(updateMessageSeen(data));
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
       yield put(
@@ -295,7 +296,7 @@ function* updateMessageSeenSaga(action: any) {
       id_room: action.payload.id_room,
       id_message: action.payload.id_message,
     };
-    const result: ResponseGenerator = yield registerLastMessage(body);
+    yield registerLastMessage(body);
     yield socket.emit('connect_room_join_req2', {
       user_id: user_id,
       room_ids: [action.payload.id_room],
@@ -315,7 +316,7 @@ function* getDetailMessageSeen(action: any) {
   };
   try {
     const result: ResponseGenerator = yield getMessageFromSocket(body);
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
     } else {
       if (result?.data?.message?.medthod === 1) {
       } else {
@@ -358,7 +359,7 @@ export function* logMessageSaga(action: any) {
       current_room_id: action.payload.current_room_id,
       irregular_message_ids: action.payload.irregular_message_ids,
     };
-    const res: ResponseGenerator = yield logMessage(body);
+    yield logMessage(body);
   } catch (error) {
   } finally {
     GlobalService.hideLoading();

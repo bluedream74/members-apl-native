@@ -1,8 +1,15 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import { View, Image, Platform, TouchableOpacity, Text } from "react-native";
+import React, {useCallback} from 'react';
+import {View, Image, Platform, TouchableOpacity} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from "@images";
+import {
+  iconSearch,
+  iconUpload,
+  iconLike,
+  iconDetail,
+  iconSend,
+  iconTask,
+} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -91,35 +98,37 @@ const DetailChat = (props: any) => {
     deleteFile,
     setListUserSelect,
     listUserSelect,
-    listUserRoot,
     customBack,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
-  const renderActions = useCallback((props: any) => {
-    return (
-      <Actions
-        {...props}
-        containerStyle={styles.addBtn}
-        onPressActionButton={cancelModal}
-        icon={() => <Image source={iconUpload} />}
-      />
-    );
-  }, []);
+  const renderActions = useCallback(
+    (inputProps: any) => {
+      return (
+        <Actions
+          {...inputProps}
+          containerStyle={styles.addBtn}
+          onPressActionButton={cancelModal}
+          icon={() => <Image source={iconUpload} />}
+        />
+      );
+    },
+    [cancelModal],
+  );
 
   const renderActionsRight = useCallback(
-    (props: any) => {
+    (inputProps: any) => {
       return (
         <>
-          {props.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+          {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
             <Actions
-              {...props}
+              {...inputProps}
               containerStyle={styles.buttonRight}
               onPressActionButton={() => {
                 const messages = [
                   {
-                    text: getText(props.formattedText),
-                    user: {_id: props.user?._id},
+                    text: getText(inputProps.formattedText),
+                    user: {_id: inputProps.user?._id},
                     createdAt: new Date(Date.now()),
                   },
                 ];
@@ -130,7 +139,7 @@ const DetailChat = (props: any) => {
             />
           ) : (
             <Actions
-              {...props}
+              {...inputProps}
               containerStyle={styles.buttonRight}
               onPressActionButton={() => sendLabel(1)}
               icon={() => <Image source={iconLike} />}
@@ -139,16 +148,16 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser, chosenFiles],
+    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText],
   );
 
   //Render ra UI của message
   const renderMessage = useCallback(
-    (props: any) => {
+    (inputProps: any) => {
       return (
         <>
           <ItemMessage
-            {...props}
+            {...inputProps}
             idRoomChat={idRoomChat}
             deleteMsg={(id: any) => {
               deleteMsg(id);
@@ -190,7 +199,27 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [listUser, newIndexArray, listChat],
+    [
+      listUser,
+      newIndexArray,
+      bookmarkMessage,
+      dataDetail?.is_admin,
+      deleteMsg,
+      editMessage,
+      idRoomChat,
+      indexRedLine,
+      me,
+      mentionedUsers,
+      navigateToMessage,
+      navigatiteToListReaction,
+      quoteMessage,
+      reactionMessage,
+      redLineId,
+      replyMessage,
+      setFormattedText,
+      showRedLine,
+      updateGimMessage,
+    ],
   );
 
   //Check phạm vi để gọi hàm loadmore
@@ -218,7 +247,7 @@ const DetailChat = (props: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={showTaskForm ? [styles.blackout] : []}></View>
+      <View style={showTaskForm ? [styles.blackout] : []} />
       <View style={showTaskForm ? [styles.displayNone] : [{height: '100%'}]}>
         <Header
           back
@@ -346,7 +375,7 @@ const DetailChat = (props: any) => {
                     {showTagModal && (
                       <ModalTagName
                         idRoomChat={idRoomChat}
-                        choseUser={(value: any, title: string, id: any, props: any) => {
+                        choseUser={(value: any, title: string, id: any) => {
                           setIds(ids?.concat([id]));
                           setShowTag(false);
                           if (id === 'All') {
@@ -356,7 +385,8 @@ const DetailChat = (props: any) => {
                                   userId: el.id,
                                   userName: el.last_name + el.first_name,
                                 };
-                            }));
+                              }),
+                            );
                           } else {
                             listUserSelect.push({
                               userId: id,
@@ -402,10 +432,7 @@ const DetailChat = (props: any) => {
         />
         <DecoButton onDecoSelected={onDecoSelected} />
         {chosenFiles.length > 0 && (
-          <ShowPickedFile
-            chosenFiles={chosenFiles}
-            deleteFile={deleteFile}
-          />
+          <ShowPickedFile chosenFiles={chosenFiles} deleteFile={deleteFile} />
         )}
         {/* create task icon */}
         <View
