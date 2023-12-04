@@ -357,6 +357,24 @@ export const useFunction = (props: any) => {
     dispatch(saveMessageQuote(null));
   }, [dispatch]);
 
+  const checkDeletedMension = useCallback(
+    (formattedText1: any[]) => {
+      let result = false;
+      formattedText1.forEach((element, index) => {
+        if (
+          element?.props?.children?.startsWith('@') &&
+          element?.props?.children?.length > 1 &&
+          element?.props?.children?.length <
+            formattedText[index]?.props?.children.length
+        ) {
+          result = true;
+        }
+      });
+      return result;
+    },
+    [formattedText],
+  );
+
   /**
    * format method
    * @param inputText
@@ -740,24 +758,6 @@ export const useFunction = (props: any) => {
       GlobalService.hideLoading();
     }
   }, []);
-
-  const checkDeletedMension = useCallback(
-    (formattedText1: any[]) => {
-      let result = false;
-      formattedText1.forEach((element, index) => {
-        if (
-          element?.props?.children?.startsWith('@') &&
-          element?.props?.children?.length > 1 &&
-          element?.props?.children?.length <
-            formattedText[index]?.props?.children.length
-        ) {
-          result = true;
-        }
-      });
-      return result;
-    },
-    [formattedText],
-  );
 
   const callApiChatBotRequest = useCallback(
     async (message: any, messageId: any, useName: any) => {
