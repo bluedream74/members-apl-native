@@ -99,28 +99,6 @@ export const useFunction = (props: any) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
 
-  useEffect(() => {
-    function onKeyboardDidShow(e: KeyboardEvent) {
-      // Remove type here if not using TypeScript
-      setKeyboardHeight(e.endCoordinates.height);
-    }
-    function onKeyboardDidHide() {
-      setKeyboardHeight(0);
-    }
-    const showSubscription = Keyboard.addListener(
-      'keyboardDidShow',
-      onKeyboardDidShow,
-    );
-    const hideSubscription = Keyboard.addListener(
-      'keyboardDidHide',
-      onKeyboardDidHide,
-    );
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
-
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
     idMessage => {
@@ -135,48 +113,6 @@ export const useFunction = (props: any) => {
     [idRoomChat, dispatch],
   );
 
-  useEffect(() => {
-    if (!pageLoading) {
-      return;
-    }
-    if (!idMessageSearch) {
-      // 通常画面遷移/onLoadMore/onLoadMoreDown
-      if (!paging?.current_page || page !== paging?.current_page) {
-        getListChat(page);
-        getDetail();
-      }
-      setPageLoading(false);
-    } else if (idMessageSearch > 0) {
-      const index = listChat.findIndex(
-        (element: any) => element?.id === idMessageSearch,
-      );
-      // メッセージが存在する場合、メッセージへスクロール
-      if (index && index >= 0) {
-        giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-          animated: true,
-          index: Math.max(index - 1, 0),
-        });
-        dispatch(saveIdMessageSearch(0));
-        setPageLoading(false);
-        // メッセージが存在するページをloadしていない場合、fetch
-      } else {
-        fetchMessageSearch(idMessageSearch);
-        setPageLoading(false);
-      }
-    }
-  }, [
-    route,
-    page,
-    pageLoading,
-    dispatch,
-    fetchMessageSearch,
-    getDetail,
-    getListChat,
-    idMessageSearch,
-    listChat,
-    paging?.current_page,
-  ]);
-
   // 返信・引用のオリジナルメッセージのタップ
   const navigateToMessage = useCallback(
     idMessage => {
@@ -185,120 +121,6 @@ export const useFunction = (props: any) => {
     },
     [dispatch],
   );
-
-  // 他画面からの遷移、メッセージへスクロール
-  useEffect(() => {
-    if (idMessageSearchListChat > 0) {
-      setTimeout(() => {
-        dispatch(saveIdMessageSearch(idMessageSearchListChat));
-        setPageLoading(true);
-      }, 1000);
-    }
-  }, [idMessageSearchListChat, dispatch]);
-
-  // 未読メッセージが存在するページをfetch
-  useEffect(() => {
-    if (redLineId) {
-      const index = listChat.findIndex(
-        (element: any) => element?.id === redLineId,
-      );
-      if (index > 0) {
-        setIndexRedLine(index);
-      }
-      const body = {
-        id_room: idRoomChat,
-        id_message: redLineId,
-      };
-      dispatch(fetchResultMessageActionRedLine(body));
-    } else {
-    }
-  }, [redLineId, dispatch, idRoomChat, listChat]);
-
-  // WebSocket
-  useEffect(() => {
-    if (isGetInfoRoom) {
-      getDetail();
-    }
-  }, [isGetInfoRoom, getDetail]);
-
-  // check if messages belongs to this room
-  useEffect(() => {
-    const res = store.getState();
-    const currentPage = res.chat.pagingDetail?.current_page;
-    if (idMessageSearch > 0) {
-      setPage(currentPage);
-      setTopPage(currentPage);
-      setBottomPage(currentPage);
-      dispatch(saveIdMessageSearch(0));
-    }
-    if (idRoomChat && listChat.length > 0) {
-      const irregular_message_ids: number[] = listChat.map((el: any) => {
-        return idRoomChat !== el.room_id;
-      });
-      if (irregular_message_ids.length > 0) {
-        setIrregularMessageIds(irregular_message_ids);
-      }
-    }
-  }, [listChat, dispatch, idMessageSearch, idRoomChat]);
-
-  // showTagModal
-  useEffect(() => {
-    if (showTagModal) {
-      getUserListChat();
-    }
-  }, [showTagModal, getUserListChat]);
-
-  // 画面にFocusがあたった/外れた、他依存の際に発火
-  // 必要な処理か不明なので無効化
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (idRoomChat) {
-  //       getDetail();
-  //     }
-  //   }, []),
-  // );
-
-  useEffect(() => {
-    if (message_edit || messageReply || messageQuote) {
-      setShowModalStamp(false);
-    }
-  }, [message_edit, messageReply, messageQuote]);
-
-  useEffect(() => {
-    if (!message_edit) {
-      setText('');
-    }
-  }, [message_edit]);
-
-  useEffect(() => {
-    if (message_edit) {
-      dispatch(saveMessageReply(null));
-      dispatch(saveMessageQuote(null));
-    } else if (messageReply) {
-      dispatch(saveMessageEdit(null));
-      dispatch(saveMessageQuote(null));
-    } else if (messageQuote) {
-      dispatch(saveMessageEdit(null));
-      dispatch(saveMessageReply(null));
-    }
-  }, [message_edit, messageReply, messageQuote, dispatch]);
-
-  useEffect(() => {
-    if (modalStamp === true) {
-      removeReplyMessage();
-      removeEditMessage();
-      removeQuoteMessage();
-    }
-  }, [modalStamp, removeEditMessage, removeQuoteMessage, removeReplyMessage]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (formattedText[0]?.props?.children === '') {
-        formattedText.shift();
-        setFormattedText([...formattedText]);
-      }
-    }, 10);
-  }, [formattedText]);
 
   const navigateToDetail = useCallback(() => {
     navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, {idRoomChat: idRoomChat});
@@ -413,13 +235,13 @@ export const useFunction = (props: any) => {
     [idRoomChat, dispatch],
   );
 
-  const getDetail = async () => {
+  const getDetail = useCallback(async () => {
     try {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
       dispatch(isGetInfoRoom(false));
     } catch {}
-  };
+  }, [idRoomChat, dispatch, isGetInfoRoom]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -459,201 +281,6 @@ export const useFunction = (props: any) => {
   const showHideModalTagName = useCallback(() => {
     setShowTag(!showTagModal);
   }, [showTagModal]);
-
-  const sendMessage = useCallback(
-    async mes => {
-      setShowTag(false);
-      setShowModalStamp(false);
-      setShowRedLine(false);
-      if (messageReply) {
-        try {
-          // 現在表示中のルームIDと返信元のルームIDが違う場合はエラー
-          if (messageReply?.roomId !== idRoomChat) {
-            showMessage({
-              message: 'ルームIDが違います',
-              type: 'danger',
-            });
-            return;
-          }
-          const data = new FormData();
-          data.append('room_id', idRoomChat);
-          data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
-          data.append('reply_to_message_id', messageReply?.id);
-          ids?.forEach((item: any) => {
-            data.append('ids[]', item);
-          });
-          // at first show temporally data
-          const tempData = {
-            room_id: idRoomChat,
-            from_id: user_id,
-            message: mes[0]?.text?.split('\n').join('<br>'),
-            reply_to_message_id: messageReply?.id,
-          };
-          dispatch(saveMessageReply(null));
-          dispatch(
-            getDetailMessageSocketSuccess(makeTemporallyDataMessage(tempData)),
-          );
-          const res = await replyMessageApi(data);
-          socket.emit('message_ind2', {
-            user_id: mes[0]?.user?._id,
-            room_id: idRoomChat,
-            task_id: null,
-            to_info: null,
-            level: res?.data?.data?.msg_level,
-            message_id: res?.data?.data?.id,
-            message_type: res?.data?.data?.msg_type,
-            method: res?.data?.data?.method,
-            attachment_files: res?.data?.attachmentFiles,
-            stamp_no: res?.data?.data?.stamp_no,
-            relation_message_id: res?.data?.data?.reply_to_message_id,
-            text: res?.data?.data?.message,
-            text2: null,
-            time: res?.data?.data?.created_at,
-          });
-          dispatch(saveMessageReply(null));
-          // next show real data
-          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
-      } else if (message_edit) {
-        try {
-          const param = {
-            room_id: idRoomChat,
-            message: mes[0]?.text?.split('\n').join('<br>'),
-            ids: ids,
-          };
-          const res = await editMessageApi(message_edit?.id, param);
-          socket.emit('message_ind2', {
-            user_id: mes[0]?.user?._id,
-            room_id: idRoomChat,
-            task_id: null,
-            to_info: null,
-            level: res?.data?.data?.msg_level,
-            message_id: res?.data?.data?.id,
-            message_type: res?.data?.data?.msg_type,
-            method: res?.data?.data?.method,
-            attachment_files: res?.data?.attachmentFiles,
-            stamp_no: res?.data?.data?.stamp_no,
-            relation_message_id: res?.data?.data?.reply_to_message_id,
-            text: res?.data?.data?.message,
-            text2: null,
-            time: res?.data?.data?.created_at,
-            time2: res?.data?.data?.updated_at,
-          });
-          dispatch(saveMessageEdit(null));
-          dispatch(
-            editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
-          );
-        } catch (error: any) {}
-      } else if (messageQuote) {
-        try {
-          // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
-          if (messageQuote?.roomId !== idRoomChat) {
-            showMessage({
-              message: 'ルームIDが違います',
-              type: 'danger',
-            });
-            return;
-          }
-          const data = new FormData();
-          data.append('room_id', idRoomChat);
-          data.append('from_id', user_id);
-          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
-          data.append('message_quote', messageQuote?.text);
-          data.append('quote_message_id', messageQuote?.id);
-          ids?.forEach((item: any) => {
-            data.append('ids[]', item);
-          });
-          const res = await sendMessageApi(data);
-          socket.emit('message_ind2', {
-            user_id: mes[0]?.user?._id,
-            room_id: idRoomChat,
-            task_id: null,
-            to_info: null,
-            level: res?.data?.data?.msg_level,
-            message_id: res?.data?.data?.id,
-            message_type: res?.data?.data?.msg_type,
-            method: res?.data?.data?.method,
-            attachment_files: res?.data?.attachmentFiles,
-            stamp_no: res?.data?.data?.stamp_no,
-            relation_message_id: res?.data?.data?.reply_to_message_id,
-            text: res?.data?.data?.message,
-            text2: messageQuote?.text,
-            time: res?.data?.data?.created_at,
-          });
-          dispatch(saveMessageQuote(null));
-          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
-      } else {
-        try {
-          if (mes[0]?.text) {
-            const data = new FormData();
-            data.append('room_id', idRoomChat);
-            data.append('from_id', mes[0]?.user?._id);
-            data.append('message', mes[0]?.text?.split('\n').join('<br>'));
-            ids?.forEach((item: any) => {
-              data.append('ids[]', item);
-            });
-            const res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: mes[0]?.user?._id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            callApiChatBotRequest(
-              res?.data?.data?.message,
-              res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-            );
-          }
-        } catch (error: any) {}
-      }
-      // send files
-      if (chosenFiles?.length > 0) {
-        await sendFile();
-      }
-      // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
-      giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-        animated: true,
-        index: 0,
-      });
-      setIds([]);
-      // prevent from becoming blue character after sending mention message.
-      const formattedText1: (string | JSX.Element)[] = [];
-      formattedText1.push(' ');
-      setFormattedText(formattedText1);
-      formattedText1.shift();
-      setFormattedText(formattedText1);
-      // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
-      setInputText('');
-    },
-    [
-      messageReply,
-      message_edit,
-      ids,
-      messageQuote,
-      idRoomChat,
-      chosenFiles,
-      callApiChatBotRequest,
-      dispatch,
-      makeTemporallyDataMessage,
-      sendFile,
-      socket,
-      user_id,
-    ],
-  );
 
   const updateGimMessage = useCallback(
     async (id, status) => {
@@ -987,121 +614,129 @@ export const useFunction = (props: any) => {
     }
   }, []);
 
+  const checkDeletedMension = useCallback(
+    (formattedText1: any[]) => {
+      let result = false;
+      formattedText1.forEach((element, index) => {
+        if (
+          element?.props?.children?.startsWith('@') &&
+          element?.props?.children?.length > 1 &&
+          element?.props?.children?.length <
+            formattedText[index]?.props?.children.length
+        ) {
+          result = true;
+        }
+      });
+      return result;
+    },
+    [formattedText],
+  );
+
   /**
    * format method
    * @param inputText
    * @param fromTagFlg
    */
-  const formatText = (input: string, fromTagFlg: boolean) => {
-    if (input.length === 0) {
-      setFormattedText([]);
-      return;
-    }
-    const words = input.split(' ');
-    const newWords: string[] = [];
-    words.forEach(word => {
-      if (word.match('.+\n.+')) {
-        const splitNewWord = word.split('\n');
-        splitNewWord.forEach((s, index) => {
-          if (index > 0) {
-            newWords.push('\n');
-          }
-          newWords.push(s);
-        });
-      } else if (word.match('.+\n')) {
-        const splitNewWord = word.split('\n');
-        splitNewWord.forEach(s => {
-          if (s !== '') {
+  const formatText = useCallback(
+    (input: string, fromTagFlg: boolean) => {
+      if (input.length === 0) {
+        setFormattedText([]);
+        return;
+      }
+      const words = input.split(' ');
+      const newWords: string[] = [];
+      words.forEach(word => {
+        if (word.match('.+\n.+')) {
+          const splitNewWord = word.split('\n');
+          splitNewWord.forEach((s, index) => {
+            if (index > 0) {
+              newWords.push('\n');
+            }
             newWords.push(s);
-          } else {
-            newWords.push('\n');
-          }
-        });
-      } else if (word.match('\n.+')) {
-        newWords.push(word);
-      } else if (word.match('　')) {
-        const splitNewWord = word.split('　');
-        splitNewWord.forEach((s, index) => {
-          if (index > 0) {
-            newWords.push(' ');
-          }
-          newWords.push(s);
-        });
-      } else {
-        newWords.push(word);
-      }
-    });
-    const formattedText1: (string | JSX.Element)[] = [];
-    words.forEach((word, index) => {
-      const isLastWord = index === words.length - 1;
-      const includingList = mentionedUsers.filter((el: string) => {
-        var re = new RegExp('^' + el + '', 'gi');
-        var result = re.test(word);
-        if (result) {
-          return true;
-        }
-        return false;
-      });
-      if (!word.startsWith('@') || includingList.length === 0) {
-        const nonmention = (
-          <Text
-            key={word + index}
-            style={{
-              alignSelf: 'flex-start',
-              color: 'black',
-            }}>
-            {word}
-          </Text>
-        );
-        return isLastWord
-          ? formattedText1.push(nonmention)
-          : formattedText1.push(nonmention, ' ');
-      } else {
-        const mention = (
-          <Text
-            key={word + index}
-            style={{
-              alignSelf: 'flex-start',
-              color: '#3366CC',
-              fontWeight: 'bold',
-            }}>
-            {word}
-          </Text>
-        );
-        if (word === '@') {
-          formattedText1.push(mention);
+          });
+        } else if (word.match('.+\n')) {
+          const splitNewWord = word.split('\n');
+          splitNewWord.forEach(s => {
+            if (s !== '') {
+              newWords.push(s);
+            } else {
+              newWords.push('\n');
+            }
+          });
+        } else if (word.match('\n.+')) {
+          newWords.push(word);
+        } else if (word.match('　')) {
+          const splitNewWord = word.split('　');
+          splitNewWord.forEach((s, index) => {
+            if (index > 0) {
+              newWords.push(' ');
+            }
+            newWords.push(s);
+          });
         } else {
-          if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
-            isLastWord
-              ? formattedText1.push(mention)
-              : formattedText1.push(mention, ' ');
+          newWords.push(word);
+        }
+      });
+      const formattedText1: (string | JSX.Element)[] = [];
+      words.forEach((word, index) => {
+        const isLastWord = index === words.length - 1;
+        const includingList = mentionedUsers.filter((el: string) => {
+          var re = new RegExp('^' + el + '', 'gi');
+          var result = re.test(word);
+          if (result) {
+            return true;
+          }
+          return false;
+        });
+        if (!word.startsWith('@') || includingList.length === 0) {
+          const nonmention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: 'black',
+              }}>
+              {word}
+            </Text>
+          );
+          return isLastWord
+            ? formattedText1.push(nonmention)
+            : formattedText1.push(nonmention, ' ');
+        } else {
+          const mention = (
+            <Text
+              key={word + index}
+              style={{
+                alignSelf: 'flex-start',
+                color: '#3366CC',
+                fontWeight: 'bold',
+              }}>
+              {word}
+            </Text>
+          );
+          if (word === '@') {
+            formattedText1.push(mention);
           } else {
-            isLastWord
-              ? formattedText1.push(mention, ' ')
-              : formattedText1.push(mention, ' ');
+            if (word.startsWith('@') && !word.includes(' ') && !fromTagFlg) {
+              isLastWord
+                ? formattedText1.push(mention)
+                : formattedText1.push(mention, ' ');
+            } else {
+              isLastWord
+                ? formattedText1.push(mention, ' ')
+                : formattedText1.push(mention, ' ');
+            }
           }
         }
+      });
+      if (checkDeletedMension(formattedText1)) {
+        formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
       }
-    });
-    if (checkDeletedMension(formattedText1)) {
-      formattedText1.unshift(' '); //i put space in beggining because text color cant be changed without this.
-    }
-    setFormattedText(formattedText1);
-  };
-  const checkDeletedMension = (formattedText1: any[]) => {
-    let result = false;
-    formattedText1.forEach((element, index) => {
-      if (
-        element?.props?.children?.startsWith('@') &&
-        element?.props?.children?.length > 1 &&
-        element?.props?.children?.length <
-          formattedText[index]?.props?.children.length
-      ) {
-        result = true;
-      }
-    });
-    return result;
-  };
+      setFormattedText(formattedText1);
+    },
+    [checkDeletedMension, mentionedUsers],
+  );
+
   const getText = (formattedtext: (string | JSX.Element)[]) => {
     let context: string = '';
     formattedtext.forEach(element => {
@@ -1122,42 +757,236 @@ export const useFunction = (props: any) => {
     return context;
   };
 
-  const callApiChatBotRequest = async (
-    message: any,
-    messageId: any,
-    useName: any,
-  ) => {
-    try {
-      const numberOfMember = listUserRoot.length;
-      let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
-      if (numberOfMember < 1) {
-        return null;
-      } else if (numberOfMember === 1) {
-        // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-        listUserRootOnlyOne = [
-          {
-            userId: listUserRoot[0].id,
-            userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
-          },
-        ];
-        setListUserSelect(listUserRootOnlyOne);
-      } else if (numberOfMember > 1) {
-        // Nothing Done.
+  const callApiChatBotRequest = useCallback(
+    async (message: any, messageId: any, useName: any) => {
+      try {
+        const numberOfMember = listUserRoot.length;
+        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
+        if (numberOfMember < 1) {
+          return null;
+        } else if (numberOfMember === 1) {
+          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
+          listUserRootOnlyOne = [
+            {
+              userId: listUserRoot[0].id,
+              userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+            },
+          ];
+          setListUserSelect(listUserRootOnlyOne);
+        } else if (numberOfMember > 1) {
+          // Nothing Done.
+        }
+        let formData = new FormData();
+        formData.append('from_user_name', useName);
+        formData.append(
+          'mention_members',
+          numberOfMember === 1
+            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
+            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
+        );
+        formData.append('message', message);
+        formData.append('message_id', messageId);
+        formData.append('room_id', idRoomChat);
+        await callApiChatBot(formData);
+      } catch (error) {}
+    },
+    [idRoomChat, listUserRoot, listUserSelect],
+  );
+
+  const sendMessage = useCallback(
+    async mes => {
+      setShowTag(false);
+      setShowModalStamp(false);
+      setShowRedLine(false);
+      if (messageReply) {
+        try {
+          // 現在表示中のルームIDと返信元のルームIDが違う場合はエラー
+          if (messageReply?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
+          const data = new FormData();
+          data.append('room_id', idRoomChat);
+          data.append('from_id', user_id);
+          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('reply_to_message_id', messageReply?.id);
+          ids?.forEach((item: any) => {
+            data.append('ids[]', item);
+          });
+          // at first show temporally data
+          const tempData = {
+            room_id: idRoomChat,
+            from_id: user_id,
+            message: mes[0]?.text?.split('\n').join('<br>'),
+            reply_to_message_id: messageReply?.id,
+          };
+          dispatch(saveMessageReply(null));
+          dispatch(
+            getDetailMessageSocketSuccess(makeTemporallyDataMessage(tempData)),
+          );
+          const res = await replyMessageApi(data);
+          socket.emit('message_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            task_id: null,
+            to_info: null,
+            level: res?.data?.data?.msg_level,
+            message_id: res?.data?.data?.id,
+            message_type: res?.data?.data?.msg_type,
+            method: res?.data?.data?.method,
+            attachment_files: res?.data?.attachmentFiles,
+            stamp_no: res?.data?.data?.stamp_no,
+            relation_message_id: res?.data?.data?.reply_to_message_id,
+            text: res?.data?.data?.message,
+            text2: null,
+            time: res?.data?.data?.created_at,
+          });
+          dispatch(saveMessageReply(null));
+          // next show real data
+          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+        } catch (error: any) {}
+      } else if (message_edit) {
+        try {
+          const param = {
+            room_id: idRoomChat,
+            message: mes[0]?.text?.split('\n').join('<br>'),
+            ids: ids,
+          };
+          const res = await editMessageApi(message_edit?.id, param);
+          socket.emit('message_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            task_id: null,
+            to_info: null,
+            level: res?.data?.data?.msg_level,
+            message_id: res?.data?.data?.id,
+            message_type: res?.data?.data?.msg_type,
+            method: res?.data?.data?.method,
+            attachment_files: res?.data?.attachmentFiles,
+            stamp_no: res?.data?.data?.stamp_no,
+            relation_message_id: res?.data?.data?.reply_to_message_id,
+            text: res?.data?.data?.message,
+            text2: null,
+            time: res?.data?.data?.created_at,
+            time2: res?.data?.data?.updated_at,
+          });
+          dispatch(saveMessageEdit(null));
+          dispatch(
+            editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+          );
+        } catch (error: any) {}
+      } else if (messageQuote) {
+        try {
+          // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
+          if (messageQuote?.roomId !== idRoomChat) {
+            showMessage({
+              message: 'ルームIDが違います',
+              type: 'danger',
+            });
+            return;
+          }
+          const data = new FormData();
+          data.append('room_id', idRoomChat);
+          data.append('from_id', user_id);
+          data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+          data.append('message_quote', messageQuote?.text);
+          data.append('quote_message_id', messageQuote?.id);
+          ids?.forEach((item: any) => {
+            data.append('ids[]', item);
+          });
+          const res = await sendMessageApi(data);
+          socket.emit('message_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            task_id: null,
+            to_info: null,
+            level: res?.data?.data?.msg_level,
+            message_id: res?.data?.data?.id,
+            message_type: res?.data?.data?.msg_type,
+            method: res?.data?.data?.method,
+            attachment_files: res?.data?.attachmentFiles,
+            stamp_no: res?.data?.data?.stamp_no,
+            relation_message_id: res?.data?.data?.reply_to_message_id,
+            text: res?.data?.data?.message,
+            text2: messageQuote?.text,
+            time: res?.data?.data?.created_at,
+          });
+          dispatch(saveMessageQuote(null));
+          dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+        } catch (error: any) {}
+      } else {
+        try {
+          if (mes[0]?.text) {
+            const data = new FormData();
+            data.append('room_id', idRoomChat);
+            data.append('from_id', mes[0]?.user?._id);
+            data.append('message', mes[0]?.text?.split('\n').join('<br>'));
+            ids?.forEach((item: any) => {
+              data.append('ids[]', item);
+            });
+            const res = await sendMessageApi(data);
+            socket.emit('message_ind2', {
+              user_id: mes[0]?.user?._id,
+              room_id: idRoomChat,
+              task_id: null,
+              to_info: null,
+              level: res?.data?.data?.msg_level,
+              message_id: res?.data?.data?.id,
+              message_type: res?.data?.data?.msg_type,
+              method: res?.data?.data?.method,
+              attachment_files: res?.data?.attachmentFiles,
+              stamp_no: res?.data?.data?.stamp_no,
+              relation_message_id: res?.data?.data?.reply_to_message_id,
+              text: res?.data?.data?.message,
+              text2: null,
+              time: res?.data?.data?.created_at,
+            });
+            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            callApiChatBotRequest(
+              res?.data?.data?.message,
+              res?.data?.data?.id,
+              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+            );
+          }
+        } catch (error: any) {}
       }
-      let formData = new FormData();
-      formData.append('from_user_name', useName);
-      formData.append(
-        'mention_members',
-        numberOfMember === 1
-          ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
-          : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
-      );
-      formData.append('message', message);
-      formData.append('message_id', messageId);
-      formData.append('room_id', idRoomChat);
-      await callApiChatBot(formData);
-    } catch (error) {}
-  };
+      // send files
+      if (chosenFiles?.length > 0) {
+        await sendFile();
+      }
+      // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
+      giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+        animated: true,
+        index: 0,
+      });
+      setIds([]);
+      // prevent from becoming blue character after sending mention message.
+      const formattedText1: (string | JSX.Element)[] = [];
+      formattedText1.push(' ');
+      setFormattedText(formattedText1);
+      formattedText1.shift();
+      setFormattedText(formattedText1);
+      // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
+      setInputText('');
+    },
+    [
+      messageReply,
+      message_edit,
+      ids,
+      messageQuote,
+      idRoomChat,
+      chosenFiles,
+      callApiChatBotRequest,
+      dispatch,
+      makeTemporallyDataMessage,
+      sendFile,
+      socket,
+      user_id,
+    ],
+  );
 
   const onDecoSelected = (tagName: string) => {
     let newText = '';
@@ -1260,6 +1089,184 @@ export const useFunction = (props: any) => {
       idRoomChat: idRoomChat,
     });
   }, [navigation, idRoomChat]);
+
+  useEffect(() => {
+    function onKeyboardDidShow(e: KeyboardEvent) {
+      // Remove type here if not using TypeScript
+      setKeyboardHeight(e.endCoordinates.height);
+    }
+    function onKeyboardDidHide() {
+      setKeyboardHeight(0);
+    }
+    const showSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      onKeyboardDidShow,
+    );
+    const hideSubscription = Keyboard.addListener(
+      'keyboardDidHide',
+      onKeyboardDidHide,
+    );
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!pageLoading) {
+      return;
+    }
+    if (!idMessageSearch) {
+      // 通常画面遷移/onLoadMore/onLoadMoreDown
+      if (!paging?.current_page || page !== paging?.current_page) {
+        getListChat(page);
+        getDetail();
+      }
+      setPageLoading(false);
+    } else if (idMessageSearch > 0) {
+      const index = listChat.findIndex(
+        (element: any) => element?.id === idMessageSearch,
+      );
+      // メッセージが存在する場合、メッセージへスクロール
+      if (index && index >= 0) {
+        giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+          animated: true,
+          index: Math.max(index - 1, 0),
+        });
+        dispatch(saveIdMessageSearch(0));
+        setPageLoading(false);
+        // メッセージが存在するページをloadしていない場合、fetch
+      } else {
+        fetchMessageSearch(idMessageSearch);
+        setPageLoading(false);
+      }
+    }
+  }, [
+    route,
+    page,
+    pageLoading,
+    dispatch,
+    fetchMessageSearch,
+    getDetail,
+    getListChat,
+    idMessageSearch,
+    listChat,
+    paging?.current_page,
+  ]);
+
+  // 他画面からの遷移、メッセージへスクロール
+  useEffect(() => {
+    if (idMessageSearchListChat > 0) {
+      setTimeout(() => {
+        dispatch(saveIdMessageSearch(idMessageSearchListChat));
+        setPageLoading(true);
+      }, 1000);
+    }
+  }, [idMessageSearchListChat, dispatch]);
+
+  // 未読メッセージが存在するページをfetch
+  useEffect(() => {
+    if (redLineId) {
+      const index = listChat.findIndex(
+        (element: any) => element?.id === redLineId,
+      );
+      if (index > 0) {
+        setIndexRedLine(index);
+      }
+      const body = {
+        id_room: idRoomChat,
+        id_message: redLineId,
+      };
+      dispatch(fetchResultMessageActionRedLine(body));
+    } else {
+    }
+  }, [redLineId, dispatch, idRoomChat, listChat]);
+
+  // WebSocket
+  useEffect(() => {
+    if (isGetInfoRoom) {
+      getDetail();
+    }
+  }, [isGetInfoRoom, getDetail]);
+
+  // check if messages belongs to this room
+  useEffect(() => {
+    const res = store.getState();
+    const currentPage = res.chat.pagingDetail?.current_page;
+    if (idMessageSearch > 0) {
+      setPage(currentPage);
+      setTopPage(currentPage);
+      setBottomPage(currentPage);
+      dispatch(saveIdMessageSearch(0));
+    }
+    if (idRoomChat && listChat.length > 0) {
+      const irregular_message_ids: number[] = listChat.map((el: any) => {
+        return idRoomChat !== el.room_id;
+      });
+      if (irregular_message_ids.length > 0) {
+        setIrregularMessageIds(irregular_message_ids);
+      }
+    }
+  }, [listChat, dispatch, idMessageSearch, idRoomChat]);
+
+  // showTagModal
+  useEffect(() => {
+    if (showTagModal) {
+      getUserListChat();
+    }
+  }, [showTagModal, getUserListChat]);
+
+  // 画面にFocusがあたった/外れた、他依存の際に発火
+  // 必要な処理か不明なので無効化
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (idRoomChat) {
+  //       getDetail();
+  //     }
+  //   }, []),
+  // );
+
+  useEffect(() => {
+    if (message_edit || messageReply || messageQuote) {
+      setShowModalStamp(false);
+    }
+  }, [message_edit, messageReply, messageQuote]);
+
+  useEffect(() => {
+    if (!message_edit) {
+      setText('');
+    }
+  }, [message_edit]);
+
+  useEffect(() => {
+    if (message_edit) {
+      dispatch(saveMessageReply(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageReply) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageQuote(null));
+    } else if (messageQuote) {
+      dispatch(saveMessageEdit(null));
+      dispatch(saveMessageReply(null));
+    }
+  }, [message_edit, messageReply, messageQuote, dispatch]);
+
+  useEffect(() => {
+    if (modalStamp === true) {
+      removeReplyMessage();
+      removeEditMessage();
+      removeQuoteMessage();
+    }
+  }, [modalStamp, removeEditMessage, removeQuoteMessage, removeReplyMessage]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (formattedText[0]?.props?.children === '') {
+        formattedText.shift();
+        setFormattedText([...formattedText]);
+      }
+    }, 10);
+  }, [formattedText]);
 
   return {
     chatUser,
