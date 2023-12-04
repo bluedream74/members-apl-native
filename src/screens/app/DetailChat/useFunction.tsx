@@ -115,6 +115,17 @@ export const useFunction = (props: any) => {
     };
   }, []);
 
+  // メッセージが存在するページをfetch
+  const fetchMessageSearch = useCallback((id_MessageSearch) => {
+    setTimeout(() => {
+      const body = {
+        id_room: idRoomChat,
+        id_message: id_MessageSearch,
+      };
+      dispatch(fetchResultMessageActionListRoom(body));
+    }, 1000);
+  }, []);
+
   useEffect(() => {
     if (!pageLoading) return;
     if (!idMessageSearch) {
@@ -148,17 +159,6 @@ export const useFunction = (props: any) => {
   const navigateToMessage = useCallback((id_messageSearch) => {
     dispatch(saveIdMessageSearch(id_messageSearch));
     setPageLoading(true);
-  }, []);
-
-  // メッセージが存在するページをfetch
-  const fetchMessageSearch = useCallback((id_MessageSearch) => {
-    setTimeout(() => {
-      const body = {
-        id_room: idRoomChat,
-        id_message: id_MessageSearch,
-      };
-      dispatch(fetchResultMessageActionListRoom(body));
-    }, 1000);
   }, []);
 
   // 他画面からの遷移、メッセージへスクロール
