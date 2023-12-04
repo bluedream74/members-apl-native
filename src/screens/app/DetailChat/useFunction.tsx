@@ -57,11 +57,15 @@ export const useFunction = (props: any) => {
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
   const paging = useSelector((state: any) => state.chat?.pagingDetail);
-  const message_pinned = useSelector((state: any) => state.chat?.message_pinned);
+  const message_pinned = useSelector(
+    (state: any) => state.chat?.message_pinned,
+  );
   const message_edit = useSelector((state: any) => state.chat?.messageEdit);
   const messageReply = useSelector((state: any) => state.chat?.messageReply);
   const messageQuote = useSelector((state: any) => state.chat?.messageQuote);
-  const idMessageSearch = useSelector((state: any) => state.chat?.id_messageSearch);
+  const idMessageSearch = useSelector(
+    (state: any) => state.chat?.id_messageSearch,
+  );
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
@@ -75,7 +79,9 @@ export const useFunction = (props: any) => {
   const [chosenFiles, setchosenFiles] = useState<any>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
-  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>([]);
+  const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
+    [],
+  );
   const [showTagModal, setShowTag] = useState(false);
   const [listUser, setListUser] = useState([]);
   const [ids, setIds] = useState<any>([]);
@@ -116,18 +122,23 @@ export const useFunction = (props: any) => {
   }, []);
 
   // メッセージが存在するページをfetch
-  const fetchMessageSearch = useCallback((idMessage) => {
-    setTimeout(() => {
-      const body = {
-        id_room: idRoomChat,
-        id_message: idMessage,
-      };
-      dispatch(fetchResultMessageActionListRoom(body));
-    }, 1000);
-  }, []);
+  const fetchMessageSearch = useCallback(
+    idMessage => {
+      setTimeout(() => {
+        const body = {
+          id_room: idRoomChat,
+          id_message: idMessage,
+        };
+        dispatch(fetchResultMessageActionListRoom(body));
+      }, 1000);
+    },
+    [idRoomChat, dispatch],
+  );
 
   useEffect(() => {
-    if (!pageLoading) return;
+    if (!pageLoading) {
+      return;
+    }
     if (!idMessageSearch) {
       // 通常画面遷移/onLoadMore/onLoadMoreDown
       if (!paging?.current_page || page !== paging?.current_page) {
@@ -147,19 +158,33 @@ export const useFunction = (props: any) => {
         });
         dispatch(saveIdMessageSearch(0));
         setPageLoading(false);
-      // メッセージが存在するページをloadしていない場合、fetch
+        // メッセージが存在するページをloadしていない場合、fetch
       } else {
         fetchMessageSearch(idMessageSearch);
         setPageLoading(false);
       }
     }
-  }, [route, page, pageLoading]);
+  }, [
+    route,
+    page,
+    pageLoading,
+    dispatch,
+    fetchMessageSearch,
+    getDetail,
+    getListChat,
+    idMessageSearch,
+    listChat,
+    paging?.current_page,
+  ]);
 
   // 返信・引用のオリジナルメッセージのタップ
-  const navigateToMessage = useCallback((idMessage) => {
-    dispatch(saveIdMessageSearch(idMessage));
-    setPageLoading(true);
-  }, []);
+  const navigateToMessage = useCallback(
+    idMessage => {
+      dispatch(saveIdMessageSearch(idMessage));
+      setPageLoading(true);
+    },
+    [dispatch],
+  );
 
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
@@ -169,13 +194,13 @@ export const useFunction = (props: any) => {
         setPageLoading(true);
       }, 1000);
     }
-  }, [idMessageSearchListChat]);
+  }, [idMessageSearchListChat, dispatch]);
 
   // 未読メッセージが存在するページをfetch
   useEffect(() => {
     if (redLineId) {
       const index = listChat.findIndex(
-        (element: any) => element?.id == redLineId,
+        (element: any) => element?.id === redLineId,
       );
       if (index > 0) {
         setIndexRedLine(index);
@@ -187,14 +212,14 @@ export const useFunction = (props: any) => {
       dispatch(fetchResultMessageActionRedLine(body));
     } else {
     }
-  }, [redLineId]);
+  }, [redLineId, dispatch, idRoomChat, listChat]);
 
   // WebSocket
   useEffect(() => {
     if (isGetInfoRoom) {
       getDetail();
     }
-  }, [isGetInfoRoom]);
+  }, [isGetInfoRoom, getDetail]);
 
   // check if messages belongs to this room
   useEffect(() => {
@@ -214,14 +239,14 @@ export const useFunction = (props: any) => {
         setIrregularMessageIds(irregular_message_ids);
       }
     }
-  }, [listChat]);
+  }, [listChat, dispatch, idMessageSearch, idRoomChat]);
 
   // showTagModal
   useEffect(() => {
     if (showTagModal) {
       getUserListChat();
     }
-  }, [showTagModal]);
+  }, [showTagModal, getUserListChat]);
 
   // 画面にFocusがあたった/外れた、他依存の際に発火
   // 必要な処理か不明なので無効化
@@ -256,7 +281,7 @@ export const useFunction = (props: any) => {
       dispatch(saveMessageEdit(null));
       dispatch(saveMessageReply(null));
     }
-  }, [message_edit, messageReply, messageQuote]);
+  }, [message_edit, messageReply, messageQuote, dispatch]);
 
   useEffect(() => {
     if (modalStamp === true) {
@@ -264,7 +289,7 @@ export const useFunction = (props: any) => {
       removeEditMessage();
       removeQuoteMessage();
     }
-  }, [modalStamp]);
+  }, [modalStamp, removeEditMessage, removeQuoteMessage, removeReplyMessage]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -277,7 +302,7 @@ export const useFunction = (props: any) => {
 
   const navigateToDetail = useCallback(() => {
     navigation.navigate(ROUTE_NAME.INFO_ROOM_CHAT, {idRoomChat: idRoomChat});
-  }, [idRoomChat]);
+  }, [idRoomChat, navigation]);
 
   const convertDataMessage = useCallback((message: any, index: any) => {
     //Hàm xử lý lại dữ liệu message khi nhận từ api trả về
@@ -319,65 +344,74 @@ export const useFunction = (props: any) => {
     return date.toLocaleString().replace('T', ' ').substring(0, 19);
   }, []);
 
-  const makeTemporallyDataMessage = useCallback((tempData: any) => {
-    let dateNow = new Date();
-    const currentDatetime = generateDatabaseDateTime(dateNow);
-    return [
-      {
-        id: 9999999999,
-        room_id: tempData.room_id,
-        from_id: tempData.from_id,
-        user_send: {},
-        message: tempData.message,
-        type: null,
-        msg_level: 0,
-        msg_type: 0,
-        message_quote: null,
-        quote_message_id: null,
-        quote_message_user: null,
-        method: 0,
-        stamp_no: null,
-        stamp_icon: '',
-        medthod: 0,
-        created_at: currentDatetime,
-        updated_at: currentDatetime,
-        reactions: [],
-        del_flag: '0',
-        reply_to_message_id: tempData.reply_to_message_id,
-        reply_to_message_text: null,
-        reply_to_message_user: null,
-        reply_to_message_user_id: null,
-        reply_to_message_files: [],
-        reply_to_message_stamp: {stamp_no: null, stamp_icon: null},
-        task: null,
-        task_link: null,
-        attachment_files: [],
-        users_seen: [],
-      },
-    ];
-  }, []);
+  const makeTemporallyDataMessage = useCallback(
+    (tempData: any) => {
+      let dateNow = new Date();
+      const currentDatetime = generateDatabaseDateTime(dateNow);
+      return [
+        {
+          id: 9999999999,
+          room_id: tempData.room_id,
+          from_id: tempData.from_id,
+          user_send: {},
+          message: tempData.message,
+          type: null,
+          msg_level: 0,
+          msg_type: 0,
+          message_quote: null,
+          quote_message_id: null,
+          quote_message_user: null,
+          method: 0,
+          stamp_no: null,
+          stamp_icon: '',
+          medthod: 0,
+          created_at: currentDatetime,
+          updated_at: currentDatetime,
+          reactions: [],
+          del_flag: '0',
+          reply_to_message_id: tempData.reply_to_message_id,
+          reply_to_message_text: null,
+          reply_to_message_user: null,
+          reply_to_message_user_id: null,
+          reply_to_message_files: [],
+          reply_to_message_stamp: {stamp_no: null, stamp_icon: null},
+          task: null,
+          task_link: null,
+          attachment_files: [],
+          users_seen: [],
+        },
+      ];
+    },
+    [generateDatabaseDateTime],
+  );
 
-  const getConvertedMessages = useCallback((msgs: any) => {
-    msgs = msgs.filter(el => !irregularMessageIds.includes(el.id));
-    return msgs?.map((item: any, index: any) => {
-      return convertDataMessage(item, index);
-    });
-  }, []);
+  const getConvertedMessages = useCallback(
+    (msgs: any) => {
+      msgs = msgs.filter(el => !irregularMessageIds.includes(el.id));
+      return msgs?.map((item: any, index: any) => {
+        return convertDataMessage(item, index);
+      });
+    },
+    [convertDataMessage, irregularMessageIds],
+  );
 
   const chatUser = useMemo(() => {
     return {
       _id: user_id,
     };
-  }, []);
+  }, [user_id]);
 
-  const getListChat = useCallback(async (nextPage) => {
-    const data = {
-      id: idRoomChat,
-      page: nextPage,
-    };
-    await dispatch(getDetailListChat(data));
-    setPage(nextPage);
-  }, [idRoomChat, paging]);
+  const getListChat = useCallback(
+    async nextPage => {
+      const data = {
+        id: idRoomChat,
+        page: nextPage,
+      };
+      await dispatch(getDetailListChat(data));
+      setPage(nextPage);
+    },
+    [idRoomChat, dispatch],
+  );
 
   const getDetail = async () => {
     try {
@@ -419,7 +453,7 @@ export const useFunction = (props: any) => {
         GlobalService.hideLoading();
       }
     },
-    [idRoomChat],
+    [idRoomChat, dispatch, socket, user_id],
   );
 
   const showHideModalTagName = useCallback(() => {
@@ -611,16 +645,20 @@ export const useFunction = (props: any) => {
       ids,
       messageQuote,
       idRoomChat,
-      listUserRoot,
-      listUser,
       chosenFiles,
+      callApiChatBotRequest,
+      dispatch,
+      makeTemporallyDataMessage,
+      sendFile,
+      socket,
+      user_id,
     ],
   );
 
   const updateGimMessage = useCallback(
     async (id, status) => {
       try {
-        const res = await pinMessageApi(id, status);
+        await pinMessageApi(id, status);
         if (status === 0) {
           dispatch(pinMessage(null));
         } else {
@@ -628,7 +666,7 @@ export const useFunction = (props: any) => {
         }
       } catch (error: any) {}
     },
-    [message_pinned?.id],
+    [dispatch, getListChat, page],
   );
 
   const getCurrentPage = useCallback(() => {
@@ -649,79 +687,100 @@ export const useFunction = (props: any) => {
   const onLoadMore = useCallback(() => {
     const currentPage = getCurrentPage();
     const nextPage = topPage ? topPage + 1 : currentPage + 1;
-    if (nextPage > paging?.last_page) return;
+    if (nextPage > paging?.last_page) {
+      return;
+    }
     setPage(nextPage);
     setTopPage(nextPage);
     setPageLoading(true);
-  }, [topPage, paging]);
+  }, [topPage, paging, getCurrentPage]);
 
   const onLoadMoreDown = useCallback(() => {
-    if (bottomPage === 1) return;
+    if (bottomPage === 1) {
+      return;
+    }
     const currentPage = getCurrentPage();
-    const nextPage = bottomPage ? Math.max(bottomPage - 1, 1) : Math.max(currentPage - 1, 1);
+    const nextPage = bottomPage
+      ? Math.max(bottomPage - 1, 1)
+      : Math.max(currentPage - 1, 1);
     setPage(nextPage);
     setBottomPage(nextPage);
     setPageLoading(true);
-  }, [bottomPage]);
+  }, [bottomPage, getCurrentPage]);
 
-  const replyMessage = useCallback((data: any) => {
-    dispatch(saveMessageReply(data));
-  }, []);
+  const replyMessage = useCallback(
+    (data: any) => {
+      dispatch(saveMessageReply(data));
+    },
+    [dispatch],
+  );
 
   const removeReplyMessage = useCallback(() => {
     dispatch(saveMessageReply(null));
-  }, []);
-  const quoteMessage = useCallback((data: any) => {
-    dispatch(saveMessageQuote(data));
-  }, []);
+  }, [dispatch]);
+  const quoteMessage = useCallback(
+    (data: any) => {
+      dispatch(saveMessageQuote(data));
+    },
+    [dispatch],
+  );
   const removeQuoteMessage = useCallback(() => {
     dispatch(saveMessageQuote(null));
-  }, []);
+  }, [dispatch]);
 
-  const editMessage = useCallback((data: any) => {
-    // setText(data?.text);
-    formatText(data?.text + ' ', false);
-    dispatch(saveMessageEdit(data));
-  }, []);
+  const editMessage = useCallback(
+    (data: any) => {
+      // setText(data?.text);
+      formatText(data?.text + ' ', false);
+      dispatch(saveMessageEdit(data));
+    },
+    [dispatch, formatText],
+  );
 
   const removeEditMessage = useCallback(() => {
     dispatch(saveMessageEdit(null));
-  }, []);
+  }, [dispatch]);
 
-  const reactionMessage = useCallback(async (data, id) => {
-    setShowRedLine(false);
-    const body = {
-      message_id: id,
-      reaction_no: data,
-    };
-    const res = await sendReactionApi(body);
-    socket.emit('message_ind2', {
-      user_id: user_id,
-      room_id: idRoomChat,
-      task_id: null,
-      to_info: null,
-      level: res?.data?.data?.msg_level,
-      message_id: null,
-      message_type: 3,
-      method: 0,
-      attachment_files: res?.data?.attachmentFiles,
-      stamp_no: data,
-      relation_message_id: res?.data?.data?.id,
-      text: res?.data?.data?.message,
-      text2: null,
-      time: res?.data?.data?.created_at,
-    });
-    dispatch(
-      editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
-    );
-  }, []);
+  const reactionMessage = useCallback(
+    async (data, id) => {
+      setShowRedLine(false);
+      const body = {
+        message_id: id,
+        reaction_no: data,
+      };
+      const res = await sendReactionApi(body);
+      socket.emit('message_ind2', {
+        user_id: user_id,
+        room_id: idRoomChat,
+        task_id: null,
+        to_info: null,
+        level: res?.data?.data?.msg_level,
+        message_id: null,
+        message_type: 3,
+        method: 0,
+        attachment_files: res?.data?.attachmentFiles,
+        stamp_no: data,
+        relation_message_id: res?.data?.data?.id,
+        text: res?.data?.data?.message,
+        text2: null,
+        time: res?.data?.data?.created_at,
+      });
+      dispatch(
+        editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+      );
+    },
+    [dispatch, idRoomChat, socket, user_id],
+  );
 
-  const navigatiteToListReaction = useCallback(idMsg => {
-    navigation.navigate(ROUTE_NAME.LIST_REACTION, {
-      id: idMsg,
-      room_id: idRoomChat,
-    });
-  }, []);
+  const navigatiteToListReaction = useCallback(
+    idMsg => {
+      navigation.navigate(ROUTE_NAME.LIST_REACTION, {
+        id: idMsg,
+        room_id: idRoomChat,
+      });
+    },
+    [idRoomChat, navigation],
+  );
 
   const cancelModal = useCallback(() => {
     setPickFile(!pickFile);
@@ -773,8 +832,8 @@ export const useFunction = (props: any) => {
               item?.path?.endsWith('.HEIC') ||
               item?.path?.endsWith('.HEIC');
             data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\\/]/, ''),
-              name: item?.path?.replace(/^.*[\\\/]/, ''),
+              fileName: item?.path?.replace(/^.*[\\]/, ''),
+              name: item?.path?.replace(/^.*[\\]/, ''),
               width: item?.width,
               uri: item?.path,
               path: item?.path,
@@ -854,7 +913,7 @@ export const useFunction = (props: any) => {
     } catch (error: any) {
       GlobalService.hideLoading();
     }
-  }, [chosenFiles]);
+  }, [chosenFiles, dispatch, idRoomChat, socket, user_id]);
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
@@ -914,19 +973,17 @@ export const useFunction = (props: any) => {
     }
   }, [idRoomChat]);
 
-  const bookmarkMessage = useCallback((data: any) => {
+  const bookmarkMessage = useCallback(async (data: any) => {
     try {
       GlobalService.showLoading();
-      const rest = addBookmark(data);
+      await addBookmark(data);
       GlobalService.hideLoading();
       showMessage({
         message: 'ブックマークが正常に追加されました',
         type: 'success',
       });
     } catch {
-      (error: any) => {
-        GlobalService.hideLoading();
-      };
+      GlobalService.hideLoading();
     }
   }, []);
 
@@ -935,12 +992,12 @@ export const useFunction = (props: any) => {
    * @param inputText
    * @param fromTagFlg
    */
-  const formatText = (inputText: string, fromTagFlg: boolean) => {
-    if (inputText.length === 0) {
+  const formatText = (input: string, fromTagFlg: boolean) => {
+    if (input.length === 0) {
       setFormattedText([]);
       return;
     }
-    const words = inputText.split(' ');
+    const words = input.split(' ');
     const newWords: string[] = [];
     words.forEach(word => {
       if (word.match('.+\n.+')) {
@@ -1047,7 +1104,7 @@ export const useFunction = (props: any) => {
   };
   const getText = (formattedtext: (string | JSX.Element)[]) => {
     let context: string = '';
-    formattedtext.forEach((element, index) => {
+    formattedtext.forEach(element => {
       let word = '';
       if (typeof element === 'string') {
         word = element;
@@ -1098,7 +1155,7 @@ export const useFunction = (props: any) => {
       formData.append('message', message);
       formData.append('message_id', messageId);
       formData.append('room_id', idRoomChat);
-      const res = await callApiChatBot(formData);
+      await callApiChatBot(formData);
     } catch (error) {}
   };
 
@@ -1131,7 +1188,7 @@ export const useFunction = (props: any) => {
 
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);
-  }, []);
+  }, [showUserList]);
 
   const onSaveTask = useCallback(async input => {
     const data = {
@@ -1176,7 +1233,7 @@ export const useFunction = (props: any) => {
   }, []);
 
   const onUpdateTask = useCallback(async data => {
-    const res = await updateTask(data);
+    await updateTask(data);
     setShowTaskForm(false);
   }, []);
 
@@ -1202,7 +1259,7 @@ export const useFunction = (props: any) => {
     navigation.navigate(ROUTE_NAME.LISTCHAT_SCREEN, {
       idRoomChat: idRoomChat,
     });
-  }, []);
+  }, [navigation, idRoomChat]);
 
   return {
     chatUser,
