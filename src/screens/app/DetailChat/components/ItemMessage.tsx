@@ -79,6 +79,7 @@ const ItemMessage = React.memo((props: any) => {
     users_seen,
     stamp_no,
     task,
+    task_message,
     task_link,
     message_quote,
     quote_message_id,
@@ -462,8 +463,14 @@ const ItemMessage = React.memo((props: any) => {
                     />
                   ) : (
                     <>
-                      {msg_type == 6 || msg_type == 8 ? null : (
+                      {msg_type == 14 && (
                         <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
+                          <Text>{task_message}</Text>
+                        </View>
+                      )}
+                      {msg_type == 6 || msg_type == 8 || msg_type == 14 ? null : (
+                        <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
+                          <Text>shohei</Text>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
                           reply_to_message_stamp?.stamp_icon ||
@@ -599,8 +606,10 @@ const ItemMessage = React.memo((props: any) => {
                 </>
                 {user?._id == user_id ||
                 msg_type == 6 ||
-                msg_type == 8 ? null : (
+                msg_type == 8 ||
+                msg_type == 14 ? null : (
                   <>
+                    <Text>shohei</Text>
                     {moment(createdAt) < moment(updated_at) ? (
                       <Text style={styles.txtTime}>
                         {moment(updated_at, 'YYYY/MM/DD hh:mm:ss').format(
