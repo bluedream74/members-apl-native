@@ -71,9 +71,9 @@ export const useFunction = (props: any) => {
 
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
-  const [page, setPage] = useState<number | null>(null);
-  const [topPage, setTopPage] = useState<number | null>(null);
-  const [bottomPage, setBottomPage] = useState<number | null>(null);
+  const [page, setPage] = useState<number | null>(1);
+  const [topPage, setTopPage] = useState<number | null>(1);
+  const [bottomPage, setBottomPage] = useState<number | null>(1);
   const [pageLoading, setPageLoading] = useState(true);
   const [pickFile, setPickFile] = useState(false);
   const [chosenFiles, setchosenFiles] = useState<any>([]);
@@ -345,12 +345,14 @@ export const useFunction = (props: any) => {
   const removeReplyMessage = useCallback(() => {
     dispatch(saveMessageReply(null));
   }, [dispatch]);
+
   const quoteMessage = useCallback(
     (data: any) => {
       dispatch(saveMessageQuote(data));
     },
     [dispatch],
   );
+
   const removeQuoteMessage = useCallback(() => {
     dispatch(saveMessageQuote(null));
   }, [dispatch]);
@@ -1193,7 +1195,7 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     const res = store.getState();
     const currentPage = res.chat.pagingDetail?.current_page;
-    if (idMessageSearch > 0) {
+    if (idMessageSearch > 0 && page !== currentPage) {
       setPage(currentPage);
       setTopPage(currentPage);
       setBottomPage(currentPage);
@@ -1207,7 +1209,15 @@ export const useFunction = (props: any) => {
         setIrregularMessageIds(irregular_message_ids);
       }
     }
-  }, [listChat, dispatch, idMessageSearch, idRoomChat]);
+  }, [
+    listChat,
+    dispatch,
+    idMessageSearch,
+    idRoomChat,
+    page,
+    bottomPage,
+    topPage,
+  ]);
 
   // showTagModal
   useEffect(() => {
