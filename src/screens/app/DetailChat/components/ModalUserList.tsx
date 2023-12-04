@@ -12,7 +12,6 @@ import {
 
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
@@ -36,11 +35,6 @@ const ModalUserList = React.memo((prop: any) => {
   const [searchWord, setSearchWord] = useState<any>('');
 
   useEffect(() => {
-    AntDesign.loadFont()
-      .then()
-      .catch((error: any) => {
-        console.info(error);
-      });
     getListUserApi();
   }, []);
 
