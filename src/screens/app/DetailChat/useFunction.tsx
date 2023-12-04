@@ -139,7 +139,6 @@ export const useFunction = (props: any) => {
       // メッセージが存在するページをloadしていない場合、fetch
       } else {
         fetchMessageSearch(idMessageSearch);
-        dispatch(saveIdMessageSearch(0));
         setPageLoading(false);
       }
     }
@@ -199,6 +198,14 @@ export const useFunction = (props: any) => {
 
   // check if messages belongs to this room
   useEffect(() => {
+    const res = store.getState();
+    const currentPage = res.chat.pagingDetail?.current_page;
+    if (idMessageSearch > 0) {
+      setPage(currentPage);
+      setTopPage(currentPage);
+      setBottomPage(currentPage);
+      dispatch(saveIdMessageSearch(0));
+    }
     if (idRoomChat && listChat.length > 0) {
       const irregular_message_ids: number[] = listChat.map((el: any) => {
         return idRoomChat !== el.room_id;
