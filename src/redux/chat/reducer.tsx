@@ -24,7 +24,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       const currentPage = state.pagingDetail?.current_page;
       const messages = () => {
         if (page === 1 && Object.keys(state.detailChat).length  === 0) {
-          return convertArrUnique(action.payload.room_messages.data, 'id');
+          return action.payload.room_messages.data;
         } else if (currentPage && currentPage < page) {
           return convertArrUnique(
             state.detailChat.concat(action.payload.room_messages.data),
