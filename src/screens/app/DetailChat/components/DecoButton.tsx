@@ -5,36 +5,36 @@ import {styles} from './stylesItem';
 
 const height = Dimensions.get('window').height;
 
+const decoButtonArr = [
+  {
+    text: 'タイトル',
+    tag: 'title',
+    width: 72,
+  },
+  {
+    text: '囲み枠',
+    tag: 'info',
+    width: 72,
+  },
+  {
+    text: '罫線',
+    tag: 'hr',
+  },
+  {
+    text: '太字',
+    tag: 'bold',
+  },
+  {
+    text: '赤字',
+    tag: 'red',
+  },
+];
+
 export type DecoButtonProps = {
   onDecoSelected: any;
 };
 
 export default function DecoButton({onDecoSelected}: DecoButtonProps) {
-  const decoButtonArr = [
-    {
-      text: 'タイトル',
-      tag: 'title',
-      width: 72,
-    },
-    {
-      text: '囲み枠',
-      tag: 'info',
-      width: 72,
-    },
-    {
-      text: '罫線',
-      tag: 'hr',
-    },
-    {
-      text: '太字',
-      tag: 'bold',
-    },
-    {
-      text: '赤字',
-      tag: 'red',
-    },
-  ];
-
   const [bottom, setBottom] = useState(0);
 
   Keyboard.addListener('keyboardWillShow', () => {
