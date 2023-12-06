@@ -79,6 +79,7 @@ const ItemMessage = React.memo((props: any) => {
     users_seen,
     stamp_no,
     task,
+    task_message,
     task_link,
     message_quote,
     quote_message_id,
@@ -462,7 +463,12 @@ const ItemMessage = React.memo((props: any) => {
                     />
                   ) : (
                     <>
-                      {msg_type == 6 || msg_type == 8 ? null : (
+                      {msg_type == 14 && (
+                        <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
+                          <Text>{task_message}</Text>
+                        </View>
+                      )}
+                      {msg_type == 6 || msg_type == 8 || msg_type == 14 ? null : (
                         <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
@@ -599,7 +605,8 @@ const ItemMessage = React.memo((props: any) => {
                 </>
                 {user?._id == user_id ||
                 msg_type == 6 ||
-                msg_type == 8 ? null : (
+                msg_type == 8 ||
+                msg_type == 14 ? null : (
                   <>
                     {moment(createdAt) < moment(updated_at) ? (
                       <Text style={styles.txtTime}>
