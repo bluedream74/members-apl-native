@@ -132,13 +132,13 @@ export default function MessageInfo({
       return str;
     }
 
-    let regexp_url =
+    const regexp_url =
       /((h?)(ttps?:\/\/[-_.!~*'()a-zA-Z0-9;"'/?:@&=+$,%#[…\]\u3001-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+))/g;
     str = str.replace(regexp_url, '<a href="$1">$1</a>');
     str = str.replace('">https://', '">');
     str = str.replace('">http://', '">');
 
-    let regexp_email =
+    const regexp_email =
       /(\/|:)?([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)+/g;
     let regexp_makeMailLink = function (mail: string) {
       // 先頭が'/'または':'であればリンク化しない

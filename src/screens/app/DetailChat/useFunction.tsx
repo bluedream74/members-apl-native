@@ -778,7 +778,7 @@ export const useFunction = (props: any) => {
         } else if (numberOfMember > 1) {
           // Nothing Done.
         }
-        let formData = new FormData();
+        const formData = new FormData();
         formData.append('from_user_name', useName);
         formData.append(
           'mention_members',
