@@ -98,8 +98,9 @@ export const useFunction = (props: any) => {
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+  const [extraData, setExtraData] = useState(false);
 
-  // メッセージが存在するページをfetch
+  // 現在ページからメッセージが存在するページまでをfetch
   const fetchMessageSearch = useCallback(
     idMessage => {
       setTimeout(() => {
@@ -1129,16 +1130,18 @@ export const useFunction = (props: any) => {
       const index = listChat.findIndex(
         (element: any) => element?.id === idMessageSearch,
       );
-      // メッセージが存在する場合、メッセージへスクロール
       if (index && index >= 0) {
-        giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-          animated: true,
-          index: Math.max(index - 1, 0),
-        });
-        dispatch(saveIdMessageSearch(0));
-        setPageLoading(false);
-        // メッセージが存在するページをloadしていない場合、fetch
+        try {
+          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+            animated: true,
+            index: Math.max(index - 1, 0),
+          });
+          dispatch(saveIdMessageSearch(0));
+        } catch (error) {
+          console.log(error);
+        }
       } else {
+        // メッセージが存在するページをloadしていない場合、fetch
         fetchMessageSearch(idMessageSearch);
         setPageLoading(false);
       }
@@ -1195,11 +1198,10 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     const res = store.getState();
     const currentPage = res.chat.pagingDetail?.current_page;
-    if (idMessageSearch > 0 && page !== currentPage) {
+    if (page !== currentPage) {
       setPage(currentPage);
       setTopPage(currentPage);
-      setBottomPage(currentPage);
-      dispatch(saveIdMessageSearch(0));
+      setExtraData(!extraData);
     }
     if (idRoomChat && listChat.length > 0) {
       const irregular_message_ids: number[] = listChat.map((el: any) => {
@@ -1211,6 +1213,7 @@ export const useFunction = (props: any) => {
     }
   }, [
     listChat,
+    extraData,
     dispatch,
     idMessageSearch,
     idRoomChat,
@@ -1218,6 +1221,26 @@ export const useFunction = (props: any) => {
     bottomPage,
     topPage,
   ]);
+
+  // fetch後にextraDataによってgiftedChatのFlatListの更新されてindexの検索が可能になる
+  useEffect(() => {
+    if (idMessageSearch > 0) {
+      try {
+        const index = listChat.findIndex(
+          (element: any) => element?.id === idMessageSearch,
+        );
+        if (index && index >= 0) {
+          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+            animated: true,
+            index: Math.max(index - 1, 0),
+          });
+          dispatch(saveIdMessageSearch(0));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [extraData, dispatch, idMessageSearch, listChat]);
 
   // showTagModal
   useEffect(() => {
@@ -1354,5 +1377,6 @@ export const useFunction = (props: any) => {
     customBack,
     chosenFiles,
     deleteFile,
+    extraData,
   };
 };

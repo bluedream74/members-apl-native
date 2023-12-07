@@ -259,27 +259,38 @@ export function* fetchResultMessageListFile(action: any) {
 
 export function* fetchResultMessageListRoom(action: any) {
   try {
+    const state = store.getState();
+    const currentPage = state.chat.pagingDetail?.current_page;
+    const detailChat = state.chat.detailChat;
     const body = {
       id_room: action.payload.id_room,
       id_message: action.payload.id_message,
     };
     const res: ResponseGenerator = yield getResultSearchMessage(body);
     if (res?.code === 200) {
-      const param = {
-        id: action.payload.id_room,
-        page: res?.data.pages,
-      };
-      const result: ResponseGenerator = yield getDetailChatApi(param);
-      const valueSave = {
-        data: convertArrUnique(
-          res?.data?.room_messages?.data.concat(
-            result?.data?.room_messages?.data,
-          ),
+      let roomMessagesData = [];
+      let paging = null;
+      for (let page = currentPage + 1; page <= res?.data.pages; page++) {
+        const param = {
+          id: action.payload.id_room,
+          page: page,
+        };
+        const result: ResponseGenerator = yield getDetailChatApi(param);
+        roomMessagesData = convertArrUnique(
+          roomMessagesData.concat(result?.data?.room_messages?.data),
           'id',
-        ),
-        paging: result?.data?.room_messages?.paging,
-      };
-      yield put(fetchResultMessageSuccess(valueSave));
+        );
+        if (page === res?.data.pages) {
+          paging = result?.data?.room_messages?.paging;
+        }
+      }
+      if (roomMessagesData.length > 0 && paging) {
+        const valueSave = {
+          data: convertArrUnique(detailChat.concat(roomMessagesData), 'id'),
+          paging: paging,
+        };
+        yield put(fetchResultMessageSuccess(valueSave));
+      }
     }
   } catch (error) {
   } finally {
