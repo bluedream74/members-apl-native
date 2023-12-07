@@ -379,6 +379,10 @@ const ItemMessage = React.memo((props: any) => {
             <MenuOption onDeleteMessage={() => onActionMenu(11)} />
           </Menu>
         </TouchableOpacity>
+      ) : msg_type == 14 ? (
+        <Text style={styles.txtCenter} numberOfLines={2}>
+          {task_message}
+        </Text>
       ) : (
         <>
           {redLineId === _id && showRedLine === true ? (
@@ -463,11 +467,6 @@ const ItemMessage = React.memo((props: any) => {
                     />
                   ) : (
                     <>
-                      {msg_type == 14 && (
-                        <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
-                          <Text>{task_message}</Text>
-                        </View>
-                      )}
                       {msg_type == 6 || msg_type == 8 || msg_type == 14 ? null : (
                         <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
                           {reply_to_message_text ||
