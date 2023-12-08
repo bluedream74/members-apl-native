@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import {memo, useCallback, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -17,7 +17,7 @@ import {ItemUser} from '../../DetailChat/components/ItemUser';
 import {useSelector} from 'react-redux';
 import {AppInput} from '@component';
 
-const ModalUserList = React.memo((prop: any) => {
+const ModalUserList = memo((prop: any) => {
   const {
     onCancel,
     visible,

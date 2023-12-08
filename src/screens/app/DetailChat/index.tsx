@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import {useCallback, useRef} from 'react';
 import {View, Image, Platform, TouchableOpacity} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
@@ -236,13 +236,13 @@ const DetailChat = (props: any) => {
   );
 
   //Check vị trí scroll màn hình đang ở index số mấy
-  const onViewRef = React.useRef((viewableItems: any) => {
+  const onViewRef = useRef((viewableItems: any) => {
     const index = viewableItems?.viewableItems?.length - 1;
     setIndex(viewableItems?.viewableItems[index]?.index);
   });
 
   //Config view xem trong tài liệu của RN
-  const viewConfigRef = React.useRef({
+  const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 0,
   });
 
