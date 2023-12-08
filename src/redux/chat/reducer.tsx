@@ -79,14 +79,23 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         id_roomChat: action.payload,
       };
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
-      const filteredStateDetailChat = state.detailChat.filter(function (el) {
+      // delete dummy data id=9999999999
+      let filteredStateDetailChat = state.detailChat.filter(function (el) {
         return el.id != 9999999999;
-      }); // delete dummy data id=9999999999
+      });
+
+      // concat and sort by id
+      const newDetailChat = action.payload
+        .concat(filteredStateDetailChat)
+        .sort((a: {id: number}, b: {id: number}) => b.id - a.id);
+
+      // remove duplicates of id
+      const uniqueDetailChat = newDetailChat.filter((obj, index) => {
+        return index === newDetailChat.findIndex(o => obj.id === o.id);
+      });
       return {
         ...state,
-        detailChat: action.payload
-          .concat(filteredStateDetailChat)
-          .sort((a: {id: number}, b: {id: number}) => b.id - a.id),
+        detailChat: uniqueDetailChat,
       };
     case typeChat.SAVE_MESSAGE_REPLY:
       return {
