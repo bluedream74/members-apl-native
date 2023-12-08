@@ -7,12 +7,10 @@ import {debounce} from 'lodash';
 import {Item} from './component/Item';
 import {getDetailChatApi} from '@services';
 import {useDispatch} from 'react-redux';
-import {fetchResultMessageAction} from '@redux';
 import {ROUTE_NAME} from '@routeName';
 import {useNavigation} from '@react-navigation/native';
 
 const SearchMessage = (props: any) => {
-  const dispatch = useDispatch();
   const {route} = props;
   const {idRoomChat} = route?.params;
   const [key, setKey] = useState<string>('');
@@ -82,11 +80,6 @@ const SearchMessage = (props: any) => {
   }, [page, lastPage]);
 
   const onClickItem = (value: any) => {
-    const body = {
-      id_room: idRoomChat,
-      id_message: value?.id,
-    };
-    dispatch(fetchResultMessageAction(body));
     navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
       idRoomChat: idRoomChat,
       idMessageSearchListChat: value?.id,

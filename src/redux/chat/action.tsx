@@ -95,12 +95,6 @@ export const resetDataChat = () => ({
   type: typeChat.RESET_DATA,
 });
 
-//Action dùng để get ra kết quả search message
-export const fetchResultMessageAction = (payload: any) => ({
-  type: typeChat.FETCH_RESULT_SEARCH_MESSAGE,
-  payload,
-});
-
 export const fetchResultMessageActionListRoom = (payload: any) => ({
   type: typeChat.FETCH_RESULT_SEARCH_MESSAGE_LIST_ROOM,
   payload,
