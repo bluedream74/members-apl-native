@@ -430,7 +430,7 @@ const DetailChat = (props: any) => {
           }
           bottomOffset={0}
           messagesContainerStyle={styles.containerMessage}
-          extraData={{extraData}}
+          extraData={[extraData]}
         />
         <DecoButton onDecoSelected={onDecoSelected} />
         {chosenFiles.length > 0 && (

@@ -548,7 +548,7 @@ GiftedChat.propTypes = {
     forceGetKeyboardHeight: PropTypes.bool,
     inverted: PropTypes.bool,
     textInputProps: PropTypes.object,
-    extraData: PropTypes.object,
+    extraData: PropTypes.array,
     minComposerHeight: PropTypes.number,
     maxComposerHeight: PropTypes.number,
     alignTop: PropTypes.bool,
