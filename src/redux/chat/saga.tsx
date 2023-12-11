@@ -1,4 +1,4 @@
-import {put, takeLatest, select, takeEvery, call} from 'redux-saga/effects';
+import {put, takeEvery} from 'redux-saga/effects';
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
@@ -7,7 +7,6 @@ import {
   editMessageAction,
   getRoomList,
   fetchResultMessageSuccess,
-  saveIdMessageSearch,
   updateMessageSeen,
   getDetailMessageSocketSeenSuccess,
   getDetailRoomSocketSuccess,
@@ -23,13 +22,13 @@ import {
   registerLastMessage,
   getUnreadMessageCountApi,
   GlobalService,
-  detailRoomchat, logMessage,
-} from "@services";
+  detailRoomchat,
+  logMessage,
+} from '@services';
 
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
 import {store} from '../store';
-import {convertArrUnique} from '@util';
 import {AppSocket} from '@util';
 
 interface ResponseGenerator {
@@ -81,7 +80,7 @@ export function* getDetailMessageSaga(action: any) {
     };
     yield put(updateMessageSeen(data));
     //Check xoá tin nhắn
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
       //Chỉnh sửa tin nhắn
@@ -131,7 +130,7 @@ export function* editMessageReaction(action: any) {
       id_message: action.payload?.id_message,
     };
     yield put(updateMessageSeen(data));
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
       yield put(
@@ -167,7 +166,6 @@ export function* getDetailMessageSagaCurrent(action: any) {
 }
 
 export function* fetchResultMessageRedLine(action: any) {
-  //Hàm xử lý cho việc tìm kiếm message
   try {
     const body = {
       id_room: action.payload.id_room,
@@ -181,48 +179,10 @@ export function* fetchResultMessageRedLine(action: any) {
       };
       const result: ResponseGenerator = yield getDetailChatApi(param);
       const valueSave = {
-        data: convertArrUnique(
-          res?.data?.room_messages?.data.concat(
-            result?.data?.room_messages?.data,
-          ),
-          'id',
-        ),
+        data: result?.data?.room_messages?.data,
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
-    }
-  } catch (error) {
-  } finally {
-  }
-}
-
-export function* fetchResultMessage(action: any) {
-  //Hàm xử lý cho việc tìm kiếm message
-  try {
-    const body = {
-      id_room: action.payload.id_room,
-      id_message: action.payload.id_message,
-    };
-    const res: ResponseGenerator = yield getResultSearchMessage(body);
-    if (res?.code === 200) {
-      const param = {
-        id: action.payload.id_room,
-        page: res?.data.pages,
-      };
-      const result: ResponseGenerator = yield getDetailChatApi(param);
-      const valueSave = {
-        data: convertArrUnique(
-          res?.data?.room_messages?.data.concat(
-            result?.data?.room_messages?.data,
-          ),
-          'id',
-        ),
-        paging: result?.data?.room_messages?.paging,
-      };
-      yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
-      NavigationUtils.goBack();
     }
   } catch (error) {
   } finally {
@@ -243,16 +203,10 @@ export function* fetchResultMessageListFile(action: any) {
       };
       const result: ResponseGenerator = yield getDetailChatApi(param);
       const valueSave = {
-        data: convertArrUnique(
-          res?.data?.room_messages?.data.concat(
-            result?.data?.room_messages?.data,
-          ),
-          'id',
-        ),
+        data: result?.data?.room_messages?.data,
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
       NavigationUtils.pop(2);
     }
   } catch (error) {
@@ -274,16 +228,10 @@ export function* fetchResultMessageListRoom(action: any) {
       };
       const result: ResponseGenerator = yield getDetailChatApi(param);
       const valueSave = {
-        data: convertArrUnique(
-          res?.data?.room_messages?.data.concat(
-            result?.data?.room_messages?.data,
-          ),
-          'id',
-        ),
+        data: result?.data?.room_messages?.data,
         paging: result?.data?.room_messages?.paging,
       };
       yield put(fetchResultMessageSuccess(valueSave));
-      yield put(saveIdMessageSearch(action.payload.id_message));
     }
   } catch (error) {
   } finally {
@@ -300,7 +248,7 @@ function* updateMessageSeenSaga(action: any) {
       id_room: action.payload.id_room,
       id_message: action.payload.id_message,
     };
-    const result: ResponseGenerator = yield registerLastMessage(body);
+    yield registerLastMessage(body);
     yield socket.emit('connect_room_join_req2', {
       user_id: user_id,
       room_ids: [action.payload.id_room],
@@ -320,7 +268,7 @@ function* getDetailMessageSeen(action: any) {
   };
   try {
     const result: ResponseGenerator = yield getMessageFromSocket(body);
-    if (result?.data?.message?.del_flag == 1) {
+    if (result?.data?.message?.del_flag === 1) {
     } else {
       if (result?.data?.message?.medthod === 1) {
       } else {
@@ -363,7 +311,7 @@ export function* logMessageSaga(action: any) {
       current_room_id: action.payload.current_room_id,
       irregular_message_ids: action.payload.irregular_message_ids,
     };
-    const res: ResponseGenerator = yield logMessage(body);
+    yield logMessage(body);
   } catch (error) {
   } finally {
     GlobalService.hideLoading();

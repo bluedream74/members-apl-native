@@ -22,23 +22,26 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
       const currentPage = state.pagingDetail?.current_page;
+      const messages = () => {
+        if (page === 1 && Object.keys(state.detailChat).length === 0) {
+          return action.payload.room_messages.data;
+        } else if (currentPage && currentPage < page) {
+          return convertArrUnique(
+            state.detailChat.concat(action.payload.room_messages.data),
+            'id',
+          );
+        } else if (currentPage && currentPage > page) {
+          return convertArrUnique(
+            action.payload.room_messages.data.concat(state.detailChat),
+            'id',
+          );
+        } else {
+          return state.detailChat;
+        }
+      };
       return {
         ...state,
-        detailChat:
-          //Load more list message detail
-          // in case of currentPage > page: add new data after current data
-          // in case of currentPage <= page: add new data before current data
-          page === 1
-            ? convertArrUnique(action.payload.room_messages.data, 'id')
-            : currentPage && currentPage > page
-            ? convertArrUnique(
-                action.payload.room_messages.data.concat(state.detailChat),
-                'id',
-              )
-            : convertArrUnique(
-                state.detailChat.concat(action.payload.room_messages.data),
-                'id',
-              ),
+        detailChat: messages(),
         pagingDetail: action.payload.room_messages.paging,
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
@@ -47,7 +50,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       const {detailChat} = state;
       let data = [...detailChat];
       const index = data.findIndex(
-        (element: any) => element?.id == action.payload,
+        (element: any) => element?.id === action.payload,
       );
       if (index > -1) {
         data.splice(index, 1);
@@ -59,7 +62,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
     case typeChat.EDIT_MESSAGE:
       const array = [...state.detailChat];
       const indexEdit = array.findIndex(
-        (element: any) => element?.id == action.payload.id,
+        (element: any) => element?.id === action.payload.id,
       );
       if (indexEdit > -1) {
         array[indexEdit] = action.payload.data;
@@ -80,10 +83,9 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       };
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
       // delete dummy data id=9999999999
-      let filteredStateDetailChat = state.detailChat.filter(function (el) {
+      const filteredStateDetailChat = state.detailChat.filter(function (el) {
         return el.id != 9999999999;
       });
-
       // concat and sort by id
       const newDetailChat = action.payload
         .concat(filteredStateDetailChat)
@@ -145,7 +147,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         if (itemData?.users_seen?.length > 0) {
           dataUser = [...itemData?.users_seen];
           const indexUser = dataUser.findIndex(
-            (element: any) => element?.id == action.payload?.userID,
+            (element: any) => element?.id === action.payload?.userID,
           );
           if (indexUser > -1) {
             dataUser.splice(indexUser, 1);
@@ -160,7 +162,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
     case typeChat.DETAIL_ROOM_SOCKET_SUCCESS:
       const dataList = [...state?.roomList];
       const indexListRoom = dataList.findIndex(
-        (element: any) => element?.id == action.payload?.id,
+        (element: any) => element?.id === action.payload?.id,
       );
       if (indexListRoom > -1) {
         dataList[indexListRoom] = action.payload;

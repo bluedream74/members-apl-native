@@ -1,19 +1,15 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import {memo, useCallback, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
   Modal,
   Text,
-  TouchableOpacity,
-  Image,
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
 
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-AntDesign.loadFont().then();
 import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
 import {showMessage} from 'react-native-flash-message';
@@ -21,7 +17,7 @@ import {ItemUser} from '../../DetailChat/components/ItemUser';
 import {useSelector} from 'react-redux';
 import {AppInput} from '@component';
 
-const ModalUserList = React.memo((prop: any) => {
+const ModalUserList = memo((prop: any) => {
   const {
     onCancel,
     visible,
@@ -36,11 +32,7 @@ const ModalUserList = React.memo((prop: any) => {
   const loginUser = useSelector((state: any) => state.auth.userInfo);
   const [searchWord, setSearchWord] = useState<any>('');
 
-  useEffect(() => {
-    getListUserApi();
-  }, []);
-
-  const getListUserApi = async () => {
+  const getListUserApi = useCallback(async () => {
     try {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
@@ -97,7 +89,13 @@ const ModalUserList = React.memo((prop: any) => {
         type: 'danger',
       });
     }
-  };
+  }, [
+    idRoomChat,
+    loginUser.first_name,
+    loginUser.icon_image,
+    loginUser.id,
+    loginUser.last_name,
+  ]);
 
   const closeModal = () => {
     onCancel();
@@ -111,6 +109,10 @@ const ModalUserList = React.memo((prop: any) => {
       setSelected={setSelected}
     />
   );
+
+  useEffect(() => {
+    getListUserApi();
+  }, [getListUserApi]);
 
   return (
     <Modal
