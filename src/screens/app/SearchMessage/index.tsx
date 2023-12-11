@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {View, Text, FlatList} from 'react-native';
 import {styles} from './style';
 import {Header, AppInput} from '@component';
