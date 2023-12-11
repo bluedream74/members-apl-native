@@ -99,7 +99,7 @@ export const useFunction = (props: any) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
 
-  // 現在ページからメッセージが存在するページまでをfetch
+  // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
     idMessage => {
       setTimeout(() => {
@@ -325,10 +325,10 @@ export const useFunction = (props: any) => {
   }, [topPage, paging, getCurrentPage]);
 
   const onLoadMoreDown = useCallback(() => {
-    if (bottomPage === 1) {
+    const currentPage = getCurrentPage();
+    if (currentPage === 1 || bottomPage === 1) {
       return;
     }
-    const currentPage = getCurrentPage();
     const nextPage = bottomPage
       ? Math.max(bottomPage - 1, 1)
       : Math.max(currentPage - 1, 1);
@@ -1138,13 +1138,13 @@ export const useFunction = (props: any) => {
             index: Math.max(index - 1, 0),
           });
           dispatch(saveIdMessageSearch(0));
+          setPageLoading(false);
         } catch (error) {
           console.log(error);
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
         fetchMessageSearch(idMessageSearch);
-        setPageLoading(false);
       }
     }
   }, [
@@ -1179,11 +1179,13 @@ export const useFunction = (props: any) => {
       if (index > 0) {
         setIndexRedLine(index);
       }
-      const body = {
-        id_room: idRoomChat,
-        id_message: redLineId,
-      };
-      dispatch(fetchResultMessageActionRedLine(body));
+      setTimeout(() => {
+        const body = {
+          id_room: idRoomChat,
+          id_message: redLineId,
+        };
+        dispatch(fetchResultMessageActionRedLine(body));
+      }, 1000);
     } else {
     }
   }, [redLineId, dispatch, idRoomChat, listChat]);
@@ -1199,10 +1201,11 @@ export const useFunction = (props: any) => {
   useEffect(() => {
     const res = store.getState();
     const currentPage = res.chat.pagingDetail?.current_page;
-    if (page !== currentPage) {
+    if (idMessageSearch > 0 && page !== currentPage) {
       setPage(currentPage);
       setTopPage(currentPage);
-      setExtraData(!extraData);
+      setBottomPage(currentPage);
+      dispatch(saveIdMessageSearch(0));
     }
     if (idRoomChat && listChat.length > 0) {
       const irregular_message_ids: number[] = listChat.map((el: any) => {
@@ -1212,15 +1215,7 @@ export const useFunction = (props: any) => {
         setIrregularMessageIds(irregular_message_ids);
       }
     }
-  }, [
-    listChat,
-    dispatch,
-    idMessageSearch,
-    idRoomChat,
-    page,
-    bottomPage,
-    topPage,
-  ]);
+  }, [listChat, pageLoading, dispatch, idMessageSearch, idRoomChat, page]);
 
   // showTagModal
   useEffect(() => {
