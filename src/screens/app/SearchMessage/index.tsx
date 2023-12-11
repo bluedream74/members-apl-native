@@ -6,7 +6,6 @@ import {iconSearch} from '@images';
 import {debounce} from 'lodash';
 import {Item} from './component/Item';
 import {getDetailChatApi} from '@services';
-import {useDispatch} from 'react-redux';
 import {ROUTE_NAME} from '@routeName';
 import {useNavigation} from '@react-navigation/native';
 

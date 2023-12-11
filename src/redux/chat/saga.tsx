@@ -29,7 +29,6 @@ import {
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
 import {store} from '../store';
-import {convertArrUnique} from '@util';
 import {AppSocket} from '@util';
 
 interface ResponseGenerator {
