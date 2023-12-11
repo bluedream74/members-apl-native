@@ -22,7 +22,7 @@ const ViewFile = React.memo((props: any) => {
   const [page, setPage] = useState(1);
   const [dataModalFile, setDataModalFile] = useState({
     show: false,
-    path: null,
+    path: '',
   });
 
   const getData = async (params: any) => {
@@ -66,14 +66,19 @@ const ViewFile = React.memo((props: any) => {
         path: item?.path,
       });
     } else {
-      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {url: item?.path});
+      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {
+        url:
+          item?.path.substring(-1, item?.path.lastIndexOf('/')) +
+          '/' +
+          encodeURIComponent(item?.name),
+      });
     }
   };
 
   const onCloseModalFile = useCallback(() => {
     setDataModalFile({
       show: false,
-      path: null,
+      path: '',
     });
   }, []);
 
