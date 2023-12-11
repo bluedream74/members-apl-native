@@ -165,7 +165,13 @@ const MsgFile = React.memo((props: any) => {
             item?.type == ATTACHMENT_FILE_TYPE.MOVIE) && (
             <TouchableOpacity
               style={styles.viewRow}
-              onPress={() => openFile(item?.path)}>
+              onPress={() =>
+                openFile(
+                  item?.path.substring(-1, item?.path.lastIndexOf('/')) +
+                    '/' +
+                    encodeURIComponent(item?.name),
+                )
+              }>
               <Image source={iconFile} style={styles.iconFile} />
               <Text style={styles.txtTitleFile} numberOfLines={1}>
                 {item?.name}
