@@ -112,7 +112,7 @@ const ItemMessage = React.memo((props: any) => {
   const onActionMenu = useCallback(
     value => {
       onShowMenu();
-      const txt = String(text ?? '');
+      const txt = String(text);
       switch (value) {
         case 7:
           Clipboard.setString(txt.replace(/<br>/g, '\n'));
