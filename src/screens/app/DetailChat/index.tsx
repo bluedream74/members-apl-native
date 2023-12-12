@@ -91,6 +91,7 @@ const DetailChat = (props: any) => {
     selected,
     setSelected,
     setInputText,
+    inputText,
     textSelection,
     onDecoSelected,
     keyboardHeight,
@@ -99,6 +100,8 @@ const DetailChat = (props: any) => {
     setListUserSelect,
     listUserSelect,
     customBack,
+    setInputIndex,
+    inputIndex,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -244,6 +247,15 @@ const DetailChat = (props: any) => {
   const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 0,
   });
+  const findDiffIndex = useCallback((str1, str2) => {
+    let diffIndex = -1;
+    for (let i = 0; i < str2.split('').length; i++) {
+      if (str2.charAt(i) !== str1.charAt(i)) {
+        return i;
+      }
+    }
+    return diffIndex;
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -295,9 +307,12 @@ const DetailChat = (props: any) => {
           formattedText={formattedText}
           keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
-          onInputTextChanged={inputText => {
-            formatText(inputText, false);
-            setInputText(inputText);
+          onInputTextChanged={txt => {
+            //get index
+            const index = findDiffIndex(inputText, txt);
+            setInputIndex(index);
+            formatText(txt, false);
+            setInputText(txt);
           }}
           textSelection={textSelection}
           messages={getConvertedMessages(listChat)}
@@ -401,8 +416,11 @@ const DetailChat = (props: any) => {
                             const wordBeforeMention = getText(formattedText)
                               ? getText(formattedText)
                               : ' ';
+                            //前のテキストと今のテキストの違いをみつけてそれが@のみのはずなので、その@の位置にinsertする
+                            const first = wordBeforeMention.substring(0, inputIndex);
+                            const second = wordBeforeMention.substring(inputIndex + 1);
                             formatText(
-                              `${wordBeforeMention}@${value}${title}`,
+                              first + ` @${value}${title} ` + second,
                               true,
                             );
                           }
