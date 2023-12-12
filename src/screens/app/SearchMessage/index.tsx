@@ -42,22 +42,23 @@ const SearchMessage = (props: any) => {
     [listMessage],
   );
 
-  const debounceText = () => {
-    debounce(text => {
-      setPage(1);
-      const params = {
-        id: idRoomChat,
-        page: 1,
-        key: text,
-      };
-      callApiSearch(params);
-    }, 500);
-  };
+  const debounceText = debounce((text: string) => {
+    setPage(1);
+    const params = {
+      id: idRoomChat,
+      page: 1,
+      key: text,
+    };
+    callApiSearch(params);
+  });
 
-  const onChangeText = (text: any) => {
-    setKey(text);
-    debounceText(text);
-  };
+  const onChangeText = useCallback(
+    (text: string) => {
+      setKey(text);
+      debounceText(text);
+    },
+    [debounceText],
+  );
 
   useEffect(() => {
     if (page > 1) {
