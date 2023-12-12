@@ -95,6 +95,7 @@ export const useFunction = (props: any) => {
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
+  const [inputIndex, setInputIndex] = useState<number>(-1);
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
@@ -1345,6 +1346,7 @@ export const useFunction = (props: any) => {
     selected,
     setSelected,
     setInputText,
+    inputText,
     textSelection,
     setTextSelection,
     onDecoSelected,
@@ -1352,5 +1354,7 @@ export const useFunction = (props: any) => {
     customBack,
     chosenFiles,
     deleteFile,
+    setInputIndex,
+    inputIndex,
   };
 };
