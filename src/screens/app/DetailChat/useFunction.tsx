@@ -541,7 +541,7 @@ export const useFunction = (props: any) => {
         time: res?.data?.data?.created_at,
       });
       dispatch(
-        editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+        editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
     [dispatch, idRoomChat, socket, user_id],
@@ -880,7 +880,7 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageEdit(null));
           dispatch(
-            editMessageAction({id: res?.data?.data.id, data: res?.data?.data}),
+            editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
           );
         } catch (error: any) {}
       } else if (messageQuote) {
