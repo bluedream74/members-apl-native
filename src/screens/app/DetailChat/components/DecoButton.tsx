@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {Dimensions, Keyboard, View} from 'react-native';
 import {AppButton} from '@component';
 import {styles} from './stylesItem';

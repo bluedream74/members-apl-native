@@ -1,4 +1,4 @@
-import {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {View, Image, Platform, TouchableOpacity} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
