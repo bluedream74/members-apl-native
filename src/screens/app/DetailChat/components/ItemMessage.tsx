@@ -112,9 +112,10 @@ const ItemMessage = React.memo((props: any) => {
   const onActionMenu = useCallback(
     value => {
       onShowMenu();
+      const txt = String(text ?? '');
       switch (value) {
         case 7:
-          Clipboard.setString(text.replace(/<br>/g, '\n'));
+          Clipboard.setString(txt.replace(/<br>/g, '\n'));
           showMessage({
             message: 'コピー',
             backgroundColor: colors.backgroundTab,
@@ -136,7 +137,7 @@ const ItemMessage = React.memo((props: any) => {
           const dataMessageEdit = {
             id: _id,
             user: user,
-            text: text.replace(/<br>/g, '\n'),
+            text: txt.replace(/<br>/g, '\n'),
             attachment_files: attachment_files,
           };
           editMsg(dataMessageEdit);
@@ -145,7 +146,7 @@ const ItemMessage = React.memo((props: any) => {
           const dataMessageReply = {
             id: _id,
             user: user,
-            text: text,
+            text: txt,
             attachment_files: attachment_files,
             stamp_no: stamp_no,
             roomId: idRoomChat,
@@ -198,7 +199,7 @@ const ItemMessage = React.memo((props: any) => {
           const dataQuote = {
             id: _id,
             user: user,
-            text: text,
+            text: txt,
             roomId: idRoomChat,
           };
           quoteMsg(dataQuote);
@@ -320,7 +321,9 @@ const ItemMessage = React.memo((props: any) => {
   const checkMessageToSelfMention = () => {
     let isSelfMention = false;
     //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-    const matchs = text?.match(new RegExp("@all( |　|<br>)+|^@all$|( |　|<br>)@all$", 'g'));
+    const matchs = text?.match(
+      new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
+    );
     if (matchs != null) {
       isSelfMention = true;
     } else {
@@ -467,8 +470,21 @@ const ItemMessage = React.memo((props: any) => {
                     />
                   ) : (
                     <>
-                      {msg_type == 6 || msg_type == 8 || msg_type == 14 ? null : (
-                        <View style={user?._id == user_id ? [styles.containerViewChat, {alignItems: 'flex-end',}] : [styles.containerViewChat, {alignItems: 'flex-start',}]}>
+                      {msg_type == 6 ||
+                      msg_type == 8 ||
+                      msg_type == 14 ? null : (
+                        <View
+                          style={
+                            user?._id == user_id
+                              ? [
+                                  styles.containerViewChat,
+                                  {alignItems: 'flex-end'},
+                                ]
+                              : [
+                                  styles.containerViewChat,
+                                  {alignItems: 'flex-start'},
+                                ]
+                          }>
                           {reply_to_message_text ||
                           reply_to_message_files?.length > 0 ||
                           reply_to_message_stamp?.stamp_icon ||
@@ -486,10 +502,18 @@ const ItemMessage = React.memo((props: any) => {
                                     style={
                                       styles.containerAdditionalMessageText
                                     }>
-                                    {reply_to_message_user_id !== user?._id && reply_to_message_user_id === user_id && user.name + 'が' + reply_to_message_user + 'に返信しました'}
-                                    {reply_to_message_user_id === user?._id && reply_to_message_user_id === user_id && '自分に返信しました'}
-                                    {reply_to_message_user_id !== user?._id && reply_to_message_user_id !== user_id && reply_to_message_user + 'に返信しました'}
-
+                                    {reply_to_message_user_id !== user?._id &&
+                                      reply_to_message_user_id === user_id &&
+                                      user.name +
+                                        'が' +
+                                        reply_to_message_user +
+                                        'に返信しました'}
+                                    {reply_to_message_user_id === user?._id &&
+                                      reply_to_message_user_id === user_id &&
+                                      '自分に返信しました'}
+                                    {reply_to_message_user_id !== user?._id &&
+                                      reply_to_message_user_id !== user_id &&
+                                      reply_to_message_user + 'に返信しました'}
                                   </Text>
                                 </View>
                               )}
@@ -517,7 +541,10 @@ const ItemMessage = React.memo((props: any) => {
                                           onJumpToOriginal(reply_to_message_id)
                                         }>
                                         <MessageInfo
-                                          text={reply_to_message_text.replace(/[<]br[^>]*[>]/gi,"")}
+                                          text={reply_to_message_text.replace(
+                                            /[<]br[^>]*[>]/gi,
+                                            '',
+                                          )}
                                           textSetting={{numberOfLines: 1}}
                                         />
                                       </TouchableOpacity>
@@ -529,7 +556,10 @@ const ItemMessage = React.memo((props: any) => {
                                           onJumpToOriginal(quote_message_id)
                                         }>
                                         <MessageInfo
-                                          text={message_quote.replace(/[<]br[^>]*[>]/gi,"")}
+                                          text={message_quote.replace(
+                                            /[<]br[^>]*[>]/gi,
+                                            '',
+                                          )}
                                           textSetting={{numberOfLines: 1}}
                                         />
                                       </TouchableOpacity>
