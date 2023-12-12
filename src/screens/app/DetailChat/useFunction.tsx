@@ -212,8 +212,8 @@ export const useFunction = (props: any) => {
 
   const getConvertedMessages = useCallback(
     (msgs: any) => {
-      msgs = msgs.filter((el: any) => !irregularMessageIds.includes(el.id));
-      return msgs?.map((item: any, index: any) => {
+      const messages = msgs.filter((el: any) => !irregularMessageIds.includes(el.id));
+      return messages?.map((item: any, index: any) => {
         return convertDataMessage(item, index);
       });
     },
