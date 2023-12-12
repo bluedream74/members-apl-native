@@ -307,12 +307,12 @@ const DetailChat = (props: any) => {
           formattedText={formattedText}
           keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
-          onInputTextChanged={text => {
+          onInputTextChanged={txt => {
             //get index
-            const index = findDiffIndex(inputText, text);
+            const index = findDiffIndex(inputText, txt);
             setInputIndex(index);
-            formatText(text, false);
-            setInputText(text);
+            formatText(txt, false);
+            setInputText(txt);
           }}
           textSelection={textSelection}
           messages={getConvertedMessages(listChat)}
