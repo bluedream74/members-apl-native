@@ -10,7 +10,7 @@ import {ModalReadFile} from '@component';
 import {useDispatch} from 'react-redux';
 import {fetchResultMessageActionListFile} from '@redux';
 
-const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv)$/;
+const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/i;
 
 const ViewFile = React.memo((props: any) => {
   const {id} = props;
@@ -66,12 +66,7 @@ const ViewFile = React.memo((props: any) => {
         path: item?.path,
       });
     } else {
-      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {
-        url:
-          item?.path.substring(-1, item?.path.lastIndexOf('/')) +
-          '/' +
-          encodeURIComponent(item?.name),
-      });
+      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {url: item?.path});
     }
   };
 
