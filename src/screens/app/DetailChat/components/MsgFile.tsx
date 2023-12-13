@@ -166,10 +166,7 @@ const MsgFile = React.memo((props: any) => {
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() =>
-                openFile(
-                  item?.path.substring(-1, item?.path.lastIndexOf('/')) +
-                    '/' +
-                    encodeURIComponent(item?.name),
+                openFile(encodeURI(item?.path)
                 )
               }>
               <Image source={iconFile} style={styles.iconFile} />

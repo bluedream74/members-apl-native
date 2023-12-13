@@ -67,10 +67,7 @@ const ViewFile = React.memo((props: any) => {
       });
     } else {
       navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {
-        url:
-          item?.path.substring(-1, item?.path.lastIndexOf('/')) +
-          '/' +
-          encodeURIComponent(item?.name),
+        url: item?.path,
       });
     }
   };
