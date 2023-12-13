@@ -38,13 +38,30 @@ function createAppNotification() {
       });
 
     messaging().onMessage(async notification => {
+      // 該当のルームを開いていない場合は通知を表示
       if (notification.messageId !== lastMessageId) {
         lastMessageId = notification.messageId || '';
+        // iOS用のバッチ表示
+        let BadgeCount = 1;
+        // iOSバッチ表示は PHP側で件数を指定される
+        if (
+          notification.data &&
+          notification.data.badge_update_numflag === '1'
+        ) {
+          // badge_update_numflagがある場合は受け取った件数を表示
+          BadgeCount = Number(notification.data.badgeCount);
+          await notifee.setBadgeCount(BadgeCount);
+        } else {
+          // badge_update_numflagなしの通知を受け取ったらiOSバッチ表示は+1
+          await notifee.incrementBadgeCount();
+        }
+
         handleNotiOnForeground(notification);
       }
     });
 
     messaging().onNotificationOpenedApp(async notification => {
+      //
       if (notification.messageId !== lastMessageId) {
         lastMessageId = notification.messageId || '';
       }
@@ -52,6 +69,9 @@ function createAppNotification() {
       handleUserInteractionNotification(notification);
     });
 
+
+    // バックグラウンド時に通知を受け取った場合の処理
+    // バッチの更新とルームごとの未読件数の更新を実施
     messaging().setBackgroundMessageHandler(async notification => {
       if (notification.messageId !== lastMessageId) {
         lastMessageId = notification.messageId || '';
@@ -84,8 +104,6 @@ function createAppNotification() {
           }
         }
       }
-
-      handleUserInteractionNotification(notification);
     });
   };
 
