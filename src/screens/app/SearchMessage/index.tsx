@@ -69,7 +69,7 @@ const SearchMessage = (props: any) => {
       };
       callApiSearch(params);
     }
-  }, [page, callApiSearch, idRoomChat, key]);
+  }, [page]);
 
   const handleLoadMore = useCallback(() => {
     if (page !== lastPage) {
