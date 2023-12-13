@@ -166,8 +166,7 @@ const MsgFile = React.memo((props: any) => {
             <TouchableOpacity
               style={styles.viewRow}
               onPress={() =>
-                openFile(encodeURI(item?.path)
-                )
+                openFile(item?.path)
               }>
               <Image source={iconFile} style={styles.iconFile} />
               <Text style={styles.txtTitleFile} numberOfLines={1}>
