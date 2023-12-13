@@ -66,9 +66,7 @@ const ViewFile = React.memo((props: any) => {
         path: item?.path,
       });
     } else {
-      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {
-        url: item?.path,
-      });
+      navigation.navigate(ROUTE_NAME.DETAIL_VIDEO, {url: item?.path});
     }
   };
 
