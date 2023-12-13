@@ -10,7 +10,7 @@ import {ModalReadFile} from '@component';
 import {useDispatch} from 'react-redux';
 import {fetchResultMessageActionListFile} from '@redux';
 
-const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv)$/;
+const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/i;
 
 const ViewFile = React.memo((props: any) => {
   const {id} = props;

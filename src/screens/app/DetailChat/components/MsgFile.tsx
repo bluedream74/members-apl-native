@@ -34,7 +34,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {ATTACHMENT_FILE_TYPE} from '@util';
 
-const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/;
+const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/i;
 
 const MsgFile = React.memo((props: any) => {
   const {data} = props;
