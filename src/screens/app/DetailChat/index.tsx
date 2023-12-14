@@ -419,10 +419,9 @@ const DetailChat = (props: any) => {
                             //前のテキストと今のテキストの違いをみつけてそれが@のみのはずなので、その@の位置にinsertする
                             const first = wordBeforeMention.substring(0, inputIndex);
                             const second = wordBeforeMention.substring(inputIndex + 1);
-                            formatText(
-                              first + ` @${value}${title} ` + second,
-                              true,
-                            );
+                            const newText = first + ` @${value}${title} ` + second;
+                            formatText(newText, true);
+                            setInputText(newText);
                           }
                         }}
                       />
