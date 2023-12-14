@@ -1,8 +1,15 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import { View, Image, Platform, TouchableOpacity, Text } from "react-native";
+import React, {useCallback, useRef} from 'react';
+import {View, Image, Platform, TouchableOpacity} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
-import { iconSearch, iconUpload, iconLike, iconDetail, iconSend, iconTask } from "@images";
+import {
+  iconSearch,
+  iconUpload,
+  iconLike,
+  iconDetail,
+  iconSend,
+  iconTask,
+} from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
 import {ItemMessage} from './components/ItemMessage';
@@ -84,6 +91,7 @@ const DetailChat = (props: any) => {
     selected,
     setSelected,
     setInputText,
+    inputText,
     textSelection,
     onDecoSelected,
     keyboardHeight,
@@ -91,35 +99,39 @@ const DetailChat = (props: any) => {
     deleteFile,
     setListUserSelect,
     listUserSelect,
-    listUserRoot,
     customBack,
+    setInputIndex,
+    inputIndex,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
-  const renderActions = useCallback((props: any) => {
-    return (
-      <Actions
-        {...props}
-        containerStyle={styles.addBtn}
-        onPressActionButton={cancelModal}
-        icon={() => <Image source={iconUpload} />}
-      />
-    );
-  }, []);
+  const renderActions = useCallback(
+    (inputProps: any) => {
+      return (
+        <Actions
+          {...inputProps}
+          containerStyle={styles.addBtn}
+          onPressActionButton={cancelModal}
+          icon={() => <Image source={iconUpload} />}
+        />
+      );
+    },
+    [cancelModal],
+  );
 
   const renderActionsRight = useCallback(
-    (props: any) => {
+    (inputProps: any) => {
       return (
         <>
-          {props.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+          {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
             <Actions
-              {...props}
+              {...inputProps}
               containerStyle={styles.buttonRight}
               onPressActionButton={() => {
                 const messages = [
                   {
-                    text: getText(props.formattedText),
-                    user: {_id: props.user?._id},
+                    text: getText(inputProps.formattedText),
+                    user: {_id: inputProps.user?._id},
                     createdAt: new Date(Date.now()),
                   },
                 ];
@@ -130,7 +142,7 @@ const DetailChat = (props: any) => {
             />
           ) : (
             <Actions
-              {...props}
+              {...inputProps}
               containerStyle={styles.buttonRight}
               onPressActionButton={() => sendLabel(1)}
               icon={() => <Image source={iconLike} />}
@@ -139,16 +151,16 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [messageReply, message_edit, ids, messageQuote, listUserRoot, listUser, chosenFiles],
+    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText],
   );
 
   //Render ra UI của message
   const renderMessage = useCallback(
-    (props: any) => {
+    (inputProps: any) => {
       return (
         <>
           <ItemMessage
-            {...props}
+            {...inputProps}
             idRoomChat={idRoomChat}
             deleteMsg={(id: any) => {
               deleteMsg(id);
@@ -190,7 +202,27 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [listUser, newIndexArray, listChat],
+    [
+      listUser,
+      newIndexArray,
+      bookmarkMessage,
+      dataDetail?.is_admin,
+      deleteMsg,
+      editMessage,
+      idRoomChat,
+      indexRedLine,
+      me,
+      mentionedUsers,
+      navigateToMessage,
+      navigatiteToListReaction,
+      quoteMessage,
+      reactionMessage,
+      redLineId,
+      replyMessage,
+      setFormattedText,
+      showRedLine,
+      updateGimMessage,
+    ],
   );
 
   //Check phạm vi để gọi hàm loadmore
@@ -206,19 +238,28 @@ const DetailChat = (props: any) => {
   );
 
   //Check vị trí scroll màn hình đang ở index số mấy
-  const onViewRef = React.useRef((viewableItems: any) => {
+  const onViewRef = useRef((viewableItems: any) => {
     const index = viewableItems?.viewableItems?.length - 1;
     setIndex(viewableItems?.viewableItems[index]?.index);
   });
 
   //Config view xem trong tài liệu của RN
-  const viewConfigRef = React.useRef({
+  const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 0,
   });
+  const findDiffIndex = useCallback((str1, str2) => {
+    let diffIndex = -1;
+    for (let i = 0; i < str2.split('').length; i++) {
+      if (str2.charAt(i) !== str1.charAt(i)) {
+        return i;
+      }
+    }
+    return diffIndex;
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={showTaskForm ? [styles.blackout] : []}></View>
+      <View style={showTaskForm ? [styles.blackout] : []} />
       <View style={showTaskForm ? [styles.displayNone] : [{height: '100%'}]}>
         <Header
           back
@@ -266,9 +307,12 @@ const DetailChat = (props: any) => {
           formattedText={formattedText}
           keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
-          onInputTextChanged={inputText => {
-            formatText(inputText, false);
-            setInputText(inputText);
+          onInputTextChanged={txt => {
+            //get index
+            const index = findDiffIndex(inputText, txt);
+            setInputIndex(index);
+            formatText(txt, false);
+            setInputText(txt);
           }}
           textSelection={textSelection}
           messages={getConvertedMessages(listChat)}
@@ -346,7 +390,7 @@ const DetailChat = (props: any) => {
                     {showTagModal && (
                       <ModalTagName
                         idRoomChat={idRoomChat}
-                        choseUser={(value: any, title: string, id: any, props: any) => {
+                        choseUser={(value: any, title: string, id: any) => {
                           setIds(ids?.concat([id]));
                           setShowTag(false);
                           if (id === 'All') {
@@ -356,7 +400,8 @@ const DetailChat = (props: any) => {
                                   userId: el.id,
                                   userName: el.last_name + el.first_name,
                                 };
-                            }));
+                              }),
+                            );
                           } else {
                             listUserSelect.push({
                               userId: id,
@@ -371,10 +416,12 @@ const DetailChat = (props: any) => {
                             const wordBeforeMention = getText(formattedText)
                               ? getText(formattedText)
                               : ' ';
-                            formatText(
-                              `${wordBeforeMention}@${value}${title}`,
-                              true,
-                            );
+                            //前のテキストと今のテキストの違いをみつけてそれが@のみのはずなので、その@の位置にinsertする
+                            const first = wordBeforeMention.substring(0, inputIndex);
+                            const second = wordBeforeMention.substring(inputIndex + 1);
+                            const newText = first + ` @${value}${title} ` + second;
+                            formatText(newText, true);
+                            setInputText(newText);
                           }
                         }}
                       />
@@ -402,10 +449,7 @@ const DetailChat = (props: any) => {
         />
         <DecoButton onDecoSelected={onDecoSelected} />
         {chosenFiles.length > 0 && (
-          <ShowPickedFile
-            chosenFiles={chosenFiles}
-            deleteFile={deleteFile}
-          />
+          <ShowPickedFile chosenFiles={chosenFiles} deleteFile={deleteFile} />
         )}
         {/* create task icon */}
         <View
@@ -423,25 +467,29 @@ const DetailChat = (props: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ModalTask
-        visible={showTaskForm}
-        onCancel={() => setShowTaskForm(false)}
-        onSaveTask={onSaveTask}
-        idRoomChat={idRoomChat}
-        selected={selected}
-        setSelected={setSelected}
-        showTaskForm={showTaskForm}
-        keyboardHeight={keyboardHeight}
-      />
-      <ModalUserList
-        visible={showUserList}
-        onCancel={() => setShowUserList(false)}
-        idRoomChat={idRoomChat}
-        setShowTaskForm={setShowTaskForm}
-        setShowUserList={setShowUserList}
-        setSelected={setSelected}
-        keyboardHeight={keyboardHeight}
-      />
+      {showTaskForm && (
+        <ModalTask
+          visible={showTaskForm}
+          onCancel={() => setShowTaskForm(false)}
+          onSaveTask={onSaveTask}
+          idRoomChat={idRoomChat}
+          selected={selected}
+          setSelected={setSelected}
+          showTaskForm={showTaskForm}
+          keyboardHeight={keyboardHeight}
+        />
+      )}
+      {showUserList && (
+        <ModalUserList
+          visible={showUserList}
+          onCancel={() => setShowUserList(false)}
+          idRoomChat={idRoomChat}
+          setShowTaskForm={setShowTaskForm}
+          setShowUserList={setShowUserList}
+          setSelected={setSelected}
+          keyboardHeight={keyboardHeight}
+        />
+      )}
       {/* UI modal chọn ảnh, video và file */}
       <ModalPickFile
         visible={pickFile}

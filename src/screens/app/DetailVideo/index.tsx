@@ -136,7 +136,7 @@ const DetailVideo = (props: any) => {
   return (
     <View style={styles.container}>
       <Video
-        source={{uri: url}}
+        source={{uri: encodeURI(url)}}
         style={styles.video}
         resizeMode="contain"
         ref={videoPlayer}

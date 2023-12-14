@@ -4,17 +4,12 @@ import {styles} from './style';
 import {Header, AppInput} from '@component';
 import {iconSearch} from '@images';
 import {debounce} from 'lodash';
-import {useSelector} from 'react-redux';
 import {Item} from './component/Item';
 import {getDetailChatApi} from '@services';
-import {useDispatch} from 'react-redux';
-import {fetchResultMessageAction} from '@redux';
-import {ROUTE_NAME} from "@routeName";
-import {useNavigation} from "@react-navigation/native";
+import {ROUTE_NAME} from '@routeName';
+import {useNavigation} from '@react-navigation/native';
 
 const SearchMessage = (props: any) => {
-  const idCompany = useSelector((state: any) => state.chat.idCompany);
-  const dispatch = useDispatch();
   const {route} = props;
   const {idRoomChat} = route?.params;
   const [key, setKey] = useState<string>('');
@@ -24,43 +19,46 @@ const SearchMessage = (props: any) => {
   const [page, setPage] = useState(1);
   const navigation = useNavigation<any>();
 
-  const callApiSearch = async (params: any) => {
-    try {
-      if (params?.key?.length > 0) {
-        const res = await getDetailChatApi(params);
-        setTotal(res?.data?.room_messages?.paging?.total);
-        setLastPage(res?.data?.room_messages?.paging?.last_page);
-        setList(
-          params?.page === 1
-            ? res?.data?.room_messages?.data
-            : listMessage.concat(res?.data?.room_messages?.data),
-        );
-      } else {
-        setLastPage(null);
-        setList([]);
-        setPage(1);
-        setTotal(null);
-      }
-    } catch (error: any) {}
-  };
-
-  const debounceText = useCallback(
-    debounce(text => {
-      setPage(1);
-      const params = {
-        id: idRoomChat,
-        page: 1,
-        key: text,
-      };
-      callApiSearch(params);
-    }, 500),
-    [],
+  const callApiSearch = useCallback(
+    async (params: any) => {
+      try {
+        if (params?.key?.length > 0) {
+          const res = await getDetailChatApi(params);
+          setTotal(res?.data?.room_messages?.paging?.total);
+          setLastPage(res?.data?.room_messages?.paging?.last_page);
+          setList(
+            params?.page === 1
+              ? res?.data?.room_messages?.data
+              : listMessage.concat(res?.data?.room_messages?.data),
+          );
+        } else {
+          setLastPage(null);
+          setList([]);
+          setPage(1);
+          setTotal(null);
+        }
+      } catch (error: any) {}
+    },
+    [listMessage],
   );
 
-  const onChangeText = (text: any) => {
-    setKey(text);
-    debounceText(text);
-  };
+  const debounceText = debounce((text: string) => {
+    setPage(1);
+    const params = {
+      id: idRoomChat,
+      page: 1,
+      key: text,
+    };
+    callApiSearch(params);
+  });
+
+  const onChangeText = useCallback(
+    (text: string) => {
+      setKey(text);
+      debounceText(text);
+    },
+    [debounceText],
+  );
 
   useEffect(() => {
     if (page > 1) {
@@ -82,15 +80,9 @@ const SearchMessage = (props: any) => {
   }, [page, lastPage]);
 
   const onClickItem = (value: any) => {
-    const body = {
-      id_room: idRoomChat,
-      id_message: value?.id,
-    };
-    dispatch(fetchResultMessageAction(body));
     navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
       idRoomChat: idRoomChat,
       idMessageSearchListChat: value?.id,
-      searchingFlg: Math.random(),
     });
   };
 

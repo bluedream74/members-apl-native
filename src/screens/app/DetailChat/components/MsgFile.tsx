@@ -34,7 +34,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {ATTACHMENT_FILE_TYPE} from '@util';
 
-const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/;
+const LINK_URL_VIDEO = /^(http(s)?:\/\/|www\.).*(\.mp4|\.mkv|\.mov)$/i;
 
 const MsgFile = React.memo((props: any) => {
   const {data} = props;
@@ -165,7 +165,9 @@ const MsgFile = React.memo((props: any) => {
             item?.type == ATTACHMENT_FILE_TYPE.MOVIE) && (
             <TouchableOpacity
               style={styles.viewRow}
-              onPress={() => openFile(item?.path)}>
+              onPress={() =>
+                openFile(item?.path)
+              }>
               <Image source={iconFile} style={styles.iconFile} />
               <Text style={styles.txtTitleFile} numberOfLines={1}>
                 {item?.name}
