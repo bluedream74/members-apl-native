@@ -17,7 +17,7 @@ import FastImage from 'react-native-fast-image';
 import {convertString, HITSLOP} from '@util';
 import {pinFlag, GlobalService} from '@services';
 
-import {saveIdRoomChat, getRoomList} from '@redux';
+import {saveIdRoomChat, getRoomList, resetDataChat} from '@redux';
 import {showMessage} from 'react-native-flash-message';
 import {useSelector, useDispatch} from 'react-redux';
 import {decode} from 'html-entities';
@@ -64,6 +64,7 @@ const Item = React.memo((props: any) => {
 
   const navigateDetail = () => {
     try {
+      dispatch(resetDataChat());
       notifee.getBadgeCount().then(async (count: any) => {
         if (count > 0) {
           const countMessage = count - Number(item?.message_unread);
