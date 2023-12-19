@@ -46,7 +46,7 @@ const Item = React.memo((props: any) => {
   }, [item?.pin_flag]);
 
   useEffect(() => {
-    if (item?.message_unread) {
+    if (idRoomChat && item?.message_unread > 0) {
       setNoIdRoomChatFlg(true);
     }
   }, [item?.message_unread]);
@@ -71,6 +71,7 @@ const Item = React.memo((props: any) => {
 
   const navigateDetail = () => {
     try {
+      setNoIdRoomChatFlg(false);
       dispatch(resetDataChat());
       notifee.getBadgeCount().then(async (count: any) => {
         if (count > 0) {
@@ -257,7 +258,7 @@ const Item = React.memo((props: any) => {
               style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
             />
           </TouchableOpacity>
-          {(item?.message_unread > 0 && (!idRoomChat || noIdRoomChatFlg)) ? (
+          {(item?.message_unread > 0 && !idRoomChat) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
@@ -266,7 +267,7 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
-          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat !== item?.id) ? (
+          ) : (item?.message_unread > 0 && idRoomChat && (idRoomChat !== item?.id || noIdRoomChatFlg)) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
