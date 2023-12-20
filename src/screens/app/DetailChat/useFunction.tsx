@@ -69,6 +69,7 @@ export const useFunction = (props: any) => {
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
+  const [idRoom, setIdRoom] = useState<number | null>(null);
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<number | null>(1);
@@ -1162,7 +1163,6 @@ export const useFunction = (props: any) => {
       }
     }
   }, [
-    route,
     page,
     pageLoading,
     dispatch,
@@ -1173,6 +1173,19 @@ export const useFunction = (props: any) => {
     listChat,
     paging?.current_page,
   ]);
+
+  // route?.paramsが変わったら実行
+  // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
+  // push通知をタップした時に、route?.params.idRoomChatが変更になりこちらが実行される
+  useEffect(() => {
+    if (pageLoading) {
+      setIdRoom(route?.params.idRoomChat);
+    } else if (!pageLoading && idRoom !== route?.params.idRoomChat) {
+      getListChat(page);
+      getDetail();
+      setIdRoom(route?.params.idRoomChat);
+    }
+  }, [route, pageLoading, getDetail, getListChat, idRoom, page]);
 
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
