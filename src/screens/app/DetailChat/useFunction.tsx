@@ -213,7 +213,9 @@ export const useFunction = (props: any) => {
 
   const getConvertedMessages = useCallback(
     (msgs: any) => {
-      const messages = msgs?.filter((el: any) => !irregularMessageIds.includes(el?.id));
+      const messages = msgs?.filter(
+        (el: any) => !irregularMessageIds.includes(el?.id),
+      );
       return messages?.map((item: any, index: any) => {
         return convertDataMessage(item, index);
       });
@@ -955,7 +957,9 @@ export const useFunction = (props: any) => {
               room_id: idRoomChat,
               room_name: null,
               join_users: null,
-              user_name: res?.data?.data?.user_send?.last_name + res?.data?.data?.user_send?.first_name,
+              user_name:
+                res?.data?.data?.user_send?.last_name +
+                res?.data?.data?.user_send?.first_name,
               user_icon_url: res?.data?.data?.icon_image,
               client_name: null,
               message_text: res?.data?.data?.message,
