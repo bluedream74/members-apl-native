@@ -955,11 +955,15 @@ export const useFunction = (props: any) => {
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
               room_id: idRoomChat,
-              room_name: null,
-              join_users: null,
-              user_name: res?.data?.data?.user_send?.last_name + res?.data?.data?.user_send?.first_name,
+              room_name: dataDetail?.name,
+              join_users: listUser.map(el => {
+                return {userId: el.id};
+              }),
+              user_name:
+                res?.data?.data?.user_send?.last_name +
+                res?.data?.data?.user_send?.first_name,
               user_icon_url: res?.data?.data?.icon_image,
-              client_name: null,
+              client_name: 'dummy',
               message_text: res?.data?.data?.message,
               attachment: res?.data?.attachmentFiles,
               stamp_no: res?.data?.data?.stamp_no,
