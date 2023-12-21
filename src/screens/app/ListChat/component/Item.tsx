@@ -34,6 +34,7 @@ const Item = React.memo((props: any) => {
   const navigation = useNavigation<any>();
   const {item, idRoomChat} = props;
   const [pin, setStatusPin] = useState<any>(null);
+  const [noIdRoomChatFlg, setNoIdRoomChatFlg] = useState<boolean>(false);
 
   let count_user =
     item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
@@ -43,6 +44,12 @@ const Item = React.memo((props: any) => {
       setStatusPin(Number(item?.pin_flag));
     }
   }, [item?.pin_flag]);
+
+  useEffect(() => {
+    if (idRoomChat && item?.message_unread > 0) {
+      setNoIdRoomChatFlg(true);
+    }
+  }, [item?.message_unread]);
 
   const renderNameRoom = (name: any) => {
     if (count_user > 0) {
@@ -64,6 +71,7 @@ const Item = React.memo((props: any) => {
 
   const navigateDetail = () => {
     try {
+      setNoIdRoomChatFlg(false);
       dispatch(resetDataChat());
       notifee.getBadgeCount().then(async (count: any) => {
         if (count > 0) {
@@ -259,7 +267,7 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
-          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat !== item?.id) ? (
+          ) : (item?.message_unread > 0 && idRoomChat && (idRoomChat !== item?.id || noIdRoomChatFlg)) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
