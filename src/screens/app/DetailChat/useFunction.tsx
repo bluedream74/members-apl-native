@@ -32,7 +32,7 @@ import {
 } from '@services';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
-import {AppSocket} from '@util';
+import {AppSocket, MESSAGE_RANGE_TYPE} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import {Platform, Text} from 'react-native';
@@ -952,6 +952,27 @@ export const useFunction = (props: any) => {
             if (listUser.length === 0) {
               getUserListChat();
             }
+            console.log('hosotanidebug111');
+            console.log({
+              user_id: mes[0]?.user?._id,
+              room_id: idRoomChat,
+              room_name: dataDetail?.name,
+              join_users: listUser.map(el => {
+                return {userId: el.id};
+              }),
+              user_name:
+                  res?.data?.data?.user_send?.last_name +
+                  res?.data?.data?.user_send?.first_name,
+              user_icon_url: res?.data?.data?.icon_image ?? null,
+              client_name: listUser[0]?.client_name ?? 'dummy',
+              message_text: res?.data?.data?.message,
+              attachment: res?.data?.attachmentFiles ?? null,
+              stamp_no: res?.data?.data?.stamp_no,
+              to_info: {
+                type: MESSAGE_RANGE_TYPE.USER,
+                ids: listUser.map(el => el.id),
+              },
+            });
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
               room_id: idRoomChat,
@@ -962,12 +983,15 @@ export const useFunction = (props: any) => {
               user_name:
                 res?.data?.data?.user_send?.last_name +
                 res?.data?.data?.user_send?.first_name,
-              user_icon_url: res?.data?.data?.icon_image,
-              client_name: 'dummy',
+              user_icon_url: res?.data?.data?.icon_image ?? null,
+              client_name: listUser[0]?.client_name ?? null,
               message_text: res?.data?.data?.message,
-              attachment: res?.data?.attachmentFiles,
+              attachment: res?.data?.attachmentFiles ?? null,
               stamp_no: res?.data?.data?.stamp_no,
-              to_info: listUser.map(el => el.id),
+              to_info: {
+                type: MESSAGE_RANGE_TYPE.USER,
+                ids: listUser.map(el => el.id),
+              },
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
             callApiChatBotRequest(
@@ -1010,6 +1034,7 @@ export const useFunction = (props: any) => {
       sendFile,
       socket,
       user_id,
+      listUser,
     ],
   );
 
