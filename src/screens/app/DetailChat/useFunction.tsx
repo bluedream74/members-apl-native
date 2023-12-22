@@ -1173,6 +1173,14 @@ export const useFunction = (props: any) => {
       if (pageLoading) {
         setIdRoom(idRoomChat);
       } else if (!pageLoading && idRoom !== idRoomChat) {
+        try {
+          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+            animated: true,
+            index: 0,
+          });
+        } catch (error) {
+          console.log(error);
+        }
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
         setPage(1);
