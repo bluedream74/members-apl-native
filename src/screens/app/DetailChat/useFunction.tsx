@@ -14,6 +14,7 @@ import {
   fetchResultMessageActionRedLine,
   saveIdMessageSearch,
   resetDataChat,
+  saveIdRoomChat,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -1168,18 +1169,21 @@ export const useFunction = (props: any) => {
   // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
   // push通知をタップした時に、route?.params.idRoomChatが変更になりこちらが実行される
   useEffect(() => {
-    if (pageLoading) {
-      setIdRoom(route?.params.idRoomChat);
-    } else if (!pageLoading && idRoom !== route?.params.idRoomChat) {
-      dispatch(resetDataChat());
-      setPage(1);
-      setTopPage(1);
-      setBottomPage(1);
-      getListChat(page);
-      getDetail();
-      setIdRoom(route?.params.idRoomChat);
-    }
-  }, [route, pageLoading, getDetail, getListChat, idRoom, page, dispatch]);
+    async () => {
+      if (pageLoading) {
+        setIdRoom(idRoomChat);
+      } else if (!pageLoading && idRoom !== idRoomChat) {
+        await dispatch(resetDataChat());
+        await dispatch(saveIdRoomChat(idRoomChat));
+        setPage(1);
+        setTopPage(1);
+        setBottomPage(1);
+        getListChat(1);
+        getDetail();
+        setIdRoom(idRoomChat);
+      }
+    };
+  }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);
 
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
