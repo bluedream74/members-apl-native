@@ -1173,22 +1173,25 @@ export const useFunction = (props: any) => {
       if (pageLoading) {
         setIdRoom(idRoomChat);
       } else if (!pageLoading && idRoom !== idRoomChat) {
+        // page関連初期化
         try {
           giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
+            animated: false,
             index: 0,
           });
         } catch (error) {
           console.log(error);
         }
-        await dispatch(resetDataChat());
-        await dispatch(saveIdRoomChat(idRoomChat));
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
-        getListChat(1);
-        getDetail();
-        setIdRoom(idRoomChat);
+        await dispatch(resetDataChat());
+        await dispatch(saveIdRoomChat(idRoomChat));
+        setTimeout(() => {
+          getListChat(1);
+          getDetail();
+          setIdRoom(idRoomChat);
+        }, 500);
       }
     })();
   }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);
