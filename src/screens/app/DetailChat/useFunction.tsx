@@ -1170,6 +1170,9 @@ export const useFunction = (props: any) => {
     if (pageLoading) {
       setIdRoom(route?.params.idRoomChat);
     } else if (!pageLoading && idRoom !== route?.params.idRoomChat) {
+      setPage(1);
+      setTopPage(1);
+      setBottomPage(1);
       getListChat(page);
       getDetail();
       setIdRoom(route?.params.idRoomChat);
