@@ -1169,7 +1169,7 @@ export const useFunction = (props: any) => {
   // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
   // push通知をタップした時に、route?.params.idRoomChatが変更になりこちらが実行される
   useEffect(() => {
-    async () => {
+    (async () => {
       if (pageLoading) {
         setIdRoom(idRoomChat);
       } else if (!pageLoading && idRoom !== idRoomChat) {
@@ -1182,7 +1182,7 @@ export const useFunction = (props: any) => {
         getDetail();
         setIdRoom(idRoomChat);
       }
-    };
+    })();
   }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);
 
   // 他画面からの遷移、メッセージへスクロール
