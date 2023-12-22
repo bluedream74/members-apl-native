@@ -13,6 +13,7 @@ import {
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
   saveIdMessageSearch,
+  resetDataChat,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -1170,6 +1171,7 @@ export const useFunction = (props: any) => {
     if (pageLoading) {
       setIdRoom(route?.params.idRoomChat);
     } else if (!pageLoading && idRoom !== route?.params.idRoomChat) {
+      dispatch(resetDataChat());
       setPage(1);
       setTopPage(1);
       setBottomPage(1);
@@ -1177,7 +1179,7 @@ export const useFunction = (props: any) => {
       getDetail();
       setIdRoom(route?.params.idRoomChat);
     }
-  }, [route, pageLoading, getDetail, getListChat, idRoom, page]);
+  }, [route, pageLoading, getDetail, getListChat, idRoom, page, dispatch]);
 
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
