@@ -942,18 +942,17 @@ export const useFunction = (props: any) => {
               message_id: res?.data?.data?.id,
               message_type: res?.data?.data?.msg_type,
               method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
+              attachment_files: res?.data?.data?.attachment_files ?? null,
               stamp_no: res?.data?.data?.stamp_no,
               relation_message_id: res?.data?.data?.reply_to_message_id,
               text: res?.data?.data?.message,
               text2: null,
               time: res?.data?.data?.created_at,
             });
-            const result = await getListUser({room_id: idRoomChat, all: 1});
-            const joinUsers = result?.data?.users?.data?.map(el => el.id);
+            const joinUsers = listUser.map(el => el.id);
             const toInfo = {
-              'type' : MESSAGE_RANGE_TYPE.USER,
-              'ids' : joinUsers
+              type: MESSAGE_RANGE_TYPE.USER,
+              ids: joinUsers,
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -961,12 +960,12 @@ export const useFunction = (props: any) => {
               room_name: dataDetail?.name,
               join_users: joinUsers,
               user_name:
-                  res?.data?.data?.user_send?.last_name +
-                  res?.data?.data?.user_send?.first_name,
+                res?.data?.data?.user_send?.last_name +
+                res?.data?.data?.user_send?.first_name,
               user_icon_url: res?.data?.data?.icon_image ?? null,
               client_name: listUser[0]?.client_name ?? null,
               message_text: res?.data?.data?.message,
-              attachment: res?.data?.data?.attachmentFiles ?? null,
+              attachment: res?.data?.data?.attachment_files ?? null,
               stamp_no: res?.data?.data?.stamp_no,
               to_info: toInfo,
             });
@@ -1148,6 +1147,9 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
+        if (listUser.length === 0) {
+          getUserListChat();
+        }
       }
       setPageLoading(false);
     } else if (idMessageSearch > 0) {
@@ -1181,6 +1183,7 @@ export const useFunction = (props: any) => {
     idMessageSearch,
     listChat,
     paging?.current_page,
+    listUser,
   ]);
 
   // 他画面からの遷移、メッセージへスクロール
