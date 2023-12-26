@@ -13,6 +13,8 @@ import {
   fetchResultMessageActionListRoom,
   fetchResultMessageActionRedLine,
   saveIdMessageSearch,
+  resetDataChat,
+  saveIdRoomChat,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -69,6 +71,7 @@ export const useFunction = (props: any) => {
   const isGetInfoRoom = useSelector((state: any) => state.chat?.isGetInfoRoom);
   const redLineId = useSelector((state: any) => state.chat?.redLineId);
 
+  const [idRoom, setIdRoom] = useState<number | null>(null);
   const [visible, setVisible] = useState(false);
   const [dataDetail, setData] = useState<any>(null);
   const [page, setPage] = useState<number | null>(1);
@@ -212,7 +215,9 @@ export const useFunction = (props: any) => {
 
   const getConvertedMessages = useCallback(
     (msgs: any) => {
-      const messages = msgs?.filter((el: any) => !irregularMessageIds.includes(el?.id));
+      const messages = msgs?.filter(
+        (el: any) => !irregularMessageIds.includes(el?.id),
+      );
       return messages?.map((item: any, index: any) => {
         return convertDataMessage(item, index);
       });
@@ -1149,7 +1154,6 @@ export const useFunction = (props: any) => {
       }
     }
   }, [
-    route,
     page,
     pageLoading,
     dispatch,
@@ -1160,6 +1164,37 @@ export const useFunction = (props: any) => {
     listChat,
     paging?.current_page,
   ]);
+
+  // route?.paramsが変わったら実行
+  // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
+  // push通知をタップした時に、route?.params.idRoomChatが変更になりこちらが実行される
+  useEffect(() => {
+    if (pageLoading) {
+      setIdRoom(idRoomChat);
+    } else if (!pageLoading && idRoom !== idRoomChat) {
+      // page関連初期化
+    　(async () => {
+        try {
+          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
+            animated: false,
+            index: 0,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+        setPage(1);
+        setTopPage(1);
+        setBottomPage(1);
+        await dispatch(resetDataChat());
+        await dispatch(saveIdRoomChat(idRoomChat));
+        setTimeout(() => {
+          getListChat(1);
+          getDetail();
+          setIdRoom(idRoomChat);
+        }, 500);
+      })();
+    }
+  }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);
 
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
