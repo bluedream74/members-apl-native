@@ -1169,11 +1169,11 @@ export const useFunction = (props: any) => {
   // FirebaseMessage.tsxのhandleUserInteractionNotificationの中からこちらが実行される
   // push通知をタップした時に、route?.params.idRoomChatが変更になりこちらが実行される
   useEffect(() => {
-    (async () => {
-      if (pageLoading) {
-        setIdRoom(idRoomChat);
-      } else if (!pageLoading && idRoom !== idRoomChat) {
-        // page関連初期化
+    if (pageLoading) {
+      setIdRoom(idRoomChat);
+    } else if (!pageLoading && idRoom !== idRoomChat) {
+      // page関連初期化
+    　(async () => {
         try {
           giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
             animated: false,
@@ -1192,8 +1192,8 @@ export const useFunction = (props: any) => {
           getDetail();
           setIdRoom(idRoomChat);
         }, 500);
-      }
-    })();
+      })();
+    }
   }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);
 
   // 他画面からの遷移、メッセージへスクロール
