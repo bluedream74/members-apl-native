@@ -965,7 +965,7 @@ export const useFunction = (props: any) => {
               user_icon_url: res?.data?.data?.icon_image ?? null,
               client_name: listUser[0]?.client_name ?? null,
               message_text: res?.data?.data?.message,
-              attachment: res?.data?.data?.attachment_files ?? null,
+              attachment: null,
               stamp_no: res?.data?.data?.stamp_no,
               to_info: toInfo,
             });
