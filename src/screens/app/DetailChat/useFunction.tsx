@@ -1173,7 +1173,7 @@ export const useFunction = (props: any) => {
       setIdRoom(idRoomChat);
     } else if (!pageLoading && idRoom !== idRoomChat) {
       // page関連初期化
-    　(async () => {
+      (async () => {
         try {
           giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
             animated: false,
@@ -1187,11 +1187,9 @@ export const useFunction = (props: any) => {
         setBottomPage(1);
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
-        setTimeout(() => {
-          getListChat(1);
-          getDetail();
-          setIdRoom(idRoomChat);
-        }, 500);
+        getListChat(1);
+        getDetail();
+        setIdRoom(idRoomChat);
       })();
     }
   }, [idRoomChat, pageLoading, getDetail, getListChat, idRoom, dispatch]);

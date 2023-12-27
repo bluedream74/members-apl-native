@@ -66,19 +66,21 @@ const ListChat = (props: any) => {
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(saveIdRoomChat(null));
-      dispatch(saveMessageReply(null));
-      dispatch(resetDataChat());
-      setPage(1);
-      dispatch(
-        getRoomList({
-          key: key,
-          company_id: idCompany,
-          page: 1,
-          type: type_Filter,
-          category_id: categoryID_Filter,
-        }),
-      );
+      (async () => {
+        await dispatch(saveIdRoomChat(null));
+        await dispatch(saveMessageReply(null));
+        await dispatch(resetDataChat());
+        setPage(1);
+        dispatch(
+          getRoomList({
+            key: key,
+            company_id: idCompany,
+            page: 1,
+            type: type_Filter,
+            category_id: categoryID_Filter,
+          }),
+        );
+      })();
     }, [type_Filter, categoryID_Filter]),
   );
 
