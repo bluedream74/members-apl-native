@@ -8,7 +8,7 @@ import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
-import {getRoomList, saveIdRoomChat, getDetailRoomSocket} from '@redux';
+import {getRoomList, saveIdRoomChat, getDetailRoomSocket, resetDataChat} from '@redux';
 import {ROUTE_NAME} from '@routeName';
 import {NavigationUtils} from '@navigation';
 
@@ -163,12 +163,9 @@ function createAppNotification() {
   };
 
   const handleUserInteractionNotification = async (message: any) => {
-    let {notification, data} = message;
-    let title = '';
-    let bodyMessage = '';
+    let {data} = message;
     try {
-      title = notification.title;
-      bodyMessage = convertString(notification?.title);
+      await store.dispatch(resetDataChat());
       await store.dispatch(saveIdRoomChat(data?.room_id));
       NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
         idRoomChat: data?.room_id,
