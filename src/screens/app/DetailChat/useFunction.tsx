@@ -1210,6 +1210,8 @@ export const useFunction = (props: any) => {
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
+        setListUser([]);
+        setListUserRoot([]);
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
         setTimeout(() => {
