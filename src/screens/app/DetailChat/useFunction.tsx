@@ -11,7 +11,6 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  fetchResultMessageActionRedLine,
   saveIdMessageSearch,
   resetDataChat,
   saveIdRoomChat,
@@ -1213,13 +1212,14 @@ export const useFunction = (props: any) => {
       if (index > 0) {
         setIndexRedLine(index);
       }
-      setTimeout(() => {
-        const body = {
-          id_room: idRoomChat,
-          id_message: redLineId,
-        };
-        dispatch(fetchResultMessageActionRedLine(body));
-      }, 1000);
+      // 無限ループの原因になる為、無効化
+      // setTimeout(() => {
+      //   const body = {
+      //     id_room: idRoomChat,
+      //     id_message: redLineId,
+      //   };
+      //   dispatch(fetchResultMessageActionRedLine(body));
+      // }, 1000);
     } else {
     }
   }, [redLineId, dispatch, idRoomChat, listChat]);
