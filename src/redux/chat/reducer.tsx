@@ -21,7 +21,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       };
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
-      const currentPage = state.pagingDetail?.current_page;
+      const currentPage = state.pagingDetail?.current_page ?? 1;
       const messages = () => {
         if (page === 1 && Object.keys(state.detailChat).length === 0) {
           return action.payload.room_messages.data;

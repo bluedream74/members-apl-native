@@ -305,7 +305,7 @@ export const useFunction = (props: any) => {
 
   const getCurrentPage = useCallback(() => {
     const res = store.getState();
-    const currentPage = res.chat.pagingDetail.current_page;
+    const currentPage = res.chat.pagingDetail?.current_page ?? 1;
     if (!page) {
       setPage(currentPage);
     }
@@ -1234,7 +1234,7 @@ export const useFunction = (props: any) => {
   // check if messages belongs to this room
   useEffect(() => {
     const res = store.getState();
-    const currentPage = res.chat.pagingDetail?.current_page;
+    const currentPage = res.chat.pagingDetail?.current_page ?? 1;
     if (idMessageSearch > 0 && page !== currentPage) {
       setPage(currentPage);
       setTopPage(currentPage);
