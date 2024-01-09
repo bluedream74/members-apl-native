@@ -854,6 +854,26 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
+          });
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
@@ -882,6 +902,26 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
+          });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
           });
           dispatch(saveMessageEdit(null));
           dispatch(
@@ -923,6 +963,26 @@ export const useFunction = (props: any) => {
             text: res?.data?.data?.message,
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
+          });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
