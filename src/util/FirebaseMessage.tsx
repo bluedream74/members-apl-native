@@ -173,11 +173,11 @@ function createAppNotification() {
           await store.dispatch(resetDataChat());
         }
         await store.dispatch(saveIdRoomChat(data?.room_id));
+        NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+          idRoomChat: data?.room_id,
+          idMessageSearchListChat: null,
+        });
       }
-      NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
-        idRoomChat: data?.room_id,
-        idMessageSearchListChat: null,
-      });
     } catch (error) {}
   };
 
