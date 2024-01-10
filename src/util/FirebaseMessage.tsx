@@ -169,12 +169,12 @@ function createAppNotification() {
     try {
       if (data?.room_id) {
         const state = store.getState();
-        if (data?.room_id !== state?.chat?.id_roomChat) {
+        if (data.room_id !== state?.chat?.id_roomChat) {
           await store.dispatch(resetDataChat());
         }
-        await store.dispatch(saveIdRoomChat(data?.room_id));
+        await store.dispatch(saveIdRoomChat(data.room_id));
         NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
-          idRoomChat: data?.room_id,
+          idRoomChat: data.room_id,
           idMessageSearchListChat: null,
         });
       }
