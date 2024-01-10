@@ -545,10 +545,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => el.id);
+      const joinUsers = listUser.map(el => {
+        return {userId: el.id, userName: el.last_name + el.first_name};
+      });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: joinUsers,
+        ids: listUser.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -744,10 +746,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => el.id);
+      const joinUsers = listUser.map(el => {
+        return {userId: el.id, userName: el.last_name + el.first_name};
+      });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: joinUsers,
+        ids: listUser.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -894,10 +898,12 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => el.id);
+          const joinUsers = listUser.map(el => {
+            return {userId: el.id, userName: el.last_name + el.first_name};
+          });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: joinUsers,
+            ids: listUser.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -943,10 +949,12 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
           });
-          const joinUsers = listUser.map(el => el.id);
+          const joinUsers = listUser.map(el => {
+            return {userId: el.id, userName: el.last_name + el.first_name};
+          });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: joinUsers,
+            ids: listUser.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1004,10 +1012,12 @@ export const useFunction = (props: any) => {
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => el.id);
+          const joinUsers = listUser.map(el => {
+            return {userId: el.id, userName: el.last_name + el.first_name};
+          });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: joinUsers,
+            ids: listUser.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1054,10 +1064,12 @@ export const useFunction = (props: any) => {
               text2: null,
               time: res?.data?.data?.created_at,
             });
-            const joinUsers = listUser.map(el => el.id);
+            const joinUsers = listUser.map(el => {
+              return {userId: el.id, userName: el.last_name + el.first_name};
+            });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: joinUsers,
+              ids: listUser.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
