@@ -131,7 +131,7 @@ function createAppNotification() {
   };
 
   const handleNotiOnForeground = async (message: any) => {
-    let {notification} = message;
+    const {notification} = message;
     let title = '';
     let bodyMessage = '';
     const state = store.getState();
@@ -165,9 +165,10 @@ function createAppNotification() {
   };
 
   const handleUserInteractionNotification = async (message: any) => {
-    let {data} = message;
+    const {data} = message;
     try {
       await store.dispatch(resetDataChat());
+      const state = store.getState();
       await store.dispatch(saveIdRoomChat(data?.room_id));
       NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
         idRoomChat: data?.room_id,
