@@ -79,7 +79,7 @@ const DetailChat = (props: any) => {
     getText,
     me,
     showRedLine,
-    redLineId,
+    idRedLine,
     navigateToMessage,
     indexRedLine,
     onCreateTask,
@@ -190,7 +190,7 @@ const DetailChat = (props: any) => {
             newIndexArray={newIndexArray}
             me={me}
             showRedLine={showRedLine}
-            redLineId={redLineId}
+            idRedLine={idRedLine}
             isAdmin={dataDetail?.is_admin}
             moveToMessage={(id: any) => {
               navigateToMessage(id);
@@ -217,7 +217,7 @@ const DetailChat = (props: any) => {
       navigatiteToListReaction,
       quoteMessage,
       reactionMessage,
-      redLineId,
+      idRedLine,
       replyMessage,
       setFormattedText,
       showRedLine,

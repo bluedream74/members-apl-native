@@ -92,6 +92,7 @@ export const useFunction = (props: any) => {
   const [listUserSelect, setListUserSelect] = useState<any>([]);
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [idRedLine, setIdRedLine] = useState<number | null>(null);
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
@@ -1198,23 +1199,17 @@ export const useFunction = (props: any) => {
   // 未読メッセージが存在するページをfetch
   useEffect(() => {
     if (redLineId) {
+      setIdRedLine(redLineId);
+    }
+    if (idRedLine) {
       const index = listChat.findIndex(
-        (element: any) => element?.id === redLineId,
+        (element: any) => element?.id === idRedLine,
       );
       if (index > 0) {
         setIndexRedLine(index);
       }
-      // 無限ループの原因になる為、無効化
-      // setTimeout(() => {
-      //   const body = {
-      //     id_room: idRoomChat,
-      //     id_message: redLineId,
-      //   };
-      //   dispatch(fetchResultMessageActionRedLine(body));
-      // }, 1000);
-    } else {
     }
-  }, [redLineId, dispatch, idRoomChat, listChat]);
+  }, [redLineId, idRedLine, dispatch, idRoomChat, listChat]);
 
   // WebSocket
   useEffect(() => {
@@ -1358,7 +1353,7 @@ export const useFunction = (props: any) => {
     getText,
     me,
     showRedLine,
-    redLineId,
+    idRedLine,
     navigateToMessage,
     indexRedLine,
     onCreateTask,
