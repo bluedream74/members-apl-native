@@ -34,7 +34,7 @@ import {
 } from '@services';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
-import {AppSocket} from '@util';
+import {AppSocket, MESSAGE_RANGE_TYPE} from '@util';
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import {Platform, Text} from 'react-native';
@@ -545,6 +545,26 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
+      const joinUsers = listUser.map(el => el.id);
+      const toInfo = {
+        type: MESSAGE_RANGE_TYPE.USER,
+        ids: joinUsers,
+      };
+      socket.emit('notification_ind2', {
+        user_id: user_id,
+        room_id: idRoomChat,
+        room_name: dataDetail?.name,
+        join_users: joinUsers,
+        user_name:
+          res?.data?.data?.user_send?.last_name +
+          res?.data?.data?.user_send?.first_name,
+        user_icon_url: res?.data?.data?.icon_image ?? null,
+        client_name: listUser[0]?.client_name ?? null,
+        message_text: res?.data?.data?.message,
+        attachment: null,
+        stamp_no: res?.data?.data?.stamp_no,
+        to_info: toInfo,
+      });
       dispatch(
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
@@ -724,6 +744,26 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
+      const joinUsers = listUser.map(el => el.id);
+      const toInfo = {
+        type: MESSAGE_RANGE_TYPE.USER,
+        ids: joinUsers,
+      };
+      socket.emit('notification_ind2', {
+        user_id: user_id,
+        room_id: idRoomChat,
+        room_name: dataDetail?.name,
+        join_users: joinUsers,
+        user_name:
+          res?.data?.data?.user_send?.last_name +
+          res?.data?.data?.user_send?.first_name,
+        user_icon_url: res?.data?.data?.icon_image ?? null,
+        client_name: listUser[0]?.client_name ?? null,
+        message_text: res?.data?.data?.message,
+        attachment: null,
+        stamp_no: res?.data?.data?.stamp_no,
+        to_info: toInfo,
+      });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
@@ -854,6 +894,26 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
+          });
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
@@ -882,6 +942,26 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
+          });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
           });
           dispatch(saveMessageEdit(null));
           dispatch(
@@ -924,6 +1004,26 @@ export const useFunction = (props: any) => {
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
           });
+          const joinUsers = listUser.map(el => el.id);
+          const toInfo = {
+            type: MESSAGE_RANGE_TYPE.USER,
+            ids: joinUsers,
+          };
+          socket.emit('notification_ind2', {
+            user_id: mes[0]?.user?._id,
+            room_id: idRoomChat,
+            room_name: dataDetail?.name,
+            join_users: joinUsers,
+            user_name:
+              res?.data?.data?.user_send?.last_name +
+              res?.data?.data?.user_send?.first_name,
+            user_icon_url: res?.data?.data?.icon_image ?? null,
+            client_name: listUser[0]?.client_name ?? null,
+            message_text: res?.data?.data?.message,
+            attachment: null,
+            stamp_no: res?.data?.data?.stamp_no,
+            to_info: toInfo,
+          });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
         } catch (error: any) {}
@@ -947,12 +1047,32 @@ export const useFunction = (props: any) => {
               message_id: res?.data?.data?.id,
               message_type: res?.data?.data?.msg_type,
               method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
+              attachment_files: res?.data?.data?.attachment_files ?? null,
               stamp_no: res?.data?.data?.stamp_no,
               relation_message_id: res?.data?.data?.reply_to_message_id,
               text: res?.data?.data?.message,
               text2: null,
               time: res?.data?.data?.created_at,
+            });
+            const joinUsers = listUser.map(el => el.id);
+            const toInfo = {
+              type: MESSAGE_RANGE_TYPE.USER,
+              ids: joinUsers,
+            };
+            socket.emit('notification_ind2', {
+              user_id: mes[0]?.user?._id,
+              room_id: idRoomChat,
+              room_name: dataDetail?.name,
+              join_users: joinUsers,
+              user_name:
+                res?.data?.data?.user_send?.last_name +
+                res?.data?.data?.user_send?.first_name,
+              user_icon_url: res?.data?.data?.icon_image ?? null,
+              client_name: listUser[0]?.client_name ?? null,
+              message_text: res?.data?.data?.message,
+              attachment: null,
+              stamp_no: res?.data?.data?.stamp_no,
+              to_info: toInfo,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
             callApiChatBotRequest(
@@ -995,6 +1115,7 @@ export const useFunction = (props: any) => {
       sendFile,
       socket,
       user_id,
+      listUser,
     ],
   );
 
@@ -1131,6 +1252,9 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
+        if (listUser.length === 0) {
+          getUserListChat();
+        }
       }
       setPageLoading(false);
     } else if (idMessageSearch > 0) {
@@ -1163,6 +1287,7 @@ export const useFunction = (props: any) => {
     idMessageSearch,
     listChat,
     paging?.current_page,
+    listUser,
   ]);
 
   // route?.paramsが変わったら実行
@@ -1185,6 +1310,8 @@ export const useFunction = (props: any) => {
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
+        setListUser([]);
+        setListUserRoot([]);
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
         getListChat(1);
