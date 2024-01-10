@@ -14,6 +14,7 @@ import {
   saveIdMessageSearch,
   resetDataChat,
   saveIdRoomChat,
+  saveIsGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -247,8 +248,10 @@ export const useFunction = (props: any) => {
     try {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
-      dispatch(isGetInfoRoom(false));
-    } catch {}
+      dispatch(saveIsGetInfoRoom(false));
+    } catch (error) {
+      console.error(error);
+    }
   }, [idRoomChat, dispatch, isGetInfoRoom]);
 
   const onShowMenu = useCallback(() => {

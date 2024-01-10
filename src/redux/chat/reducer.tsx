@@ -171,7 +171,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         roomList: dataList,
       };
-    case typeChat.IS_GET_INFO_ROOM:
+    case typeChat.SAVE_IS_GET_INFO_ROOM:
       return {
         ...state,
         isGetInfoRoom: action.payload,

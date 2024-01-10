@@ -136,8 +136,8 @@ export const getDetailMessageSocketSeenSuccess = (payload: any) => ({
   payload,
 });
 
-export const isGetInfoRoom = (payload: any) => ({
-  type: typeChat.IS_GET_INFO_ROOM,
+export const saveIsGetInfoRoom = (payload: any) => ({
+  type: typeChat.SAVE_IS_GET_INFO_ROOM,
   payload,
 });
 
