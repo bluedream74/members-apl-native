@@ -167,8 +167,10 @@ function createAppNotification() {
   const handleUserInteractionNotification = async (message: any) => {
     const {data} = message;
     try {
-      await store.dispatch(resetDataChat());
       const state = store.getState();
+      if (data?.room_id !== state?.chat?.id_roomChat) {
+        await store.dispatch(resetDataChat());
+      }
       await store.dispatch(saveIdRoomChat(data?.room_id));
       NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
         idRoomChat: data?.room_id,
