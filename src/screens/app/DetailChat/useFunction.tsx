@@ -1173,14 +1173,6 @@ export const useFunction = (props: any) => {
     } else if (!pageLoading && idRoom !== idRoomChat) {
       // page関連初期化
       (async () => {
-        try {
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: false,
-            index: 0,
-          });
-        } catch (error) {
-          console.log(error);
-        }
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
