@@ -115,11 +115,6 @@ export const saveIdMessageSearch = (payload: any) => ({
   payload,
 });
 
-export const fetchResultMessageActionRedLine = (payload: any) => ({
-  type: typeChat.FETCH_RESULT_SEARCH_MESSAGE_RED_LINE,
-  payload,
-});
-
 //Action dùng để cập nhật tin nhắn cuối cùng trong room
 export const updateMessageSeen = (payload: any) => ({
   type: typeChat.UPDATE_MESSAGE_SEEN,
