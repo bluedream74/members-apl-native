@@ -11,10 +11,10 @@ import {
   saveMessageQuote,
   editMessageAction,
   fetchResultMessageActionListRoom,
-  fetchResultMessageActionRedLine,
   saveIdMessageSearch,
   resetDataChat,
   saveIdRoomChat,
+  saveIsGetInfoRoom,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -93,6 +93,7 @@ export const useFunction = (props: any) => {
   const [listUserSelect, setListUserSelect] = useState<any>([]);
   const [mentionedUsers, setMentionedUsers] = useState<any>([]);
   const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [idRedLine, setIdRedLine] = useState<number | null>(null);
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
@@ -247,8 +248,10 @@ export const useFunction = (props: any) => {
     try {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
-      dispatch(isGetInfoRoom(false));
-    } catch {}
+      dispatch(saveIsGetInfoRoom(false));
+    } catch (error) {
+      console.error(error);
+    }
   }, [idRoomChat, dispatch, isGetInfoRoom]);
 
   const onShowMenu = useCallback(() => {
@@ -306,7 +309,7 @@ export const useFunction = (props: any) => {
 
   const getCurrentPage = useCallback(() => {
     const res = store.getState();
-    const currentPage = res.chat.pagingDetail.current_page;
+    const currentPage = res.chat.pagingDetail?.current_page ?? 1;
     if (!page) {
       setPage(currentPage);
     }
@@ -1311,14 +1314,6 @@ export const useFunction = (props: any) => {
     } else if (!pageLoading && idRoom !== idRoomChat) {
       // page関連初期化
       (async () => {
-        try {
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: false,
-            index: 0,
-          });
-        } catch (error) {
-          console.log(error);
-        }
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
@@ -1346,22 +1341,17 @@ export const useFunction = (props: any) => {
   // 未読メッセージが存在するページをfetch
   useEffect(() => {
     if (redLineId) {
+      setIdRedLine(redLineId);
+    }
+    if (idRedLine) {
       const index = listChat.findIndex(
-        (element: any) => element?.id === redLineId,
+        (element: any) => element?.id === idRedLine,
       );
       if (index > 0) {
         setIndexRedLine(index);
       }
-      setTimeout(() => {
-        const body = {
-          id_room: idRoomChat,
-          id_message: redLineId,
-        };
-        dispatch(fetchResultMessageActionRedLine(body));
-      }, 1000);
-    } else {
     }
-  }, [redLineId, dispatch, idRoomChat, listChat]);
+  }, [redLineId, idRedLine, dispatch, idRoomChat, listChat]);
 
   // WebSocket
   useEffect(() => {
@@ -1373,7 +1363,7 @@ export const useFunction = (props: any) => {
   // check if messages belongs to this room
   useEffect(() => {
     const res = store.getState();
-    const currentPage = res.chat.pagingDetail?.current_page;
+    const currentPage = res.chat.pagingDetail?.current_page ?? 1;
     if (idMessageSearch > 0 && page !== currentPage) {
       setPage(currentPage);
       setTopPage(currentPage);
@@ -1505,7 +1495,7 @@ export const useFunction = (props: any) => {
     getText,
     me,
     showRedLine,
-    redLineId,
+    idRedLine,
     navigateToMessage,
     indexRedLine,
     onCreateTask,

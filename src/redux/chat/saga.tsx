@@ -165,30 +165,6 @@ export function* getDetailMessageSagaCurrent(action: any) {
   }
 }
 
-export function* fetchResultMessageRedLine(action: any) {
-  try {
-    const body = {
-      id_room: action.payload.id_room,
-      id_message: action.payload.id_message,
-    };
-    const res: ResponseGenerator = yield getResultSearchMessage(body);
-    if (res?.code === 200 && res?.data?.room_messages) {
-      const param = {
-        id: action.payload.id_room,
-        page: res?.data.pages,
-      };
-      const result: ResponseGenerator = yield getDetailChatApi(param);
-      const valueSave = {
-        data: result?.data?.room_messages?.data,
-        paging: result?.data?.room_messages?.paging,
-      };
-      yield put(fetchResultMessageSuccess(valueSave));
-    }
-  } catch (error) {
-  } finally {
-  }
-}
-
 export function* fetchResultMessageListFile(action: any) {
   try {
     const body = {
@@ -325,10 +301,6 @@ export function* chatSaga() {
   yield takeEvery(
     typeChat.GET_DETAIL_MESSAGE_SOCKET_CURRENT,
     getDetailMessageSagaCurrent,
-  );
-  yield takeEvery(
-    typeChat.FETCH_RESULT_SEARCH_MESSAGE_RED_LINE,
-    fetchResultMessageRedLine,
   );
   yield takeEvery(
     typeChat.FETCH_RESULT_SEARCH_MESSAGE_LIST_FILE,
