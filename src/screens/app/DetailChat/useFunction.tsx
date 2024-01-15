@@ -1095,6 +1095,27 @@ export const useFunction = (props: any) => {
               res?.data?.data?.id,
               `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
+          } else {
+            const joinUsers = listUser.map(el => {
+              return {userId: el.id, userName: el.last_name + el.first_name};
+            });
+            const toInfo = {
+              type: MESSAGE_RANGE_TYPE.USER,
+              ids: listUser.map(el => el.id),
+            };
+            socket.emit('notification_ind2', {
+              user_id: mes[0]?.user?._id,
+              room_id: idRoomChat,
+              room_name: dataDetail?.name,
+              join_users: joinUsers,
+              user_name: null,
+              user_icon_url: null,
+              client_name: listUser[0]?.client_name ?? null,
+              message_text: null,
+              attachment: null,
+              stamp_no: null,
+              to_info: toInfo,
+            });
           }
         } catch (error: any) {}
       }
