@@ -1,14 +1,17 @@
 import messaging from '@react-native-firebase/messaging';
-import {colors} from '@stylesCommon';
 import {showMessage} from 'react-native-flash-message';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Platform} from 'react-native';
 import {getSystemVersion} from 'react-native-device-info';
 import {registerToken} from '@services';
 import {store} from '../redux/store';
 import {convertString} from '@util';
 import notifee, {EventType} from '@notifee/react-native';
-import {getRoomList, saveIdRoomChat, getDetailRoomSocket} from '@redux';
+import {
+  getRoomList,
+  saveIdRoomChat,
+  getDetailRoomSocket,
+  resetDataChat,
+} from '@redux';
 import {ROUTE_NAME} from '@routeName';
 import {NavigationUtils} from '@navigation';
 
@@ -69,7 +72,6 @@ function createAppNotification() {
       handleUserInteractionNotification(notification);
     });
 
-
     // バックグラウンド時に通知を受け取った場合の処理
     // バッチの更新とルームごとの未読件数の更新を実施
     messaging().setBackgroundMessageHandler(async notification => {
@@ -90,13 +92,13 @@ function createAppNotification() {
 
       // roomidの指定があれば更新をする
       const state = store.getState();
-      if (notification.data?.room_id == state?.chat?.id_roomChat) {
+      if (notification.data?.room_id === state?.chat?.id_roomChat) {
         return null;
       } else {
         if (state?.chat?.roomList?.length > 0) {
           const dataList = [...state?.chat?.roomList];
           const index = dataList.findIndex(
-            (element: any) => element?.id == notification.data?.room_id,
+            (element: any) => element?.id === notification.data?.room_id,
           );
           console.log(index);
           if (index > -1) {
@@ -129,7 +131,7 @@ function createAppNotification() {
   };
 
   const handleNotiOnForeground = async (message: any) => {
-    let {notification, data} = message;
+    const {notification} = message;
     let title = '';
     let bodyMessage = '';
     const state = store.getState();
@@ -163,17 +165,19 @@ function createAppNotification() {
   };
 
   const handleUserInteractionNotification = async (message: any) => {
-    let {notification, data} = message;
-    let title = '';
-    let bodyMessage = '';
+    const {data} = message;
     try {
-      title = notification.title;
-      bodyMessage = convertString(notification?.title);
-      await store.dispatch(saveIdRoomChat(data?.room_id));
-      NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
-        idRoomChat: data?.room_id,
-        idMessageSearchListChat: null,
-      });
+      if (data?.room_id) {
+        const state = store.getState();
+        if (data.room_id !== state?.chat?.id_roomChat) {
+          await store.dispatch(resetDataChat());
+        }
+        await store.dispatch(saveIdRoomChat(data.room_id));
+        NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+          idRoomChat: data.room_id,
+          idMessageSearchListChat: null,
+        });
+      }
     } catch (error) {}
   };
 
@@ -184,7 +188,7 @@ function createAppNotification() {
         os_version: getSystemVersion(),
         os_name: Platform.OS,
       };
-      const response = await registerToken(data);
+      await registerToken(data);
     } catch (error) {}
   };
 

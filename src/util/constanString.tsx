@@ -26,4 +26,10 @@ export const ATTACHMENT_FILE_TYPE = {
   PDF: 2,
   DOC: 5,
   XLS: 3,
-}
+};
+
+export const MESSAGE_RANGE_TYPE = {
+  USER: 1, // ユーザID（複数）
+  GROUP: 2, // グループID（複数）
+  ALL: 3, // ALL
+};

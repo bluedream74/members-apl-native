@@ -55,7 +55,7 @@ const ItemMessage = React.memo((props: any) => {
     quoteMsg,
     me,
     showRedLine,
-    redLineId,
+    idRedLine,
     isAdmin,
     moveToMessage,
     indexRedLine,
@@ -388,7 +388,7 @@ const ItemMessage = React.memo((props: any) => {
         </Text>
       ) : (
         <>
-          {redLineId === _id && showRedLine === true ? (
+          {idRedLine === _id && showRedLine === true ? (
             <View style={styles.viewCenter}>
               <View style={styles.viewRedLine} />
               <Text style={styles.txtRedLine}>未読メッセージ</Text>
