@@ -102,6 +102,7 @@ const DetailChat = (props: any) => {
     customBack,
     setInputIndex,
     inputIndex,
+    showSendMessageButton,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -123,7 +124,8 @@ const DetailChat = (props: any) => {
     (inputProps: any) => {
       return (
         <>
-          {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+          {showSendMessageButton &&
+          (inputProps.formattedText?.length > 0 || chosenFiles.length > 0) ? (
             <Actions
               {...inputProps}
               containerStyle={styles.buttonRight}
@@ -151,7 +153,7 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText],
+    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText, showSendMessageButton],
   );
 
   //Render ra UI của message
