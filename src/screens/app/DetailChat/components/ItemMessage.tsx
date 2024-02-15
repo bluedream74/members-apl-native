@@ -733,6 +733,7 @@ const ItemMessage = React.memo((props: any) => {
 
             {users_seen?.length > 0 ? (
               <TouchableOpacity
+                key={index}
                 style={styles.viewSeen}
                 onPress={onClickDetailSeen}>
                 {users_seen?.map((item: any, indexItem: any) => {
@@ -740,7 +741,7 @@ const ItemMessage = React.memo((props: any) => {
                     <ViewUserSeen
                       item={item}
                       index={indexItem}
-                      key={index}
+                      key={indexItem}
                       data={users_seen}
                     />
                   );
