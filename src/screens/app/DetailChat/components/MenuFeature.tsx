@@ -115,10 +115,6 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 1,
       sourceImage: icon1,
-      style: {
-        width: 21,
-        height: 18,
-      },
     },
     {
       id: 2,
@@ -135,34 +131,18 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 6,
       sourceImage: icon6,
-      style: {
-        width: 18,
-        height: 21,
-      },
     },
     {
       id: 7,
       sourceImage: understand,
-      style: {
-        width: 21,
-        height: 20,
-      },
     },
     {
       id: 8,
       sourceImage: bow,
-      style: {
-        width: 20,
-        height: 20,
-      },
     },
     {
       id: 9,
       sourceImage: congrats,
-      style: {
-        width: 20,
-        height: 20,
-      },
     },
   ];
 
@@ -279,8 +259,9 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
   },
   imageEmoji: {
-    width: 21,
-    height: 21,
+    width: 24,
+    height: 24,
+    marginRight: 2,
   },
 });
 
