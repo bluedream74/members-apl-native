@@ -1,6 +1,6 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { colors, stylesCommon } from '@stylesCommon';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {StyleSheet, Dimensions} from 'react-native';
+import {colors, stylesCommon} from '@stylesCommon';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const height_screen = Dimensions.get('window').height;
 
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
-    backgroundColor:'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   viewPartCopyOverlay: {
     justifyContent: 'center',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: verticalScale(5),
   },
-  buttonRight: { marginRight: 16, marginLeft: 0 },
+  buttonRight: {marginRight: 16, marginLeft: 0},
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),
@@ -167,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { styles };
+export {styles};

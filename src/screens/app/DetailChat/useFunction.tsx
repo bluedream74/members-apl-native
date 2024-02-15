@@ -253,7 +253,7 @@ export const useFunction = (props: any) => {
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat, dispatch, isGetInfoRoom]);
+  }, [idRoomChat, dispatch]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -575,7 +575,7 @@ export const useFunction = (props: any) => {
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
-    [dispatch, idRoomChat, socket, user_id],
+    [dispatch, idRoomChat, socket, user_id, dataDetail?.name, listUser],
   );
 
   const navigatiteToListReaction = useCallback(
@@ -1153,6 +1153,7 @@ export const useFunction = (props: any) => {
       socket,
       user_id,
       listUser,
+      dataDetail?.name,
     ],
   );
 
@@ -1329,6 +1330,7 @@ export const useFunction = (props: any) => {
     listChat,
     paging?.current_page,
     listUser,
+    getUserListChat,
   ]);
 
   // route?.paramsが変わったら実行

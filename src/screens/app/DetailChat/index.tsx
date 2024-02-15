@@ -223,6 +223,7 @@ const DetailChat = (props: any) => {
       navigatiteToListReaction,
       quoteMessage,
       reactionMessage,
+      changePartCopy,
       idRedLine,
       replyMessage,
       setFormattedText,
@@ -423,9 +424,15 @@ const DetailChat = (props: any) => {
                               ? getText(formattedText)
                               : ' ';
                             //前のテキストと今のテキストの違いをみつけてそれが@のみのはずなので、その@の位置にinsertする
-                            const first = wordBeforeMention.substring(0, inputIndex);
-                            const second = wordBeforeMention.substring(inputIndex + 1);
-                            const newText = first + ` @${value}${title} ` + second;
+                            const first = wordBeforeMention.substring(
+                              0,
+                              inputIndex,
+                            );
+                            const second = wordBeforeMention.substring(
+                              inputIndex + 1,
+                            );
+                            const newText =
+                              first + ` @${value}${title} ` + second;
                             formatText(newText, true);
                             setInputText(newText);
                           }
@@ -506,22 +513,23 @@ const DetailChat = (props: any) => {
       {partCopy && (
         <View style={styles.viewPartCopy}>
           <TouchableOpacity
-            style={[styles.viewPartCopyOverlay, {alignItems: partCopy.me ? 'flex-end' : 'flex-start'}]}
-            onPress={() => changePartCopy(null)}
-          >
+            style={[
+              styles.viewPartCopyOverlay,
+              {alignItems: partCopy.me ? 'flex-end' : 'flex-start'},
+            ]}
+            onPress={() => changePartCopy(null)}>
             <LinearGradient
               colors={partCopy.colors}
               start={{x: 1, y: 0}}
               end={{x: 0, y: 0}}
               style={styles.containerChat}>
-                <TextInput
-                  editable={false}
-                  multiline
-                  scrollEnabled={true}
-                  style={styles.partCopyText}
-                >
-                  {partCopy.text}
-                </TextInput>
+              <TextInput
+                editable={false}
+                multiline
+                scrollEnabled={true}
+                style={styles.partCopyText}>
+                {partCopy.text}
+              </TextInput>
             </LinearGradient>
           </TouchableOpacity>
         </View>

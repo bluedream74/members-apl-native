@@ -1,13 +1,7 @@
 import {colors, stylesCommon} from '@stylesCommon';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {
-  like,
-  happy,
-  heart,
-  great,
-  smile,
-  sad,
   menuCopy,
   menuPartCopy,
   menuDelete,
@@ -18,16 +12,14 @@ import {
   icon2,
   icon3,
   icon4,
-  icon5,
   icon6,
   understand,
   bow,
   congrats,
-  iconBookmark,
   iconPin,
   iconQuote,
 } from '@images';
-import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import {verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
 const MenuFeature = React.memo((props: any) => {
@@ -62,8 +54,7 @@ const MenuFeature = React.memo((props: any) => {
         width: 18,
         height: 18,
       },
-      isShow:
-        userId == user_id && msgType === 0 ? true : false,
+      isShow: userId === user_id && msgType === 0 ? true : false,
     },
     {
       id: 9,
@@ -94,7 +85,7 @@ const MenuFeature = React.memo((props: any) => {
         width: 18,
         height: 18,
       },
-      isShow: userId == user_id ? true : false,
+      isShow: userId === user_id ? true : false,
     },
     {
       id: 10,
@@ -176,52 +167,59 @@ const MenuFeature = React.memo((props: any) => {
   ];
 
   const showDataFeature = dataFeature.filter(
-    (item: any) => item?.isShow === true
+    (item: any) => item?.isShow === true,
   );
 
   return (
     <View style={styles.container}>
       <View style={[styles.viewFeature, {marginBottom: 10}]}>
-        {showDataFeature.slice(0, showDataFeature.length / 2 + showDataFeature.length % 2).map((item: any, index: any) => {
-          return (
-            <View key={item?.id}>
-              <TouchableOpacity
-                style={styles.itemFeature}
-                onPress={() => onActionMenu(item?.id)}>
-                <Image
-                  source={item?.sourceImage}
-                  style={item?.style ? item?.style : styles.imageFeature}
-                />
-                <Text style={styles.txtNameFeature} numberOfLines={1}>
-                  {item?.name}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
+        {showDataFeature
+          .slice(0, showDataFeature.length / 2 + (showDataFeature.length % 2))
+          .map((item: any) => {
+            return (
+              <View key={item?.id}>
+                <TouchableOpacity
+                  style={styles.itemFeature}
+                  onPress={() => onActionMenu(item?.id)}>
+                  <Image
+                    source={item?.sourceImage}
+                    style={item?.style ? item?.style : styles.imageFeature}
+                  />
+                  <Text style={styles.txtNameFeature} numberOfLines={1}>
+                    {item?.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
       </View>
       <View style={styles.viewFeature}>
-        {showDataFeature.slice(showDataFeature.length / 2 + showDataFeature.length % 2, showDataFeature.length).map((item: any, index: any) => {
-          return (
-            <View key={item?.id}>
-              <TouchableOpacity
-                style={styles.itemFeature}
-                onPress={() => onActionMenu(item?.id)}>
-                <Image
-                  source={item?.sourceImage}
-                  style={item?.style ? item?.style : styles.imageFeature}
-                />
-                <Text style={styles.txtNameFeature} numberOfLines={1}>
-                  {item?.name}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
+        {showDataFeature
+          .slice(
+            showDataFeature.length / 2 + (showDataFeature.length % 2),
+            showDataFeature.length,
+          )
+          .map((item: any) => {
+            return (
+              <View key={item?.id}>
+                <TouchableOpacity
+                  style={styles.itemFeature}
+                  onPress={() => onActionMenu(item?.id)}>
+                  <Image
+                    source={item?.sourceImage}
+                    style={item?.style ? item?.style : styles.imageFeature}
+                  />
+                  <Text style={styles.txtNameFeature} numberOfLines={1}>
+                    {item?.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
       </View>
       <View style={styles.line} />
       <View style={styles.viewFeature}>
-        {dataEmoji.map((item: any, index: any) => {
+        {dataEmoji.map((item: any) => {
           return (
             <View key={item?.id}>
               <TouchableOpacity

@@ -101,13 +101,54 @@ const ItemMessage = React.memo((props: any) => {
     setShowModalDelete(!showModalDelete);
   }, [showModalDelete]);
 
-  const navigateToList = useCallback(_id => {
-    navigatiteToListReaction(_id);
-  }, []);
+  const navigateToList = useCallback(
+    id => {
+      navigatiteToListReaction(id);
+    },
+    [navigatiteToListReaction],
+  );
 
-  const onJumpToOriginal = useCallback(id => {
-    moveToMessage(id);
-  }, []);
+  const onJumpToOriginal = useCallback(
+    id => {
+      moveToMessage(id);
+    },
+    [moveToMessage],
+  );
+
+  /**
+   * 自分のメンションが入っているメッセージ
+   */
+  const checkMessageToSelfMention = useCallback(() => {
+    let isSelfMention = false;
+    //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
+    const matchs = text?.match(
+      new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
+    );
+    if (matchs != null) {
+      isSelfMention = true;
+    } else {
+      //@自分
+      let mentionText = `@${me?.last_name.replace(
+        ' ',
+        '',
+      )}${me?.first_name?.replace(' ', '')}さん`;
+
+      if (text?.includes(mentionText)) {
+        isSelfMention = true;
+      }
+    }
+    return isSelfMention;
+  }, [me, text]);
+
+  const formatColor = useCallback(() => {
+    if (user?._id === user_id) {
+      return colorCurrent;
+    } else if (checkMessageToSelfMention()) {
+      return colorSelfMention;
+    } else {
+      return color;
+    }
+  }, [checkMessageToSelfMention, user?._id, user_id]);
 
   //Đây là hàm xử lý khi ấn vào menu reaction
   const onActionMenu = useCallback(
@@ -210,12 +251,32 @@ const ItemMessage = React.memo((props: any) => {
             me: user?._id === user_id,
             colors: formatColor(),
             text: text.replace('<br>', '\n'),
-          }
+          };
           changePartCopy(copyData);
           break;
       }
     },
-    [visible],
+    [
+      _id,
+      attachment_files,
+      bookmarkMsg,
+      changePartCopy,
+      deleteMsg,
+      editMsg,
+      formatColor,
+      idRoomChat,
+      index,
+      mentionedUsers,
+      onShowMenu,
+      pinMsg,
+      quoteMsg,
+      replyMsg,
+      setFormattedText,
+      stamp_no,
+      text,
+      user,
+      user_id,
+    ],
   );
 
   const onActionReaction = useCallback(
@@ -223,7 +284,7 @@ const ItemMessage = React.memo((props: any) => {
       onShowMenu();
       onReaction(value, _id);
     },
-    [visible],
+    [_id, onReaction, onShowMenu],
   );
 
   var countReaction = reaction.reduce(function (total: any, course: any) {
@@ -249,7 +310,7 @@ const ItemMessage = React.memo((props: any) => {
 
   const onClickDetailSeen = useCallback(() => {
     navigation.navigate(ROUTE_NAME.USER_SEEN, {id: _id});
-  }, []);
+  }, [_id, navigation]);
 
   const formatText = (inputText: string) => {
     if (inputText.length === 0) {
@@ -257,11 +318,11 @@ const ItemMessage = React.memo((props: any) => {
     }
     const words = inputText.split(' ');
     const formattedText: (string | JSX.Element)[] = [];
-    words.forEach((word, index) => {
+    words.forEach((word, indexWord) => {
       const isLastWord = index === words.length - 1;
       if (!word.startsWith('@')) {
         const nonmention = (
-          <Text key={word + index} style={{color: 'black'}}>
+          <Text key={word + indexWord} style={{color: 'black'}}>
             {word}
           </Text>
         );
@@ -279,7 +340,7 @@ const ItemMessage = React.memo((props: any) => {
           mention = (
             <View>
               <Text
-                key={word + index}
+                key={word + indexWord}
                 style={{
                   alignSelf: 'flex-start',
                   color: '#3366CC',
@@ -294,7 +355,7 @@ const ItemMessage = React.memo((props: any) => {
           mention = (
             <View>
               <Text
-                key={word + index}
+                key={word + indexWord}
                 style={{
                   alignSelf: 'flex-start',
                   color: '#3366CC',
@@ -314,41 +375,6 @@ const ItemMessage = React.memo((props: any) => {
     return formattedText;
   };
 
-  const formatColor = () => {
-    if (user?._id === user_id) {
-      return colorCurrent;
-    } else if (checkMessageToSelfMention()) {
-      return colorSelfMention;
-    } else {
-      return color;
-    }
-  };
-
-  /**
-   * 自分のメンションが入っているメッセージ
-   */
-  const checkMessageToSelfMention = () => {
-    let isSelfMention = false;
-    //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-    const matchs = text?.match(
-      new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
-    );
-    if (matchs != null) {
-      isSelfMention = true;
-    } else {
-      //@自分
-      let mentionText = `@${me?.last_name.replace(
-        ' ',
-        '',
-      )}${me?.first_name?.replace(' ', '')}さん`;
-
-      if (text?.includes(mentionText)) {
-        isSelfMention = true;
-      }
-    }
-
-    return isSelfMention;
-  };
   /**
    * 条件分岐でシステムメッセージ
    * @param msgtype
@@ -369,13 +395,13 @@ const ItemMessage = React.memo((props: any) => {
 
   return (
     <>
-      {msg_type == 11 ||
-      msg_type == 4 ||
-      msg_type == 5 ||
-      msg_type == 9 ||
-      msg_type == 8 ||
-      msg_type == 10 ||
-      msg_type == 12 ? (
+      {msg_type === 11 ||
+      msg_type === 4 ||
+      msg_type === 5 ||
+      msg_type === 9 ||
+      msg_type === 8 ||
+      msg_type === 10 ||
+      msg_type === 12 ? (
         <TouchableOpacity
           style={styles.viewCenter}
           onPress={onShowModalDelete}
@@ -391,7 +417,7 @@ const ItemMessage = React.memo((props: any) => {
             <MenuOption onDeleteMessage={() => onActionMenu(11)} />
           </Menu>
         </TouchableOpacity>
-      ) : msg_type == 14 ? (
+      ) : msg_type === 14 ? (
         <Text style={styles.txtCenter} numberOfLines={2}>
           {task_message}
         </Text>
@@ -405,7 +431,9 @@ const ItemMessage = React.memo((props: any) => {
           ) : null}
           <View
             style={[
-              user?._id == user_id ? styles.containerCurrent : styles.container,
+              user?._id === user_id
+                ? styles.containerCurrent
+                : styles.container,
               {
                 marginBottom:
                   indexRedLine && indexRedLine - 1 === index
@@ -414,8 +442,8 @@ const ItemMessage = React.memo((props: any) => {
               },
             ]}>
             <>
-              {user?._id == user_id ? null : renderTxtName()}
-              {msg_type == 6 ? (
+              {user?._id === user_id ? null : renderTxtName()}
+              {msg_type === 6 ? (
                 <View style={styles.viewTask}>
                   <FastImage source={defaultAvatar} style={styles.image} />
                   <ViewTask data={task} mess={text} task_link={task_link} />
@@ -424,10 +452,10 @@ const ItemMessage = React.memo((props: any) => {
               <TouchableOpacity
                 style={styles.chat}
                 onPress={onShowMenu}
-                disabled={msg_type == 6}>
-                {user?._id == user_id ? (
+                disabled={msg_type === 6}>
+                {user?._id === user_id ? (
                   <>
-                    {msg_type == 6 || msg_type == 8 ? null : (
+                    {msg_type === 6 || msg_type === 8 ? null : (
                       <>
                         {moment(createdAt) < moment(updated_at) ? (
                           <Image source={iconEdit} style={styles.iconEdit} />
@@ -450,7 +478,7 @@ const ItemMessage = React.memo((props: any) => {
                   </>
                 ) : (
                   <View style={styles.viewAvatar}>
-                    {msg_type == 6 || msg_type == 8 ? null : (
+                    {msg_type === 6 || msg_type === 8 ? null : (
                       <FastImage
                         style={styles.image}
                         source={{
@@ -464,7 +492,7 @@ const ItemMessage = React.memo((props: any) => {
                   </View>
                 )}
                 <>
-                  {msg_type == 1 ? (
+                  {msg_type === 1 ? (
                     <FastImage
                       source={{
                         uri: stamp_icon,
@@ -479,12 +507,12 @@ const ItemMessage = React.memo((props: any) => {
                     />
                   ) : (
                     <>
-                      {msg_type == 6 ||
-                      msg_type == 8 ||
-                      msg_type == 14 ? null : (
+                      {msg_type === 6 ||
+                      msg_type === 8 ||
+                      msg_type === 14 ? null : (
                         <View
                           style={
-                            user?._id == user_id
+                            user?._id === user_id
                               ? [
                                   styles.containerViewChat,
                                   {alignItems: 'flex-end'},
@@ -578,7 +606,7 @@ const ItemMessage = React.memo((props: any) => {
                                         {reply_to_message_files?.map(
                                           (item: any) => (
                                             <View key={item?.id}>
-                                              {item?.type == 4 ? (
+                                              {item?.type === 4 ? (
                                                 <FastImage
                                                   source={{
                                                     uri: item?.path,
@@ -612,7 +640,7 @@ const ItemMessage = React.memo((props: any) => {
                                             FastImage.cacheControl.immutable,
                                         }}
                                         style={
-                                          reply_to_message_stamp?.stamp_no == 1
+                                          reply_to_message_stamp?.stamp_no === 1
                                             ? styles.imageLikeReply
                                             : styles.imageStampRepLy
                                         }
@@ -641,10 +669,10 @@ const ItemMessage = React.memo((props: any) => {
                     </>
                   )}
                 </>
-                {user?._id == user_id ||
-                msg_type == 6 ||
-                msg_type == 8 ||
-                msg_type == 14 ? null : (
+                {user?._id === user_id ||
+                msg_type === 6 ||
+                msg_type === 8 ||
+                msg_type === 14 ? null : (
                   <>
                     {moment(createdAt) < moment(updated_at) ? (
                       <Text style={styles.txtTime}>
@@ -690,7 +718,7 @@ const ItemMessage = React.memo((props: any) => {
                   index === newIndexArray - 2
                     ? moderateVerticalScale(0)
                     : moderateVerticalScale(-125),
-                width: width * 4/5,
+                width: (width * 4) / 5,
               }}
               visible={visible}
               onRequestClose={onShowMenu}
@@ -707,11 +735,11 @@ const ItemMessage = React.memo((props: any) => {
               <TouchableOpacity
                 style={styles.viewSeen}
                 onPress={onClickDetailSeen}>
-                {users_seen?.map((item: any, index: any) => {
+                {users_seen?.map((item: any, indexItem: any) => {
                   return (
                     <ViewUserSeen
                       item={item}
-                      index={index}
+                      index={indexItem}
                       key={index}
                       data={users_seen}
                     />
