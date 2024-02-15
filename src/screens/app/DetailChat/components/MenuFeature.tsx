@@ -9,6 +9,7 @@ import {
   smile,
   sad,
   menuCopy,
+  menuPartCopy,
   menuDelete,
   menuEdit,
   menuPinChat,
@@ -30,7 +31,7 @@ import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
 const MenuFeature = React.memo((props: any) => {
-  const {onActionMenu, onActionReaction, userId, msg_type} = props;
+  const {onActionMenu, onActionReaction, userId, msgType} = props;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const dataFeature = [
     {
@@ -41,7 +42,17 @@ const MenuFeature = React.memo((props: any) => {
         width: 14,
         height: 18,
       },
-      isShow: msg_type == 1 ? false : true,
+      isShow: msgType === 0 ? true : false,
+    },
+    {
+      id: 14,
+      sourceImage: menuPartCopy,
+      name: '部分コピー',
+      style: {
+        width: 14,
+        height: 18,
+      },
+      isShow: msgType === 0 ? true : false,
     },
     {
       id: 8,
@@ -52,7 +63,7 @@ const MenuFeature = React.memo((props: any) => {
         height: 18,
       },
       isShow:
-        userId == user_id && msg_type !== 1 && msg_type !== 2 ? true : false,
+        userId == user_id && msgType === 0 ? true : false,
     },
     {
       id: 9,
@@ -94,7 +105,7 @@ const MenuFeature = React.memo((props: any) => {
         height: 18,
         tintColor: '#FFFFFF',
       },
-      isShow: msg_type !== 1 ? true : false,
+      isShow: true,
     },
     {
       id: 13,
@@ -164,25 +175,46 @@ const MenuFeature = React.memo((props: any) => {
     },
   ];
 
+  const showDataFeature = dataFeature.filter(
+    (item: any) => item?.isShow === true
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.viewFeature}>
-        {dataFeature.map((item: any, index: any) => {
+      <View style={[styles.viewFeature, {marginBottom: 10}]}>
+        {showDataFeature.slice(0, showDataFeature.length / 2 + showDataFeature.length % 2).map((item: any, index: any) => {
           return (
-            <View key={item?.id} style={{maxWidth: userId == user_id ? '20%' : '100%'}}>
-              {item?.isShow === true ? (
-                <TouchableOpacity
-                  style={styles.itemFeature}
-                  onPress={() => onActionMenu(item?.id)}>
-                  <Image
-                    source={item?.sourceImage}
-                    style={item?.style ? item?.style : styles.imageFeature}
-                  />
-                  <Text style={styles.txtNameFeature} numberOfLines={1}>
-                    {item?.name}
-                  </Text>
-                </TouchableOpacity>
-              ) : null}
+            <View key={item?.id}>
+              <TouchableOpacity
+                style={styles.itemFeature}
+                onPress={() => onActionMenu(item?.id)}>
+                <Image
+                  source={item?.sourceImage}
+                  style={item?.style ? item?.style : styles.imageFeature}
+                />
+                <Text style={styles.txtNameFeature} numberOfLines={1}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </View>
+      <View style={styles.viewFeature}>
+        {showDataFeature.slice(showDataFeature.length / 2 + showDataFeature.length % 2, showDataFeature.length).map((item: any, index: any) => {
+          return (
+            <View key={item?.id}>
+              <TouchableOpacity
+                style={styles.itemFeature}
+                onPress={() => onActionMenu(item?.id)}>
+                <Image
+                  source={item?.sourceImage}
+                  style={item?.style ? item?.style : styles.imageFeature}
+                />
+                <Text style={styles.txtNameFeature} numberOfLines={1}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
             </View>
           );
         })}
@@ -193,7 +225,7 @@ const MenuFeature = React.memo((props: any) => {
           return (
             <View key={item?.id}>
               <TouchableOpacity
-                style={styles.itemFeature}
+                style={styles.reactionFeature}
                 key={item?.id}
                 onPress={() => onActionReaction(item?.id)}>
                 <Image
@@ -218,8 +250,8 @@ const styles = StyleSheet.create({
   },
   viewFeature: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   imageFeature: {
     tintColor: '#FFFFFF',
@@ -230,12 +262,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 60,
+  },
+  reactionFeature: {
+    marginHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   txtNameFeature: {
     marginTop: verticalScale(5),
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-    fontSize: verticalScale(12),
+    fontSize: verticalScale(8),
   },
   line: {
     height: verticalScale(1),

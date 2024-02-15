@@ -97,6 +97,7 @@ export const useFunction = (props: any) => {
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [partCopy, setPartCopy] = useState<any>(null);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
@@ -1186,6 +1187,10 @@ export const useFunction = (props: any) => {
     setShowUserList(!showUserList);
   }, [showUserList]);
 
+  const changePartCopy = useCallback((data: any) => {
+    setPartCopy(data);
+  }, []);
+
   const onSaveTask = useCallback(async input => {
     const data = {
       project_id: 1,
@@ -1526,6 +1531,8 @@ export const useFunction = (props: any) => {
     onUpdateTask,
     setShowUserList,
     showUserList,
+    partCopy,
+    changePartCopy,
     selected,
     setSelected,
     setInputText,

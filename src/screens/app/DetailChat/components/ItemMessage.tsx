@@ -48,6 +48,7 @@ const ItemMessage = React.memo((props: any) => {
     editMsg,
     bookmarkMsg,
     onReaction,
+    changePartCopy,
     navigatiteToListReaction,
     listUser,
     idRoomChat,
@@ -203,6 +204,14 @@ const ItemMessage = React.memo((props: any) => {
             roomId: idRoomChat,
           };
           quoteMsg(dataQuote);
+          break;
+        case 14:
+          const copyData = {
+            me: user?._id === user_id,
+            colors: formatColor(),
+            text: text.replace('<br>', '\n'),
+          }
+          changePartCopy(copyData);
           break;
       }
     },
@@ -681,12 +690,14 @@ const ItemMessage = React.memo((props: any) => {
                   index === newIndexArray - 2
                     ? moderateVerticalScale(0)
                     : moderateVerticalScale(-125),
+                width: width * 4/5,
               }}
               visible={visible}
               onRequestClose={onShowMenu}
               key={1}>
               <MenuFeature
                 userId={user?._id}
+                msgType={msg_type}
                 onActionMenu={(value: any) => onActionMenu(value)}
                 onActionReaction={(value: any) => onActionReaction(value)}
               />
