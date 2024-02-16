@@ -10,7 +10,6 @@ const ViewFilter = React.memo((props: any) => {
   const {onClick} = props;
   return (
     <View style={styles.container}>
-      <ViewHeader title="メンションがあるチャット" />
       <ViewItem
         title="すべてのチャット"
         onPress={() => {
