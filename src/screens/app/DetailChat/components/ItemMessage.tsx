@@ -119,25 +119,24 @@ const ItemMessage = React.memo((props: any) => {
    * 自分のメンションが入っているメッセージ
    */
   const checkMessageToSelfMention = useCallback(() => {
-    let isSelfMention = false;
     //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
     const matchs = text?.match(
       new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
     );
     if (matchs != null) {
-      isSelfMention = true;
+      return true;
     } else {
       //@自分
-      let mentionText = `@${me?.last_name.replace(
+      const mentionText = `@${me?.last_name.replace(
         ' ',
         '',
       )}${me?.first_name?.replace(' ', '')}さん`;
 
       if (text?.includes(mentionText)) {
-        isSelfMention = true;
+        return true;
       }
     }
-    return isSelfMention;
+    return false;
   }, [me, text]);
 
   const formatColor = useCallback(() => {
