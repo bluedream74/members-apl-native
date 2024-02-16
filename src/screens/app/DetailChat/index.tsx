@@ -1,5 +1,13 @@
 import React, {useCallback, useRef} from 'react';
-import {View, Image, Platform, TouchableOpacity, TextInput} from 'react-native';
+import {
+  View,
+  Image,
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  TextInput,
+  Text,
+} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
 import {
@@ -518,19 +526,29 @@ const DetailChat = (props: any) => {
               {alignItems: partCopy.me ? 'flex-end' : 'flex-start'},
             ]}
             onPress={() => changePartCopy(null)}>
-            <LinearGradient
-              colors={partCopy.colors}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={styles.containerChat}>
-              <TextInput
-                editable={false}
-                multiline
-                scrollEnabled={true}
-                style={styles.partCopyText}>
-                {partCopy.text}
-              </TextInput>
-            </LinearGradient>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <LinearGradient
+                colors={partCopy.colors}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={styles.containerChat}>
+                {Platform.OS === 'ios' ? (
+                  <TextInput
+                    editable={false}
+                    multiline
+                    scrollEnabled={true}
+                    selectTextOnFocus={true}
+                    showSoftInputOnFocus={false}
+                    style={styles.partCopyText}>
+                    {partCopy.text}
+                  </TextInput>
+                ) : (
+                  <Text selectable={true} style={styles.partCopyText}>
+                    {partCopy.text}
+                  </Text>
+                )}
+              </LinearGradient>
+            </TouchableWithoutFeedback>
           </TouchableOpacity>
         </View>
       )}
