@@ -721,8 +721,7 @@ const ItemMessage = React.memo((props: any) => {
                 width: (width * 4) / 5,
               }}
               visible={visible}
-              onRequestClose={onShowMenu}
-              key={1}>
+              onRequestClose={onShowMenu}>
               <MenuFeature
                 userId={user?._id}
                 msgType={msg_type}
