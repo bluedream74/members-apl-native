@@ -43,6 +43,12 @@ import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
 import {Keyboard, KeyboardEvent} from 'react-native';
 
+interface partCopyType {
+  me: boolean;
+  colors: Array<string>;
+  text: string;
+}
+
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
@@ -97,7 +103,7 @@ export const useFunction = (props: any) => {
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
-  const [partCopy, setPartCopy] = useState<any>(null);
+  const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
