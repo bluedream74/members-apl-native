@@ -124,7 +124,7 @@ const DetailChat = (props: any) => {
     (inputProps: any) => {
       return (
         <>
-          {showSendMessageButton ? (
+          {showSendMessageButton && (
             <>
               {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
                 <Actions
@@ -152,8 +152,6 @@ const DetailChat = (props: any) => {
                 />
               )}
             </>
-          ) : (
-            <></>
           )}
         </>
       );
