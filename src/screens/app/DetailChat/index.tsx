@@ -113,6 +113,7 @@ const DetailChat = (props: any) => {
     customBack,
     setInputIndex,
     inputIndex,
+    showSendMessageButton,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -134,35 +135,39 @@ const DetailChat = (props: any) => {
     (inputProps: any) => {
       return (
         <>
-          {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
-            <Actions
-              {...inputProps}
-              containerStyle={styles.buttonRight}
-              onPressActionButton={() => {
-                const messages = [
-                  {
-                    text: getText(inputProps.formattedText),
-                    user: {_id: inputProps.user?._id},
-                    createdAt: new Date(Date.now()),
-                  },
-                ];
-                sendMessage(messages);
-                setFormattedText([]);
-              }}
-              icon={() => <Image source={iconSend} />}
-            />
-          ) : (
-            <Actions
-              {...inputProps}
-              containerStyle={styles.buttonRight}
-              onPressActionButton={() => sendLabel(1)}
-              icon={() => <Image source={iconLike} />}
-            />
+          {showSendMessageButton && (
+            <>
+              {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+                <Actions
+                  {...inputProps}
+                  containerStyle={styles.buttonRight}
+                  onPressActionButton={() => {
+                    const messages = [
+                      {
+                        text: getText(inputProps.formattedText),
+                        user: {_id: inputProps.user?._id},
+                        createdAt: new Date(Date.now()),
+                      },
+                    ];
+                    sendMessage(messages);
+                    setFormattedText([]);
+                  }}
+                  icon={() => <Image source={iconSend} />}
+                />
+              ) : (
+                <Actions
+                  {...inputProps}
+                  containerStyle={styles.buttonRight}
+                  onPressActionButton={() => sendLabel(1)}
+                  icon={() => <Image source={iconLike} />}
+                />
+              )}
+            </>
           )}
         </>
       );
     },
-    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText],
+    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText, showSendMessageButton],
   );
 
   //Render ra UI của message
