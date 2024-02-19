@@ -440,7 +440,7 @@ const DetailChat = (props: any) => {
                               inputIndex + 1,
                             );
                             const newText =
-                              first + ` @${value}${title} ` + second;
+                              `${first} @${value}${title} ${second}`;
                             formatText(newText, true);
                             setInputText(newText);
                           }
