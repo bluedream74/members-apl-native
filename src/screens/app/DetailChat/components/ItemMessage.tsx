@@ -311,69 +311,6 @@ const ItemMessage = React.memo((props: any) => {
     navigation.navigate(ROUTE_NAME.USER_SEEN, {id: _id});
   }, [_id, navigation]);
 
-  const formatText = (inputText: string) => {
-    if (inputText.length === 0) {
-      return;
-    }
-    const words = inputText.split(' ');
-    const formattedText: (string | JSX.Element)[] = [];
-    words.forEach((word, indexWord) => {
-      const isLastWord = index === words.length - 1;
-      if (!word.startsWith('@')) {
-        const nonmention = (
-          <Text key={word + indexWord} style={{color: 'black'}}>
-            {word}
-          </Text>
-        );
-        return isLastWord
-          ? formattedText.push(nonmention)
-          : formattedText.push(nonmention, ' ');
-      } else {
-        let myName = `@${me?.last_name.replace(
-          ' ',
-          '',
-        )}${me?.first_name?.replace(' ', '')}`;
-        let mention;
-        // 自分宛のメンションの場合
-        if (word.includes(myName)) {
-          mention = (
-            <View>
-              <Text
-                key={word + indexWord}
-                style={{
-                  alignSelf: 'flex-start',
-                  color: '#3366CC',
-                  fontWeight: 'bold',
-                }}>
-                {word}
-              </Text>
-            </View>
-          );
-        } else {
-          // 他人宛のメンションの場合
-          mention = (
-            <View>
-              <Text
-                key={word + indexWord}
-                style={{
-                  alignSelf: 'flex-start',
-                  color: '#3366CC',
-                  fontWeight: 'bold',
-                }}>
-                {word}
-              </Text>
-            </View>
-          );
-        }
-
-        isLastWord
-          ? formattedText.push(mention)
-          : formattedText.push(mention, ' ');
-      }
-    });
-    return formattedText;
-  };
-
   /**
    * 条件分岐でシステムメッセージ
    * @param msgtype
