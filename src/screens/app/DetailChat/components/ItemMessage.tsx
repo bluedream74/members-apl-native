@@ -247,7 +247,7 @@ const ItemMessage = React.memo((props: any) => {
           const copyData = {
             me: user?._id === user_id,
             colors: formatColor(),
-            text: text.replace('<br>', '\n'),
+            text: text.replace(/<br>/g, '\n'),
           };
           changePartCopy(copyData);
           break;
