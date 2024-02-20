@@ -125,16 +125,14 @@ const ItemMessage = React.memo((props: any) => {
     );
     if (matchs != null) {
       return true;
-    } else {
-      //@自分
-      const mentionText = `@${me?.last_name.replace(
-        ' ',
-        '',
-      )}${me?.first_name?.replace(' ', '')}さん`;
-
-      if (text?.includes(mentionText)) {
-        return true;
-      }
+    }
+    //@自分
+    const mentionText = `@${me?.last_name.replace(
+      ' ',
+      '',
+    )}${me?.first_name?.replace(' ', '')}さん`;
+    if (text?.includes(mentionText)) {
+      return true;
     }
     return false;
   }, [me, text]);
@@ -142,11 +140,11 @@ const ItemMessage = React.memo((props: any) => {
   const formatColor = useCallback(() => {
     if (user?._id === user_id) {
       return colorCurrent;
-    } else if (checkMessageToSelfMention()) {
-      return colorSelfMention;
-    } else {
-      return color;
     }
+    if (checkMessageToSelfMention()) {
+      return colorSelfMention;
+    }
+    return color;
   }, [checkMessageToSelfMention, user?._id, user_id]);
 
   //Đây là hàm xử lý khi ấn vào menu reaction
