@@ -1198,7 +1198,7 @@ export const useFunction = (props: any) => {
   }, [showUserList]);
 
   const changePartCopy = useCallback((data: any) => {
-    setPartCopy(data);
+    setTimeout(() => setPartCopy(data), 200)
   }, []);
 
   const onSaveTask = useCallback(async input => {
