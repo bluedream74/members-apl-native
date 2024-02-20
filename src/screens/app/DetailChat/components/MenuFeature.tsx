@@ -115,6 +115,10 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 1,
       sourceImage: icon1,
+      style: {
+        width: 27,
+        height: 24,
+      },
     },
     {
       id: 2,
@@ -135,6 +139,10 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 7,
       sourceImage: understand,
+      style: {
+        width: 27,
+        height: 24,
+      },
     },
     {
       id: 8,
