@@ -22,6 +22,27 @@ import {
 import {verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
+interface dataFeatureType {
+  id: number;
+  sourceImage: number;
+  name: string;
+  style: {
+    width: number;
+    height: number;
+    tintColor?: string;
+  };
+  isShow: boolean;
+}
+
+interface dataEmojiType {
+  id: number;
+  sourceImage: number;
+  style?: {
+    width: number;
+    height: number;
+  };
+}
+
 const MenuFeature = React.memo((props: any) => {
   const {onActionMenu, onActionReaction, userId, msgType} = props;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
@@ -155,7 +176,7 @@ const MenuFeature = React.memo((props: any) => {
   ];
 
   const showDataFeature = dataFeature.filter(
-    (item: any) => item?.isShow === true,
+    (item: dataFeatureType) => item?.isShow === true,
   );
 
   return (
@@ -163,7 +184,7 @@ const MenuFeature = React.memo((props: any) => {
       <View style={[styles.viewFeature, {marginBottom: 10}]}>
         {showDataFeature
           .slice(0, showDataFeature.length / 2 + (showDataFeature.length % 2))
-          .map((item: any) => {
+          .map((item: dataFeatureType) => {
             return (
               <View key={item?.id}>
                 <TouchableOpacity
@@ -187,7 +208,7 @@ const MenuFeature = React.memo((props: any) => {
             showDataFeature.length / 2 + (showDataFeature.length % 2),
             showDataFeature.length,
           )
-          .map((item: any) => {
+          .map((item: dataFeatureType) => {
             return (
               <View key={item?.id}>
                 <TouchableOpacity
@@ -207,7 +228,7 @@ const MenuFeature = React.memo((props: any) => {
       </View>
       <View style={styles.line} />
       <View style={styles.viewReaction}>
-        {dataEmoji.map((item: any) => {
+        {dataEmoji.map((item: dataEmojiType) => {
           return (
             <View key={item?.id}>
               <TouchableOpacity
