@@ -206,7 +206,7 @@ const MenuFeature = React.memo((props: any) => {
           })}
       </View>
       <View style={styles.line} />
-      <View style={styles.viewFeature}>
+      <View style={styles.viewReaction}>
         {dataEmoji.map((item: any) => {
           return (
             <View key={item?.id}>
@@ -236,6 +236,12 @@ const styles = StyleSheet.create({
   },
   viewFeature: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginHorizontal: 30,
+  },
+  viewReaction: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
@@ -248,7 +254,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 60,
+    width: 40,
   },
   reactionFeature: {
     marginHorizontal: 4,
@@ -257,6 +263,7 @@ const styles = StyleSheet.create({
   },
   txtNameFeature: {
     marginTop: verticalScale(5),
+    marginHorizontal: -10,
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
     fontSize: verticalScale(8),
