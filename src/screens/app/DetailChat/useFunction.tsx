@@ -103,6 +103,7 @@ export const useFunction = (props: any) => {
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+  const [showSendMessageButton, setShowSendMessageButton] = useState<boolean>(true);
 
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
@@ -855,6 +856,7 @@ export const useFunction = (props: any) => {
       setShowTag(false);
       setShowModalStamp(false);
       setShowRedLine(false);
+      setShowSendMessageButton(false);
       if (messageReply) {
         try {
           // 現在表示中のルームIDと返信元のルームIDが違う場合はエラー
@@ -1137,6 +1139,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
+      setShowSendMessageButton(true);
     },
     [
       messageReply,
@@ -1539,5 +1542,6 @@ export const useFunction = (props: any) => {
     deleteFile,
     setInputIndex,
     inputIndex,
+    showSendMessageButton,
   };
 };

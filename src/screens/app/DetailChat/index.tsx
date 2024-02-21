@@ -102,6 +102,7 @@ const DetailChat = (props: any) => {
     customBack,
     setInputIndex,
     inputIndex,
+    showSendMessageButton,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -123,35 +124,39 @@ const DetailChat = (props: any) => {
     (inputProps: any) => {
       return (
         <>
-          {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
-            <Actions
-              {...inputProps}
-              containerStyle={styles.buttonRight}
-              onPressActionButton={() => {
-                const messages = [
-                  {
-                    text: getText(inputProps.formattedText),
-                    user: {_id: inputProps.user?._id},
-                    createdAt: new Date(Date.now()),
-                  },
-                ];
-                sendMessage(messages);
-                setFormattedText([]);
-              }}
-              icon={() => <Image source={iconSend} />}
-            />
-          ) : (
-            <Actions
-              {...inputProps}
-              containerStyle={styles.buttonRight}
-              onPressActionButton={() => sendLabel(1)}
-              icon={() => <Image source={iconLike} />}
-            />
+          {showSendMessageButton && (
+            <>
+              {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+                <Actions
+                  {...inputProps}
+                  containerStyle={styles.buttonRight}
+                  onPressActionButton={() => {
+                    const messages = [
+                      {
+                        text: getText(inputProps.formattedText),
+                        user: {_id: inputProps.user?._id},
+                        createdAt: new Date(Date.now()),
+                      },
+                    ];
+                    sendMessage(messages);
+                    setFormattedText([]);
+                  }}
+                  icon={() => <Image source={iconSend} />}
+                />
+              ) : (
+                <Actions
+                  {...inputProps}
+                  containerStyle={styles.buttonRight}
+                  onPressActionButton={() => sendLabel(1)}
+                  icon={() => <Image source={iconLike} />}
+                />
+              )}
+            </>
           )}
         </>
       );
     },
-    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText],
+    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText, showSendMessageButton],
   );
 
   //Render ra UI của message
@@ -308,9 +313,6 @@ const DetailChat = (props: any) => {
           keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
           onInputTextChanged={txt => {
-            //get index
-            const index = findDiffIndex(inputText, txt);
-            setInputIndex(index);
             formatText(txt, false);
             setInputText(txt);
           }}
@@ -368,6 +370,8 @@ const DetailChat = (props: any) => {
                 formattedText.push(' ');
                 setFormattedText(formattedText);
                 return false;
+              } else if (nativeEvent?.key === 'Backspace') {
+                // 半角@入力後にも発火するので何もしない
               } else {
                 setShowTag(false);
               }
@@ -375,6 +379,7 @@ const DetailChat = (props: any) => {
             onSelectionChange: ({nativeEvent}: any) => {
               textSelection.start = nativeEvent.selection.start;
               textSelection.end = nativeEvent.selection.end;
+              setInputIndex(nativeEvent.selection.start);
             },
           }}
           //Chú ý đây là phần xử lý các UI nằm bên trên của input chat (có custom trong thư viện)
