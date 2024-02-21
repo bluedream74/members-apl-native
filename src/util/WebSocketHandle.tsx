@@ -144,14 +144,6 @@ function createAppSocket() {
         } else {
         }
       } else {
-        store.dispatch(
-          getRoomList({
-            company_id: state?.chat?.idCompany,
-            search: null,
-            type: state?.chat?.type_Filter,
-            category_id: state?.chat?.categoryID_Filter,
-          }),
-        );
       }
     });
     socket.on(EVENT_SOCKET.DISCONNECT, () => {});
