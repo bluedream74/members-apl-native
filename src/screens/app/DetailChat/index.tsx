@@ -370,6 +370,8 @@ const DetailChat = (props: any) => {
                 formattedText.push(' ');
                 setFormattedText(formattedText);
                 return false;
+              } else if (nativeEvent?.key === 'Backspace') {
+                // 半角@入力後にも発火するので何もしない
               } else {
                 setShowTag(false);
               }
