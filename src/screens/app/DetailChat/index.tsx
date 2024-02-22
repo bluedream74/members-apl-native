@@ -526,6 +526,7 @@ const DetailChat = (props: any) => {
       {partCopy && (
         <View style={styles.viewPartCopy}>
           <TouchableOpacity
+            activeOpacity={1}
             style={[
               styles.viewPartCopyOverlay,
               {alignItems: partCopy.me ? 'flex-end' : 'flex-start'},
