@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    marginTop: verticalScale(3),
   },
   imageFeature: {
     tintColor: '#FFFFFF',
