@@ -328,9 +328,6 @@ const DetailChat = (props: any) => {
           keyboardHeight={keyboardHeight}
           ref={giftedChatRef}
           onInputTextChanged={txt => {
-            //get index
-            const index = findDiffIndex(inputText, txt);
-            setInputIndex(index);
             formatText(txt, false);
             setInputText(txt);
           }}
@@ -388,6 +385,8 @@ const DetailChat = (props: any) => {
                 formattedText.push(' ');
                 setFormattedText(formattedText);
                 return false;
+              } else if (nativeEvent?.key === 'Backspace') {
+                // 半角@入力後にも発火するので何もしない
               } else {
                 setShowTag(false);
               }
@@ -395,6 +394,7 @@ const DetailChat = (props: any) => {
             onSelectionChange: ({nativeEvent}: any) => {
               textSelection.start = nativeEvent.selection.start;
               textSelection.end = nativeEvent.selection.end;
+              setInputIndex(nativeEvent.selection.start);
             },
           }}
           //Chú ý đây là phần xử lý các UI nằm bên trên của input chat (có custom trong thư viện)
