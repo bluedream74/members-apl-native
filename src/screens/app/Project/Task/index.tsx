@@ -1,10 +1,9 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, FlatList, RefreshControl} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
 import {useSelector} from 'react-redux';
 import {GlobalService, getListTask, finishTask} from '@services';
-import {useFocusEffect} from '@react-navigation/native';
 import {Accordion} from './component/Accordion';
 import {ModalTask} from '../../DetailChat/components/ModalTask';
 import {ModalUserList} from '../../DetailChat/components/ModalUserList';
@@ -50,22 +49,17 @@ const Task = (props: any) => {
           ? res?.data?.tasks?.data
           : listTask.concat(res?.data?.tasks?.data),
       );
+      setReload(false);
       GlobalService.hideLoading();
     } catch (error: any) {
+      setReload(false);
       GlobalService.hideLoading();
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const params = {
-        page: 1,
-        idCompany: idCompany,
-        idRoomChat: idRoom_chat,
-      };
-      callApiSearch(params);
-    }, []),
-  );
+  useEffect(() => {
+    setReload(true);
+  }, []);
 
   useEffect(() => {
     if (page > 1) {
@@ -79,14 +73,14 @@ const Task = (props: any) => {
   }, [page]);
 
   useEffect(() => {
-    setTimeout(() => {
+    if (reload) {
       const params = {
         page: page,
         idCompany: idCompany,
         idRoomChat: idRoom_chat,
       };
       callApiSearch(params);
-    }, 500);
+    }
   }, [reload]);
 
   const handleLoadMore = useCallback(() => {
@@ -94,6 +88,7 @@ const Task = (props: any) => {
       setPage(prevPage => prevPage + 1);
     }
   }, [page, lastPage]);
+
   const onFinishTask = useCallback(
     async input => {
       const data = {
@@ -109,7 +104,7 @@ const Task = (props: any) => {
           type: 'danger',
         });
       } else {
-        setReload(!reload);
+        setReload(true);
         showMessage({
           message: '保存しました。',
           type: 'success',
@@ -145,6 +140,12 @@ const Task = (props: any) => {
             onEndReachedThreshold={0.01}
             onEndReached={handleLoadMore}
             contentContainerStyle={{paddingBottom: 300}}
+            refreshControl={
+              <RefreshControl
+                refreshing={reload}
+                onRefresh={() => setReload(true)}
+              />
+            }
           />
         </View>
       </View>
