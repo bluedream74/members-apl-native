@@ -149,7 +149,7 @@ const ItemMessage = React.memo((props: any) => {
 
   //Đây là hàm xử lý khi ấn vào menu reaction
   const onActionMenu = useCallback(
-    async (value) => {
+    async value => {
       await onShowMenu();
       const txt = String(text);
       switch (value) {

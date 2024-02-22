@@ -102,7 +102,6 @@ const DetailChat = (props: any) => {
     selected,
     setSelected,
     setInputText,
-    inputText,
     textSelection,
     onDecoSelected,
     keyboardHeight,
@@ -137,7 +136,8 @@ const DetailChat = (props: any) => {
         <>
           {showSendMessageButton && (
             <>
-              {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+              {inputProps.formattedText?.length > 0 ||
+              chosenFiles.length > 0 ? (
                 <Actions
                   {...inputProps}
                   containerStyle={styles.buttonRight}
@@ -167,7 +167,14 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText, showSendMessageButton],
+    [
+      chosenFiles,
+      getText,
+      sendLabel,
+      sendMessage,
+      setFormattedText,
+      showSendMessageButton,
+    ],
   );
 
   //Render ra UI của message
@@ -267,15 +274,6 @@ const DetailChat = (props: any) => {
   const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 0,
   });
-  const findDiffIndex = useCallback((str1, str2) => {
-    let diffIndex = -1;
-    for (let i = 0; i < str2.split('').length; i++) {
-      if (str2.charAt(i) !== str1.charAt(i)) {
-        return i;
-      }
-    }
-    return diffIndex;
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -444,8 +442,7 @@ const DetailChat = (props: any) => {
                             const second = wordBeforeMention.substring(
                               inputIndex + 1,
                             );
-                            const newText =
-                              `${first} @${value}${title} ${second}`;
+                            const newText = `${first} @${value}${title} ${second}`;
                             formatText(newText, true);
                             setInputText(newText);
                           }

@@ -75,7 +75,8 @@ const MenuFeature = React.memo((props: any) => {
         width: 18,
         height: 18,
       },
-      isShow: userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
+      isShow:
+        userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
     },
     {
       id: 9,

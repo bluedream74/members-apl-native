@@ -110,7 +110,8 @@ export const useFunction = (props: any) => {
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
-  const [showSendMessageButton, setShowSendMessageButton] = useState<boolean>(true);
+  const [showSendMessageButton, setShowSendMessageButton] =
+    useState<boolean>(true);
 
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
@@ -1198,7 +1199,7 @@ export const useFunction = (props: any) => {
   }, [showUserList]);
 
   const changePartCopy = useCallback((data: any) => {
-    setTimeout(() => setPartCopy(data), 200)
+    setTimeout(() => setPartCopy(data), 200);
   }, []);
 
   const onSaveTask = useCallback(async input => {
