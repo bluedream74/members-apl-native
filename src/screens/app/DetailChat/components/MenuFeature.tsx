@@ -179,52 +179,65 @@ const MenuFeature = React.memo((props: any) => {
     (item: dataFeatureType) => item?.isShow === true,
   );
 
+  const topDataFeature = () => {
+    if (showDataFeature.length <= 4) {
+      return showDataFeature;
+    }
+    return showDataFeature.slice(
+      0,
+      showDataFeature.length / 2 + (showDataFeature.length % 2),
+    );
+  };
+
+  const bottomDataFeature = () => {
+    if (showDataFeature.length <= 4) {
+      return [];
+    }
+    return showDataFeature.slice(
+      showDataFeature.length / 2 + (showDataFeature.length % 2),
+      showDataFeature.length,
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.viewFeature, {marginBottom: 10}]}>
-        {showDataFeature
-          .slice(0, showDataFeature.length / 2 + (showDataFeature.length % 2))
-          .map((item: dataFeatureType) => {
-            return (
-              <View key={item?.id}>
-                <TouchableOpacity
-                  style={styles.itemFeature}
-                  onPress={() => onActionMenu(item?.id)}>
-                  <Image
-                    source={item?.sourceImage}
-                    style={item?.style ? item?.style : styles.imageFeature}
-                  />
-                  <Text style={styles.txtNameFeature} numberOfLines={1}>
-                    {item?.name}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
+        {topDataFeature().map((item: dataFeatureType) => {
+          return (
+            <View key={item?.id}>
+              <TouchableOpacity
+                style={styles.itemFeature}
+                onPress={() => onActionMenu(item?.id)}>
+                <Image
+                  source={item?.sourceImage}
+                  style={item?.style ? item?.style : styles.imageFeature}
+                />
+                <Text style={styles.txtNameFeature} numberOfLines={1}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </View>
       <View style={styles.viewFeature}>
-        {showDataFeature
-          .slice(
-            showDataFeature.length / 2 + (showDataFeature.length % 2),
-            showDataFeature.length,
-          )
-          .map((item: dataFeatureType) => {
-            return (
-              <View key={item?.id}>
-                <TouchableOpacity
-                  style={styles.itemFeature}
-                  onPress={() => onActionMenu(item?.id)}>
-                  <Image
-                    source={item?.sourceImage}
-                    style={item?.style ? item?.style : styles.imageFeature}
-                  />
-                  <Text style={styles.txtNameFeature} numberOfLines={1}>
-                    {item?.name}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
+        {bottomDataFeature().map((item: dataFeatureType) => {
+          return (
+            <View key={item?.id}>
+              <TouchableOpacity
+                style={styles.itemFeature}
+                onPress={() => onActionMenu(item?.id)}>
+                <Image
+                  source={item?.sourceImage}
+                  style={item?.style ? item?.style : styles.imageFeature}
+                />
+                <Text style={styles.txtNameFeature} numberOfLines={1}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </View>
       <View style={styles.line} />
       <View style={styles.viewReaction}>
