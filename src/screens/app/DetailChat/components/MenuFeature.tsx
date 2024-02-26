@@ -157,6 +157,10 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 6,
       sourceImage: icon6,
+      style: {
+        width: 22,
+        height: 24,
+      },
     },
     {
       id: 7,
@@ -173,6 +177,10 @@ const MenuFeature = React.memo((props: any) => {
     {
       id: 9,
       sourceImage: congrats,
+      style: {
+        width: 23,
+        height: 24,
+      },
     },
   ];
 
@@ -251,7 +259,7 @@ const MenuFeature = React.memo((props: any) => {
                 onPress={() => onActionReaction(item?.id)}>
                 <Image
                   source={item?.sourceImage}
-                  style={item?.style ? item?.style : styles.imageEmoji}
+                  style={[item?.style ? item?.style : styles.imageEmoji, {overflow: 'visible'}]}
                 />
               </TouchableOpacity>
             </View>
@@ -294,7 +302,7 @@ const styles = StyleSheet.create({
   },
   reactionFeature: {
     marginHorizontal: 4,
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   txtNameFeature: {
