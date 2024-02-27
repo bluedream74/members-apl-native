@@ -64,7 +64,7 @@ const DetailChat = (props: any) => {
     text,
     setShowTag,
     showTagModal,
-    listUser,
+    listUserChat,
     bookmarkMessage,
     ids,
     setIds,
@@ -191,7 +191,7 @@ const DetailChat = (props: any) => {
             navigatiteToListReaction={(idMsg: any) => {
               navigatiteToListReaction(idMsg);
             }}
-            listUser={listUser}
+            listUser={listUserChat}
             newIndexArray={newIndexArray}
             me={me}
             showRedLine={showRedLine}
@@ -208,7 +208,7 @@ const DetailChat = (props: any) => {
       );
     },
     [
-      listUser,
+      listUserChat,
       newIndexArray,
       bookmarkMessage,
       dataDetail?.is_admin,
@@ -400,7 +400,7 @@ const DetailChat = (props: any) => {
                           setShowTag(false);
                           if (id === 'All') {
                             setListUserSelect(
-                              listUser.map(el => {
+                              listUserChat.map(el => {
                                 return {
                                   userId: el.id,
                                   userName: el.last_name + el.first_name,

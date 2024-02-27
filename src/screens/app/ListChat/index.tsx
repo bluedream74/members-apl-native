@@ -23,6 +23,7 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
+  saveListUserChat,
   showHideModalFilterListChat,
   getUnreadMessageCount,
 } from "@redux";
@@ -70,6 +71,7 @@ const ListChat = (props: any) => {
         await dispatch(saveIdRoomChat(null));
         await dispatch(saveMessageReply(null));
         await dispatch(resetDataChat());
+        dispatch(saveListUserChat([]));
         setPage(1);
         dispatch(
           getRoomList({
