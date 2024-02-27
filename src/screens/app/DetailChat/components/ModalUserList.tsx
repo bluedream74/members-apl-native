@@ -86,7 +86,7 @@ const ModalUserList = memo((prop: any) => {
           },
         ]),
     );
-  }, [listUserChat]);
+  }, [listUserChat, loginUser]);
 
   return (
     <Modal

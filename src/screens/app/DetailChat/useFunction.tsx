@@ -103,7 +103,8 @@ export const useFunction = (props: any) => {
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
-  const [showSendMessageButton, setShowSendMessageButton] = useState<boolean>(true);
+  const [showSendMessageButton, setShowSendMessageButton] =
+    useState<boolean>(true);
 
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
@@ -253,7 +254,7 @@ export const useFunction = (props: any) => {
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat, dispatch, isGetInfoRoom]);
+  }, [idRoomChat, dispatch]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -575,7 +576,7 @@ export const useFunction = (props: any) => {
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
-    [dispatch, idRoomChat, socket, user_id],
+    [dispatch, idRoomChat, socket, user_id, dataDetail, listUserChat],
   );
 
   const navigatiteToListReaction = useCallback(
@@ -793,13 +794,15 @@ export const useFunction = (props: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      await dispatch(getListUserChat({
-        room_id: idRoomChat
-      }));
+      await dispatch(
+        getListUserChat({
+          room_id: idRoomChat,
+        }),
+      );
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat]);
+  }, [idRoomChat, dispatch]);
 
   const bookmarkMessage = useCallback(async (data: any) => {
     try {
@@ -1155,6 +1158,7 @@ export const useFunction = (props: any) => {
       socket,
       user_id,
       listUserChat,
+      dataDetail,
     ],
   );
 
@@ -1327,6 +1331,7 @@ export const useFunction = (props: any) => {
     listChat,
     paging?.current_page,
     listUserChat,
+    getUserListChat,
   ]);
 
   // route?.paramsが変わったら実行

@@ -1,4 +1,4 @@
-import {io, Socket} from 'socket.io-client';
+import {io} from 'socket.io-client';
 import {
   getRoomList,
   getDetailMessageSocket,
@@ -17,7 +17,7 @@ import {EVENT_SOCKET} from '@util';
 //socket product
 const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
 
-let socket = io('', {
+let socketIO = io('', {
   autoConnect: false,
 });
 
@@ -29,9 +29,9 @@ function createAppSocket() {
         token: token || store.getState()?.auth?.userInfo?.ws_token,
       },
     };
-    socket = io(socketURL, SOCKET_CONFIG);
-    socket.connect();
-    onHanleEvent(socket);
+    socketIO = io(socketURL, SOCKET_CONFIG);
+    socketIO.connect();
+    onHanleEvent(socketIO);
   };
 
   const onHanleEvent = (socket: any) => {
@@ -40,15 +40,15 @@ function createAppSocket() {
     // 誰かがメッセージ送信&socketサーバに送信(NEW_MESSAGE_IND)->ここで受信
     // ルームリストの更新
     socket.on(EVENT_SOCKET.NEW_MESSAGE_IND, (data: any) => {
-      console.log(EVENT_SOCKET.NEW_MESSAGE_IND, data)
+      console.log(EVENT_SOCKET.NEW_MESSAGE_IND, data);
       const state = store.getState();
-      if (data?.room_id == state?.chat?.id_roomChat) {
+      if (data?.room_id === state?.chat?.id_roomChat) {
         return null;
       } else {
         if (state?.chat?.roomList?.length > 0) {
           const dataList = [...state?.chat?.roomList];
           const index = dataList.findIndex(
-            (element: any) => element?.id == data?.room_id,
+            (element: any) => element?.id === data?.room_id,
           );
           if (index > -1) {
             store.dispatch(getDetailRoomSocket(data?.room_id));
@@ -60,10 +60,10 @@ function createAppSocket() {
     // 誰かがメッセージ送信&socketサーバに送信(MESSAGE_IND)->ここで受信
     // ルーム詳細の更新
     socket.on(EVENT_SOCKET.MESSAGE_IND, (data: any) => {
-      console.log(EVENT_SOCKET.MESSAGE_IND, data)
+      console.log(EVENT_SOCKET.MESSAGE_IND, data);
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
-        if (data?.room_id == state?.chat?.id_roomChat) {
+        if (data?.room_id === state?.chat?.id_roomChat) {
           //Check tin nhắn về là dạng thả reaction
           if (data?.message_type === 3) {
             const value = {
@@ -99,16 +99,18 @@ function createAppSocket() {
     });
 
     socket.on(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, (data: any) => {
-      console.log(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, data)
+      console.log(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, data);
       const state = store.getState();
       if (data?.member_info?.ids?.includes(state?.auth?.userInfo?.id)) {
-        if (data?.room_id == state?.chat?.id_roomChat) {
+        if (data?.room_id === state?.chat?.id_roomChat) {
           if (data?.member_info?.type === 5) {
             store?.dispatch(saveIsGetInfoRoom(true));
           }
-          store?.dispatch(getListUserChat({
-            room_id: state?.chat?.id_roomChat,
-          }));
+          store?.dispatch(
+            getListUserChat({
+              room_id: state?.chat?.id_roomChat,
+            }),
+          );
         } else {
           store.dispatch(
             getRoomList({
@@ -120,11 +122,13 @@ function createAppSocket() {
           );
         }
       } else {
-        if (data?.room_id == state?.chat?.id_roomChat) {
+        if (data?.room_id === state?.chat?.id_roomChat) {
           store?.dispatch(saveIsGetInfoRoom(true));
-          store?.dispatch(getListUserChat({
-            room_id: state?.chat?.id_roomChat,
-          }));
+          store?.dispatch(
+            getListUserChat({
+              room_id: state?.chat?.id_roomChat,
+            }),
+          );
         } else {
           store.dispatch(
             getRoomList({
@@ -139,10 +143,10 @@ function createAppSocket() {
     });
 
     socket.on(EVENT_SOCKET.NEW_MESSAGE_CONF, async (data: any) => {
-      console.log(EVENT_SOCKET.NEW_MESSAGE_CONF, data)
+      console.log(EVENT_SOCKET.NEW_MESSAGE_CONF, data);
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
-        if (data?.room_id == state?.chat?.id_roomChat) {
+        if (data?.room_id === state?.chat?.id_roomChat) {
           const body = {
             idMsg: data?.message_id,
             idUser: data?.user_id,
@@ -155,12 +159,13 @@ function createAppSocket() {
     });
     socket.on(EVENT_SOCKET.DISCONNECT, () => {});
   };
+
   const endConnect = () => {
-    socket.disconnect();
+    socketIO.disconnect();
   };
 
   const getSocket = () => {
-    return socket;
+    return socketIO;
   };
 
   return {

@@ -22,24 +22,18 @@ const EditRoomChat = (props: any) => {
 
   const onBack = useCallback(() => {
     navigation.goBack();
+  }, [navigation]);
+
+  const onChangeName = useCallback((value: string) => {
+    setName(value);
   }, []);
 
-  const onChangeName = useCallback(
-    (value: string) => {
-      setName(value);
-    },
-    [name],
-  );
-
-  const onChangeContent = useCallback(
-    (value: string) => {
-      setContent(value);
-    },
-    [content],
-  );
+  const onChangeContent = useCallback((value: string) => {
+    setContent(value);
+  }, []);
 
   const renderNameRoom = () => {
-    if (listUserChat?.length == 1) {
+    if (listUserChat?.length === 1) {
       return null;
     } else {
       return '新規グループ';
@@ -54,7 +48,7 @@ const EditRoomChat = (props: any) => {
         name: name ? name : renderNameRoom(),
       };
       GlobalService.showLoading();
-      const response = await updateInfoRoomchat(body);
+      await updateInfoRoomchat(body);
       socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
         room_id: idRoomChat,

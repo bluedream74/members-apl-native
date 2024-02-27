@@ -109,7 +109,7 @@ const ModalTask = React.memo((prop: any) => {
           },
         ]),
     );
-  }, [listUserChat]);
+  }, [listUserChat, loginUser]);
 
   useEffect(() => {
     if (item) {
@@ -191,10 +191,10 @@ const ModalTask = React.memo((prop: any) => {
     }
   };
 
-  const renderDataItem = (item, selected) => {
+  const renderDataItem = (dataItem, select) => {
     return (
       <View style={styles.item}>
-        {selected && (
+        {select && (
           <CheckBox
             value={true}
             style={styles.checkbox}
@@ -202,7 +202,7 @@ const ModalTask = React.memo((prop: any) => {
             hideBox={false}
           />
         )}
-        {!selected && (
+        {!select && (
           <CheckBox
             value={false}
             style={styles.checkbox}
@@ -210,7 +210,7 @@ const ModalTask = React.memo((prop: any) => {
             hideBox={false}
           />
         )}
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+        <Text style={styles.selectedTextStyle}>{dataItem.label}</Text>
       </View>
     );
   };
@@ -366,12 +366,12 @@ const ModalTask = React.memo((prop: any) => {
                     }}
                     renderLeftIcon={() => {}}
                     renderItem={renderDataItem}
-                    renderSelectedItem={(item, unSelect) => (
+                    renderSelectedItem={(dataItem, unSelect) => (
                       <TouchableOpacity
-                        onPress={() => unSelect && unSelect(item)}>
+                        onPress={() => unSelect && unSelect(dataItem)}>
                         <View style={styles.selectedStyle}>
                           <Text style={styles.textSelectedStyle}>
-                            {item.label}
+                            {dataItem.label}
                           </Text>
                         </View>
                       </TouchableOpacity>

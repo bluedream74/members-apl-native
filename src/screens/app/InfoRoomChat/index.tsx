@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   Image,
@@ -21,7 +20,6 @@ import {
   iconPin,
   iconUpload,
   iconDocument,
-  iconDeleteRoom,
   iconTaskCutting,
 } from '@images';
 import {ViewItem} from './components/ViewItem';
@@ -31,25 +29,21 @@ import {detailRoomchat, pinFlag, leaveRoomChat, GlobalService} from '@services';
 import {showMessage} from 'react-native-flash-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import {verticalScale} from 'react-native-size-matters';
-import {
-  updateImageRoomChat,
-  deleteImageRoomChat,
-  deleteRoom,
-} from '@services';
+import {updateImageRoomChat, deleteImageRoomChat, deleteRoom} from '@services';
 import {colors} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
-import {AppSocket} from '@util';
+// import {AppSocket} from '@util';
 import {useSelector} from 'react-redux';
 
 const InfoRoomChat = (props: any) => {
   const {route} = props;
   const {idRoomChat} = route?.params;
-  const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const user = useSelector((state: any) => state.auth.userInfo);
   const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const navigation = useNavigation<any>();
-  const {getSocket} = AppSocket;
-  const socket = getSocket();
+  // const {getSocket} = AppSocket;
+  // const socket = getSocket();
+  // const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const [dataDetail, setData] = useState<any>(null);
   const [activePin, setActivePin] = useState<any>(false);
   const [modal, setModal] = useState<boolean>(false);
@@ -57,10 +51,17 @@ const InfoRoomChat = (props: any) => {
   const [modalLink, setModalLink] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
 
-  let count_user =
+  const count_user =
     dataDetail?.name?.length > 0
       ? (dataDetail?.name.match(/、/g) || []).length
       : 0;
+
+  const getDetail = useCallback(async () => {
+    try {
+      const response = await detailRoomchat(idRoomChat);
+      setData(response?.data?.room);
+    } catch {}
+  }, [idRoomChat]);
 
   const uploadImageApi = useCallback(async () => {
     try {
@@ -91,20 +92,13 @@ const InfoRoomChat = (props: any) => {
       getDetail();
       setImage(null);
     } catch (error) {}
-  }, [image, idRoomChat]);
+  }, [image, idRoomChat, getDetail]);
 
   useEffect(() => {
     if (image) {
       uploadImageApi();
     }
-  }, [image]);
-
-  const getDetail = async () => {
-    try {
-      const response = await detailRoomchat(idRoomChat);
-      setData(response?.data?.room);
-    } catch {}
-  };
+  }, [image, uploadImageApi]);
 
   const onCancelModal = useCallback(() => {
     setModal(!modal);
@@ -121,11 +115,11 @@ const InfoRoomChat = (props: any) => {
   useFocusEffect(
     useCallback(() => {
       getDetail();
-    }, []),
+    }, [getDetail]),
   );
 
   useEffect(() => {
-    if (dataDetail?.pin_flag == 0) {
+    if (dataDetail?.pin_flag === 0) {
       setActivePin(false);
     } else {
       setActivePin(true);
@@ -136,7 +130,7 @@ const InfoRoomChat = (props: any) => {
     try {
       const response = await pinFlag(
         idRoomChat,
-        dataDetail?.pin_flag == 0 ? 1 : 0,
+        dataDetail?.pin_flag === 0 ? 1 : 0,
       );
       showMessage({
         message: response?.data?.message,
@@ -152,18 +146,18 @@ const InfoRoomChat = (props: any) => {
       const body = {
         room_id: idRoomChat,
       };
-      const response = await leaveRoomChat(body);
+      await leaveRoomChat(body);
       navigation.pop(2);
     } catch {}
-  }, [idRoomChat, modal]);
+  }, [idRoomChat, navigation, onCancelModal]);
 
   const onDelete = useCallback(async () => {
     try {
       onCancelModalDelete();
-      const response = await deleteRoom(idRoomChat);
+      await deleteRoom(idRoomChat);
       navigation.pop(2);
     } catch {}
-  }, [idRoomChat, modalDelete]);
+  }, [idRoomChat, navigation, onCancelModalDelete]);
 
   const upLoadImage = () => {
     ImagePicker.openPicker({
@@ -171,10 +165,12 @@ const InfoRoomChat = (props: any) => {
       width: verticalScale(126),
       height: verticalScale(126),
     })
-      .then(async (image: any) => {
-        setImage(image);
+      .then(async (imageData: any) => {
+        setImage(imageData);
       })
-      .catch(err => {});
+      .catch(err => {
+        console.log(err.message);
+      });
   };
 
   const deleteAvatar = async () => {
@@ -205,12 +201,12 @@ const InfoRoomChat = (props: any) => {
   const renderName = (name: any) => {
     if (count_user > 0) {
       let dataName = '';
-      const dataAdd = listUserChat?.forEach((item: any) => {
+      listUserChat?.forEach((item: any) => {
         dataName = dataName + `${item?.last_name}${item?.first_name},`;
       });
       const nameUser = `,${user?.last_name}${user?.first_name}`;
-      const name = dataName?.replace(/.$/, '') + nameUser;
-      return name;
+      const replaceName = dataName?.replace(/.$/, '') + nameUser;
+      return replaceName;
     } else {
       return name;
     }
@@ -380,7 +376,7 @@ const InfoRoomChat = (props: any) => {
                 onClick={onCancelModal}
               />
             )}
-            {dataDetail?.is_admin == 1 && listUserChat?.length > 1 ? (
+            {dataDetail?.is_admin === 1 && listUserChat?.length > 1 ? (
               <ViewItem
                 sourceImage={iconDelete}
                 content="グループを削除"
