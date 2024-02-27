@@ -268,7 +268,10 @@ const MenuFeature = React.memo((props: any) => {
                 onPress={() => onActionReaction(item?.id)}>
                 <Image
                   source={item?.sourceImage}
-                  style={[item?.style ? item?.style : styles.imageEmoji, {overflow: 'visible'}]}
+                  style={[
+                    item?.style ? item?.style : styles.imageEmoji,
+                    {overflow: 'visible'},
+                  ]}
                 />
               </TouchableOpacity>
             </View>
