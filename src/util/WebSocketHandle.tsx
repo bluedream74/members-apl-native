@@ -6,6 +6,7 @@ import {
   getDetailMessageSocketSeen,
   updateMessageReaction,
   saveIsGetInfoRoom,
+  getListUserChat,
   getDetailRoomSocket,
 } from '@redux';
 import {store} from '../redux/store';
@@ -105,6 +106,9 @@ function createAppSocket() {
           if (data?.member_info?.type === 5) {
             store?.dispatch(saveIsGetInfoRoom(true));
           }
+          store?.dispatch(getListUserChat({
+            room_id: state?.chat?.id_roomChat,
+          }));
         } else {
           store.dispatch(
             getRoomList({
@@ -118,6 +122,9 @@ function createAppSocket() {
       } else {
         if (data?.room_id == state?.chat?.id_roomChat) {
           store?.dispatch(saveIsGetInfoRoom(true));
+          store?.dispatch(getListUserChat({
+            room_id: state?.chat?.id_roomChat,
+          }));
         } else {
           store.dispatch(
             getRoomList({
