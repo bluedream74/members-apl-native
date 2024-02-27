@@ -219,7 +219,7 @@ const MenuFeature = React.memo((props: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.viewFeature, {marginBottom: 10}]}>
+      <View style={styles.viewFeature}>
         {topDataFeature().map((item: dataFeatureType) => {
           return (
             <View key={item?.id}>
@@ -238,25 +238,27 @@ const MenuFeature = React.memo((props: any) => {
           );
         })}
       </View>
-      <View style={styles.viewFeature}>
-        {bottomDataFeature().map((item: dataFeatureType) => {
-          return (
-            <View key={item?.id}>
-              <TouchableOpacity
-                style={styles.itemFeature}
-                onPress={() => onActionMenu(item?.id)}>
-                <Image
-                  source={item?.sourceImage}
-                  style={item?.style ? item?.style : styles.imageFeature}
-                />
-                <Text style={styles.txtNameFeature} numberOfLines={1}>
-                  {item?.name}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </View>
+      {bottomDataFeature().length > 0 && (
+        <View style={[styles.viewFeature, {marginTop: 10}]}>
+          {bottomDataFeature().map((item: dataFeatureType) => {
+            return (
+              <View key={item?.id}>
+                <TouchableOpacity
+                  style={styles.itemFeature}
+                  onPress={() => onActionMenu(item?.id)}>
+                  <Image
+                    source={item?.sourceImage}
+                    style={item?.style ? item?.style : styles.imageFeature}
+                  />
+                  <Text style={styles.txtNameFeature} numberOfLines={1}>
+                    {item?.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
+      )}
       <View style={styles.line} />
       <View style={styles.viewReaction}>
         {dataEmoji.map((item: dataEmojiType) => {
