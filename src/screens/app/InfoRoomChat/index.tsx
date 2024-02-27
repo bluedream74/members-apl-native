@@ -34,7 +34,6 @@ import {verticalScale} from 'react-native-size-matters';
 import {
   updateImageRoomChat,
   deleteImageRoomChat,
-  getListUser,
   deleteRoom,
 } from '@services';
 import {colors} from '@stylesCommon';
@@ -47,6 +46,7 @@ const InfoRoomChat = (props: any) => {
   const {idRoomChat} = route?.params;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const user = useSelector((state: any) => state.auth.userInfo);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const navigation = useNavigation<any>();
   const {getSocket} = AppSocket;
   const socket = getSocket();
@@ -56,22 +56,11 @@ const InfoRoomChat = (props: any) => {
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [modalLink, setModalLink] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
-  const [listUser, setListUser] = useState([]);
 
   let count_user =
     dataDetail?.name?.length > 0
       ? (dataDetail?.name.match(/、/g) || []).length
       : 0;
-
-  const convertDataUser = useCallback(() => {
-    //@ts-ignore
-    let data = [];
-    if (listUser && listUser?.length > 0) {
-      listUser?.map((item: any) => data.push(item?.id));
-    }
-    //@ts-ignore
-    return data;
-  }, [listUser]);
 
   const uploadImageApi = useCallback(async () => {
     try {
@@ -96,7 +85,7 @@ const InfoRoomChat = (props: any) => {
       //   room_id: idRoomChat,
       //   member_info: {
       //     type: 5,
-      //     ids: convertDataUser(),
+      //     ids: listUserChat?.map((e: any) => e.id),
       //   },
       // });
       getDetail();
@@ -129,22 +118,9 @@ const InfoRoomChat = (props: any) => {
     setModalLink(!modalLink);
   }, [modalLink]);
 
-  const getListUserOfRoom = async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      setListUser(result?.data?.users?.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
       getDetail();
-      getListUserOfRoom();
     }, []),
   );
 
@@ -216,7 +192,7 @@ const InfoRoomChat = (props: any) => {
       //   room_id: idRoomChat,
       //   member_info: {
       //     type: 5,
-      //     ids: convertDataUser(),
+      //     ids: listUserChat?.map((e: any) => e.id),
       //   },
       // });
       getDetail();
@@ -229,7 +205,7 @@ const InfoRoomChat = (props: any) => {
   const renderName = (name: any) => {
     if (count_user > 0) {
       let dataName = '';
-      const dataAdd = listUser?.forEach((item: any) => {
+      const dataAdd = listUserChat?.forEach((item: any) => {
         dataName = dataName + `${item?.last_name}${item?.first_name},`;
       });
       const nameUser = `,${user?.last_name}${user?.first_name}`;
@@ -404,7 +380,7 @@ const InfoRoomChat = (props: any) => {
                 onClick={onCancelModal}
               />
             )}
-            {dataDetail?.is_admin == 1 && listUser?.length > 1 ? (
+            {dataDetail?.is_admin == 1 && listUserChat?.length > 1 ? (
               <ViewItem
                 sourceImage={iconDelete}
                 content="グループを削除"

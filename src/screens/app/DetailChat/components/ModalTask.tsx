@@ -12,6 +12,7 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
 import {iconClose} from '@images';
@@ -21,10 +22,7 @@ import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {HITSLOP} from '@util';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {MultiSelect} from 'react-native-element-dropdown';
-import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
-import {showMessage} from 'react-native-flash-message';
-import {useSelector} from 'react-redux';
 import moment from 'moment/moment';
 
 const ModalTask = React.memo((prop: any) => {
@@ -33,6 +31,7 @@ const ModalTask = React.memo((prop: any) => {
     visible,
     onSaveTask,
     onUpdateTask,
+    onUpdateTaskCallback,
     idRoomChat,
     item,
     selected,
@@ -48,6 +47,7 @@ const ModalTask = React.memo((prop: any) => {
   const [isAllDay, setIsAllDay] = useState(false);
   const [focusDescription, setFocusDescription] = useState(false);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const inputRef = useRef();
 
   const [date1, setDate1] = useState(new Date());
@@ -88,8 +88,29 @@ const ModalTask = React.memo((prop: any) => {
   };
 
   useEffect(() => {
-    getListUserApi();
-  }, []);
+    const dataConvert = listUserChat?.map((element: any) => {
+      return {
+        ...element,
+        label:
+          element?.id < 0
+            ? element?.name
+            : `${element?.last_name}${element?.first_name}`,
+      };
+    });
+    setListUser(
+      dataConvert
+        .map(user => {
+          return {label: user.label, value: user.id};
+        })
+        .concat([
+          {
+            label: loginUser.last_name + loginUser.first_name,
+            value: loginUser.id,
+          },
+        ]),
+    );
+  }, [listUserChat]);
+
   useEffect(() => {
     if (item) {
       setTaskName(item?.name);
@@ -104,7 +125,8 @@ const ModalTask = React.memo((prop: any) => {
       setIsGoogleCalendar(item?.gcalendar_flg);
       setIsAllDay(item?.all_day_flg);
     }
-  }, [item]);
+  }, [item, setSelected]);
+
   useEffect(() => {
     setTaskName('');
     setTaskDescription('');
@@ -114,51 +136,15 @@ const ModalTask = React.memo((prop: any) => {
     setIsAllDay(false);
   }, [showTaskForm]);
 
-  const getListUserApi = async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-
-      const dataUser = result?.data?.users?.data;
-      const dataConvert = dataUser?.map((element: any) => {
-        return {
-          ...element,
-          label:
-            element?.id < 0
-              ? element?.name
-              : `${element?.last_name}${element?.first_name}`,
-        };
-      });
-      setListUser(
-        dataConvert
-          .map(user => {
-            return {label: user.label, value: user.id};
-          })
-          .concat([
-            {
-              label: loginUser.last_name + loginUser.first_name,
-              value: loginUser.id,
-            },
-          ]),
-      );
-    } catch (error) {
-      console.error(error);
-      showMessage({
-        message: '処理中にエラーが発生しました',
-        type: 'danger',
-      });
-    }
-  };
-
   const closeModal = () => {
     onCancel();
   };
+
   const onPressDescription = () => {
     inputRef.current.focus();
   };
-  const saveTask = () => {
+
+  const saveTask = async () => {
     let data;
     if (!item) {
       // create new
@@ -200,9 +186,11 @@ const ModalTask = React.memo((prop: any) => {
         gcalendar_flg: isGoogleCalendar,
         all_day_flg: isAllDay,
       };
-      onUpdateTask(data);
+      await onUpdateTask(data);
+      onUpdateTaskCallback();
     }
   };
+
   const renderDataItem = (item, selected) => {
     return (
       <View style={styles.item}>
@@ -226,6 +214,7 @@ const ModalTask = React.memo((prop: any) => {
       </View>
     );
   };
+
   return (
     <Modal
       transparent={true}
