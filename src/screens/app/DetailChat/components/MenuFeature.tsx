@@ -297,9 +297,9 @@ const styles = StyleSheet.create({
   },
   viewReaction: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'flex-start',
-    marginTop: verticalScale(3),
+    marginTop: verticalScale(5),
   },
   imageFeature: {
     tintColor: '#FFFFFF',
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   reactionFeature: {
     marginHorizontal: 4,
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   txtNameFeature: {
