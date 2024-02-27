@@ -138,8 +138,9 @@ const MenuFeature = React.memo((props: any) => {
       id: 1,
       sourceImage: icon1,
       style: {
-        width: 27,
-        height: 24,
+        // 横長な画像なのでバランスを調整
+        width: 24 * (512 / 453) * (95 / 100),
+        height: 24 * (95 / 100),
       },
     },
     {
@@ -158,28 +159,36 @@ const MenuFeature = React.memo((props: any) => {
       id: 6,
       sourceImage: icon6,
       style: {
-        width: 22,
-        height: 24,
+        // 縦長な画像なのでバランスを調整
+        width: 24 * (90 / 100),
+        height: 24 * (553 / 512) * (90 / 100),
       },
     },
     {
       id: 7,
       sourceImage: understand,
       style: {
-        width: 27,
-        height: 24,
+        // 横長な画像なのでバランスを調整
+        width: 24 * (32 / 29) * (95 / 100),
+        height: 24 * (95 / 100),
       },
     },
     {
       id: 8,
       sourceImage: bow,
+      style: {
+        // 余白のない画像なのでバランスを調整
+        width: 24 * (95 / 100),
+        height: 24 * (95 / 100),
+      },
     },
     {
       id: 9,
       sourceImage: congrats,
       style: {
-        width: 23,
-        height: 24,
+        // 縦長な画像なのでバランスを調整
+        width: 24 * (95 / 100),
+        height: 24 * (30 / 28) * (95 / 100),
       },
     },
   ];
