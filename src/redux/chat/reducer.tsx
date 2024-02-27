@@ -46,6 +46,17 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
       };
+    case typeChat.GET_LIST_USER_CHAT_SUCCESS:
+      const userList = action.payload.users?.data;
+      return {
+        ...state,
+        listUserChat: userList,
+      };
+    case typeChat.SAVE_LIST_USER_CHAT:
+      return {
+        ...state,
+        listUserChat: action.payload,
+      };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
       let data = [...detailChat];

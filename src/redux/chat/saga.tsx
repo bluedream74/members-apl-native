@@ -2,6 +2,7 @@ import {put, takeEvery} from 'redux-saga/effects';
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
+  getListUserChatSuccess,
   getDetailMessageSocketSuccess,
   deleteMessage,
   editMessageAction,
@@ -17,6 +18,7 @@ import {typeChat} from './type';
 import {
   getRoomListApi,
   getDetailChatApi,
+  getListUserChatApi,
   getMessageFromSocket,
   getResultSearchMessage,
   registerLastMessage,
@@ -62,6 +64,19 @@ export function* getDetailChatSaga(action: any) {
       };
       yield put(updateMessageSeen(data));
     }
+  } catch (error) {
+  } finally {
+  }
+}
+
+export function* getListUserChatSaga(action: any) {
+  try {
+    const param = {
+      room_id: action?.payload.room_id,
+      all: 1,
+    };
+    const result: ResponseGenerator = yield getListUserChatApi(param);
+    yield put(getListUserChatSuccess(result?.data));
   } catch (error) {
   } finally {
   }
@@ -297,6 +312,7 @@ export function* logMessageSaga(action: any) {
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
   yield takeEvery(typeChat.GET_DETAIL_LIST_CHAT, getDetailChatSaga);
+  yield takeEvery(typeChat.GET_LIST_USER_CHAT, getListUserChatSaga);
   yield takeEvery(typeChat.GET_DETAIL_MESSAGE_SOCKET, getDetailMessageSaga);
   yield takeEvery(
     typeChat.GET_DETAIL_MESSAGE_SOCKET_CURRENT,
