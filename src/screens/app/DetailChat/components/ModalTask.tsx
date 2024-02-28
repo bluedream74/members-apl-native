@@ -88,27 +88,20 @@ const ModalTask = React.memo((prop: any) => {
   };
 
   useEffect(() => {
-    const dataConvert = listUserChat?.map((element: any) => {
-      return {
-        ...element,
-        label:
-          element?.id < 0
-            ? element?.name
-            : `${element?.last_name}${element?.first_name}`,
-      };
-    });
-    setListUser(
-      dataConvert
-        .map(user => {
-          return {label: user.label, value: user.id};
-        })
-        .concat([
-          {
-            label: loginUser.last_name + loginUser.first_name,
-            value: loginUser.id,
-          },
-        ]),
-    );
+    const listUsers = listUserChat
+      .map(user => {
+        return {
+          label: user.last_name + user.first_name,
+          value: user.id,
+        };
+      })
+      .concat([
+        {
+          label: loginUser.last_name + loginUser.first_name,
+          value: loginUser.id,
+        },
+      ]);
+    setListUser(listUsers);
   }, [listUserChat, loginUser]);
 
   useEffect(() => {

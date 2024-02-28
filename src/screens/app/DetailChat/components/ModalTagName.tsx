@@ -21,13 +21,16 @@ const ModalTagName = React.memo((props: any) => {
   const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
 
   useEffect(() => {
-    const dataAddAll = [...listUserChat] || [];
-    dataAddAll.unshift({
-      id: 'All',
-      last_name: '@all このグループ全員に',
-      first_name: '通知が送信されます',
-      value: 'all',
-    });
+    const dataAddAll = [
+      {
+        id: 'All',
+        last_name: '@all このグループ全員に',
+        first_name: '通知が送信されます',
+        value: 'all',
+      },
+      ...listUserChat,
+    ];
+    dataAddAll.unshift();
     const dataConvert = dataAddAll?.map((item: any) => {
       return {
         ...item,
