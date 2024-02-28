@@ -32,7 +32,6 @@ import {verticalScale} from 'react-native-size-matters';
 import {updateImageRoomChat, deleteImageRoomChat, deleteRoom} from '@services';
 import {colors} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
-// import {AppSocket} from '@util';
 import {useSelector} from 'react-redux';
 
 const InfoRoomChat = (props: any) => {
@@ -41,9 +40,6 @@ const InfoRoomChat = (props: any) => {
   const user = useSelector((state: any) => state.auth.userInfo);
   const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const navigation = useNavigation<any>();
-  // const {getSocket} = AppSocket;
-  // const socket = getSocket();
-  // const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const [dataDetail, setData] = useState<any>(null);
   const [activePin, setActivePin] = useState<any>(false);
   const [modal, setModal] = useState<boolean>(false);
@@ -85,14 +81,6 @@ const InfoRoomChat = (props: any) => {
         message: res?.data?.message,
         type: 'success',
       });
-      // socket.emit('ChatGroup_update_ind2', {
-      //   user_id: user_id,
-      //   room_id: idRoomChat,
-      //   member_info: {
-      //     type: 5,
-      //     ids: listUserChat?.map((e: any) => e.id),
-      //   },
-      // });
       getDetail();
       setImage(null);
     } catch (error) {}
@@ -199,14 +187,6 @@ const InfoRoomChat = (props: any) => {
         message: res?.data?.message,
         type: 'success',
       });
-      // socket.emit('ChatGroup_update_ind2', {
-      //   user_id: user_id,
-      //   room_id: idRoomChat,
-      //   member_info: {
-      //     type: 5,
-      //     ids: listUserChat?.map((e: any) => e.id),
-      //   },
-      // });
       getDetail();
       GlobalService.hideLoading();
     } catch (error: any) {
