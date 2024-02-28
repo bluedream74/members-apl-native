@@ -42,12 +42,12 @@ const EditRoomChat = (props: any) => {
 
   const handleSubmit = async () => {
     try {
+      GlobalService.showLoading();
       const body = {
         room_id: idRoomChat,
         description: content,
         name: name ? name : renderNameRoom(),
       };
-      GlobalService.showLoading();
       await updateInfoRoomchat(body);
       socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
@@ -59,8 +59,8 @@ const EditRoomChat = (props: any) => {
         method: 2,
         room_name: name ? name : renderNameRoom(),
       });
-      onBack();
       GlobalService.hideLoading();
+      onBack();
     } catch {
       GlobalService.hideLoading();
     }
