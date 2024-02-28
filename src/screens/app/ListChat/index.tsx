@@ -37,7 +37,7 @@ import {FilterListChat} from '../FilterListChat';
 
 const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
-  let {initFB} = AppNotification;
+  const {initFB} = AppNotification;
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
   const listRoom = useSelector((state: any) => state.chat.roomList);
