@@ -53,8 +53,10 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuCopy,
       name: 'コピー',
       style: {
-        width: 14,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 72 * (1 / 5),
+        height: 88 * (1 / 5),
+        tintColor: '#FFFFFF',
       },
       isShow: msgType === 1 ? false : true,
     },
@@ -63,8 +65,10 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPartCopy,
       name: '部分コピー',
       style: {
-        width: 14,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 72 * (1 / 5),
+        height: 88 * (1 / 5),
+        tintColor: '#FFFFFF',
       },
       isShow: msgType === 0 ? true : false,
     },
@@ -73,8 +77,9 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuEdit,
       name: '編集',
       style: {
-        width: 18,
-        height: 18,
+        width: 96 * (1 / 5),
+        height: 96 * (1 / 5),
+        tintColor: '#FFFFFF',
       },
       isShow:
         userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
@@ -84,8 +89,9 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: 18,
-        height: 18,
+        width: 108 * (1 / 6),
+        height: 108 * (1 / 6),
+        tintColor: '#FFFFFF',
       },
       isShow: true,
     },
@@ -94,8 +100,9 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPinChat,
       name: 'ブックマーク',
       style: {
-        width: 17,
-        height: 17,
+        // 他の画像より一回り大きい
+        width: 72 * (1 / 5),
+        height: 72 * (1 / 5),
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -105,8 +112,10 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuDelete,
       name: '削除',
       style: {
-        width: 18,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 96 * (1 / 6),
+        height: 96 * (1 / 6),
+        tintColor: '#FFFFFF',
       },
       isShow: userId === user_id ? true : false,
     },
@@ -115,8 +124,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: 18,
-        height: 18,
+        width: 72 * (1 / 5),
+        height: 72 * (1 / 5),
         tintColor: '#FFFFFF',
       },
       isShow: msgType !== 1 ? true : false,
@@ -126,8 +135,9 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconQuote,
       name: '引用',
       style: {
-        width: 18,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 96 * (1 / 6),
+        height: 96 * (1 / 6),
         tintColor: '#FFFFFF',
       },
       isShow: true,
