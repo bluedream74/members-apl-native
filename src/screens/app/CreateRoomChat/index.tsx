@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -15,7 +15,6 @@ import {debounce} from 'lodash';
 import {AppSocket} from '@util';
 
 import {useNavigation} from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
 import {useSelector, useDispatch} from 'react-redux';
 import {getDetailMessageSocketSuccess} from '@redux';
 
@@ -23,16 +22,14 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {getListUser, createRoom, GlobalService, inviteMember} from '@services';
 
 const CreateRoomChat = (props: any) => {
-  const dispatch = useDispatch();
-  const navigation = useNavigation<any>();
   const {route} = props;
-  const user_id = useSelector((state: any) => state.auth.userInfo.id);
-  const user = useSelector((state: any) => state.auth.userInfo);
-
+  const dispatch = useDispatch();
   const {typeScreen, idRoomchat} = route?.params;
   const {getSocket} = AppSocket;
   const socket = getSocket();
-
+  const navigation = useNavigation<any>();
+  const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const user = useSelector((state: any) => state.auth.userInfo);
   const [name, setName] = useState<any>(null);
   const [listUser, setListUser] = useState<any>([]);
   const [resultUser, setResultUser] = useState<any>([]);
@@ -40,72 +37,84 @@ const CreateRoomChat = (props: any) => {
 
   const onBack = useCallback(() => {
     navigation.goBack();
+  }, [navigation]);
+
+  const onChange = useCallback((value: string) => {
+    setName(value);
   }, []);
 
-  const onChange = useCallback(
-    (value: string) => {
-      setName(value);
-    },
-    [name],
-  );
-
-  const debounceText = useCallback(
-    debounce(text => onSearch(text), 500),
-    [],
-  );
-
-  const onSearchName = (value: string) => {
-    setKey(value);
-    debounceText(value);
-  };
-
-  const onSearch = async (keySearch: any) => {
+  const onSearch = useCallback(async (keySearch: string) => {
+    GlobalService.showLoading();
     try {
       if (keySearch?.length > 0) {
         const result = await getListUser({name: keySearch});
         setResultUser(result?.data?.users?.data);
       }
-    } catch (error) {}
-  };
-
-  const onAddUser = (item: any) => {
-    setListUser(listUser?.concat([item]));
-    setResultUser([]);
-    setKey(null);
-  };
-
-  const onDeleteItem = (item: any) => {
-    let data = [...listUser];
-    const index = data.findIndex((element: any) => element?.id == item?.id);
-    if (index > -1) {
-      data.splice(index, 1);
+      GlobalService.hideLoading();
+    } catch (error) {
+      GlobalService.hideLoading();
     }
-    setListUser(data);
-  };
+  }, []);
 
-  const renderIdUser = () => {
+  const debounceText = useCallback(
+    debounce(text => {
+      onSearch(text);
+    }, 500),
+    [onSearch],
+  );
+
+  const onSearchName = useCallback(
+    (value: string) => {
+      setKey(value);
+      debounceText(value);
+    },
+    [debounceText],
+  );
+
+  const onAddUser = useCallback(
+    (item: any) => {
+      setListUser(listUser?.concat([item]));
+      setResultUser([]);
+      setKey(null);
+    },
+    [listUser],
+  );
+
+  const onDeleteItem = useCallback(
+    (item: any) => {
+      let data = [...listUser];
+      const index = data.findIndex((element: any) => element?.id === item?.id);
+      if (index > -1) {
+        data.splice(index, 1);
+      }
+      setListUser(data);
+    },
+    [listUser],
+  );
+
+  const renderIdUser = useCallback(() => {
     let data = [];
     for (let i = 0; i < listUser?.length; i++) {
       data.push(listUser[i].id);
     }
     return data;
-  };
+  }, [listUser]);
 
-  const renderNameRoom = () => {
-    if (renderIdUser()?.length == 1) {
+  const renderNameRoom = useCallback(() => {
+    if (renderIdUser()?.length === 1) {
       return null;
     } else {
       let dataName = '';
-      const dataAdd = listUser?.forEach((item: any) => {
-        dataName = dataName + `${item?.last_name}${item?.first_name}、`;
+      listUser?.forEach((item: any) => {
+        dataName = `${dataName}${item?.last_name}${item?.first_name}、`;
       });
       const nameUser = `、${user?.last_name}${user?.first_name}`;
-      const name = dataName?.replace(/.$/, '') + nameUser;
-      return name;
+      const replaceName = dataName.replace(/.$/, '') + nameUser;
+      return replaceName;
     }
-  };
+  }, [listUser, renderIdUser, user]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (typeScreen === 'CREATE') {
       try {
         GlobalService.showLoading();
@@ -169,7 +178,17 @@ const CreateRoomChat = (props: any) => {
         GlobalService.hideLoading();
       }
     }
-  };
+  }, [
+    dispatch,
+    idRoomchat,
+    name,
+    navigation,
+    renderIdUser,
+    renderNameRoom,
+    socket,
+    typeScreen,
+    user_id,
+  ]);
 
   const validateDisabled = () => {
     if (typeScreen === 'CREATE') {
