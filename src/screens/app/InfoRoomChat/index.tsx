@@ -111,10 +111,10 @@ const InfoRoomChat = (props: any) => {
   );
 
   useEffect(() => {
-    if (dataDetail?.pin_flag === 0) {
-      setActivePin(false);
-    } else {
+    if (Number(dataDetail?.pin_flag) === 1) {
       setActivePin(true);
+    } else {
+      setActivePin(false);
     }
   }, [dataDetail?.pin_flag]);
 
@@ -123,7 +123,7 @@ const InfoRoomChat = (props: any) => {
       GlobalService.showLoading();
       const response = await pinFlag(
         idRoomChat,
-        dataDetail?.pin_flag === 0 ? 1 : 0,
+        Number(dataDetail?.pin_flag) === 1 ? 0 : 1,
       );
       showMessage({
         message: response?.data?.message,
