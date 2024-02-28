@@ -68,7 +68,7 @@ const ListChat = (props: any) => {
         await dispatch(saveIdRoomChat(null));
         await dispatch(saveMessageReply(null));
         await dispatch(resetDataChat());
-        dispatch(saveListUserChat([]));
+        await dispatch(saveListUserChat([]));
         setPage(1);
         dispatch(
           getRoomList({
