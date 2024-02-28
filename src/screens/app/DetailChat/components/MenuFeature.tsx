@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 40,
+    width: 42,
   },
   reactionFeature: {
     marginHorizontal: 4,
