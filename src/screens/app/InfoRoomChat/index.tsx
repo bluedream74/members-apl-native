@@ -58,9 +58,13 @@ const InfoRoomChat = (props: any) => {
 
   const getDetail = useCallback(async () => {
     try {
+      GlobalService.showLoading();
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
-    } catch {}
+      GlobalService.hideLoading();
+    } catch {
+      GlobalService.hideLoading();
+    }
   }, [idRoomChat]);
 
   const uploadImageApi = useCallback(async () => {
@@ -128,6 +132,7 @@ const InfoRoomChat = (props: any) => {
 
   const onGhimRoomChat = async () => {
     try {
+      GlobalService.showLoading();
       const response = await pinFlag(
         idRoomChat,
         dataDetail?.pin_flag === 0 ? 1 : 0,
@@ -137,26 +142,37 @@ const InfoRoomChat = (props: any) => {
         type: 'success',
       });
       getDetail();
-    } catch {}
+      GlobalService.hideLoading();
+    } catch {
+      GlobalService.hideLoading();
+    }
   };
 
   const onLeave = useCallback(async () => {
     try {
+      GlobalService.showLoading();
       onCancelModal();
       const body = {
         room_id: idRoomChat,
       };
       await leaveRoomChat(body);
+      GlobalService.hideLoading();
       navigation.pop(2);
-    } catch {}
+    } catch {
+      GlobalService.hideLoading();
+    }
   }, [idRoomChat, navigation, onCancelModal]);
 
   const onDelete = useCallback(async () => {
     try {
+      GlobalService.showLoading();
       onCancelModalDelete();
       await deleteRoom(idRoomChat);
+      GlobalService.hideLoading();
       navigation.pop(2);
-    } catch {}
+    } catch {
+      GlobalService.hideLoading();
+    }
   }, [idRoomChat, navigation, onCancelModalDelete]);
 
   const upLoadImage = () => {
