@@ -323,9 +323,10 @@ const styles = StyleSheet.create({
   },
   itemFeature: {
     marginHorizontal: 4,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: 42,
+    height: 35,
   },
   reactionFeature: {
     marginHorizontal: 4,
