@@ -73,18 +73,6 @@ const MenuFeature = React.memo((props: any) => {
       isShow: msgType === 0 ? true : false,
     },
     {
-      id: 8,
-      sourceImage: menuEdit,
-      name: '編集',
-      style: {
-        width: 96 * (1 / 5),
-        height: 96 * (1 / 5),
-        tintColor: '#FFFFFF',
-      },
-      isShow:
-        userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
-    },
-    {
       id: 9,
       sourceImage: menuReply,
       name: '返信',
@@ -108,18 +96,6 @@ const MenuFeature = React.memo((props: any) => {
       isShow: true,
     },
     {
-      id: 11,
-      sourceImage: menuDelete,
-      name: '削除',
-      style: {
-        // 他の画像より一回り大きい
-        width: 96 * (1 / 6),
-        height: 96 * (1 / 6),
-        tintColor: '#FFFFFF',
-      },
-      isShow: userId === user_id ? true : false,
-    },
-    {
       id: 10,
       sourceImage: iconPin,
       name: 'ピン留め',
@@ -141,6 +117,30 @@ const MenuFeature = React.memo((props: any) => {
         tintColor: '#FFFFFF',
       },
       isShow: true,
+    },
+    {
+      id: 8,
+      sourceImage: menuEdit,
+      name: '編集',
+      style: {
+        width: 96 * (1 / 5),
+        height: 96 * (1 / 5),
+        tintColor: '#FFFFFF',
+      },
+      isShow:
+        userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
+    },
+    {
+      id: 11,
+      sourceImage: menuDelete,
+      name: '削除',
+      style: {
+        // 他の画像より一回り大きい
+        width: 96 * (1 / 6),
+        height: 96 * (1 / 6),
+        tintColor: '#FFFFFF',
+      },
+      isShow: userId === user_id ? true : false,
     },
   ];
 
