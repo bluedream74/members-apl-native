@@ -57,6 +57,7 @@ const ListChat = (props: any) => {
   );
   const [key, setKey] = useState<string>('');
   const [page, setPage] = useState(1);
+  const [init, setInit] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
@@ -98,13 +99,15 @@ const ListChat = (props: any) => {
   }, [unReadMessageCount]);
 
   useEffect(() => {
+    if (init) return;
+    setInit(true);
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
       dispatch(showHideModalFilterListChat(false));
       dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
     }
-  }, [dispatch, initFB, user]);
+  }, [dispatch, initFB, user, init]);
 
   useEffect(() => {
     try {
