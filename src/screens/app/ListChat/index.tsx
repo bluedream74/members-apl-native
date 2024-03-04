@@ -119,9 +119,8 @@ const ListChat = (props: any) => {
           }),
         );
       }
-    } catch (err) {
-    } finally {
-      // setIsLoadMore(false);
+    } catch (error) {
+      if (error instanceof Error) console.error(error.message);
     }
   }, [page, categoryID_Filter, dispatch, idCompany, key, type_Filter]);
 

@@ -161,7 +161,9 @@ function createAppNotification() {
           }),
         );
       }
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof Error) console.error(error.message);
+    }
   };
 
   const handleUserInteractionNotification = async (message: any) => {

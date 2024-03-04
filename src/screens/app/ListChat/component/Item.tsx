@@ -123,7 +123,9 @@ const Item = React.memo((props: any) => {
           category_id: categoryID_Filter,
         }),
       );
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) console.error(error.message);
+    } finally {
       GlobalService.hideLoading();
     }
   };
