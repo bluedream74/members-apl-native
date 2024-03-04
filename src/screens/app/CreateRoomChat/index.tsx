@@ -82,11 +82,7 @@ const CreateRoomChat = (props: any) => {
 
   const onDeleteItem = useCallback(
     (item: any) => {
-      let data = [...listUser];
-      const index = data.findIndex((element: any) => element?.id === item?.id);
-      if (index > -1) {
-        data.splice(index, 1);
-      }
+      const data = [...listUser].filter((element: any) => element?.id !== item?.id);
       setListUser(data);
     },
     [listUser],
