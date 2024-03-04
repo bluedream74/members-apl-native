@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {View, Text, FlatList, RefreshControl} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
@@ -8,6 +8,14 @@ import {Accordion} from './component/Accordion';
 import {ModalTask} from '../../DetailChat/components/ModalTask';
 import {useFunction} from './useFunction';
 import {showMessage} from 'react-native-flash-message';
+
+const taskStatus = {
+  STATUS_NOT_START: 0,
+  STATUS_IN_PROGRESS: 1,
+  STATUS_DONE: 2,
+  STATUS_CONFIRMATION: 3,
+  STATUS_BEFORE: 4,
+};
 
 const Task = (props: any) => {
   const {
@@ -27,16 +35,6 @@ const Task = (props: any) => {
   const [lastPage, setLastPage] = useState(1);
   const [page, setPage] = useState(1);
   const [currentPage, setCurrentPage] = useState<number | null>(null);
-
-  const stat = useMemo(() => {
-    return {
-      STATUS_NOT_START: 0,
-      STATUS_IN_PROGRESS: 1,
-      STATUS_DONE: 2,
-      STATUS_CONFIRMATION: 3,
-      STATUS_BEFORE: 4,
-    };
-  }, []);
 
   const callApiSearch = useCallback(
     async (params: any) => {
@@ -87,7 +85,7 @@ const Task = (props: any) => {
       setReload(true);
       const data = {
         ...input,
-        stat: stat.STATUS_DONE,
+        stat: taskStatus.STATUS_DONE,
       };
       const res = await finishTask(data);
       if (res.data?.errors) {
@@ -107,7 +105,7 @@ const Task = (props: any) => {
       }
       setReload(false);
     },
-    [reload, setReload, stat],
+    [reload, setReload],
   );
 
   const renderItem = ({item}: any) => (
