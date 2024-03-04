@@ -54,8 +54,8 @@ const MenuFeature = React.memo((props: any) => {
       name: 'コピー',
       style: {
         // 他の画像より一回り大きい
-        width: 72 * (1 / 5),
-        height: 88 * (1 / 5),
+        width: 14.4, // 72 * (1 / 5)
+        height: 17.6, // 88 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: msgType === 1 ? false : true,
@@ -66,8 +66,8 @@ const MenuFeature = React.memo((props: any) => {
       name: '部分コピー',
       style: {
         // 他の画像より一回り大きい
-        width: 72 * (1 / 5),
-        height: 88 * (1 / 5),
+        width: 14.4, // 72 * (1 / 5)
+        height: 17.6, // 88 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: msgType === 0 ? true : false,
@@ -77,8 +77,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: 108 * (1 / 6),
-        height: 108 * (1 / 6),
+        width: 18, // 108 * (1 / 6)
+        height: 18, // 108 * (1 / 6)
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -89,8 +89,8 @@ const MenuFeature = React.memo((props: any) => {
       name: 'ブックマーク',
       style: {
         // 他の画像より一回り大きい
-        width: 72 * (1 / 5),
-        height: 72 * (1 / 5),
+        width: 14.4, // 72 * (1 / 5)
+        height: 14.4, // 72 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -100,8 +100,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: 72 * (1 / 5),
-        height: 72 * (1 / 5),
+        width: 14.4, // 72 * (1 / 5)
+        height: 14.4, // 72 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: msgType !== 1 ? true : false,
@@ -112,8 +112,8 @@ const MenuFeature = React.memo((props: any) => {
       name: '引用',
       style: {
         // 他の画像より一回り大きい
-        width: 96 * (1 / 6),
-        height: 96 * (1 / 6),
+        width: 16, // 96 * (1 / 6)
+        height: 16, // 96 * (1 / 6)
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -123,8 +123,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuEdit,
       name: '編集',
       style: {
-        width: 96 * (1 / 5),
-        height: 96 * (1 / 5),
+        width: 19.2, // 96 * (1 / 5)
+        height: 19.2, // 96 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow:
@@ -136,8 +136,8 @@ const MenuFeature = React.memo((props: any) => {
       name: '削除',
       style: {
         // 他の画像より一回り大きい
-        width: 96 * (1 / 6),
-        height: 96 * (1 / 6),
+        width: 16, // 96 * (1 / 6)
+        height: 16, // 96 * (1 / 6)
         tintColor: '#FFFFFF',
       },
       isShow: userId === user_id ? true : false,
@@ -150,8 +150,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: icon1,
       style: {
         // 横長な画像なのでバランスを調整
-        width: 24 * (512 / 453) * (95 / 100),
-        height: 24 * (95 / 100),
+        width: 25.8, // 24 * (512 / 453) * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
         overflow: 'visible',
       },
     },
@@ -172,8 +172,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: icon6,
       style: {
         // 縦長な画像なのでバランスを調整
-        width: 24 * (90 / 100),
-        height: 24 * (553 / 512) * (90 / 100),
+        width: 21.6, // 24 * (90 / 100)
+        height: 23.3, // 24 * (553 / 512) * (90 / 100)
         overflow: 'visible',
       },
     },
@@ -182,8 +182,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: understand,
       style: {
         // 横長な画像なのでバランスを調整
-        width: 24 * (32 / 29) * (95 / 100),
-        height: 24 * (95 / 100),
+        width: 25.2, // 24 * (32 / 29) * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
         overflow: 'visible',
       },
     },
@@ -192,8 +192,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: bow,
       style: {
         // 余白のない画像なのでバランスを調整
-        width: 24 * (95 / 100),
-        height: 24 * (95 / 100),
+        width: 22.8, // 24 * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
         overflow: 'visible',
       },
     },
@@ -202,8 +202,8 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: congrats,
       style: {
         // 縦長な画像なのでバランスを調整
-        width: 24 * (95 / 100),
-        height: 24 * (30 / 28) * (95 / 100),
+        width: 22.8, // 24 * (95 / 100)
+        height: 24.4, // 24 * (30 / 28) * (95 / 100)
         overflow: 'visible',
       },
     },
