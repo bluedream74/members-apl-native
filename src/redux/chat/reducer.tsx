@@ -50,12 +50,12 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       const userList = action.payload.users?.data;
       return {
         ...state,
-        listUserChat: userList,
+        listUserChat: userList ?? [],
       };
     case typeChat.SAVE_LIST_USER_CHAT:
       return {
         ...state,
-        listUserChat: action.payload,
+        listUserChat: action.payload ?? [],
       };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
