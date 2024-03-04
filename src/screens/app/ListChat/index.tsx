@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Image,
+  AppState,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -37,7 +38,6 @@ import {FilterListChat} from '../FilterListChat';
 
 const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
-  //Khởi tạo Firebase noti
   let {initFB} = AppNotification;
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
@@ -64,6 +64,7 @@ const ListChat = (props: any) => {
   const [filterChat, setFilterChat] = useState<boolean>(false);
   const {route} = props;
 
+  //個別チャットから一覧に戻った時に発火
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -88,7 +89,6 @@ const ListChat = (props: any) => {
     setIsLoadMore(false);
   }, [listRoom]);
 
-  //Đây là hàm logic lắng nghe tổng các tin nhắn chưa đọc, nếu có kết quả thì set lại badge noti
   // これは、未読メッセージの合計をリッスンする論理関数です。結果がある場合は、バッジ通知をリセットします
   useEffect(() => {
     if (unReadMessageCount > 0) {
@@ -126,6 +126,22 @@ const ListChat = (props: any) => {
     }
   }, [page]);
 
+  useEffect(() => {
+    AppState.addEventListener('change', () => {
+      if (AppState.currentState === 'active') {
+        dispatch(
+          getRoomList({
+            key: key,
+            company_id: idCompany,
+            page: 1,
+            type: type_Filter,
+            category_id: categoryID_Filter,
+          }),
+        );
+      }
+    });
+  }, []);
+
   const debounceText = useCallback(
     debounce(
       text =>
@@ -161,6 +177,7 @@ const ListChat = (props: any) => {
     setKey(text);
     debounceText(text);
   };
+
   const renderItem = ({item, index}: any) => {
     return <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />;
   };
