@@ -88,7 +88,7 @@ const ModalTask = React.memo((prop: any) => {
   };
 
   useEffect(() => {
-    const listUsers = listUserChat
+    const listUsers = (listUserChat ?? [])
       .map(user => {
         return {
           label: user.last_name + user.first_name,
