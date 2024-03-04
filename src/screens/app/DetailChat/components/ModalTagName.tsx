@@ -28,16 +28,14 @@ const ModalTagName = React.memo((props: any) => {
         first_name: '通知が送信されます',
         value: 'all',
       },
-      ...listUserChat,
+      ...(listUserChat ?? []).map((item: any) => {
+        return {
+          ...item,
+          nameUser: `${item?.last_name}${item?.first_name}`,
+        };
+      }),
     ];
-    dataAddAll.unshift();
-    const dataConvert = dataAddAll?.map((item: any) => {
-      return {
-        ...item,
-        nameUser: `${item?.last_name}${item?.first_name}`,
-      };
-    });
-    setDataLocal(dataConvert);
+    setDataLocal(dataAddAll);
   }, [listUserChat]);
 
   const onChoseUser = (item: any) => {
