@@ -49,21 +49,20 @@ const Item = React.memo((props: any) => {
     if (idRoomChat && item?.message_unread > 0) {
       setNoIdRoomChatFlg(true);
     }
-  }, [item?.message_unread]);
+  }, [item?.message_unread, idRoomChat]);
 
   const renderNameRoom = (name: any) => {
     if (count_user > 0) {
       let dataName = '';
-      const dataAdd = item?.room_users?.forEach((item: any) => {
-        if (item?.user?.last_name) {
+      item?.room_users?.forEach((el: any) => {
+        if (el?.user?.last_name) {
           dataName =
-            dataName + `${item?.user?.last_name}${item?.user?.first_name}、`;
+            dataName + `${el?.user?.last_name}${el?.user?.first_name}、`;
         }
       });
-
-      const nameUser = `、${user?.last_name}${user?.first_name}`;
-      const name = dataName?.replace(/.$/, '') + nameUser;
-      return name;
+      return `${dataName?.replace(/.$/, '')}、${user?.last_name}${
+        user?.first_name
+      }`;
     } else {
       return name;
     }
@@ -113,7 +112,7 @@ const Item = React.memo((props: any) => {
   const onGhimRoomChat = async () => {
     try {
       GlobalService.showLoading();
-      const response = await pinFlag(item?.id, pin == 0 ? 1 : 0);
+      const response = await pinFlag(item?.id, Number(pin ?? 0) === 0 ? 1 : 0);
       showMessage({
         message: response?.data?.message,
         type: 'success',
@@ -136,13 +135,10 @@ const Item = React.memo((props: any) => {
     }
   };
 
-  // note: one_one_check là 1 trường check xem có phải chat 1-1 không được trả về từ api
-
   return (
     <TouchableOpacity style={styles.container} onPress={navigateDetail}>
       <View style={styles.viewContent}>
         <View style={styles.viewImage}>
-          {/* Check có phải chat 1-1 hay không */}
           {item?.one_one_check?.length > 0 ? (
             <View style={styles.image}>
               <FastImage
@@ -221,7 +217,7 @@ const Item = React.memo((props: any) => {
               <View style={styles.viewRow}>
                 {item?.lastMessageJoin?.attachment_files?.map((el: any) => (
                   <View key={el?.id}>
-                    {el?.type === 4 ? (
+                    {el?.type == 4 ? (
                       <FastImage
                         source={{
                           uri: el?.path,
@@ -248,7 +244,6 @@ const Item = React.memo((props: any) => {
                   : item?.lastMessageJoin?.msg_type === 14
                   ? item?.lastMessageJoin.task_message
                   : convertString(
-                      //Check logic xuống dòng khi thông tin được sửa từ trên app
                       decode(
                         item?.lastMessageJoin?.message
                           ?.split('<br>')
@@ -263,7 +258,9 @@ const Item = React.memo((props: any) => {
           <TouchableOpacity hitSlop={HITSLOP} onPress={onGhimRoomChat}>
             <Image
               source={iconPin}
-              style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
+              style={{
+                tintColor: Number(pin ?? 0) === 1 ? '#EA5A31' : colors.border,
+              }}
             />
           </TouchableOpacity>
           {item?.message_unread > 0 && !idRoomChat ? (
