@@ -99,26 +99,13 @@ export default function MessageInfo({
           '<b>$&</b>',
         );
       }
-      //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-      const matchs = replaceText.match(
-        new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'gi'),
-      );
-      if (matchs != null) {
-        replaceText = replaceText.replace(
-          new RegExp('^@all|@all$| @all|@all ', 'gi'),
-          '<b>@all</b>',
-        );
-      }
-      //@AIをリンク色にする（@AI単独、@AI+半角スペース、@AI+全角スペース、@aAI+改行の場合）
-      const AiMatchs = replaceText.match(
-        new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'gi'),
-      );
-      if (AiMatchs != null) {
-        replaceText = replaceText.replace(
-          new RegExp('^@AI|@AI$| @aAI|@AI ', 'gi'),
-          '<b>@AI</b>',
-        );
-      }
+
+      //@allをリンク色にする
+      //@AIをリンク色にする
+      replaceText = replaceText.replace(new RegExp('@ALL', 'g'), '<b>@ALL</b>');
+      replaceText = replaceText.replace(new RegExp('@all', 'g'), '<b>@all</b>');
+      replaceText = replaceText.replace(new RegExp('@AI', 'g'), '<b>@AI</b>');
+      replaceText = replaceText.replace(new RegExp('@ai', 'g'), '<b>@ai</b>');
     });
     return replaceText;
   }, []);
