@@ -341,7 +341,7 @@ const ItemMessage = React.memo((props: any) => {
           onPress={onShowModalDelete}
           disabled={isAdmin === 1 ? false : true}>
           <Text style={styles.txtCenter} numberOfLines={2}>
-            　{centerTxt()}
+            {centerTxt()}
           </Text>
           <Menu
             style={styles.containerMenuDelete}
