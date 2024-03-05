@@ -550,12 +550,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUserChat.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUserChat.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -751,12 +751,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUserChat.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUserChat.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -821,7 +821,7 @@ export const useFunction = (props: any) => {
   const callApiChatBotRequest = useCallback(
     async (message: any, messageId: any, useName: any) => {
       try {
-        const numberOfMember = listUserChat.length;
+        const numberOfMember = listUserChat?.length ?? 0;
         let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
         if (numberOfMember < 1) {
           return null;
@@ -906,12 +906,12 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUserChat.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUserChat.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -957,12 +957,12 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
           });
-          const joinUsers = listUserChat.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUserChat.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1020,12 +1020,12 @@ export const useFunction = (props: any) => {
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUserChat.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUserChat.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1072,12 +1072,12 @@ export const useFunction = (props: any) => {
               text2: null,
               time: res?.data?.data?.created_at,
             });
-            const joinUsers = listUserChat.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUserChat.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1101,12 +1101,12 @@ export const useFunction = (props: any) => {
               `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           } else {
-            const joinUsers = listUserChat.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUserChat.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1295,7 +1295,7 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
-        if (listUserChat.length === 0) {
+        if (listUserChat && listUserChat.length === 0) {
           getUserListChat();
         }
       }
