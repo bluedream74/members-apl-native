@@ -74,22 +74,17 @@ const CreateRoomChat = (props: any) => {
     [debounceText],
   );
 
-  const onAddUser = useCallback(
-    (item: any) => {
-      setListUser(listUser?.concat([item]));
-      setResultUser([]);
-      setKey(null);
-    },
-    [listUser],
-  );
+  const onAddUser = useCallback((item: any) => {
+    setListUser((prev: Array<any>) => prev.concat([item]));
+    setResultUser([]);
+    setKey(null);
+  }, []);
 
-  const onDeleteItem = useCallback(
-    (item: any) => {
-      const data = [...listUser].filter((element: any) => element?.id !== item?.id);
-      setListUser(data);
-    },
-    [listUser],
-  );
+  const onDeleteItem = useCallback((item: any) => {
+    setListUser((prev: Array<any>) =>
+      prev.filter((element: any) => element?.id !== item?.id),
+    );
+  }, []);
 
   const renderIdUser = useCallback(() => {
     let data = [];
