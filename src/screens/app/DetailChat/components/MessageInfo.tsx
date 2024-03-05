@@ -101,21 +101,21 @@ export default function MessageInfo({
       }
       //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
       const matchs = replaceText.match(
-        new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
+        new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'gi'),
       );
       if (matchs != null) {
         replaceText = replaceText.replace(
-          new RegExp('^@all|@all$| @all|@all ', 'g'),
+          new RegExp('^@all|@all$| @all|@all ', 'gi'),
           '<b>@all</b>',
         );
       }
       //@AIをリンク色にする（@AI単独、@AI+半角スペース、@AI+全角スペース、@aAI+改行の場合）
       const AiMatchs = replaceText.match(
-        new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'g'),
+        new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'gi'),
       );
       if (AiMatchs != null) {
         replaceText = replaceText.replace(
-          new RegExp('^@AI|@AI$| @aAI|@AI ', 'g'),
+          new RegExp('^@AI|@AI$| @aAI|@AI ', 'gi'),
           '<b>@AI</b>',
         );
       }

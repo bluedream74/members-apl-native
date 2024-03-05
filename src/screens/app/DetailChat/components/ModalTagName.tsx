@@ -53,11 +53,11 @@ const ModalTagName = React.memo((props: any) => {
   };
 
   const onChoseUser = (item: any) => {
-    const title = ' ';
+    const title = 'さん';
     if (item?.id === 'All') {
       const valueName = `${item?.value}`;
       const id = item?.id;
-      choseUser(valueName?.replace(' ', ''), title, id, item);
+      choseUser(valueName?.replace(' ', ''), ' ', id, item);
     } else {
       const valueName = `${item?.last_name}${item?.first_name}`;
       const id = item?.id;
