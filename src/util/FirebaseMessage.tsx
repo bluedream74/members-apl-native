@@ -162,7 +162,9 @@ function createAppNotification() {
         );
       }
     } catch (error) {
-      if (error instanceof Error) console.error(error.message);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   };
 

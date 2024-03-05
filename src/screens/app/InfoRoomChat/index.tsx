@@ -200,7 +200,9 @@ const InfoRoomChat = (props: any) => {
       listUserChat?.forEach((item: any) => {
         dataName = `${dataName}${item?.last_name}${item?.first_name},`;
       });
-      return `${dataName.replace(/.$/, '')},${user?.last_name}${user?.first_name}`;
+      return `${dataName.replace(/.$/, '')},${user?.last_name}${
+        user?.first_name
+      }`;
     } else {
       return name;
     }

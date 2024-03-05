@@ -104,7 +104,9 @@ const CreateRoomChat = (props: any) => {
       listUser?.forEach((item: any) => {
         dataName = `${dataName}${item?.last_name}${item?.first_name}、`;
       });
-      return `${dataName.replace(/.$/, '')}、${user?.last_name}${user?.first_name}`;
+      return `${dataName.replace(/.$/, '')}、${user?.last_name}${
+        user?.first_name
+      }`;
     }
   }, [listUser, renderIdUser, user]);
 

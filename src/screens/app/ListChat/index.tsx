@@ -99,7 +99,9 @@ const ListChat = (props: any) => {
   }, [unReadMessageCount]);
 
   useEffect(() => {
-    if (init) return;
+    if (init) {
+      return;
+    }
     setInit(true);
     initFB();
     if (user?.id) {
@@ -123,7 +125,9 @@ const ListChat = (props: any) => {
         );
       }
     } catch (error) {
-      if (error instanceof Error) console.error(error.message);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [page, categoryID_Filter, dispatch, idCompany, key, type_Filter]);
 

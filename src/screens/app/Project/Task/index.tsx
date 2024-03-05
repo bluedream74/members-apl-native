@@ -48,7 +48,9 @@ const Task = (props: any) => {
             : listTask.concat(res?.data?.tasks?.data),
         );
       } catch (error) {
-        if (error instanceof Error) console.error(error.message);
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
       } finally {
         GlobalService.hideLoading();
       }

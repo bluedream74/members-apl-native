@@ -41,7 +41,9 @@ export function* getRoomListSaga(action: any) {
     const result: ResponseGenerator = yield getRoomListApi(action?.payload);
     yield put(getRoomListSuccess(result?.data?.rooms));
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -61,7 +63,9 @@ export function* getDetailChatSaga(action: any) {
       yield put(updateMessageSeen(data));
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -74,7 +78,9 @@ export function* getListUserChatSaga(action: any) {
     const result: ResponseGenerator = yield getListUserChatApi(param);
     yield put(getListUserChatSuccess(result?.data));
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -125,7 +131,9 @@ export function* getDetailMessageSaga(action: any) {
       }
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -152,7 +160,9 @@ export function* editMessageReaction(action: any) {
       );
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -172,7 +182,9 @@ export function* getDetailMessageSagaCurrent(action: any) {
       yield put(getRoomList({company_id: state?.chat?.idCompany}));
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -197,7 +209,9 @@ export function* fetchResultMessageListFile(action: any) {
       NavigationUtils.pop(2);
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -221,7 +235,9 @@ export function* fetchResultMessageListRoom(action: any) {
       yield put(fetchResultMessageSuccess(valueSave));
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -247,7 +263,9 @@ function* updateMessageSeenSaga(action: any) {
       message_id: action.payload.id_message,
     });
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -275,7 +293,9 @@ function* getDetailMessageSeen(action: any) {
       }
     }
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -284,7 +304,9 @@ function* getDetailRoomSocket(action: any) {
     const result: ResponseGenerator = yield detailRoomchat(action?.payload);
     yield put(getDetailRoomSocketSuccess(result?.data?.room));
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -295,7 +317,9 @@ export function* getUnreadMessageCountSaga() {
     const result: ResponseGenerator = yield getUnreadMessageCountApi(user_id);
     yield put(getUnreadMessageCountSuccess(result?.data));
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -308,7 +332,9 @@ export function* logMessageSaga(action: any) {
     };
     yield logMessage(body);
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 

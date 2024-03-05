@@ -124,7 +124,9 @@ const Item = React.memo((props: any) => {
         }),
       );
     } catch (error) {
-      if (error instanceof Error) console.error(error.message);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     } finally {
       GlobalService.hideLoading();
     }
@@ -213,12 +215,12 @@ const Item = React.memo((props: any) => {
             </View>
             {item?.lastMessageJoin?.attachment_files?.length > 0 ? (
               <View style={styles.viewRow}>
-                {item?.lastMessageJoin?.attachment_files?.map((item: any) => (
-                  <View key={item?.id}>
-                    {item?.type == 4 ? (
+                {item?.lastMessageJoin?.attachment_files?.map((el: any) => (
+                  <View key={el?.id}>
+                    {el?.type === 4 ? (
                       <FastImage
                         source={{
-                          uri: item?.path,
+                          uri: el?.path,
                           priority: FastImage.priority.high,
                           cache: FastImage.cacheControl.immutable,
                         }}
@@ -226,7 +228,7 @@ const Item = React.memo((props: any) => {
                       />
                     ) : (
                       <Image
-                        source={renderImgaeFile(item?.type)}
+                        source={renderImgaeFile(el?.type)}
                         style={styles.imageFile}
                       />
                     )}
@@ -237,9 +239,9 @@ const Item = React.memo((props: any) => {
             {item?.lastMessageJoin?.message &&
             item?.lastMessageJoin?.message !== 'null' ? (
               <Text style={styles.txtTitle} numberOfLines={2}>
-                {item?.lastMessageJoin?.msg_type == 9
+                {item?.lastMessageJoin?.msg_type === 9
                   ? 'ゲストが参加しました。'
-                  : item?.lastMessageJoin?.msg_type == 14
+                  : item?.lastMessageJoin?.msg_type === 14
                   ? item?.lastMessageJoin.task_message
                   : convertString(
                       //Check logic xuống dòng khi thông tin được sửa từ trên app
@@ -260,7 +262,7 @@ const Item = React.memo((props: any) => {
               style={{tintColor: pin == 1 ? '#EA5A31' : colors.border}}
             />
           </TouchableOpacity>
-          {(item?.message_unread > 0 && !idRoomChat) ? (
+          {item?.message_unread > 0 && !idRoomChat ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
@@ -269,7 +271,9 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
-          ) : (item?.message_unread > 0 && idRoomChat && (idRoomChat !== item?.id || noIdRoomChatFlg)) ? (
+          ) : item?.message_unread > 0 &&
+            idRoomChat &&
+            (idRoomChat !== item?.id || noIdRoomChatFlg) ? (
             <View style={styles.viewUnread}>
               <Text style={styles.txtMessageUnread} numberOfLines={1}>
                 {item?.message_unread > 9 ? '9+' : item?.message_unread}
@@ -278,7 +282,9 @@ const Item = React.memo((props: any) => {
                 <View style={styles.viewActiveTag} />
               ) : null}
             </View>
-          ) : (item?.message_unread > 0 && idRoomChat && idRoomChat === item?.id) ? (
+          ) : item?.message_unread > 0 &&
+            idRoomChat &&
+            idRoomChat === item?.id ? (
             <Image source={iconNext} />
           ) : (
             <Image source={iconNext} />

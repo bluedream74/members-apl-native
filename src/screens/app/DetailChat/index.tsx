@@ -427,8 +427,7 @@ const DetailChat = (props: any) => {
                             const second = wordBeforeMention.substring(
                               inputIndex + 1,
                             );
-                            const newText =
-                              `${first} @${value}${title} ${second}`;
+                            const newText = `${first} @${value}${title} ${second}`;
                             formatText(newText, true);
                             setInputText(newText);
                           }
