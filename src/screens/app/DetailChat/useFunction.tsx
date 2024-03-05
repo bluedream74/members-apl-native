@@ -44,6 +44,12 @@ import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
 import {Keyboard, KeyboardEvent} from 'react-native';
 
+interface partCopyType {
+  me: boolean;
+  colors: Array<string>;
+  text: string;
+}
+
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
@@ -97,6 +103,7 @@ export const useFunction = (props: any) => {
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
@@ -1193,6 +1200,10 @@ export const useFunction = (props: any) => {
     setShowUserList(!showUserList);
   }, [showUserList]);
 
+  const changePartCopy = useCallback((data: any) => {
+    setTimeout(() => setPartCopy(data), 200);
+  }, []);
+
   const onSaveTask = useCallback(async input => {
     const data = {
       project_id: 1,
@@ -1515,6 +1526,8 @@ export const useFunction = (props: any) => {
     onUpdateTask,
     setShowUserList,
     showUserList,
+    partCopy,
+    changePartCopy,
     selected,
     setSelected,
     setInputText,

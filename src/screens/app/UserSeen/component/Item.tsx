@@ -16,7 +16,7 @@ const Item = React.memo((props: any) => {
     'YYYY',
   )}年${moment(item?.last_check_date).format('MM')}月${moment(
     item?.last_check_date,
-  ).format('D')}日 ${moment(item?.last_check_date).format('HH:mm')}`;
+  ).format('D')} ${moment(item?.last_check_date).format('HH:mm')}`;
 
   return (
     <View style={styles.container}>
