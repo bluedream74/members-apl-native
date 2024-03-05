@@ -43,6 +43,12 @@ import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
 import {Keyboard, KeyboardEvent} from 'react-native';
 
+interface partCopyType {
+  me: boolean;
+  colors: Array<string>;
+  text: string;
+}
+
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
@@ -97,13 +103,15 @@ export const useFunction = (props: any) => {
   const [indexRedLine, setIndexRedLine] = useState(null);
   const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
   const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
   const [selected, setSelected] = useState<any>([]);
   const [inputText, setInputText] = useState<string>('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
-  const [showSendMessageButton, setShowSendMessageButton] = useState<boolean>(true);
+  const [showSendMessageButton, setShowSendMessageButton] =
+    useState<boolean>(true);
 
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
@@ -253,7 +261,7 @@ export const useFunction = (props: any) => {
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat, dispatch, isGetInfoRoom]);
+  }, [idRoomChat, dispatch]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -575,7 +583,7 @@ export const useFunction = (props: any) => {
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
-    [dispatch, idRoomChat, socket, user_id],
+    [dispatch, idRoomChat, socket, user_id, dataDetail?.name, listUser],
   );
 
   const navigatiteToListReaction = useCallback(
@@ -1155,6 +1163,7 @@ export const useFunction = (props: any) => {
       socket,
       user_id,
       listUser,
+      dataDetail?.name,
     ],
   );
 
@@ -1188,6 +1197,10 @@ export const useFunction = (props: any) => {
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);
   }, [showUserList]);
+
+  const changePartCopy = useCallback((data: any) => {
+    setTimeout(() => setPartCopy(data), 200);
+  }, []);
 
   const onSaveTask = useCallback(async input => {
     const data = {
@@ -1327,6 +1340,7 @@ export const useFunction = (props: any) => {
     listChat,
     paging?.current_page,
     listUser,
+    getUserListChat,
   ]);
 
   // route?.paramsが変わったら実行
@@ -1529,6 +1543,8 @@ export const useFunction = (props: any) => {
     onUpdateTask,
     setShowUserList,
     showUserList,
+    partCopy,
+    changePartCopy,
     selected,
     setSelected,
     setInputText,

@@ -1,5 +1,13 @@
 import React, {useCallback, useRef} from 'react';
-import {View, Image, Platform, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Image,
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  TextInput,
+  Text,
+} from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
 import {
@@ -12,6 +20,7 @@ import {
 } from '@images';
 import {useFunction} from './useFunction';
 import {GiftedChat, Actions} from '../../../lib/react-native-gifted-chat';
+import LinearGradient from 'react-native-linear-gradient';
 import {ItemMessage} from './components/ItemMessage';
 import DecoButton from './components/DecoButton';
 import {
@@ -88,10 +97,11 @@ const DetailChat = (props: any) => {
     onSaveTask,
     setShowUserList,
     showUserList,
+    partCopy,
+    changePartCopy,
     selected,
     setSelected,
     setInputText,
-    inputText,
     textSelection,
     onDecoSelected,
     keyboardHeight,
@@ -126,7 +136,8 @@ const DetailChat = (props: any) => {
         <>
           {showSendMessageButton && (
             <>
-              {inputProps.formattedText?.length > 0 || chosenFiles.length > 0 ? (
+              {inputProps.formattedText?.length > 0 ||
+              chosenFiles.length > 0 ? (
                 <Actions
                   {...inputProps}
                   containerStyle={styles.buttonRight}
@@ -156,7 +167,14 @@ const DetailChat = (props: any) => {
         </>
       );
     },
-    [chosenFiles, getText, sendLabel, sendMessage, setFormattedText, showSendMessageButton],
+    [
+      chosenFiles,
+      getText,
+      sendLabel,
+      sendMessage,
+      setFormattedText,
+      showSendMessageButton,
+    ],
   );
 
   //Render ra UI của message
@@ -184,6 +202,9 @@ const DetailChat = (props: any) => {
             }}
             onReaction={(data: any, idMsg: any) => {
               reactionMessage(data, idMsg);
+            }}
+            changePartCopy={(data: any) => {
+              changePartCopy(data);
             }}
             quoteMsg={(data: any) => {
               quoteMessage(data);
@@ -222,6 +243,7 @@ const DetailChat = (props: any) => {
       navigatiteToListReaction,
       quoteMessage,
       reactionMessage,
+      changePartCopy,
       idRedLine,
       replyMessage,
       setFormattedText,
@@ -252,20 +274,11 @@ const DetailChat = (props: any) => {
   const viewConfigRef = useRef({
     viewAreaCoveragePercentThreshold: 0,
   });
-  const findDiffIndex = useCallback((str1, str2) => {
-    let diffIndex = -1;
-    for (let i = 0; i < str2.split('').length; i++) {
-      if (str2.charAt(i) !== str1.charAt(i)) {
-        return i;
-      }
-    }
-    return diffIndex;
-  }, []);
 
   return (
     <View style={styles.container}>
       <View style={showTaskForm ? [styles.blackout] : []} />
-      <View style={showTaskForm ? [styles.displayNone] : [{height: '100%'}]}>
+      <View style={{height: '100%'}}>
         <Header
           back
           //Check title header nếu đây là chat 1-1 hay chat nhóm
@@ -422,9 +435,14 @@ const DetailChat = (props: any) => {
                               ? getText(formattedText)
                               : ' ';
                             //前のテキストと今のテキストの違いをみつけてそれが@のみのはずなので、その@の位置にinsertする
-                            const first = wordBeforeMention.substring(0, inputIndex);
-                            const second = wordBeforeMention.substring(inputIndex + 1);
-                            const newText = first + ` @${value}${title} ` + second;
+                            const first = wordBeforeMention.substring(
+                              0,
+                              inputIndex,
+                            );
+                            const second = wordBeforeMention.substring(
+                              inputIndex + 1,
+                            );
+                            const newText = `${first} @${value}${title} ${second}`;
                             formatText(newText, true);
                             setInputText(newText);
                           }
@@ -502,6 +520,41 @@ const DetailChat = (props: any) => {
         chosePhoto={chosePhoto}
         choseFile={choseFile}
       />
+      {partCopy && (
+        <View style={styles.viewPartCopy}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[
+              styles.viewPartCopyOverlay,
+              {alignItems: partCopy.me ? 'flex-end' : 'flex-start'},
+            ]}
+            onPress={() => changePartCopy(null)}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <LinearGradient
+                colors={partCopy.colors}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={styles.containerChat}>
+                {Platform.OS === 'ios' ? (
+                  <TextInput
+                    editable={false}
+                    multiline
+                    scrollEnabled={true}
+                    selectTextOnFocus={true}
+                    showSoftInputOnFocus={false}
+                    style={styles.partCopyText}>
+                    {partCopy.text}
+                  </TextInput>
+                ) : (
+                  <Text selectable={true} style={styles.partCopyText}>
+                    {partCopy.text}
+                  </Text>
+                )}
+              </LinearGradient>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
