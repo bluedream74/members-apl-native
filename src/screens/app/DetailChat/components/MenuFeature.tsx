@@ -1,14 +1,9 @@
 import {colors, stylesCommon} from '@stylesCommon';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {
-  like,
-  happy,
-  heart,
-  great,
-  smile,
-  sad,
   menuCopy,
+  menuPartCopy,
   menuDelete,
   menuEdit,
   menuPinChat,
@@ -17,20 +12,40 @@ import {
   icon2,
   icon3,
   icon4,
-  icon5,
   icon6,
   understand,
   bow,
   congrats,
-  iconBookmark,
   iconPin,
   iconQuote,
 } from '@images';
-import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import {verticalScale, moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
+interface dataFeatureType {
+  id: number;
+  sourceImage: number;
+  name: string;
+  style: {
+    width: number;
+    height: number;
+    tintColor?: string;
+  };
+  isShow: boolean;
+}
+
+interface dataEmojiType {
+  id: number;
+  sourceImage: number;
+  style?: {
+    width: number;
+    height: number;
+    overflow: string;
+  };
+}
+
 const MenuFeature = React.memo((props: any) => {
-  const {onActionMenu, onActionReaction, userId, msg_type} = props;
+  const {onActionMenu, onActionReaction, userId, msgType} = props;
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const dataFeature = [
     {
@@ -38,29 +53,33 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuCopy,
       name: 'コピー',
       style: {
-        width: 14,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 14.4, // 72 * (1 / 5)
+        height: 17.6, // 88 * (1 / 5)
+        tintColor: '#FFFFFF',
       },
-      isShow: msg_type == 1 ? false : true,
+      isShow: msgType === 1 ? false : true,
     },
     {
-      id: 8,
-      sourceImage: menuEdit,
-      name: '編集',
+      id: 14,
+      sourceImage: menuPartCopy,
+      name: '部分コピー',
       style: {
-        width: 18,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 14.4, // 72 * (1 / 5)
+        height: 17.6, // 88 * (1 / 5)
+        tintColor: '#FFFFFF',
       },
-      isShow:
-        userId == user_id && msg_type !== 1 && msg_type !== 2 ? true : false,
+      isShow: msgType === 0 ? true : false,
     },
     {
       id: 9,
       sourceImage: menuReply,
       name: '返信',
       style: {
-        width: 18,
-        height: 18,
+        width: 18, // 108 * (1 / 6)
+        height: 18, // 108 * (1 / 6)
+        tintColor: '#FFFFFF',
       },
       isShow: true,
     },
@@ -69,43 +88,59 @@ const MenuFeature = React.memo((props: any) => {
       sourceImage: menuPinChat,
       name: 'ブックマーク',
       style: {
-        width: 17,
-        height: 17,
+        // 他の画像より一回り大きい
+        width: 14.4, // 72 * (1 / 5)
+        height: 14.4, // 72 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: true,
-    },
-    {
-      id: 11,
-      sourceImage: menuDelete,
-      name: '削除',
-      style: {
-        width: 18,
-        height: 18,
-      },
-      isShow: userId == user_id ? true : false,
     },
     {
       id: 10,
       sourceImage: iconPin,
       name: 'ピン留め',
       style: {
-        width: 18,
-        height: 18,
+        width: 14.4, // 72 * (1 / 5)
+        height: 14.4, // 72 * (1 / 5)
         tintColor: '#FFFFFF',
       },
-      isShow: msg_type !== 1 ? true : false,
+      isShow: msgType !== 1 ? true : false,
     },
     {
       id: 13,
       sourceImage: iconQuote,
       name: '引用',
       style: {
-        width: 18,
-        height: 18,
+        // 他の画像より一回り大きい
+        width: 16, // 96 * (1 / 6)
+        height: 16, // 96 * (1 / 6)
         tintColor: '#FFFFFF',
       },
       isShow: true,
+    },
+    {
+      id: 8,
+      sourceImage: menuEdit,
+      name: '編集',
+      style: {
+        width: 19.2, // 96 * (1 / 5)
+        height: 19.2, // 96 * (1 / 5)
+        tintColor: '#FFFFFF',
+      },
+      isShow:
+        userId === user_id && msgType !== 1 && msgType !== 2 ? true : false,
+    },
+    {
+      id: 11,
+      sourceImage: menuDelete,
+      name: '削除',
+      style: {
+        // 他の画像より一回り大きい
+        width: 16, // 96 * (1 / 6)
+        height: 16, // 96 * (1 / 6)
+        tintColor: '#FFFFFF',
+      },
+      isShow: userId === user_id ? true : false,
     },
   ];
 
@@ -114,8 +149,10 @@ const MenuFeature = React.memo((props: any) => {
       id: 1,
       sourceImage: icon1,
       style: {
-        width: 21,
-        height: 18,
+        // 横長な画像なのでバランスを調整
+        width: 25.8, // 24 * (512 / 453) * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
+        overflow: 'visible',
       },
     },
     {
@@ -134,43 +171,94 @@ const MenuFeature = React.memo((props: any) => {
       id: 6,
       sourceImage: icon6,
       style: {
-        width: 18,
-        height: 21,
+        // 縦長な画像なのでバランスを調整
+        width: 21.6, // 24 * (90 / 100)
+        height: 23.3, // 24 * (553 / 512) * (90 / 100)
+        overflow: 'visible',
       },
     },
     {
       id: 7,
       sourceImage: understand,
       style: {
-        width: 21,
-        height: 20,
+        // 横長な画像なのでバランスを調整
+        width: 25.2, // 24 * (32 / 29) * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
+        overflow: 'visible',
       },
     },
     {
       id: 8,
       sourceImage: bow,
       style: {
-        width: 20,
-        height: 20,
+        // 余白のない画像なのでバランスを調整
+        width: 22.8, // 24 * (95 / 100)
+        height: 22.8, // 24 * (95 / 100)
+        overflow: 'visible',
       },
     },
     {
       id: 9,
       sourceImage: congrats,
       style: {
-        width: 20,
-        height: 20,
+        // 縦長な画像なのでバランスを調整
+        width: 22.8, // 24 * (95 / 100)
+        height: 24.4, // 24 * (30 / 28) * (95 / 100)
+        overflow: 'visible',
       },
     },
   ];
 
+  const showDataFeature = dataFeature.filter(
+    (item: dataFeatureType) => item?.isShow === true,
+  );
+
+  const topDataFeature = () => {
+    if (showDataFeature.length <= 4) {
+      return showDataFeature;
+    }
+    return showDataFeature.slice(
+      0,
+      showDataFeature.length / 2 + (showDataFeature.length % 2),
+    );
+  };
+
+  const bottomDataFeature = () => {
+    if (showDataFeature.length <= 4) {
+      return [];
+    }
+    return showDataFeature.slice(
+      showDataFeature.length / 2 + (showDataFeature.length % 2),
+      showDataFeature.length,
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.viewFeature}>
-        {dataFeature.map((item: any, index: any) => {
+        {topDataFeature().map((item: dataFeatureType) => {
           return (
-            <View key={item?.id} style={{maxWidth: userId == user_id ? '20%' : '100%'}}>
-              {item?.isShow === true ? (
+            <View key={item?.id}>
+              <TouchableOpacity
+                style={styles.itemFeature}
+                onPress={() => onActionMenu(item?.id)}>
+                <Image
+                  source={item?.sourceImage}
+                  style={item?.style ? item?.style : styles.imageFeature}
+                />
+                <Text style={styles.txtNameFeature} numberOfLines={1}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </View>
+      {bottomDataFeature().length > 0 && (
+        <View style={[styles.viewFeature, {marginTop: 10}]}>
+          {bottomDataFeature().map((item: dataFeatureType) => {
+            return (
+              <View key={item?.id}>
                 <TouchableOpacity
                   style={styles.itemFeature}
                   onPress={() => onActionMenu(item?.id)}>
@@ -182,18 +270,18 @@ const MenuFeature = React.memo((props: any) => {
                     {item?.name}
                   </Text>
                 </TouchableOpacity>
-              ) : null}
-            </View>
-          );
-        })}
-      </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
       <View style={styles.line} />
-      <View style={styles.viewFeature}>
-        {dataEmoji.map((item: any, index: any) => {
+      <View style={styles.viewReaction}>
+        {dataEmoji.map((item: dataEmojiType) => {
           return (
             <View key={item?.id}>
               <TouchableOpacity
-                style={styles.itemFeature}
+                style={styles.reactionFeature}
                 key={item?.id}
                 onPress={() => onActionReaction(item?.id)}>
                 <Image
@@ -219,7 +307,14 @@ const styles = StyleSheet.create({
   viewFeature: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginHorizontal: 30,
+  },
+  viewReaction: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'flex-start',
+    marginTop: verticalScale(5),
   },
   imageFeature: {
     tintColor: '#FFFFFF',
@@ -228,14 +323,22 @@ const styles = StyleSheet.create({
   },
   itemFeature: {
     marginHorizontal: 4,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: 42,
+    height: 35,
+  },
+  reactionFeature: {
+    marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
   txtNameFeature: {
     marginTop: verticalScale(5),
+    marginHorizontal: -10,
     color: '#FFFFFF',
     ...stylesCommon.fontWeight500,
-    fontSize: verticalScale(12),
+    fontSize: verticalScale(8),
   },
   line: {
     height: verticalScale(1),
@@ -243,8 +346,10 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
   },
   imageEmoji: {
-    width: 21,
-    height: 21,
+    width: 24,
+    height: 24,
+    marginRight: 2,
+    overflow: 'visible',
   },
 });
 
