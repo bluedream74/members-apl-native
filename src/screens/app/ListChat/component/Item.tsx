@@ -90,7 +90,11 @@ const Item = React.memo((props: any) => {
           });
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   };
 
   const renderImgaeFile = useCallback((typeFile: any) => {

@@ -83,7 +83,11 @@ const InfoRoomChat = (props: any) => {
       });
       getDetail();
       setImage(null);
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   }, [image, idRoomChat, getDetail]);
 
   useEffect(() => {
@@ -188,8 +192,11 @@ const InfoRoomChat = (props: any) => {
         type: 'success',
       });
       getDetail();
-      GlobalService.hideLoading();
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   };

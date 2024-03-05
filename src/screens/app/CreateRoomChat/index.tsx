@@ -44,14 +44,17 @@ const CreateRoomChat = (props: any) => {
   }, []);
 
   const onSearch = useCallback(async (keySearch: string) => {
-    GlobalService.showLoading();
     try {
+      GlobalService.showLoading();
       if (keySearch?.length > 0) {
         const result = await getListUser({name: keySearch});
         setResultUser(result?.data?.users?.data);
       }
-      GlobalService.hideLoading();
     } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, []);
@@ -130,8 +133,11 @@ const CreateRoomChat = (props: any) => {
           room_name: name ? name : renderNameRoom(),
         });
         navigation.goBack();
-        GlobalService.hideLoading();
       } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     } else {
@@ -169,8 +175,11 @@ const CreateRoomChat = (props: any) => {
         });
         dispatch(getDetailMessageSocketSuccess([result?.data?.data]));
         navigation.goBack();
-        GlobalService.hideLoading();
       } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     }
