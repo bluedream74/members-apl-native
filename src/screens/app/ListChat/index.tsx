@@ -55,12 +55,12 @@ const ListChat = (props: any) => {
   const unReadMessageCount = useSelector(
     (state: any) => state.chat.unReadMessageCount,
   );
-  const [key, setKey] = useState<string>('');
+  const [key, setKey] = useState('');
   const [page, setPage] = useState(1);
-  const [init, setInit] = useState<boolean>(false);
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
-  const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
+  const [init, setInit] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showSearchMessage, setShowSearchMessage] = useState(false);
+  const [isLoadMore, setIsLoadMore] = useState(false);
   const {route} = props;
 
   useFocusEffect(
@@ -129,9 +129,9 @@ const ListChat = (props: any) => {
         console.error(error.message);
       }
     }
-  }, [page, categoryID_Filter, dispatch, idCompany, key, type_Filter]);
+  }, [page]);
 
-  const debounceText = useCallback(() => {
+  const debounceText = useCallback(
     debounce(
       text =>
         dispatch(
@@ -144,8 +144,9 @@ const ListChat = (props: any) => {
           }),
         ),
       500,
-    );
-  }, [categoryID_Filter, dispatch, idCompany, page, type_Filter]);
+    ),
+    [categoryID_Filter, dispatch, idCompany, page, type_Filter],
+  );
 
   const onRefresh = useCallback(() => {
     setPage(1);
