@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,95 +7,42 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-
+import {useSelector} from 'react-redux';
 import {colors, stylesCommon} from '@stylesCommon';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
-import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
-import {showMessage} from 'react-native-flash-message';
 import {ItemUser} from '../../DetailChat/components/ItemUser';
-import {useSelector} from 'react-redux';
 import {AppInput} from '@component';
 
-const ModalUserList = memo((prop: any) => {
+type PropType = {
+  onCancel: () => void;
+  visible: boolean;
+  setShowTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowUserList: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelected: React.Dispatch<React.SetStateAction<any[]>>;
+  keyboardHeight: number;
+};
+
+type UserItemType = {
+  label: any;
+  value: any;
+  icon_image: any;
+};
+
+const ModalUserList = memo((prop: PropType) => {
   const {
     onCancel,
     visible,
-    idRoomChat,
     setShowTaskForm,
     setShowUserList,
     setSelected,
     keyboardHeight,
   } = prop;
-  const [listUser, setListUser] = useState<any>([]);
-  const [allListUser, setAllListUser] = useState<any>([]);
+  const [listUser, setListUser] = useState<UserItemType[]>([]);
+  const [allListUser, setAllListUser] = useState<UserItemType[]>([]);
+  const [searchWord, setSearchWord] = useState('');
   const loginUser = useSelector((state: any) => state.auth.userInfo);
-  const [searchWord, setSearchWord] = useState<any>('');
-
-  const getListUserApi = useCallback(async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      const dataUser = result?.data?.users?.data;
-      const dataConvert = dataUser?.map((element: any) => {
-        return {
-          ...element,
-          label:
-            element?.id < 0
-              ? element?.name
-              : `${element?.last_name}${element?.first_name}`,
-        };
-      });
-      setListUser(
-        dataConvert
-          .map(user => {
-            return {
-              label: user.label,
-              value: user.id,
-              icon_image: user.icon_image,
-            };
-          })
-          .concat([
-            {
-              label: loginUser.last_name + loginUser.first_name,
-              value: loginUser.id,
-              icon_image: loginUser.icon_image,
-            },
-          ]),
-      );
-      setAllListUser(
-        dataConvert
-          .map(user => {
-            return {
-              label: user.label,
-              value: user.id,
-              icon_image: user.icon_image,
-            };
-          })
-          .concat([
-            {
-              label: loginUser.last_name + loginUser.first_name,
-              value: loginUser.id,
-              icon_image: loginUser.icon_image,
-            },
-          ]),
-      );
-    } catch (error) {
-      console.error(error);
-      showMessage({
-        message: '処理中にエラーが発生しました',
-        type: 'danger',
-      });
-    }
-  }, [
-    idRoomChat,
-    loginUser.first_name,
-    loginUser.icon_image,
-    loginUser.id,
-    loginUser.last_name,
-  ]);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
 
   const closeModal = () => {
     onCancel();
@@ -111,8 +58,24 @@ const ModalUserList = memo((prop: any) => {
   );
 
   useEffect(() => {
-    getListUserApi();
-  }, [getListUserApi]);
+    const listUsers: UserItemType[] = (listUserChat ?? [])
+      .map(user => {
+        return {
+          label: user.last_name + user.first_name,
+          value: user.id,
+          icon_image: user.icon_image,
+        };
+      })
+      .concat([
+        {
+          label: loginUser.last_name + loginUser.first_name,
+          value: loginUser.id,
+          icon_image: loginUser.icon_image,
+        },
+      ]);
+    setListUser(listUsers);
+    setAllListUser(listUsers);
+  }, [listUserChat, loginUser]);
 
   return (
     <Modal
@@ -139,7 +102,7 @@ const ModalUserList = memo((prop: any) => {
                 : styles.viewContentWithKeyboard
             }>
             <AppInput
-              onChange={(text: any) => {
+              onChange={text => {
                 setSearchWord(text);
                 if (text !== '') {
                   setListUser(

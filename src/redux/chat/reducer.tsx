@@ -46,6 +46,17 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
       };
+    case typeChat.GET_LIST_USER_CHAT_SUCCESS:
+      const userList = action.payload.users?.data;
+      return {
+        ...state,
+        listUserChat: userList ?? [],
+      };
+    case typeChat.SAVE_LIST_USER_CHAT:
+      return {
+        ...state,
+        listUserChat: action.payload ?? [],
+      };
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
       let data = [...detailChat];
@@ -165,7 +176,11 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         (element: any) => element?.id === action.payload?.id,
       );
       if (indexListRoom > -1) {
+        // websocketで通知のあったルームをリストの一番上に移動する
         dataList[indexListRoom] = action.payload;
+        const targetRoom = dataList[indexListRoom];
+        dataList.splice(indexListRoom, 1);
+        dataList.unshift(targetRoom);
       }
       return {
         ...state,

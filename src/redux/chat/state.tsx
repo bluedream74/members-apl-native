@@ -17,6 +17,7 @@ export type ChatState = {
   categoryID_Filter: any;
   status_Filter: any;
   unReadMessageCount: any;
+  listUserChat: Array<any>;
 };
 
 export const INITIAL_STATE_CHAT: ChatState = {
@@ -38,4 +39,5 @@ export const INITIAL_STATE_CHAT: ChatState = {
   categoryID_Filter: null,
   status_Filter: 'すべてのチャット',
   unReadMessageCount: null,
+  listUserChat: [],
 };
