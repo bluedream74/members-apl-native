@@ -1372,7 +1372,7 @@ export const useFunction = (props: any) => {
       setTimeout(() => {
         dispatch(saveIdMessageSearch(idMessageSearchListChat));
         setPageLoading(true);
-      }, 1000);
+      }, 200);
     }
   }, [idMessageSearchListChat, dispatch]);
 
