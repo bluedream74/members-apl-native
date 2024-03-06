@@ -631,7 +631,7 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async () => {
+  const sendFile = useCallback(async (message: string) => {
     try {
       if (chosenFiles?.length > 0) {
         GlobalService.showLoading();
@@ -683,6 +683,13 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            if (message === '') {
+              callApiChatBotRequest(
+                res?.data?.data?.message,
+                res?.data?.data?.id,
+                `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+              );
+            }
           } else {
             // in case of file
             data.append('attachment[]', {
@@ -714,6 +721,13 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            if (message === '') {
+              callApiChatBotRequest(
+                res?.data?.data?.message,
+                res?.data?.data?.id,
+                `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+              );
+            }
           }
 
           giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
@@ -781,6 +795,11 @@ export const useFunction = (props: any) => {
         to_info: toInfo,
       });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+      callApiChatBotRequest(
+        res?.data?.data?.message,
+        res?.data?.data?.id,
+        `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+      );
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
@@ -936,6 +955,11 @@ export const useFunction = (props: any) => {
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+          callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+            `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+          );
         } catch (error: any) {}
       } else if (message_edit) {
         try {
@@ -1049,6 +1073,11 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+          callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+            `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+          );
         } catch (error: any) {}
       } else {
         try {
@@ -1131,7 +1160,7 @@ export const useFunction = (props: any) => {
       }
       // send files
       if (chosenFiles?.length > 0) {
-        await sendFile();
+        await sendFile(mes[0]?.text);
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
