@@ -25,7 +25,20 @@ import {MultiSelect} from 'react-native-element-dropdown';
 import {Colors} from '../../Project/Task/component/Colors';
 import moment from 'moment/moment';
 
-const ModalTask = React.memo((prop: any) => {
+type PropType = {
+  onCancel: () => void;
+  visible: boolean;
+  idRoomChat: any;
+  selected: any[];
+  setSelected: React.Dispatch<React.SetStateAction<any[]>>;
+  showTaskForm: boolean;
+  onSaveTask?: (input: any) => Promise<void>;
+  item?: any;
+  onUpdateTask?: (data: any) => Promise<void>;
+  onUpdateTaskCallback?: () => void;
+};
+
+const ModalTask = React.memo((prop: PropType) => {
   const {
     onCancel,
     visible,
@@ -38,9 +51,9 @@ const ModalTask = React.memo((prop: any) => {
     setSelected,
     showTaskForm,
   } = prop;
-  const [taskName, setTaskName] = React.useState('');
-  const [taskDescription, setTaskDescription] = React.useState('');
-  const [listUser, setListUser] = useState<any>([]);
+  const [taskName, setTaskName] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [listUser, setListUser] = useState<any[]>([]);
   const [date, setDate] = useState(moment().format('YYYY/MM/DD'));
   const [time, setTime] = useState('00:00:00');
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
@@ -139,7 +152,7 @@ const ModalTask = React.memo((prop: any) => {
 
   const saveTask = async () => {
     let data;
-    if (!item) {
+    if (!item && onSaveTask) {
       // create new
       data = {
         taskName: taskName,
@@ -152,7 +165,7 @@ const ModalTask = React.memo((prop: any) => {
         chat_room_id: idRoomChat,
       };
       onSaveTask(data);
-    } else {
+    } else if (onUpdateTask && onUpdateTaskCallback) {
       // update
       data = {
         project_id: item.project_id,

@@ -3,10 +3,10 @@ import {updateTask} from '@services';
 import {showMessage} from 'react-native-flash-message';
 
 export const useFunction = () => {
-  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
-  const [showUserList, setShowUserList] = useState<boolean>(false);
-  const [selected, setSelected] = useState<any>([]);
-  const [reload, setReload] = useState<boolean>(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showUserList, setShowUserList] = useState(false);
+  const [selected, setSelected] = useState<any[]>([]);
+  const [reload, setReload] = useState(false);
 
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);

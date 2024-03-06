@@ -14,7 +14,22 @@ import {Colors} from '../../Project/Task/component/Colors';
 import {ItemUser} from '../../DetailChat/components/ItemUser';
 import {AppInput} from '@component';
 
-const ModalUserList = memo((prop: any) => {
+type PropType = {
+  onCancel: () => void;
+  visible: boolean;
+  setShowTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowUserList: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelected: React.Dispatch<React.SetStateAction<any[]>>;
+  keyboardHeight: number;
+};
+
+type UserItemType = {
+  label: any;
+  value: any;
+  icon_image: any;
+};
+
+const ModalUserList = memo((prop: PropType) => {
   const {
     onCancel,
     visible,
@@ -23,9 +38,9 @@ const ModalUserList = memo((prop: any) => {
     setSelected,
     keyboardHeight,
   } = prop;
-  const [listUser, setListUser] = useState<any>([]);
-  const [allListUser, setAllListUser] = useState<any>([]);
-  const [searchWord, setSearchWord] = useState<any>('');
+  const [listUser, setListUser] = useState<UserItemType[]>([]);
+  const [allListUser, setAllListUser] = useState<UserItemType[]>([]);
+  const [searchWord, setSearchWord] = useState('');
   const loginUser = useSelector((state: any) => state.auth.userInfo);
   const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
 
@@ -43,7 +58,7 @@ const ModalUserList = memo((prop: any) => {
   );
 
   useEffect(() => {
-    const listUsers = (listUserChat ?? [])
+    const listUsers: UserItemType[] = (listUserChat ?? [])
       .map(user => {
         return {
           label: user.last_name + user.first_name,
@@ -87,7 +102,7 @@ const ModalUserList = memo((prop: any) => {
                 : styles.viewContentWithKeyboard
             }>
             <AppInput
-              onChange={(text: any) => {
+              onChange={text => {
                 setSearchWord(text);
                 if (text !== '') {
                   setListUser(

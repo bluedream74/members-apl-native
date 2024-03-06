@@ -33,7 +33,7 @@ const Item = React.memo((props: any) => {
   );
   const navigation = useNavigation<any>();
   const {item, idRoomChat} = props;
-  const [pin, setStatusPin] = useState<any>(null);
+  const [pin, setStatusPin] = useState<number | null>(null);
   const [noIdRoomChatFlg, setNoIdRoomChatFlg] = useState<boolean>(false);
 
   let count_user =
@@ -56,8 +56,7 @@ const Item = React.memo((props: any) => {
       let dataName = '';
       item?.room_users?.forEach((el: any) => {
         if (el?.user?.last_name) {
-          dataName =
-            dataName + `${el?.user?.last_name}${el?.user?.first_name}、`;
+          dataName = `${dataName}${el?.user?.last_name}${el?.user?.first_name}、`;
         }
       });
       return `${dataName?.replace(/.$/, '')}、${user?.last_name}${
@@ -112,7 +111,7 @@ const Item = React.memo((props: any) => {
   const onGhimRoomChat = async () => {
     try {
       GlobalService.showLoading();
-      const response = await pinFlag(item?.id, Number(pin ?? 0) === 0 ? 1 : 0);
+      const response = await pinFlag(item?.id, !pin ? 1 : 0);
       showMessage({
         message: response?.data?.message,
         type: 'success',

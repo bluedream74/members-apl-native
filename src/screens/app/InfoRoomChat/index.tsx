@@ -41,10 +41,10 @@ const InfoRoomChat = (props: any) => {
   const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const navigation = useNavigation<any>();
   const [dataDetail, setData] = useState<any>(null);
-  const [activePin, setActivePin] = useState<any>(false);
-  const [modal, setModal] = useState<boolean>(false);
-  const [modalDelete, setModalDelete] = useState<boolean>(false);
-  const [modalLink, setModalLink] = useState<boolean>(false);
+  const [activePin, setActivePin] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [modalLink, setModalLink] = useState(false);
   const [image, setImage] = useState<any>(null);
 
   const count_user =
@@ -57,8 +57,11 @@ const InfoRoomChat = (props: any) => {
       GlobalService.showLoading();
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
-      GlobalService.hideLoading();
-    } catch {
+    } catch (e) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, [idRoomChat]);
@@ -134,8 +137,11 @@ const InfoRoomChat = (props: any) => {
         type: 'success',
       });
       getDetail();
-      GlobalService.hideLoading();
-    } catch {
+    } catch (e) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   };

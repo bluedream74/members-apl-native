@@ -31,8 +31,8 @@ const CreateRoomChat = (props: any) => {
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const user = useSelector((state: any) => state.auth.userInfo);
   const [name, setName] = useState<any>(null);
-  const [listUser, setListUser] = useState<any>([]);
-  const [resultUser, setResultUser] = useState<any>([]);
+  const [listUser, setListUser] = useState<any[]>([]);
+  const [resultUser, setResultUser] = useState<any[]>([]);
   const [key, setKey] = useState<any>(null);
 
   const onBack = useCallback(() => {
@@ -48,7 +48,7 @@ const CreateRoomChat = (props: any) => {
       GlobalService.showLoading();
       if (keySearch?.length > 0) {
         const result = await getListUser({name: keySearch});
-        setResultUser(result?.data?.users?.data);
+        setResultUser(result?.data?.users?.data ?? []);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -75,31 +75,29 @@ const CreateRoomChat = (props: any) => {
   );
 
   const onAddUser = useCallback((item: any) => {
-    setListUser((prev: Array<any>) => prev.concat([item]));
+    setListUser(prev => prev.concat([item]));
     setResultUser([]);
     setKey(null);
   }, []);
 
   const onDeleteItem = useCallback((item: any) => {
-    setListUser((prev: Array<any>) =>
-      prev.filter((element: any) => element?.id !== item?.id),
-    );
+    setListUser(prev => prev.filter(element => element?.id !== item?.id));
   }, []);
 
   const renderIdUser = useCallback(() => {
     let data = [];
-    for (let i = 0; i < listUser?.length; i++) {
+    for (let i = 0; i < listUser.length; i++) {
       data.push(listUser[i].id);
     }
     return data;
   }, [listUser]);
 
   const renderNameRoom = useCallback(() => {
-    if (renderIdUser()?.length === 1) {
+    if (renderIdUser().length === 1) {
       return null;
     } else {
       let dataName = '';
-      listUser?.forEach((item: any) => {
+      listUser.forEach((item: any) => {
         dataName = `${dataName}${item?.last_name}${item?.first_name}、`;
       });
       return `${dataName.replace(/.$/, '')}、${user?.last_name}${
@@ -113,7 +111,7 @@ const CreateRoomChat = (props: any) => {
       try {
         GlobalService.showLoading();
         const body = {
-          name: name ? name : renderNameRoom(),
+          name: name ?? renderNameRoom(),
           user_id: renderIdUser(),
         };
         const result = await createRoom(body);
@@ -125,7 +123,7 @@ const CreateRoomChat = (props: any) => {
             ids: renderIdUser(),
           },
           method: 2,
-          room_name: name ? name : renderNameRoom(),
+          room_name: name ?? renderNameRoom(),
         });
         navigation.goBack();
       } catch (error) {
@@ -233,9 +231,9 @@ const CreateRoomChat = (props: any) => {
               />
             )}
             <View style={styles.viewSelectUser}>
-              {listUser?.length > 0 && (
+              {listUser.length > 0 && (
                 <View style={styles.viewRow}>
-                  {listUser?.map((item: any, index: any) => {
+                  {listUser.map((item: any, index: any) => {
                     return (
                       <TouchableOpacity
                         key={index}
@@ -255,14 +253,14 @@ const CreateRoomChat = (props: any) => {
                 style={styles.input}
                 onChangeText={onSearchName}
                 value={key}
-                placeholder={listUser?.length > 0 ? '' : renderPlaceHolder()}
+                placeholder={listUser.length > 0 ? '' : renderPlaceHolder()}
                 placeholderTextColor={colors.placeholder}
                 onSubmitEditing={() => onSearch(key)}
                 returnKeyType="search"
               />
             </View>
             <ScrollView style={styles.viewResultSearch}>
-              {resultUser?.map((item: any, index: any) => {
+              {resultUser.map((item: any, index: any) => {
                 return (
                   <TouchableOpacity
                     key={index}

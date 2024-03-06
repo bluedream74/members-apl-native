@@ -87,29 +87,29 @@ export const useFunction = (props: any) => {
   const [bottomPage, setBottomPage] = useState<number | null>(1);
   const [pageLoading, setPageLoading] = useState(true);
   const [pickFile, setPickFile] = useState(false);
-  const [chosenFiles, setchosenFiles] = useState<any>([]);
+  const [chosenFiles, setChosenFiles] = useState<any[]>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
   const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
     [],
   );
   const [showTagModal, setShowTag] = useState(false);
-  const [ids, setIds] = useState<any>([]);
+  const [ids, setIds] = useState<any[]>([]);
   const [newIndexArray, setIndex] = useState<any>(null);
-  const [listUserSelect, setListUserSelect] = useState<any>([]);
-  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
-  const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [listUserSelect, setListUserSelect] = useState<any[]>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
+  const [showRedLine, setShowRedLine] = useState(true);
   const [idRedLine, setIdRedLine] = useState<number | null>(null);
-  const [indexRedLine, setIndexRedLine] = useState(null);
-  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
-  const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [indexRedLine, setIndexRedLine] = useState<number | null>(null);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showUserList, setShowUserList] = useState(false);
   const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
-  const [selected, setSelected] = useState<any>([]);
-  const [inputText, setInputText] = useState<string>('');
+  const [selected, setSelected] = useState<any[]>([]);
+  const [inputText, setInputText] = useState('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+  const [irregularMessageIds, setIrregularMessageIds] = useState<any[]>([]);
   const [showSendMessageButton, setShowSendMessageButton] =
     useState<boolean>(true);
 
@@ -614,7 +614,7 @@ export const useFunction = (props: any) => {
       } else {
         cancelModal();
         const mergedFiles = images.concat(chosenFiles);
-        setchosenFiles(mergedFiles);
+        setChosenFiles(mergedFiles);
       }
     });
   };
@@ -627,13 +627,13 @@ export const useFunction = (props: any) => {
     }).then(async file => {
       cancelModal();
       const mergedFiles = file.concat(chosenFiles);
-      setchosenFiles(mergedFiles);
+      setChosenFiles(mergedFiles);
     });
   };
 
   const sendFile = useCallback(async () => {
     try {
-      if (chosenFiles?.length > 0) {
+      if (chosenFiles.length > 0) {
         GlobalService.showLoading();
         // send files
         for (const item of chosenFiles) {
@@ -722,7 +722,7 @@ export const useFunction = (props: any) => {
           });
           GlobalService.hideLoading();
         }
-        setchosenFiles([]);
+        setChosenFiles([]);
       }
     } catch (error: any) {
       GlobalService.hideLoading();
@@ -801,11 +801,7 @@ export const useFunction = (props: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      await dispatch(
-        getListUserChat({
-          room_id: idRoomChat,
-        }),
-      );
+      await dispatch(getListUserChat({room_id: idRoomChat}));
     } catch (error) {
       console.error(error);
     }
@@ -1132,7 +1128,7 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       }
       // send files
-      if (chosenFiles?.length > 0) {
+      if (chosenFiles.length > 0) {
         await sendFile();
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
@@ -1264,14 +1260,14 @@ export const useFunction = (props: any) => {
           return item;
         }
       });
-      setchosenFiles(chosenFilesDeleted);
+      setChosenFiles(chosenFilesDeleted);
     },
     [chosenFiles],
   );
 
   const customBack = useCallback(() => {
     navigation.navigate(ROUTE_NAME.LISTCHAT_SCREEN, {
-      idRoomChat: idRoomChat,
+      idRoomChat,
     });
   }, [navigation, idRoomChat]);
 
@@ -1306,7 +1302,7 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
-        if (listUserChat && listUserChat.length === 0) {
+        if (listUserChat?.length === 0) {
           getUserListChat();
         }
       }

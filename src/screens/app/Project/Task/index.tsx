@@ -30,8 +30,8 @@ const Task = (props: any) => {
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const {route} = props;
   const {idRoom_chat} = route?.params;
-  const [listTask, setList] = useState([]);
-  const [specificItem, setSpecificItem] = useState(null);
+  const [listTask, setList] = useState<any[]>([]);
+  const [specificItem, setSpecificItem] = useState<any>(null);
   const [lastPage, setLastPage] = useState(1);
   const [page, setPage] = useState(1);
   const [currentPage, setCurrentPage] = useState<number | null>(null);
