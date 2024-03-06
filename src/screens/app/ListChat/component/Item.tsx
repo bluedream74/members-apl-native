@@ -59,9 +59,14 @@ const Item = React.memo((props: any) => {
           dataName = `${dataName}${el?.user?.last_name}${el?.user?.first_name}、`;
         }
       });
-      return `${dataName?.replace(/.$/, '')}、${user?.last_name}${
-        user?.first_name
-      }`;
+      if (dataName) {
+        return `${dataName.replace(/.$/, '')}、${user?.last_name}${
+          user?.first_name
+        }`;
+      } else {
+        // 名無しのルームにwebsocketから通知された場合の対応
+        return item.name;
+      }
     } else {
       return name;
     }
