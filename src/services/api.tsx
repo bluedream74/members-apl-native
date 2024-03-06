@@ -10,7 +10,7 @@ const api = axios.create();
 //adamo api url
 // export const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
 //member chat staging api url
-// export const BASEURL = 'https://stage.mem-bers.jp/mobile';
+//export const BASEURL = 'https://stage.mem-bers.jp/mobile';
 //member chat live api url
 export const BASEURL = 'https://mem-bers.jp/mobile';
 

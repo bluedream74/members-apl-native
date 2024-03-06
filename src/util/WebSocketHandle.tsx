@@ -51,7 +51,14 @@ function createAppSocket() {
             (element: any) => element?.id === data?.room_id,
           );
           if (index > -1) {
-            store.dispatch(getDetailRoomSocket(data?.room_id));
+            store.dispatch(
+              getRoomList({
+                company_id: state?.chat?.idCompany,
+                search: null,
+                type: state?.chat?.type_Filter,
+                category_id: state?.chat?.categoryID_Filter,
+              }),
+            );
           }
         }
       }
