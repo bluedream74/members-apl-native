@@ -1,11 +1,11 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {View, Text} from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput, AppButton} from '@component';
 import {iconClose} from '@images';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {updateInfoRoomchat, GlobalService, getListUser} from '@services';
+import {updateInfoRoomchat, GlobalService} from '@services';
 import {AppSocket} from '@util';
 import {useSelector} from 'react-redux';
 
@@ -18,54 +18,22 @@ const EditRoomChat = (props: any) => {
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const [name, setName] = useState<any>(dataDetail?.name);
   const [content, setContent] = useState<any>(dataDetail?.summary_column);
-  const [listUser, setListUser] = useState([]);
-
-  const convertDataUser = useCallback(() => {
-    //@ts-ignore
-    let data = [];
-    if (listUser && listUser?.length > 0) {
-      listUser?.map((item: any) => data.push(item?.id));
-    }
-    //@ts-ignore
-    return data;
-  }, [listUser]);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
 
   const onBack = useCallback(() => {
     navigation.goBack();
+  }, [navigation]);
+
+  const onChangeName = useCallback((value: string) => {
+    setName(value);
   }, []);
 
-  const onChangeName = useCallback(
-    (value: string) => {
-      setName(value);
-    },
-    [name],
-  );
-
-  const onChangeContent = useCallback(
-    (value: string) => {
-      setContent(value);
-    },
-    [content],
-  );
-
-  const getListUserOfRoom = async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      setListUser(result?.data?.users?.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getListUserOfRoom();
+  const onChangeContent = useCallback((value: string) => {
+    setContent(value);
   }, []);
 
   const renderNameRoom = () => {
-    if (listUser?.length == 1) {
+    if (listUserChat?.length === 1) {
       return null;
     } else {
       return '新規グループ';
@@ -74,25 +42,25 @@ const EditRoomChat = (props: any) => {
 
   const handleSubmit = async () => {
     try {
+      GlobalService.showLoading();
       const body = {
         room_id: idRoomChat,
         description: content,
         name: name ? name : renderNameRoom(),
       };
-      GlobalService.showLoading();
-      const response = await updateInfoRoomchat(body);
+      await updateInfoRoomchat(body);
       socket.emit('ChatGroup_update_ind2', {
         user_id: user_id,
         room_id: idRoomChat,
         member_info: {
           type: 5,
-          ids: convertDataUser(),
+          ids: listUserChat?.map((e: any) => e.id),
         },
         method: 2,
         room_name: name ? name : renderNameRoom(),
       });
-      onBack();
       GlobalService.hideLoading();
+      onBack();
     } catch {
       GlobalService.hideLoading();
     }

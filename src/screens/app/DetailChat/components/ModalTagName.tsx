@@ -4,12 +4,11 @@ import {
   View,
   Text,
   Dimensions,
-  ActivityIndicator,
   FlatList,
   TouchableOpacity,
 } from 'react-native';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
-import {getListUser} from '@services';
+import {useSelector} from 'react-redux';
 import {colors, stylesCommon} from '@stylesCommon';
 import FastImage from 'react-native-fast-image';
 import {defaultAvatar} from '@images';
@@ -17,40 +16,27 @@ import {defaultAvatar} from '@images';
 const width = Dimensions.get('window').width;
 
 const ModalTagName = React.memo((props: any) => {
-  const {idRoomChat, choseUser} = props;
-  const [dataLocal, setDataLocal] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {choseUser} = props;
+  const [dataLocal, setDataLocal] = useState<any[]>([]);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
 
   useEffect(() => {
-    getListUserApi();
-  }, []);
-
-  const getListUserApi = async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      const dataAddAll = result?.data?.users?.data || [];
-      dataAddAll.unshift({
+    const dataAddAll = [
+      {
         id: 'All',
         last_name: '@all このグループ全員に',
         first_name: '通知が送信されます',
         value: 'all',
-      });
-      const dataConvert = dataAddAll?.map((item: any) => {
+      },
+      ...(listUserChat ?? []).map((item: any) => {
         return {
           ...item,
           nameUser: `${item?.last_name}${item?.first_name}`,
         };
-      });
-      setDataLocal(dataConvert);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
+      }),
+    ];
+    setDataLocal(dataAddAll);
+  }, [listUserChat]);
 
   const onChoseUser = (item: any) => {
     const title = 'さん';
@@ -110,18 +96,12 @@ const ModalTagName = React.memo((props: any) => {
 
   return (
     <View style={styles.container}>
-      {loading === true ? (
-        <View style={styles.viewLoading}>
-          <ActivityIndicator size="small" color={colors.darkGrayText} />
-        </View>
-      ) : (
-        <FlatList
-          data={dataLocal}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <FlatList
+        data={dataLocal}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 });

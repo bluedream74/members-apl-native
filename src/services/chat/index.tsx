@@ -131,6 +131,11 @@ export const getDetailChatApi: any = async (params: any) => {
   return response;
 };
 
+export const getListUserChatApi: any = async (params: any) => {
+  const response = await api.get(GET_LIST_USER, {params});
+  return response;
+};
+
 export const deleteMessageApi: any = async (idMessage: any, idRoom: any) => {
   const response = api.post(`${DELETE_MESSAGE}/${idMessage}?room_id=${idRoom}`);
   return response;
@@ -294,7 +299,7 @@ export const getUnreadMessageCountApi: any = async (user_id: any) => {
 };
 
 export const getListTask: any = async (data: any) => {
-  const response = api.get(
+  const response = await api.get(
     `${GET_LIST_TASK}?page=${data?.page}&company_id=${data.idCompany}&chat_room_id=${data.idRoomChat}`,
   );
   return response;
@@ -304,7 +309,7 @@ export const saveTask: any = async (body: any) => {
   return response;
 };
 export const finishTask: any = async (body: any) => {
-  const response = api.post(`${UPDATE_TASK}`, body);
+  const response = await api.post(`${UPDATE_TASK}`, body);
   return response;
 };
 export const updateTask: any = async (body: any) => {
