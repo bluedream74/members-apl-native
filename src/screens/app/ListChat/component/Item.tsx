@@ -60,7 +60,7 @@ const Item = React.memo((props: any) => {
         }
       });
       if (dataName) {
-        return `${dataName?.replace(/.$/, '')}、${user?.last_name}${
+        return `${dataName.replace(/.$/, '')}、${user?.last_name}${
           user?.first_name
         }`;
       } else {
