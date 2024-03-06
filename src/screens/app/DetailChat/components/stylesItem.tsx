@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: scale(-10),
   },
   containerChat: {
-    maxWidth: '100%',
+    maxWidth: '95%',
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(14),
     borderRadius: verticalScale(16),
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   txtTime: {
-    marginLeft: scale(7),
+    marginLeft: scale(3),
     color: colors.border,
     fontSize: moderateScale(8),
   },
