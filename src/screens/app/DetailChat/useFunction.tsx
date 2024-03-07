@@ -680,119 +680,124 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async (message: string) => {
-    try {
-      if (chosenFiles.length > 0) {
-        GlobalService.showLoading();
-        // send files
-        for (const item of chosenFiles) {
-          let data = new FormData();
-          if (item?.sourceURL || item?.path) {
-            // in case of image
-            let isHEIC =
-              item?.sourceURL?.endsWith('.heic') ||
-              item?.sourceURL?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC');
-            data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\/]/, ''),
-              name: item?.path?.replace(/^.*[\\/]/, ''),
-              width: item?.width,
-              uri: item?.path,
-              path: item?.path,
-              size: item?.size,
-              type:
-                Platform.OS === 'ios'
-                  ? `image/${
-                      isHEIC
-                        ? item?.path?.split('.')[0] + '.JPG'
-                        : item?.path?.split('.').pop()
-                    }}`
-                  : item?.mime,
-              height: item?.height,
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            let res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            if (message === '') {
-              callApiChatBotRequest(
-                res?.data?.data?.message,
-                res?.data?.data?.id,
-                `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-              );
+  const sendFile = useCallback(
+    async (message: string) => {
+      try {
+        if (chosenFiles.length > 0) {
+          GlobalService.showLoading();
+          // send files
+          for (const item of chosenFiles) {
+            let data = new FormData();
+            if (item?.sourceURL || item?.path) {
+              // in case of image
+              let isHEIC =
+                item?.sourceURL?.endsWith('.heic') ||
+                item?.sourceURL?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC');
+              data.append('attachment[]', {
+                fileName: item?.path?.replace(/^.*[\\/]/, ''),
+                name: item?.path?.replace(/^.*[\\/]/, ''),
+                width: item?.width,
+                uri: item?.path,
+                path: item?.path,
+                size: item?.size,
+                type:
+                  Platform.OS === 'ios'
+                    ? `image/${
+                        isHEIC
+                          ? item?.path?.split('.')[0] + '.JPG'
+                          : item?.path?.split('.').pop()
+                      }}`
+                    : item?.mime,
+                height: item?.height,
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+              let res = await sendMessageApi(data);
+              socket.emit('message_ind2', {
+                user_id: user_id,
+                room_id: idRoomChat,
+                task_id: null,
+                to_info: null,
+                level: res?.data?.data?.msg_level,
+                message_id: res?.data?.data?.id,
+                message_type: res?.data?.data?.msg_type,
+                method: res?.data?.data?.method,
+                attachment_files: res?.data?.attachmentFiles,
+                stamp_no: res?.data?.data?.stamp_no,
+                relation_message_id: res?.data?.data?.reply_to_message_id,
+                text: res?.data?.data?.message,
+                text2: null,
+                time: res?.data?.data?.created_at,
+              });
+              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+              if (message === '') {
+                callApiChatBotRequest(
+                  res?.data?.data?.message,
+                  res?.data?.data?.id,
+                  `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+                );
+              }
+            } else {
+              // in case of file
+              data.append('attachment[]', {
+                name: item?.name,
+                type: item?.type,
+                uri:
+                  Platform.OS === 'ios'
+                    ? decodeURIComponent(item?.uri?.replace('file://', ''))
+                    : decodeURIComponent(item?.fileCopyUri),
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+              const res = await sendMessageApi(data);
+              socket.emit('message_ind2', {
+                user_id: user_id,
+                room_id: idRoomChat,
+                task_id: null,
+                to_info: null,
+                level: res?.data?.data?.msg_level,
+                message_id: res?.data?.data?.id,
+                message_type: res?.data?.data?.msg_type,
+                method: res?.data?.data?.method,
+                attachment_files: res?.data?.attachmentFiles,
+                stamp_no: res?.data?.data?.stamp_no,
+                relation_message_id: res?.data?.data?.reply_to_message_id,
+                text: res?.data?.data?.message,
+                text2: null,
+                time: res?.data?.data?.created_at,
+              });
+              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+              if (message === '') {
+                callApiChatBotRequest(
+                  res?.data?.data?.message,
+                  res?.data?.data?.id,
+                  `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
+                );
+              }
             }
-          } else {
-            // in case of file
-            data.append('attachment[]', {
-              name: item?.name,
-              type: item?.type,
-              uri:
-                Platform.OS === 'ios'
-                  ? decodeURIComponent(item?.uri?.replace('file://', ''))
-                  : decodeURIComponent(item?.fileCopyUri),
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            const res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            if (message === '') {
-              callApiChatBotRequest(
-                res?.data?.data?.message,
-                res?.data?.data?.id,
-                `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-              );
-            }
+            giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
+              {
+                animated: true,
+                index: 0,
+              },
+            );
           }
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
+          setChosenFiles([]);
         }
-        setChosenFiles([]);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
+        GlobalService.hideLoading();
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      GlobalService.hideLoading();
-    }
-  }, [chosenFiles, dispatch, idRoomChat, socket, user_id]);
+    },
+    [chosenFiles, dispatch, idRoomChat, socket, user_id, callApiChatBotRequest],
+  );
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
