@@ -1,6 +1,6 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { colors, stylesCommon } from '@stylesCommon';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {StyleSheet, Dimensions} from 'react-native';
+import {colors, stylesCommon} from '@stylesCommon';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const height_screen = Dimensions.get('window').height;
 
@@ -17,6 +17,31 @@ const styles = StyleSheet.create({
   },
   containerMessage: {
     backgroundColor: '#FFFFFF',
+  },
+  viewPartCopy: {
+    position: 'absolute',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  viewPartCopyOverlay: {
+    justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  containerChat: {
+    marginLeft: scale(43),
+    marginRight: scale(14),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(14),
+    borderRadius: verticalScale(16),
+    maxHeight: '66%',
+  },
+  partCopyText: {
+    color: colors.darkGrayText,
+    fontSize: moderateScale(15),
   },
   txtTitle: {
     ...stylesCommon.fontWeight600,
@@ -98,7 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: verticalScale(5),
   },
-  buttonRight: { marginRight: 16, marginLeft: 0 },
+  buttonRight: {marginRight: 16, marginLeft: 0},
   imageFile: {
     width: moderateScale(25),
     height: moderateScale(25),
@@ -143,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { styles };
+export {styles};

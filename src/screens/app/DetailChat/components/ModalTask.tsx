@@ -12,6 +12,7 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import CheckBox from '@react-native-community/checkbox';
 import {AppButton, AppInput} from '@component';
 import {iconClose} from '@images';
@@ -21,33 +22,45 @@ import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {HITSLOP} from '@util';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {MultiSelect} from 'react-native-element-dropdown';
-import {getListUser} from '@services';
 import {Colors} from '../../Project/Task/component/Colors';
-import {showMessage} from 'react-native-flash-message';
-import {useSelector} from 'react-redux';
 import moment from 'moment/moment';
 
-const ModalTask = React.memo((prop: any) => {
+type PropType = {
+  onCancel: () => void;
+  visible: boolean;
+  idRoomChat: any;
+  selected: any[];
+  setSelected: React.Dispatch<React.SetStateAction<any[]>>;
+  showTaskForm: boolean;
+  onSaveTask?: (input: any) => Promise<void>;
+  item?: any;
+  onUpdateTask?: (data: any) => Promise<void>;
+  onUpdateTaskCallback?: () => void;
+};
+
+const ModalTask = React.memo((prop: PropType) => {
   const {
     onCancel,
     visible,
     onSaveTask,
     onUpdateTask,
+    onUpdateTaskCallback,
     idRoomChat,
     item,
     selected,
     setSelected,
     showTaskForm,
   } = prop;
-  const [taskName, setTaskName] = React.useState('');
-  const [taskDescription, setTaskDescription] = React.useState('');
-  const [listUser, setListUser] = useState<any>([]);
+  const [taskName, setTaskName] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [listUser, setListUser] = useState<any[]>([]);
   const [date, setDate] = useState(moment().format('YYYY/MM/DD'));
   const [time, setTime] = useState('00:00:00');
   const [isGoogleCalendar, setIsGoogleCalendar] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
   const [focusDescription, setFocusDescription] = useState(false);
   const loginUser = useSelector((state: any) => state.auth.userInfo);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const inputRef = useRef();
 
   const [date1, setDate1] = useState(new Date());
@@ -88,8 +101,22 @@ const ModalTask = React.memo((prop: any) => {
   };
 
   useEffect(() => {
-    getListUserApi();
-  }, []);
+    const listUsers = (listUserChat ?? [])
+      .map(user => {
+        return {
+          label: user.last_name + user.first_name,
+          value: user.id,
+        };
+      })
+      .concat([
+        {
+          label: loginUser.last_name + loginUser.first_name,
+          value: loginUser.id,
+        },
+      ]);
+    setListUser(listUsers);
+  }, [listUserChat, loginUser]);
+
   useEffect(() => {
     if (item) {
       setTaskName(item?.name);
@@ -104,7 +131,8 @@ const ModalTask = React.memo((prop: any) => {
       setIsGoogleCalendar(item?.gcalendar_flg);
       setIsAllDay(item?.all_day_flg);
     }
-  }, [item]);
+  }, [item, setSelected]);
+
   useEffect(() => {
     setTaskName('');
     setTaskDescription('');
@@ -114,53 +142,17 @@ const ModalTask = React.memo((prop: any) => {
     setIsAllDay(false);
   }, [showTaskForm]);
 
-  const getListUserApi = async () => {
-    try {
-      if (!idRoomChat) {
-        throw new Error('idRoomChat is undefined.');
-      }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-
-      const dataUser = result?.data?.users?.data;
-      const dataConvert = dataUser?.map((element: any) => {
-        return {
-          ...element,
-          label:
-            element?.id < 0
-              ? element?.name
-              : `${element?.last_name}${element?.first_name}`,
-        };
-      });
-      setListUser(
-        dataConvert
-          .map(user => {
-            return {label: user.label, value: user.id};
-          })
-          .concat([
-            {
-              label: loginUser.last_name + loginUser.first_name,
-              value: loginUser.id,
-            },
-          ]),
-      );
-    } catch (error) {
-      console.error(error);
-      showMessage({
-        message: '処理中にエラーが発生しました',
-        type: 'danger',
-      });
-    }
-  };
-
   const closeModal = () => {
     onCancel();
   };
+
   const onPressDescription = () => {
     inputRef.current.focus();
   };
-  const saveTask = () => {
+
+  const saveTask = async () => {
     let data;
-    if (!item) {
+    if (!item && onSaveTask) {
       // create new
       data = {
         taskName: taskName,
@@ -173,7 +165,7 @@ const ModalTask = React.memo((prop: any) => {
         chat_room_id: idRoomChat,
       };
       onSaveTask(data);
-    } else {
+    } else if (onUpdateTask && onUpdateTaskCallback) {
       // update
       data = {
         project_id: item.project_id,
@@ -200,13 +192,15 @@ const ModalTask = React.memo((prop: any) => {
         gcalendar_flg: isGoogleCalendar,
         all_day_flg: isAllDay,
       };
-      onUpdateTask(data);
+      await onUpdateTask(data);
+      onUpdateTaskCallback();
     }
   };
-  const renderDataItem = (item, selected) => {
+
+  const renderDataItem = (dataItem, select) => {
     return (
       <View style={styles.item}>
-        {selected && (
+        {select && (
           <CheckBox
             value={true}
             style={styles.checkbox}
@@ -214,7 +208,7 @@ const ModalTask = React.memo((prop: any) => {
             hideBox={false}
           />
         )}
-        {!selected && (
+        {!select && (
           <CheckBox
             value={false}
             style={styles.checkbox}
@@ -222,10 +216,11 @@ const ModalTask = React.memo((prop: any) => {
             hideBox={false}
           />
         )}
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+        <Text style={styles.selectedTextStyle}>{dataItem.label}</Text>
       </View>
     );
   };
+
   return (
     <Modal
       transparent={true}
@@ -377,12 +372,12 @@ const ModalTask = React.memo((prop: any) => {
                     }}
                     renderLeftIcon={() => {}}
                     renderItem={renderDataItem}
-                    renderSelectedItem={(item, unSelect) => (
+                    renderSelectedItem={(dataItem, unSelect) => (
                       <TouchableOpacity
-                        onPress={() => unSelect && unSelect(item)}>
+                        onPress={() => unSelect && unSelect(dataItem)}>
                         <View style={styles.selectedStyle}>
                           <Text style={styles.textSelectedStyle}>
-                            {item.label}
+                            {dataItem.label}
                           </Text>
                         </View>
                       </TouchableOpacity>

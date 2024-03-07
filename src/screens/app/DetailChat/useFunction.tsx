@@ -3,6 +3,7 @@ import {store} from '../../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getDetailListChat,
+  getListUserChat,
   deleteMessage,
   pinMessage,
   getDetailMessageSocketSuccess,
@@ -15,6 +16,7 @@ import {
   resetDataChat,
   saveIdRoomChat,
   saveIsGetInfoRoom,
+  saveListUserChat,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -26,7 +28,6 @@ import {
   editMessageApi,
   sendReactionApi,
   sendLabelApi,
-  getListUser,
   addBookmark,
   callApiChatBot,
   saveTask,
@@ -43,6 +44,12 @@ import {convertArrUnique} from '@util';
 import moment from 'moment/moment';
 import {Keyboard, KeyboardEvent} from 'react-native';
 
+interface partCopyType {
+  me: boolean;
+  colors: Array<string>;
+  text: string;
+}
+
 export const useFunction = (props: any) => {
   const {getSocket} = AppSocket;
   const socket = getSocket();
@@ -58,6 +65,7 @@ export const useFunction = (props: any) => {
   const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const paging = useSelector((state: any) => state.chat?.pagingDetail);
   const message_pinned = useSelector(
     (state: any) => state.chat?.message_pinned,
@@ -79,31 +87,31 @@ export const useFunction = (props: any) => {
   const [bottomPage, setBottomPage] = useState<number | null>(1);
   const [pageLoading, setPageLoading] = useState(true);
   const [pickFile, setPickFile] = useState(false);
-  const [chosenFiles, setchosenFiles] = useState<any>([]);
+  const [chosenFiles, setChosenFiles] = useState<any[]>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
   const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
     [],
   );
   const [showTagModal, setShowTag] = useState(false);
-  const [listUser, setListUser] = useState([]);
-  const [ids, setIds] = useState<any>([]);
+  const [ids, setIds] = useState<any[]>([]);
   const [newIndexArray, setIndex] = useState<any>(null);
-  const [listUserRoot, setListUserRoot] = useState([]);
-  const [listUserSelect, setListUserSelect] = useState<any>([]);
-  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
-  const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [listUserSelect, setListUserSelect] = useState<any[]>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
+  const [showRedLine, setShowRedLine] = useState(true);
   const [idRedLine, setIdRedLine] = useState<number | null>(null);
-  const [indexRedLine, setIndexRedLine] = useState(null);
-  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
-  const [showUserList, setShowUserList] = useState<boolean>(false);
-  const [selected, setSelected] = useState<any>([]);
-  const [inputText, setInputText] = useState<string>('');
+  const [indexRedLine, setIndexRedLine] = useState<number | null>(null);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showUserList, setShowUserList] = useState(false);
+  const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
+  const [selected, setSelected] = useState<any[]>([]);
+  const [inputText, setInputText] = useState('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
-  const [showSendMessageButton, setShowSendMessageButton] = useState<boolean>(true);
+  const [irregularMessageIds, setIrregularMessageIds] = useState<any[]>([]);
+  const [showSendMessageButton, setShowSendMessageButton] =
+    useState<boolean>(true);
 
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
@@ -253,7 +261,7 @@ export const useFunction = (props: any) => {
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat, dispatch, isGetInfoRoom]);
+  }, [idRoomChat, dispatch]);
 
   const onShowMenu = useCallback(() => {
     setVisible(!visible);
@@ -549,12 +557,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUser.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -565,7 +573,7 @@ export const useFunction = (props: any) => {
           res?.data?.data?.user_send?.last_name +
           res?.data?.data?.user_send?.first_name,
         user_icon_url: res?.data?.data?.icon_image ?? null,
-        client_name: listUser[0]?.client_name ?? null,
+        client_name: listUserChat[0]?.client_name ?? null,
         message_text: res?.data?.data?.message,
         attachment: null,
         stamp_no: res?.data?.data?.stamp_no,
@@ -575,7 +583,7 @@ export const useFunction = (props: any) => {
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
-    [dispatch, idRoomChat, socket, user_id],
+    [dispatch, idRoomChat, socket, user_id, dataDetail, listUserChat],
   );
 
   const navigatiteToListReaction = useCallback(
@@ -606,7 +614,7 @@ export const useFunction = (props: any) => {
       } else {
         cancelModal();
         const mergedFiles = images.concat(chosenFiles);
-        setchosenFiles(mergedFiles);
+        setChosenFiles(mergedFiles);
       }
     });
   };
@@ -619,13 +627,13 @@ export const useFunction = (props: any) => {
     }).then(async file => {
       cancelModal();
       const mergedFiles = file.concat(chosenFiles);
-      setchosenFiles(mergedFiles);
+      setChosenFiles(mergedFiles);
     });
   };
 
   const sendFile = useCallback(async () => {
     try {
-      if (chosenFiles?.length > 0) {
+      if (chosenFiles.length > 0) {
         GlobalService.showLoading();
         // send files
         for (const item of chosenFiles) {
@@ -714,7 +722,7 @@ export const useFunction = (props: any) => {
           });
           GlobalService.hideLoading();
         }
-        setchosenFiles([]);
+        setChosenFiles([]);
       }
     } catch (error: any) {
       GlobalService.hideLoading();
@@ -750,12 +758,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUser.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -766,7 +774,7 @@ export const useFunction = (props: any) => {
           res?.data?.data?.user_send?.last_name +
           res?.data?.data?.user_send?.first_name,
         user_icon_url: res?.data?.data?.icon_image ?? null,
-        client_name: listUser[0]?.client_name ?? null,
+        client_name: listUserChat[0]?.client_name ?? null,
         message_text: res?.data?.data?.message,
         attachment: null,
         stamp_no: res?.data?.data?.stamp_no,
@@ -793,13 +801,11 @@ export const useFunction = (props: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      setListUser(result?.data?.users?.data);
-      setListUserRoot(result?.data?.users?.data);
+      await dispatch(getListUserChat({room_id: idRoomChat}));
     } catch (error) {
       console.error(error);
     }
-  }, [idRoomChat]);
+  }, [idRoomChat, dispatch]);
 
   const bookmarkMessage = useCallback(async (data: any) => {
     try {
@@ -818,7 +824,7 @@ export const useFunction = (props: any) => {
   const callApiChatBotRequest = useCallback(
     async (message: any, messageId: any, useName: any) => {
       try {
-        const numberOfMember = listUserRoot.length;
+        const numberOfMember = listUserChat?.length ?? 0;
         let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
         if (numberOfMember < 1) {
           return null;
@@ -826,8 +832,8 @@ export const useFunction = (props: any) => {
           // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
           listUserRootOnlyOne = [
             {
-              userId: listUserRoot[0].id,
-              userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
+              userId: listUserChat[0].id,
+              userName: listUserChat[0].last_name + listUserChat[0].first_name,
             },
           ];
           setListUserSelect(listUserRootOnlyOne);
@@ -848,7 +854,7 @@ export const useFunction = (props: any) => {
         await callApiChatBot(formData);
       } catch (error) {}
     },
-    [idRoomChat, listUserRoot, listUserSelect],
+    [idRoomChat, listUserChat, listUserSelect],
   );
 
   const sendMessage = useCallback(
@@ -903,12 +909,12 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -919,7 +925,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -954,12 +960,12 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -970,7 +976,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -1017,12 +1023,12 @@ export const useFunction = (props: any) => {
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1033,7 +1039,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -1069,12 +1075,12 @@ export const useFunction = (props: any) => {
               text2: null,
               time: res?.data?.data?.created_at,
             });
-            const joinUsers = listUser.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUser.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1085,7 +1091,7 @@ export const useFunction = (props: any) => {
                 res?.data?.data?.user_send?.last_name +
                 res?.data?.data?.user_send?.first_name,
               user_icon_url: res?.data?.data?.icon_image ?? null,
-              client_name: listUser[0]?.client_name ?? null,
+              client_name: listUserChat[0]?.client_name ?? null,
               message_text: res?.data?.data?.message,
               attachment: null,
               stamp_no: res?.data?.data?.stamp_no,
@@ -1098,12 +1104,12 @@ export const useFunction = (props: any) => {
               `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           } else {
-            const joinUsers = listUser.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUser.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1112,7 +1118,7 @@ export const useFunction = (props: any) => {
               join_users: joinUsers,
               user_name: null,
               user_icon_url: null,
-              client_name: listUser[0]?.client_name ?? null,
+              client_name: listUserChat[0]?.client_name ?? null,
               message_text: null,
               attachment: null,
               stamp_no: null,
@@ -1122,7 +1128,7 @@ export const useFunction = (props: any) => {
         } catch (error: any) {}
       }
       // send files
-      if (chosenFiles?.length > 0) {
+      if (chosenFiles.length > 0) {
         await sendFile();
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
@@ -1154,7 +1160,8 @@ export const useFunction = (props: any) => {
       sendFile,
       socket,
       user_id,
-      listUser,
+      listUserChat,
+      dataDetail,
     ],
   );
 
@@ -1188,6 +1195,10 @@ export const useFunction = (props: any) => {
   const onCreateTask = useCallback(() => {
     setShowUserList(!showUserList);
   }, [showUserList]);
+
+  const changePartCopy = useCallback((data: any) => {
+    setTimeout(() => setPartCopy(data), 200);
+  }, []);
 
   const onSaveTask = useCallback(async input => {
     const data = {
@@ -1249,14 +1260,14 @@ export const useFunction = (props: any) => {
           return item;
         }
       });
-      setchosenFiles(chosenFilesDeleted);
+      setChosenFiles(chosenFilesDeleted);
     },
     [chosenFiles],
   );
 
   const customBack = useCallback(() => {
     navigation.navigate(ROUTE_NAME.LISTCHAT_SCREEN, {
-      idRoomChat: idRoomChat,
+      idRoomChat,
     });
   }, [navigation, idRoomChat]);
 
@@ -1291,7 +1302,7 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
-        if (listUser.length === 0) {
+        if (listUserChat?.length === 0) {
           getUserListChat();
         }
       }
@@ -1326,7 +1337,8 @@ export const useFunction = (props: any) => {
     idMessageSearch,
     listChat,
     paging?.current_page,
-    listUser,
+    listUserChat,
+    getUserListChat,
   ]);
 
   // route?.paramsが変わったら実行
@@ -1341,8 +1353,7 @@ export const useFunction = (props: any) => {
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
-        setListUser([]);
-        setListUserRoot([]);
+        await dispatch(saveListUserChat([]));
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
         getListChat(1);
@@ -1358,7 +1369,7 @@ export const useFunction = (props: any) => {
       setTimeout(() => {
         dispatch(saveIdMessageSearch(idMessageSearchListChat));
         setPageLoading(true);
-      }, 1000);
+      }, 200);
     }
   }, [idMessageSearchListChat, dispatch]);
 
@@ -1403,23 +1414,6 @@ export const useFunction = (props: any) => {
       }
     }
   }, [listChat, pageLoading, dispatch, idMessageSearch, idRoomChat, page]);
-
-  // showTagModal
-  useEffect(() => {
-    if (showTagModal) {
-      getUserListChat();
-    }
-  }, [showTagModal, getUserListChat]);
-
-  // 画面にFocusがあたった/外れた、他依存の際に発火
-  // 必要な処理か不明なので無効化
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (idRoomChat) {
-  //       getDetail();
-  //     }
-  //   }, []),
-  // );
 
   useEffect(() => {
     if (message_edit || messageReply || messageQuote) {
@@ -1499,8 +1493,7 @@ export const useFunction = (props: any) => {
     showHideModalTagName,
     setShowTag,
     showTagModal,
-    listUser,
-    listUserRoot,
+    listUserChat,
     setText,
     bookmarkMessage,
     setIds,
@@ -1529,6 +1522,8 @@ export const useFunction = (props: any) => {
     onUpdateTask,
     setShowUserList,
     showUserList,
+    partCopy,
+    changePartCopy,
     selected,
     setSelected,
     setInputText,

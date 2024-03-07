@@ -24,6 +24,21 @@ export const getDetailListChatSuccess = (payload: any) => ({
   payload,
 });
 
+export const getListUserChat = (payload: any) => ({
+  type: typeChat.GET_LIST_USER_CHAT,
+  payload,
+});
+
+export const getListUserChatSuccess = (payload: any) => ({
+  type: typeChat.GET_LIST_USER_CHAT_SUCCESS,
+  payload,
+});
+
+export const saveListUserChat = (payload: any) => ({
+  type: typeChat.SAVE_LIST_USER_CHAT,
+  payload,
+});
+
 //Action lưu ID của company vào redux
 export const saveIdCompany = (payload: any) => ({
   type: typeChat.SAVE_ID_COMPANY,

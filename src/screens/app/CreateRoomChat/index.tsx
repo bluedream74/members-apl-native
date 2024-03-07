@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -15,7 +15,6 @@ import {debounce} from 'lodash';
 import {AppSocket} from '@util';
 
 import {useNavigation} from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
 import {useSelector, useDispatch} from 'react-redux';
 import {getDetailMessageSocketSuccess} from '@redux';
 
@@ -23,94 +22,96 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {getListUser, createRoom, GlobalService, inviteMember} from '@services';
 
 const CreateRoomChat = (props: any) => {
-  const dispatch = useDispatch();
-  const navigation = useNavigation<any>();
   const {route} = props;
-  const user_id = useSelector((state: any) => state.auth.userInfo.id);
-  const user = useSelector((state: any) => state.auth.userInfo);
-
+  const dispatch = useDispatch();
   const {typeScreen, idRoomchat} = route?.params;
   const {getSocket} = AppSocket;
   const socket = getSocket();
-
+  const navigation = useNavigation<any>();
+  const user_id = useSelector((state: any) => state.auth.userInfo.id);
+  const user = useSelector((state: any) => state.auth.userInfo);
   const [name, setName] = useState<any>(null);
-  const [listUser, setListUser] = useState<any>([]);
-  const [resultUser, setResultUser] = useState<any>([]);
+  const [listUser, setListUser] = useState<any[]>([]);
+  const [resultUser, setResultUser] = useState<any[]>([]);
   const [key, setKey] = useState<any>(null);
 
   const onBack = useCallback(() => {
     navigation.goBack();
+  }, [navigation]);
+
+  const onChange = useCallback((value: string) => {
+    setName(value);
   }, []);
 
-  const onChange = useCallback(
-    (value: string) => {
-      setName(value);
-    },
-    [name],
-  );
-
-  const debounceText = useCallback(
-    debounce(text => onSearch(text), 500),
-    [],
-  );
-
-  const onSearchName = (value: string) => {
-    setKey(value);
-    debounceText(value);
-  };
-
-  const onSearch = async (keySearch: any) => {
+  const onSearch = useCallback(async (keySearch: string) => {
     try {
+      GlobalService.showLoading();
       if (keySearch?.length > 0) {
         const result = await getListUser({name: keySearch});
-        setResultUser(result?.data?.users?.data);
+        setResultUser(result?.data?.users?.data ?? []);
       }
-    } catch (error) {}
-  };
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
+      GlobalService.hideLoading();
+    }
+  }, []);
 
-  const onAddUser = (item: any) => {
-    setListUser(listUser?.concat([item]));
+  const debounceText = useCallback(
+    debounce(text => {
+      onSearch(text);
+    }, 500),
+    [onSearch],
+  );
+
+  const onSearchName = useCallback(
+    (value: string) => {
+      setKey(value);
+      debounceText(value);
+    },
+    [debounceText],
+  );
+
+  const onAddUser = useCallback((item: any) => {
+    setListUser(prev => prev.concat([item]));
     setResultUser([]);
     setKey(null);
-  };
+  }, []);
 
-  const onDeleteItem = (item: any) => {
-    let data = [...listUser];
-    const index = data.findIndex((element: any) => element?.id == item?.id);
-    if (index > -1) {
-      data.splice(index, 1);
-    }
-    setListUser(data);
-  };
+  const onDeleteItem = useCallback((item: any) => {
+    setListUser(prev => prev.filter(element => element?.id !== item?.id));
+  }, []);
 
-  const renderIdUser = () => {
+  const renderIdUser = useCallback(() => {
     let data = [];
-    for (let i = 0; i < listUser?.length; i++) {
+    for (let i = 0; i < listUser.length; i++) {
       data.push(listUser[i].id);
     }
     return data;
-  };
+  }, [listUser]);
 
-  const renderNameRoom = () => {
-    if (renderIdUser()?.length == 1) {
+  const renderNameRoom = useCallback(() => {
+    if (renderIdUser().length === 1) {
       return null;
     } else {
       let dataName = '';
-      const dataAdd = listUser?.forEach((item: any) => {
-        dataName = dataName + `${item?.last_name}${item?.first_name}、`;
+      listUser.forEach((item: any) => {
+        dataName = `${dataName}${item?.last_name}${item?.first_name}、`;
       });
-      const nameUser = `、${user?.last_name}${user?.first_name}`;
-      const name = dataName?.replace(/.$/, '') + nameUser;
-      return name;
+      return `${dataName.replace(/.$/, '')}、${user?.last_name}${
+        user?.first_name
+      }`;
     }
-  };
+  }, [listUser, renderIdUser, user]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (typeScreen === 'CREATE') {
       try {
         GlobalService.showLoading();
         const body = {
-          name: name ? name : renderNameRoom(),
+          name: name ?? renderNameRoom(),
           user_id: renderIdUser(),
         };
         const result = await createRoom(body);
@@ -122,11 +123,14 @@ const CreateRoomChat = (props: any) => {
             ids: renderIdUser(),
           },
           method: 2,
-          room_name: name ? name : renderNameRoom(),
+          room_name: name ?? renderNameRoom(),
         });
         navigation.goBack();
-        GlobalService.hideLoading();
       } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     } else {
@@ -164,12 +168,25 @@ const CreateRoomChat = (props: any) => {
         });
         dispatch(getDetailMessageSocketSuccess([result?.data?.data]));
         navigation.goBack();
-        GlobalService.hideLoading();
       } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     }
-  };
+  }, [
+    dispatch,
+    idRoomchat,
+    name,
+    navigation,
+    renderIdUser,
+    renderNameRoom,
+    socket,
+    typeScreen,
+    user_id,
+  ]);
 
   const validateDisabled = () => {
     if (typeScreen === 'CREATE') {
@@ -214,9 +231,9 @@ const CreateRoomChat = (props: any) => {
               />
             )}
             <View style={styles.viewSelectUser}>
-              {listUser?.length > 0 && (
+              {listUser.length > 0 && (
                 <View style={styles.viewRow}>
-                  {listUser?.map((item: any, index: any) => {
+                  {listUser.map((item: any, index: any) => {
                     return (
                       <TouchableOpacity
                         key={index}
@@ -236,14 +253,14 @@ const CreateRoomChat = (props: any) => {
                 style={styles.input}
                 onChangeText={onSearchName}
                 value={key}
-                placeholder={listUser?.length > 0 ? '' : renderPlaceHolder()}
+                placeholder={listUser.length > 0 ? '' : renderPlaceHolder()}
                 placeholderTextColor={colors.placeholder}
                 onSubmitEditing={() => onSearch(key)}
                 returnKeyType="search"
               />
             </View>
             <ScrollView style={styles.viewResultSearch}>
-              {resultUser?.map((item: any, index: any) => {
+              {resultUser.map((item: any, index: any) => {
                 return (
                   <TouchableOpacity
                     key={index}
