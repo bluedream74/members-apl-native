@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
-  Text,
+  Keyboard,
 } from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
@@ -546,9 +546,18 @@ const DetailChat = (props: any) => {
                     {partCopy.text}
                   </TextInput>
                 ) : (
-                  <Text selectable={true} style={styles.partCopyText}>
-                    {partCopy.text}
-                  </Text>
+                  <TextInput
+                    multiline
+                    scrollEnabled={true}
+                    selectTextOnFocus={true}
+                    showSoftInputOnFocus={false}
+                    style={styles.partCopyText}
+                    value={partCopy.text}
+                    onChangeText={() => {
+                      Keyboard.dismiss();
+                      changePartCopy(partCopy);
+                    }}
+                  />
                 )}
               </LinearGradient>
             </TouchableWithoutFeedback>
