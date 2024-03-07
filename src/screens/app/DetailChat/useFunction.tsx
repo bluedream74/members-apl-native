@@ -688,6 +688,7 @@ export const useFunction = (props: any) => {
           // send files
           for (const item of chosenFiles) {
             let data = new FormData();
+            let res;
             if (item?.sourceURL || item?.path) {
               // in case of image
               let isHEIC =
@@ -715,30 +716,7 @@ export const useFunction = (props: any) => {
               data.append('msg_type', 2);
               data.append('room_id', idRoomChat);
               data.append('from_id', user_id);
-              let res = await sendMessageApi(data);
-              socket.emit('message_ind2', {
-                user_id: user_id,
-                room_id: idRoomChat,
-                task_id: null,
-                to_info: null,
-                level: res?.data?.data?.msg_level,
-                message_id: res?.data?.data?.id,
-                message_type: res?.data?.data?.msg_type,
-                method: res?.data?.data?.method,
-                attachment_files: res?.data?.attachmentFiles,
-                stamp_no: res?.data?.data?.stamp_no,
-                relation_message_id: res?.data?.data?.reply_to_message_id,
-                text: res?.data?.data?.message,
-                text2: null,
-                time: res?.data?.data?.created_at,
-              });
-              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-              if (callChatBot) {
-                callApiChatBotRequest(
-                  res?.data?.data?.message,
-                  res?.data?.data?.id,
-                );
-              }
+              res = await sendMessageApi(data);
             } else {
               // in case of file
               data.append('attachment[]', {
@@ -752,30 +730,30 @@ export const useFunction = (props: any) => {
               data.append('msg_type', 2);
               data.append('room_id', idRoomChat);
               data.append('from_id', user_id);
-              const res = await sendMessageApi(data);
-              socket.emit('message_ind2', {
-                user_id: user_id,
-                room_id: idRoomChat,
-                task_id: null,
-                to_info: null,
-                level: res?.data?.data?.msg_level,
-                message_id: res?.data?.data?.id,
-                message_type: res?.data?.data?.msg_type,
-                method: res?.data?.data?.method,
-                attachment_files: res?.data?.attachmentFiles,
-                stamp_no: res?.data?.data?.stamp_no,
-                relation_message_id: res?.data?.data?.reply_to_message_id,
-                text: res?.data?.data?.message,
-                text2: null,
-                time: res?.data?.data?.created_at,
-              });
-              dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-              if (callChatBot) {
-                callApiChatBotRequest(
-                  res?.data?.data?.message,
-                  res?.data?.data?.id,
-                );
-              }
+              res = await sendMessageApi(data);
+            }
+            socket.emit('message_ind2', {
+              user_id: user_id,
+              room_id: idRoomChat,
+              task_id: null,
+              to_info: null,
+              level: res?.data?.data?.msg_level,
+              message_id: res?.data?.data?.id,
+              message_type: res?.data?.data?.msg_type,
+              method: res?.data?.data?.method,
+              attachment_files: res?.data?.attachmentFiles,
+              stamp_no: res?.data?.data?.stamp_no,
+              relation_message_id: res?.data?.data?.reply_to_message_id,
+              text: res?.data?.data?.message,
+              text2: null,
+              time: res?.data?.data?.created_at,
+            });
+            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            if (callChatBot) {
+              callApiChatBotRequest(
+                res?.data?.data?.message,
+                res?.data?.data?.id,
+              );
             }
             giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
               {
