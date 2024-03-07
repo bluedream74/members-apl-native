@@ -259,7 +259,9 @@ export const useFunction = (props: any) => {
       setData(response?.data?.room);
       dispatch(saveIsGetInfoRoom(false));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [idRoomChat, dispatch]);
 
@@ -290,8 +292,11 @@ export const useFunction = (props: any) => {
           time: res?.data?.message_id?.created_at,
         });
         dispatch(deleteMessage(id));
-        GlobalService.hideLoading();
-      } catch (error: any) {
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     },
@@ -311,7 +316,11 @@ export const useFunction = (props: any) => {
         } else {
           getListChat(page);
         }
-      } catch (error: any) {}
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
     },
     [dispatch, getListChat, page],
   );
@@ -769,16 +778,18 @@ export const useFunction = (props: any) => {
               );
             }
           }
-
           giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
             animated: true,
             index: 0,
           });
-          GlobalService.hideLoading();
         }
         setChosenFiles([]);
       }
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, [chosenFiles, dispatch, idRoomChat, socket, user_id]);
@@ -844,7 +855,11 @@ export const useFunction = (props: any) => {
         animated: true,
         index: 0,
       });
-    } catch (error: any) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   };
 
   const searchMessage = useCallback(() => {
@@ -862,7 +877,9 @@ export const useFunction = (props: any) => {
       }
       await dispatch(getListUserChat({room_id: idRoomChat}));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [idRoomChat, dispatch]);
 
@@ -875,7 +892,11 @@ export const useFunction = (props: any) => {
         message: 'ブックマークが正常に追加されました',
         type: 'success',
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, []);
@@ -962,7 +983,11 @@ export const useFunction = (props: any) => {
             res?.data?.data?.id,
             `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
           );
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (message_edit) {
         try {
           const param = {
@@ -1014,7 +1039,11 @@ export const useFunction = (props: any) => {
           dispatch(
             editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
           );
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (messageQuote) {
         try {
           // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
@@ -1080,7 +1109,11 @@ export const useFunction = (props: any) => {
             res?.data?.data?.id,
             `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
           );
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else {
         try {
           if (mes[0]?.text) {
@@ -1158,7 +1191,11 @@ export const useFunction = (props: any) => {
               to_info: toInfo,
             });
           }
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       }
       // send files
       if (chosenFiles.length > 0) {
@@ -1353,7 +1390,9 @@ export const useFunction = (props: any) => {
           dispatch(saveIdMessageSearch(0));
           setPageLoading(false);
         } catch (error) {
-          console.log(error);
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
