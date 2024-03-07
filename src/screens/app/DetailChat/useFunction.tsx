@@ -688,7 +688,6 @@ export const useFunction = (props: any) => {
           // send files
           for (const item of chosenFiles) {
             let data = new FormData();
-            let res;
             if (item?.sourceURL || item?.path) {
               // in case of image
               let isHEIC =
@@ -716,7 +715,6 @@ export const useFunction = (props: any) => {
               data.append('msg_type', 2);
               data.append('room_id', idRoomChat);
               data.append('from_id', user_id);
-              res = await sendMessageApi(data);
             } else {
               // in case of file
               data.append('attachment[]', {
@@ -730,8 +728,8 @@ export const useFunction = (props: any) => {
               data.append('msg_type', 2);
               data.append('room_id', idRoomChat);
               data.append('from_id', user_id);
-              res = await sendMessageApi(data);
             }
+            const res = await sendMessageApi(data);
             socket.emit('message_ind2', {
               user_id: user_id,
               room_id: idRoomChat,
