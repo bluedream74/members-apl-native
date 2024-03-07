@@ -395,6 +395,46 @@ export const useFunction = (props: any) => {
     [formattedText],
   );
 
+  const callApiChatBotRequest = useCallback(
+    async (message: any, messageId: any, useName: any) => {
+      try {
+        const numberOfMember = listUserChat?.length ?? 0;
+        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
+        if (numberOfMember < 1) {
+          return null;
+        } else if (numberOfMember === 1) {
+          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
+          listUserRootOnlyOne = [
+            {
+              userId: listUserChat[0].id,
+              userName: listUserChat[0].last_name + listUserChat[0].first_name,
+            },
+          ];
+          setListUserSelect(listUserRootOnlyOne);
+        } else if (numberOfMember > 1) {
+          // Nothing Done.
+        }
+        const formData = new FormData();
+        formData.append('from_user_name', useName);
+        formData.append(
+          'mention_members',
+          numberOfMember === 1
+            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
+            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
+        );
+        formData.append('message', message);
+        formData.append('message_id', messageId);
+        formData.append('room_id', idRoomChat);
+        await callApiChatBot(formData);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    },
+    [idRoomChat, listUserChat, listUserSelect],
+  );
+
   /**
    * format method
    * @param inputText
@@ -839,42 +879,6 @@ export const useFunction = (props: any) => {
       GlobalService.hideLoading();
     }
   }, []);
-
-  const callApiChatBotRequest = useCallback(
-    async (message: any, messageId: any, useName: any) => {
-      try {
-        const numberOfMember = listUserChat?.length ?? 0;
-        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
-        if (numberOfMember < 1) {
-          return null;
-        } else if (numberOfMember === 1) {
-          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-          listUserRootOnlyOne = [
-            {
-              userId: listUserChat[0].id,
-              userName: listUserChat[0].last_name + listUserChat[0].first_name,
-            },
-          ];
-          setListUserSelect(listUserRootOnlyOne);
-        } else if (numberOfMember > 1) {
-          // Nothing Done.
-        }
-        const formData = new FormData();
-        formData.append('from_user_name', useName);
-        formData.append(
-          'mention_members',
-          numberOfMember === 1
-            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
-            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
-        );
-        formData.append('message', message);
-        formData.append('message_id', messageId);
-        formData.append('room_id', idRoomChat);
-        await callApiChatBot(formData);
-      } catch (error) {}
-    },
-    [idRoomChat, listUserChat, listUserSelect],
-  );
 
   const sendMessage = useCallback(
     async mes => {
