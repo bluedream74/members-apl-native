@@ -405,7 +405,7 @@ export const useFunction = (props: any) => {
   );
 
   const callApiChatBotRequest = useCallback(
-    async (message: any, messageId: any, useName: any) => {
+    async (message: any, messageId: any) => {
       try {
         const numberOfMember = listUserChat?.length ?? 0;
         let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
@@ -424,7 +424,7 @@ export const useFunction = (props: any) => {
           // Nothing Done.
         }
         const formData = new FormData();
-        formData.append('from_user_name', useName);
+        formData.append('from_user_name', `${me.last_name}${me.first_name}`);
         formData.append(
           'mention_members',
           numberOfMember === 1
@@ -441,7 +441,7 @@ export const useFunction = (props: any) => {
         }
       }
     },
-    [idRoomChat, listUserChat, listUserSelect],
+    [idRoomChat, listUserChat, listUserSelect, me],
   );
 
   /**
@@ -681,7 +681,7 @@ export const useFunction = (props: any) => {
   };
 
   const sendFile = useCallback(
-    async (message: string) => {
+    async (callChatBot: boolean) => {
       try {
         if (chosenFiles.length > 0) {
           GlobalService.showLoading();
@@ -733,11 +733,10 @@ export const useFunction = (props: any) => {
                 time: res?.data?.data?.created_at,
               });
               dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-              if (message === '') {
+              if (callChatBot) {
                 callApiChatBotRequest(
                   res?.data?.data?.message,
                   res?.data?.data?.id,
-                  `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
                 );
               }
             } else {
@@ -771,11 +770,10 @@ export const useFunction = (props: any) => {
                 time: res?.data?.data?.created_at,
               });
               dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-              if (message === '') {
+              if (callChatBot) {
                 callApiChatBotRequest(
                   res?.data?.data?.message,
                   res?.data?.data?.id,
-                  `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
                 );
               }
             }
@@ -851,11 +849,7 @@ export const useFunction = (props: any) => {
         to_info: toInfo,
       });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-      callApiChatBotRequest(
-        res?.data?.data?.message,
-        res?.data?.data?.id,
-        `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-      );
+      callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
@@ -983,11 +977,7 @@ export const useFunction = (props: any) => {
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          callApiChatBotRequest(
-            res?.data?.data?.message,
-            res?.data?.data?.id,
-            `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-          );
+          callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
         } catch (error) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -1109,11 +1099,7 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          callApiChatBotRequest(
-            res?.data?.data?.message,
-            res?.data?.data?.id,
-            `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
-          );
+          callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
         } catch (error) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -1172,7 +1158,6 @@ export const useFunction = (props: any) => {
             callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           } else {
             const joinUsers = listUserChat?.map(el => {
@@ -1204,7 +1189,7 @@ export const useFunction = (props: any) => {
       }
       // send files
       if (chosenFiles.length > 0) {
-        await sendFile(mes[0]?.text);
+        await sendFile(mes[0]?.text === '');
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
