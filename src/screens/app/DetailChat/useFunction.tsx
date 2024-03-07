@@ -862,7 +862,6 @@ export const useFunction = (props: any) => {
     try {
       GlobalService.showLoading();
       await addBookmark(data);
-      GlobalService.hideLoading();
       showMessage({
         message: 'ブックマークが正常に追加されました',
         type: 'success',
