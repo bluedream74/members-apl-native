@@ -535,30 +535,19 @@ const DetailChat = (props: any) => {
                 start={{x: 1, y: 0}}
                 end={{x: 0, y: 0}}
                 style={styles.containerChat}>
-                {Platform.OS === 'ios' ? (
-                  <TextInput
-                    editable={false}
-                    multiline
-                    scrollEnabled={true}
-                    selectTextOnFocus={true}
-                    showSoftInputOnFocus={false}
-                    style={styles.partCopyText}>
-                    {partCopy.text}
-                  </TextInput>
-                ) : (
-                  <TextInput
-                    multiline
-                    scrollEnabled={true}
-                    selectTextOnFocus={true}
-                    showSoftInputOnFocus={false}
-                    style={styles.partCopyText}
-                    value={partCopy.text}
-                    onChangeText={() => {
-                      Keyboard.dismiss();
-                      changePartCopy(partCopy);
-                    }}
-                  />
-                )}
+                <TextInput
+                  editable={Platform.OS === 'android'}
+                  multiline
+                  scrollEnabled={true}
+                  selectTextOnFocus={true}
+                  showSoftInputOnFocus={false}
+                  style={styles.partCopyText}
+                  value={partCopy.text}
+                  onChangeText={() => {
+                    Keyboard.dismiss();
+                    changePartCopy(partCopy);
+                  }}
+                />
               </LinearGradient>
             </TouchableWithoutFeedback>
           </TouchableOpacity>
