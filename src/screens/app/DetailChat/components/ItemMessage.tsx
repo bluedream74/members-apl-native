@@ -62,6 +62,7 @@ const ItemMessage = React.memo((props: any) => {
     indexRedLine,
     setFormattedText,
     mentionedUsers,
+    setListUserSelect,
   } = props;
   const {
     user,
@@ -201,6 +202,10 @@ const ItemMessage = React.memo((props: any) => {
           const word_no_title = '@' + user.name + ' ';
           mentionedUsers.push(word.trim());
           mentionedUsers.push(word_no_title.trim());
+          setListUserSelect([{
+            userId: user._id,
+            userName: user.name,
+          }]);
           const mention = (
             <Text
               key={word + index}

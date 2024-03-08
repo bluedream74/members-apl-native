@@ -412,7 +412,7 @@ export const useFunction = (props: any) => {
         if (numberOfMember < 1) {
           return null;
         } else if (numberOfMember === 1) {
-          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
+          // 個別チャットでは常に送信対象
           listUserRootOnlyOne = [
             {
               userId: listUserChat[0].id,
@@ -421,7 +421,7 @@ export const useFunction = (props: any) => {
           ];
           setListUserSelect(listUserRootOnlyOne);
         } else if (numberOfMember > 1) {
-          // Nothing Done.
+          // グループチャットではメンションのみ送信対象
         }
         const formData = new FormData();
         formData.append('from_user_name', `${me.last_name}${me.first_name}`);
