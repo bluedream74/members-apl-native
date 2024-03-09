@@ -8,6 +8,7 @@ const DETAIL_ROOM_CHAT = 'user/chat/room';
 const UPDATE_INFO_ROOM_CHAT = 'user/chat/room/update-info';
 const INVITE_MEMBER = 'user/chat/room/invite-member';
 const PIN_FLAG = 'user/chat/room/pin-flag';
+const UPDATE_MUTE_FLAG = 'user/chat/room/update-mute-flag';
 const LEAVE_ROOM = 'user/chat/room/leave';
 const UPDATE_IMAGE_ROOM_CHAT = 'user/chat/room/update-avatar';
 const DETAIL_CHAT = 'user/chat/room';
@@ -106,6 +107,11 @@ export const inviteMember: any = async (body: any) => {
 
 export const pinFlag: any = async (id: any, status: any) => {
   const response = api.get(`${PIN_FLAG}/${id}?status=${status}`);
+  return response;
+};
+
+export const updateMuteFlag: any = async (body: any) => {
+  const response = api.post(UPDATE_MUTE_FLAG, body);
   return response;
 };
 

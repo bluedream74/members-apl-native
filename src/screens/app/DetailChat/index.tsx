@@ -310,6 +310,7 @@ const DetailChat = (props: any) => {
           }
           onRightSecond={searchMessage}
           customBack={customBack}
+          mute={dataDetail?.mute_flag === 1 ? true : false}
         />
         {/* UI pin message */}
         {message_pinned?.id && (
