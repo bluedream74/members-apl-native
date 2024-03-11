@@ -445,7 +445,7 @@ const ItemMessage = React.memo((props: any) => {
                       }
                     />
                   ) : (
-                    <>
+                    <View style={styles.containerViewChatWrap}>
                       {msg_type === 6 ||
                       msg_type === 8 ||
                       msg_type === 14 ? null : (
@@ -605,7 +605,7 @@ const ItemMessage = React.memo((props: any) => {
                           </LinearGradient>
                         </View>
                       )}
-                    </>
+                    </View>
                   )}
                 </>
                 {user?._id === user_id ||
