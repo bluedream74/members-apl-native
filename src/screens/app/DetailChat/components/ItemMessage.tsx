@@ -62,6 +62,8 @@ const ItemMessage = React.memo((props: any) => {
     indexRedLine,
     setFormattedText,
     mentionedUsers,
+    setListUserSelect,
+    setInputText,
   } = props;
   const {
     user,
@@ -197,10 +199,16 @@ const ItemMessage = React.memo((props: any) => {
             return;
           }
           const formattedText1: (string | JSX.Element)[] = [];
-          const word = '@' + user.name + 'さん';
-          const word_no_title = '@' + user.name + ' ';
-          mentionedUsers.push(word.trim());
+          const word = `@${user.name}さん`;
+          const word_no_title = `@${user.name}`;
+          mentionedUsers.push(word);
           mentionedUsers.push(word_no_title.trim());
+          setListUserSelect([
+            {
+              userId: user._id,
+              userName: user.name,
+            },
+          ]);
           const mention = (
             <Text
               key={word + index}
@@ -224,6 +232,7 @@ const ItemMessage = React.memo((props: any) => {
           );
           formattedText1.push(mention);
           setFormattedText([' ', ...formattedText1, ' ', emptyText]);
+          setInputText(word);
           break;
         case 10:
           pinMsg(_id);
@@ -273,6 +282,8 @@ const ItemMessage = React.memo((props: any) => {
       text,
       user,
       user_id,
+      setInputText,
+      setListUserSelect,
     ],
   );
 
