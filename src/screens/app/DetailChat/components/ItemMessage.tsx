@@ -201,8 +201,8 @@ const ItemMessage = React.memo((props: any) => {
           const formattedText1: (string | JSX.Element)[] = [];
           const word = `@${user.name}さん`;
           const word_no_title = `@${user.name}`;
-          mentionedUsers.push(word.trim());
-          mentionedUsers.push(word_no_title.trim());
+          mentionedUsers.push(word);
+          mentionedUsers.push(word_no_title);
           setListUserSelect([
             {
               userId: user._id,
