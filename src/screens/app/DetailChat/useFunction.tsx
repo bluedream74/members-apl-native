@@ -422,12 +422,10 @@ export const useFunction = (props: any) => {
         } else if (numberOfMember > 1) {
           // グループチャットではメンションのみ送信対象
           if (inputText.indexOf('@all') > -1) {
-            mentionMembers = listUserChat.map(el => {
-              return {
-                userId: el.id,
-                userName: `${el.last_name}${el.first_name}`,
-              };
-            })
+            mentionMembers = listUserChat.map(el => ({
+              userId: el.id,
+              userName: `${el.last_name}${el.first_name}`,
+            }));
           } else {
             mentionMembers = listUserSelect.filter(el => {
               return inputText.indexOf(`@${el.userName}`) > -1;
