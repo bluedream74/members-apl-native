@@ -503,14 +503,12 @@ const DetailChat = (props: any) => {
           selected={selected}
           setSelected={setSelected}
           showTaskForm={showTaskForm}
-          keyboardHeight={keyboardHeight}
         />
       )}
       {showUserList && (
         <ModalUserList
           visible={showUserList}
           onCancel={() => setShowUserList(false)}
-          idRoomChat={idRoomChat}
           setShowTaskForm={setShowTaskForm}
           setShowUserList={setShowUserList}
           setSelected={setSelected}
