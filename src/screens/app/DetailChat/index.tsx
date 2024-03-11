@@ -225,6 +225,7 @@ const DetailChat = (props: any) => {
             setFormattedText={setFormattedText}
             mentionedUsers={mentionedUsers}
             setListUserSelect={setListUserSelect}
+            setInputText={setInputText}
           />
         </>
       );
@@ -250,6 +251,8 @@ const DetailChat = (props: any) => {
       setFormattedText,
       showRedLine,
       updateGimMessage,
+      setInputText,
+      setListUserSelect,
     ],
   );
 
