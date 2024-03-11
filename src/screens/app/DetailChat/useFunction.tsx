@@ -408,28 +408,32 @@ export const useFunction = (props: any) => {
     async (message: any, messageId: any) => {
       try {
         const numberOfMember = listUserChat?.length ?? 0;
-        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
+        let mentionMembers: {userId: number; userName: string}[] = [];
         if (numberOfMember < 1) {
           return null;
         } else if (numberOfMember === 1) {
           // 個別チャットでは常に送信対象
-          listUserRootOnlyOne = [
+          mentionMembers = [
             {
               userId: listUserChat[0].id,
               userName: listUserChat[0].last_name + listUserChat[0].first_name,
             },
           ];
-          setListUserSelect(listUserRootOnlyOne);
         } else if (numberOfMember > 1) {
           // グループチャットではメンションのみ送信対象
+          if (inputText.indexOf('@all') > -1) {
+            mentionMembers = [...listUserSelect];
+          } else {
+            mentionMembers = listUserSelect.filter(el => {
+              return inputText.indexOf(`@${el.userName}`) > -1;
+            });
+          }
         }
         const formData = new FormData();
         formData.append('from_user_name', `${me.last_name}${me.first_name}`);
         formData.append(
           'mention_members',
-          numberOfMember === 1
-            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
-            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
+          JSON.stringify(convertArrUnique(mentionMembers, 'userId')),
         );
         formData.append('message', message);
         formData.append('message_id', messageId);
@@ -441,7 +445,7 @@ export const useFunction = (props: any) => {
         }
       }
     },
-    [idRoomChat, listUserChat, listUserSelect, me],
+    [idRoomChat, listUserChat, listUserSelect, me, inputText],
   );
 
   /**
@@ -748,7 +752,7 @@ export const useFunction = (props: any) => {
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
             if (callChatBot) {
-              callApiChatBotRequest(
+              await callApiChatBotRequest(
                 res?.data?.data?.message,
                 res?.data?.data?.id,
               );
@@ -825,7 +829,10 @@ export const useFunction = (props: any) => {
         to_info: toInfo,
       });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-      callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
+      await callApiChatBotRequest(
+        res?.data?.data?.message,
+        res?.data?.data?.id,
+      );
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
@@ -952,7 +959,10 @@ export const useFunction = (props: any) => {
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
         } catch (error) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -1074,7 +1084,10 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          callApiChatBotRequest(res?.data?.data?.message, res?.data?.data?.id);
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
         } catch (error) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -1130,7 +1143,7 @@ export const useFunction = (props: any) => {
               to_info: toInfo,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            callApiChatBotRequest(
+            await callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
             );
@@ -1180,6 +1193,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
+      setListUserSelect([]);
       setShowSendMessageButton(true);
     },
     [
