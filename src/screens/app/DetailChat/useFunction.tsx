@@ -259,7 +259,9 @@ export const useFunction = (props: any) => {
       setData(response?.data?.room);
       dispatch(saveIsGetInfoRoom(false));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [idRoomChat, dispatch]);
 
@@ -290,8 +292,11 @@ export const useFunction = (props: any) => {
           time: res?.data?.message_id?.created_at,
         });
         dispatch(deleteMessage(id));
-        GlobalService.hideLoading();
-      } catch (error: any) {
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     },
@@ -311,7 +316,11 @@ export const useFunction = (props: any) => {
         } else {
           getListChat(page);
         }
-      } catch (error: any) {}
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
     },
     [dispatch, getListChat, page],
   );
@@ -393,6 +402,53 @@ export const useFunction = (props: any) => {
       return result;
     },
     [formattedText],
+  );
+
+  const callApiChatBotRequest = useCallback(
+    async (message: any, messageId: any) => {
+      try {
+        const numberOfMember = listUserChat?.length ?? 0;
+        let mentionMembers: {userId: number; userName: string}[] = [];
+        if (numberOfMember < 1) {
+          return null;
+        } else if (numberOfMember === 1) {
+          // 個別チャットでは常に送信対象
+          mentionMembers = [
+            {
+              userId: listUserChat[0].id,
+              userName: listUserChat[0].last_name + listUserChat[0].first_name,
+            },
+          ];
+        } else if (numberOfMember > 1) {
+          // グループチャットではメンションのみ送信対象
+          if (inputText.indexOf('@all') > -1) {
+            mentionMembers = listUserChat.map(el => ({
+              userId: el.id,
+              userName: `${el.last_name}${el.first_name}`,
+            }));
+          } else {
+            mentionMembers = listUserSelect.filter(el => {
+              return inputText.indexOf(`@${el.userName}`) > -1;
+            });
+          }
+        }
+        const formData = new FormData();
+        formData.append('from_user_name', `${me.last_name}${me.first_name}`);
+        formData.append(
+          'mention_members',
+          JSON.stringify(convertArrUnique(mentionMembers, 'userId')),
+        );
+        formData.append('message', message);
+        formData.append('message_id', messageId);
+        formData.append('room_id', idRoomChat);
+        await callApiChatBot(formData);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    },
+    [idRoomChat, listUserChat, listUserSelect, me, inputText],
   );
 
   /**
@@ -631,71 +687,55 @@ export const useFunction = (props: any) => {
     });
   };
 
-  const sendFile = useCallback(async () => {
-    try {
-      if (chosenFiles.length > 0) {
-        GlobalService.showLoading();
-        // send files
-        for (const item of chosenFiles) {
-          let data = new FormData();
-          if (item?.sourceURL || item?.path) {
-            // in case of image
-            let isHEIC =
-              item?.sourceURL?.endsWith('.heic') ||
-              item?.sourceURL?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC');
-            data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\/]/, ''),
-              name: item?.path?.replace(/^.*[\\/]/, ''),
-              width: item?.width,
-              uri: item?.path,
-              path: item?.path,
-              size: item?.size,
-              type:
-                Platform.OS === 'ios'
-                  ? `image/${
-                      isHEIC
-                        ? item?.path?.split('.')[0] + '.JPG'
-                        : item?.path?.split('.').pop()
-                    }}`
-                  : item?.mime,
-              height: item?.height,
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            let res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          } else {
-            // in case of file
-            data.append('attachment[]', {
-              name: item?.name,
-              type: item?.type,
-              uri:
-                Platform.OS === 'ios'
-                  ? decodeURIComponent(item?.uri?.replace('file://', ''))
-                  : decodeURIComponent(item?.fileCopyUri),
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
+  const sendFile = useCallback(
+    async (callChatBot: boolean) => {
+      try {
+        if (chosenFiles.length > 0) {
+          GlobalService.showLoading();
+          // send files
+          for (const item of chosenFiles) {
+            let data = new FormData();
+            if (item?.sourceURL || item?.path) {
+              // in case of image
+              let isHEIC =
+                item?.sourceURL?.endsWith('.heic') ||
+                item?.sourceURL?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC');
+              data.append('attachment[]', {
+                fileName: item?.path?.replace(/^.*[\\/]/, ''),
+                name: item?.path?.replace(/^.*[\\/]/, ''),
+                width: item?.width,
+                uri: item?.path,
+                path: item?.path,
+                size: item?.size,
+                type:
+                  Platform.OS === 'ios'
+                    ? `image/${
+                        isHEIC
+                          ? item?.path?.split('.')[0] + '.JPG'
+                          : item?.path?.split('.').pop()
+                      }}`
+                    : item?.mime,
+                height: item?.height,
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+            } else {
+              // in case of file
+              data.append('attachment[]', {
+                name: item?.name,
+                type: item?.type,
+                uri:
+                  Platform.OS === 'ios'
+                    ? decodeURIComponent(item?.uri?.replace('file://', ''))
+                    : decodeURIComponent(item?.fileCopyUri),
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+            }
             const res = await sendMessageApi(data);
             socket.emit('message_ind2', {
               user_id: user_id,
@@ -714,20 +754,31 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            if (callChatBot) {
+              await callApiChatBotRequest(
+                res?.data?.data?.message,
+                res?.data?.data?.id,
+              );
+            }
+            giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
+              {
+                animated: true,
+                index: 0,
+              },
+            );
           }
-
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
-          GlobalService.hideLoading();
+          setChosenFiles([]);
         }
-        setChosenFiles([]);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
+        GlobalService.hideLoading();
       }
-    } catch (error: any) {
-      GlobalService.hideLoading();
-    }
-  }, [chosenFiles, dispatch, idRoomChat, socket, user_id]);
+    },
+    [chosenFiles, dispatch, idRoomChat, socket, user_id, callApiChatBotRequest],
+  );
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
@@ -781,11 +832,19 @@ export const useFunction = (props: any) => {
         to_info: toInfo,
       });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+      await callApiChatBotRequest(
+        res?.data?.data?.message,
+        res?.data?.data?.id,
+      );
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
       });
-    } catch (error: any) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   };
 
   const searchMessage = useCallback(() => {
@@ -803,7 +862,9 @@ export const useFunction = (props: any) => {
       }
       await dispatch(getListUserChat({room_id: idRoomChat}));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [idRoomChat, dispatch]);
 
@@ -811,51 +872,18 @@ export const useFunction = (props: any) => {
     try {
       GlobalService.showLoading();
       await addBookmark(data);
-      GlobalService.hideLoading();
       showMessage({
         message: 'ブックマークが正常に追加されました',
         type: 'success',
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, []);
-
-  const callApiChatBotRequest = useCallback(
-    async (message: any, messageId: any, useName: any) => {
-      try {
-        const numberOfMember = listUserChat?.length ?? 0;
-        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
-        if (numberOfMember < 1) {
-          return null;
-        } else if (numberOfMember === 1) {
-          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-          listUserRootOnlyOne = [
-            {
-              userId: listUserChat[0].id,
-              userName: listUserChat[0].last_name + listUserChat[0].first_name,
-            },
-          ];
-          setListUserSelect(listUserRootOnlyOne);
-        } else if (numberOfMember > 1) {
-          // Nothing Done.
-        }
-        const formData = new FormData();
-        formData.append('from_user_name', useName);
-        formData.append(
-          'mention_members',
-          numberOfMember === 1
-            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
-            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
-        );
-        formData.append('message', message);
-        formData.append('message_id', messageId);
-        formData.append('room_id', idRoomChat);
-        await callApiChatBot(formData);
-      } catch (error) {}
-    },
-    [idRoomChat, listUserChat, listUserSelect],
-  );
 
   const sendMessage = useCallback(
     async mes => {
@@ -934,7 +962,15 @@ export const useFunction = (props: any) => {
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (message_edit) {
         try {
           const param = {
@@ -986,7 +1022,11 @@ export const useFunction = (props: any) => {
           dispatch(
             editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
           );
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (messageQuote) {
         try {
           // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
@@ -1047,7 +1087,15 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else {
         try {
           if (mes[0]?.text) {
@@ -1098,10 +1146,9 @@ export const useFunction = (props: any) => {
               to_info: toInfo,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            callApiChatBotRequest(
+            await callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           } else {
             const joinUsers = listUserChat?.map(el => {
@@ -1125,11 +1172,15 @@ export const useFunction = (props: any) => {
               to_info: toInfo,
             });
           }
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       }
       // send files
       if (chosenFiles.length > 0) {
-        await sendFile();
+        await sendFile(mes[0]?.text === '');
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
@@ -1145,6 +1196,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
+      setListUserSelect([]);
       setShowSendMessageButton(true);
     },
     [
@@ -1320,7 +1372,9 @@ export const useFunction = (props: any) => {
           dispatch(saveIdMessageSearch(0));
           setPageLoading(false);
         } catch (error) {
-          console.log(error);
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
