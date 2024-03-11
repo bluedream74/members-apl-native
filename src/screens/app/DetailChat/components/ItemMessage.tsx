@@ -202,7 +202,7 @@ const ItemMessage = React.memo((props: any) => {
           const word = `@${user.name}さん`;
           const word_no_title = `@${user.name}`;
           mentionedUsers.push(word);
-          mentionedUsers.push(word_no_title);
+          mentionedUsers.push(word_no_title.trim());
           setListUserSelect([
             {
               userId: user._id,
