@@ -136,16 +136,7 @@ const ListChat = (props: any) => {
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextApplicationState => {
       if(applicationState.match(/inactive|background/) && nextApplicationState === "active") {
-        dispatch(
-          getRoomList({
-            key: key,
-            company_id: idCompany,
-            page: page,
-            type: type_Filter,
-            category_id: categoryID_Filter,
-          }),
-        );
-        dispatch(getUnreadMessageCount(user?.id));
+        onRefresh();
       }
       setApplicationState(nextApplicationState);
     });
