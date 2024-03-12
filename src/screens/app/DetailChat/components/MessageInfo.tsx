@@ -99,14 +99,14 @@ export default function MessageInfo({
           '<b>$&</b>',
         );
       }
-
-      //@allをリンク色にする
-      //@AIをリンク色にする
-      replaceText = replaceText.replace(new RegExp('@ALL', 'g'), '<b>@ALL</b>');
-      replaceText = replaceText.replace(new RegExp('@all', 'g'), '<b>@all</b>');
-      replaceText = replaceText.replace(new RegExp('@AI', 'g'), '<b>@AI</b>');
-      replaceText = replaceText.replace(new RegExp('@ai', 'g'), '<b>@ai</b>');
     });
+
+    //@allをリンク色にする
+    //@AIをリンク色にする
+    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
+    replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
+    replaceText = replaceText.replace(/@AI(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
     return replaceText;
   }, []);
 
