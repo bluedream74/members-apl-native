@@ -224,6 +224,8 @@ const DetailChat = (props: any) => {
             indexRedLine={indexRedLine}
             setFormattedText={setFormattedText}
             mentionedUsers={mentionedUsers}
+            setListUserSelect={setListUserSelect}
+            setInputText={setInputText}
           />
         </>
       );
@@ -249,6 +251,8 @@ const DetailChat = (props: any) => {
       setFormattedText,
       showRedLine,
       updateGimMessage,
+      setInputText,
+      setListUserSelect,
     ],
   );
 
@@ -500,14 +504,12 @@ const DetailChat = (props: any) => {
           selected={selected}
           setSelected={setSelected}
           showTaskForm={showTaskForm}
-          keyboardHeight={keyboardHeight}
         />
       )}
       {showUserList && (
         <ModalUserList
           visible={showUserList}
           onCancel={() => setShowUserList(false)}
-          idRoomChat={idRoomChat}
           setShowTaskForm={setShowTaskForm}
           setShowUserList={setShowUserList}
           setSelected={setSelected}
