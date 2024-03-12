@@ -71,7 +71,7 @@ function createAppSocket() {
       console.log(EVENT_SOCKET.MESSAGE_IND, data);
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
-        if (data?.room_id == state?.chat?.id_roomChat) {
+        if (data?.room_id === state?.chat?.id_roomChat) {
           if (data?.message_type === 3) {
             const value = {
               id_message: data?.relation_message_id,

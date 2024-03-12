@@ -7,6 +7,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Image,
+  AppState,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -61,6 +62,7 @@ const ListChat = (props: any) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showSearchMessage, setShowSearchMessage] = useState(false);
   const [isLoadMore, setIsLoadMore] = useState(false);
+  const [applicationState, setApplicationState] = useState(AppState.currentState);
   const {route} = props;
 
   //個別チャットから一覧に戻った時に発火
@@ -131,6 +133,28 @@ const ListChat = (props: any) => {
     }
   }, [page]);
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextApplicationState => {
+      if(applicationState.match(/inactive|background/) && nextApplicationState === "active") {
+        dispatch(
+          getRoomList({
+            key: key,
+            company_id: idCompany,
+            page: page,
+            type: type_Filter,
+            category_id: categoryID_Filter,
+          }),
+        );
+        dispatch(getUnreadMessageCount(user?.id));
+      }
+      setApplicationState(nextApplicationState);
+    });
+
+    return () => {
+      subscription.remove();
+    }
+  }, [applicationState]);
+
   const debounceText = useCallback(
     debounce(
       text =>
@@ -149,7 +173,6 @@ const ListChat = (props: any) => {
   );
 
   const onRefresh = useCallback(() => {
-    setPage(1);
     dispatch(
       getRoomList({
         key: key,
@@ -159,7 +182,6 @@ const ListChat = (props: any) => {
         category_id: categoryID_Filter,
       }),
     );
-    dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
   }, [key, idCompany, type_Filter, categoryID_Filter, user, dispatch]);
 
   const onChangeText = (text: any) => {
