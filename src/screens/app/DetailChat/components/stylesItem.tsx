@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerViewChat: {
-    maxWidth: '77%',
+    maxWidth: '100%',
     paddingVertical: verticalScale(2),
     paddingHorizontal: scale(0),
     borderRadius: verticalScale(16),
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(5),
     borderRadius: verticalScale(16),
     marginBottom: scale(-10),
+  },
+  containerViewChatWrap: {
+    maxWidth: '75%',
   },
   containerChat: {
     maxWidth: '100%',
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   txtTime: {
-    marginLeft: scale(7),
+    marginLeft: scale(3),
     color: colors.border,
     fontSize: moderateScale(8),
   },

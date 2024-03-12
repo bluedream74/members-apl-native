@@ -16,7 +16,7 @@ const Item = React.memo((props: any) => {
     'YYYY',
   )}年${moment(item?.last_check_date).format('MM')}月${moment(
     item?.last_check_date,
-  ).format('D')} ${moment(item?.last_check_date).format('HH:mm')}`;
+  ).format('DD')}日 ${moment(item?.last_check_date).format('HH:mm')}`;
 
   return (
     <View style={styles.container}>
@@ -84,14 +84,14 @@ const styles = StyleSheet.create({
     color: colors.border,
   },
   txtTitle: {
-    maxWidth: '50%',
+    maxWidth: '40%',
     ...stylesCommon.fontWeight500,
     fontSize: moderateScale(16),
     marginTop: verticalScale(5),
     color: colors.backgroundTab,
   },
   txtTitleDate: {
-    maxWidth: '50%',
+    maxWidth: '60%',
     ...stylesCommon.fontWeight500,
     fontSize: moderateScale(12),
     marginTop: verticalScale(5),

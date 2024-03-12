@@ -2,6 +2,7 @@ import {put, takeEvery} from 'redux-saga/effects';
 import {
   getRoomListSuccess,
   getDetailListChatSuccess,
+  getListUserChatSuccess,
   getDetailMessageSocketSuccess,
   deleteMessage,
   editMessageAction,
@@ -12,20 +13,18 @@ import {
   getDetailRoomSocketSuccess,
   getUnreadMessageCountSuccess,
 } from './action';
-
 import {typeChat} from './type';
 import {
   getRoomListApi,
   getDetailChatApi,
+  getListUserChatApi,
   getMessageFromSocket,
   getResultSearchMessage,
   registerLastMessage,
   getUnreadMessageCountApi,
-  GlobalService,
   detailRoomchat,
   logMessage,
 } from '@services';
-
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
 import {store} from '../store';
@@ -42,8 +41,9 @@ export function* getRoomListSaga(action: any) {
     const result: ResponseGenerator = yield getRoomListApi(action?.payload);
     yield put(getRoomListSuccess(result?.data?.rooms));
   } catch (error) {
-  } finally {
-    GlobalService.hideLoading();
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -63,13 +63,30 @@ export function* getDetailChatSaga(action: any) {
       yield put(updateMessageSeen(data));
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+
+export function* getListUserChatSaga(action: any) {
+  try {
+    const param = {
+      room_id: action?.payload.room_id,
+      all: 1,
+    };
+    const result: ResponseGenerator = yield getListUserChatApi(param);
+    yield put(getListUserChatSuccess(result?.data));
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
 export function* getDetailMessageSaga(action: any) {
-  const state = store.getState();
   try {
+    const state = store.getState();
     const body = {
       message_id: action.payload?.id_message,
     };
@@ -109,13 +126,15 @@ export function* getDetailMessageSaga(action: any) {
       }
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
 export function* editMessageReaction(action: any) {
-  const state = store.getState();
   try {
+    const state = store.getState();
     const body = {
       message_id: action.payload?.id_message,
     };
@@ -136,13 +155,15 @@ export function* editMessageReaction(action: any) {
       );
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
 export function* getDetailMessageSagaCurrent(action: any) {
-  const state = store.getState();
   try {
+    const state = store.getState();
     const body = {
       message_id: action.payload?.id_message,
     };
@@ -156,7 +177,9 @@ export function* getDetailMessageSagaCurrent(action: any) {
       yield put(getRoomList({company_id: state?.chat?.idCompany}));
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -181,7 +204,9 @@ export function* fetchResultMessageListFile(action: any) {
       NavigationUtils.pop(2);
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -205,16 +230,18 @@ export function* fetchResultMessageListRoom(action: any) {
       yield put(fetchResultMessageSuccess(valueSave));
     }
   } catch (error) {
-  } finally {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
 function* updateMessageSeenSaga(action: any) {
-  const state = store.getState();
-  const user_id = state?.auth?.userInfo.id;
-  const {getSocket} = AppSocket;
-  const socket = getSocket();
   try {
+    const state = store.getState();
+    const user_id = state?.auth?.userInfo.id;
+    const {getSocket} = AppSocket;
+    const socket = getSocket();
     const body = {
       id_room: action.payload.id_room,
       id_message: action.payload.id_message,
@@ -230,14 +257,18 @@ function* updateMessageSeenSaga(action: any) {
       task_id: null,
       message_id: action.payload.id_message,
     });
-  } catch (error: any) {}
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
 }
 
 function* getDetailMessageSeen(action: any) {
-  const body = {
-    message_id: action.payload?.idMsg,
-  };
   try {
+    const body = {
+      message_id: action.payload?.idMsg,
+    };
     const result: ResponseGenerator = yield getMessageFromSocket(body);
     if (result?.data?.message?.del_flag === 1) {
     } else {
@@ -256,14 +287,22 @@ function* getDetailMessageSeen(action: any) {
         yield put(getDetailMessageSocketSeenSuccess(infoEdit));
       }
     }
-  } catch (error: any) {}
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
 }
 
 function* getDetailRoomSocket(action: any) {
   try {
     const result: ResponseGenerator = yield detailRoomchat(action?.payload);
     yield put(getDetailRoomSocketSuccess(result?.data?.room));
-  } catch (error: any) {}
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
 }
 
 export function* getUnreadMessageCountSaga() {
@@ -273,11 +312,13 @@ export function* getUnreadMessageCountSaga() {
     const result: ResponseGenerator = yield getUnreadMessageCountApi(user_id);
     yield put(getUnreadMessageCountSuccess(result?.data));
   } catch (error) {
-  } finally {
-    GlobalService.hideLoading();
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
+// 現在未使用
 export function* logMessageSaga(action: any) {
   try {
     const body = {
@@ -286,8 +327,9 @@ export function* logMessageSaga(action: any) {
     };
     yield logMessage(body);
   } catch (error) {
-  } finally {
-    GlobalService.hideLoading();
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
@@ -303,6 +345,7 @@ function* registerRoomChatDevice(action: any) {
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
   yield takeEvery(typeChat.GET_DETAIL_LIST_CHAT, getDetailChatSaga);
+  yield takeEvery(typeChat.GET_LIST_USER_CHAT, getListUserChatSaga);
   yield takeEvery(typeChat.GET_DETAIL_MESSAGE_SOCKET, getDetailMessageSaga);
   yield takeEvery(
     typeChat.GET_DETAIL_MESSAGE_SOCKET_CURRENT,

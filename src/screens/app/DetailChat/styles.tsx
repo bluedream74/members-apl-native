@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(14),
     borderRadius: verticalScale(16),
+    maxHeight: '66%',
   },
   partCopyText: {
     color: colors.darkGrayText,

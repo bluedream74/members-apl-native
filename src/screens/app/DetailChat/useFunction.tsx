@@ -3,6 +3,7 @@ import {store} from '../../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getDetailListChat,
+  getListUserChat,
   deleteMessage,
   pinMessage,
   getDetailMessageSocketSuccess,
@@ -15,6 +16,7 @@ import {
   resetDataChat,
   saveIdRoomChat,
   saveIsGetInfoRoom,
+  saveListUserChat,
 } from '@redux';
 import {
   deleteMessageApi,
@@ -26,7 +28,6 @@ import {
   editMessageApi,
   sendReactionApi,
   sendLabelApi,
-  getListUser,
   addBookmark,
   callApiChatBot,
   saveTask,
@@ -64,6 +65,7 @@ export const useFunction = (props: any) => {
   const me = useSelector((state: any) => state.auth.userInfo);
   const user_id = useSelector((state: any) => state.auth.userInfo.id);
   const listChat = useSelector((state: any) => state.chat?.detailChat);
+  const listUserChat = useSelector((state: any) => state.chat?.listUserChat);
   const paging = useSelector((state: any) => state.chat?.pagingDetail);
   const message_pinned = useSelector(
     (state: any) => state.chat?.message_pinned,
@@ -85,31 +87,29 @@ export const useFunction = (props: any) => {
   const [bottomPage, setBottomPage] = useState<number | null>(1);
   const [pageLoading, setPageLoading] = useState(true);
   const [pickFile, setPickFile] = useState(false);
-  const [chosenFiles, setchosenFiles] = useState<any>([]);
+  const [chosenFiles, setChosenFiles] = useState<any[]>([]);
   const [modalStamp, setShowModalStamp] = useState(false);
   const [text, setText] = useState('');
   const [formattedText, setFormattedText] = useState<(string | JSX.Element)[]>(
     [],
   );
   const [showTagModal, setShowTag] = useState(false);
-  const [listUser, setListUser] = useState([]);
-  const [ids, setIds] = useState<any>([]);
+  const [ids, setIds] = useState<any[]>([]);
   const [newIndexArray, setIndex] = useState<any>(null);
-  const [listUserRoot, setListUserRoot] = useState([]);
-  const [listUserSelect, setListUserSelect] = useState<any>([]);
-  const [mentionedUsers, setMentionedUsers] = useState<any>([]);
-  const [showRedLine, setShowRedLine] = useState<boolean>(true);
+  const [listUserSelect, setListUserSelect] = useState<any[]>([]);
+  const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
+  const [showRedLine, setShowRedLine] = useState(true);
   const [idRedLine, setIdRedLine] = useState<number | null>(null);
-  const [indexRedLine, setIndexRedLine] = useState(null);
-  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
-  const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [indexRedLine, setIndexRedLine] = useState<number | null>(null);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showUserList, setShowUserList] = useState(false);
   const [partCopy, setPartCopy] = useState<partCopyType | null>(null);
-  const [selected, setSelected] = useState<any>([]);
-  const [inputText, setInputText] = useState<string>('');
+  const [selected, setSelected] = useState<any[]>([]);
+  const [inputText, setInputText] = useState('');
   const [inputIndex, setInputIndex] = useState<number>(-1);
   const [textSelection, setTextSelection] = useState<any>({start: 0, end: 0});
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [irregularMessageIds, setIrregularMessageIds] = useState<any>([]);
+  const [irregularMessageIds, setIrregularMessageIds] = useState<any[]>([]);
   const [showSendMessageButton, setShowSendMessageButton] =
     useState<boolean>(true);
 
@@ -259,7 +259,9 @@ export const useFunction = (props: any) => {
       setData(response?.data?.room);
       dispatch(saveIsGetInfoRoom(false));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [idRoomChat, dispatch]);
 
@@ -290,8 +292,11 @@ export const useFunction = (props: any) => {
           time: res?.data?.message_id?.created_at,
         });
         dispatch(deleteMessage(id));
-        GlobalService.hideLoading();
-      } catch (error: any) {
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
         GlobalService.hideLoading();
       }
     },
@@ -311,7 +316,11 @@ export const useFunction = (props: any) => {
         } else {
           getListChat(page);
         }
-      } catch (error: any) {}
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
     },
     [dispatch, getListChat, page],
   );
@@ -393,6 +402,53 @@ export const useFunction = (props: any) => {
       return result;
     },
     [formattedText],
+  );
+
+  const callApiChatBotRequest = useCallback(
+    async (message: any, messageId: any) => {
+      try {
+        const numberOfMember = listUserChat?.length ?? 0;
+        let mentionMembers: {userId: number; userName: string}[] = [];
+        if (numberOfMember < 1) {
+          return null;
+        } else if (numberOfMember === 1) {
+          // 個別チャットでは常に送信対象
+          mentionMembers = [
+            {
+              userId: listUserChat[0].id,
+              userName: listUserChat[0].last_name + listUserChat[0].first_name,
+            },
+          ];
+        } else if (numberOfMember > 1) {
+          // グループチャットではメンションのみ送信対象
+          if (inputText.indexOf('@all') > -1) {
+            mentionMembers = listUserChat.map(el => ({
+              userId: el.id,
+              userName: `${el.last_name}${el.first_name}`,
+            }));
+          } else {
+            mentionMembers = listUserSelect.filter(el => {
+              return inputText.indexOf(`@${el.userName}`) > -1;
+            });
+          }
+        }
+        const formData = new FormData();
+        formData.append('from_user_name', `${me.last_name}${me.first_name}`);
+        formData.append(
+          'mention_members',
+          JSON.stringify(convertArrUnique(mentionMembers, 'userId')),
+        );
+        formData.append('message', message);
+        formData.append('message_id', messageId);
+        formData.append('room_id', idRoomChat);
+        await callApiChatBot(formData);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    },
+    [idRoomChat, listUserChat, listUserSelect, me, inputText],
   );
 
   /**
@@ -557,12 +613,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUser.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -573,7 +629,7 @@ export const useFunction = (props: any) => {
           res?.data?.data?.user_send?.last_name +
           res?.data?.data?.user_send?.first_name,
         user_icon_url: res?.data?.data?.icon_image ?? null,
-        client_name: listUser[0]?.client_name ?? null,
+        client_name: listUserChat[0]?.client_name ?? null,
         message_text: res?.data?.data?.message,
         attachment: null,
         stamp_no: res?.data?.data?.stamp_no,
@@ -583,7 +639,7 @@ export const useFunction = (props: any) => {
         editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
       );
     },
-    [dispatch, idRoomChat, socket, user_id, dataDetail?.name, listUser],
+    [dispatch, idRoomChat, socket, user_id, dataDetail, listUserChat],
   );
 
   const navigatiteToListReaction = useCallback(
@@ -614,7 +670,7 @@ export const useFunction = (props: any) => {
       } else {
         cancelModal();
         const mergedFiles = images.concat(chosenFiles);
-        setchosenFiles(mergedFiles);
+        setChosenFiles(mergedFiles);
       }
     });
   };
@@ -627,75 +683,59 @@ export const useFunction = (props: any) => {
     }).then(async file => {
       cancelModal();
       const mergedFiles = file.concat(chosenFiles);
-      setchosenFiles(mergedFiles);
+      setChosenFiles(mergedFiles);
     });
   };
 
-  const sendFile = useCallback(async () => {
-    try {
-      if (chosenFiles?.length > 0) {
-        GlobalService.showLoading();
-        // send files
-        for (const item of chosenFiles) {
-          let data = new FormData();
-          if (item?.sourceURL || item?.path) {
-            // in case of image
-            let isHEIC =
-              item?.sourceURL?.endsWith('.heic') ||
-              item?.sourceURL?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC') ||
-              item?.path?.endsWith('.HEIC');
-            data.append('attachment[]', {
-              fileName: item?.path?.replace(/^.*[\\/]/, ''),
-              name: item?.path?.replace(/^.*[\\/]/, ''),
-              width: item?.width,
-              uri: item?.path,
-              path: item?.path,
-              size: item?.size,
-              type:
-                Platform.OS === 'ios'
-                  ? `image/${
-                      isHEIC
-                        ? item?.path?.split('.')[0] + '.JPG'
-                        : item?.path?.split('.').pop()
-                    }}`
-                  : item?.mime,
-              height: item?.height,
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
-            let res = await sendMessageApi(data);
-            socket.emit('message_ind2', {
-              user_id: user_id,
-              room_id: idRoomChat,
-              task_id: null,
-              to_info: null,
-              level: res?.data?.data?.msg_level,
-              message_id: res?.data?.data?.id,
-              message_type: res?.data?.data?.msg_type,
-              method: res?.data?.data?.method,
-              attachment_files: res?.data?.attachmentFiles,
-              stamp_no: res?.data?.data?.stamp_no,
-              relation_message_id: res?.data?.data?.reply_to_message_id,
-              text: res?.data?.data?.message,
-              text2: null,
-              time: res?.data?.data?.created_at,
-            });
-            dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-          } else {
-            // in case of file
-            data.append('attachment[]', {
-              name: item?.name,
-              type: item?.type,
-              uri:
-                Platform.OS === 'ios'
-                  ? decodeURIComponent(item?.uri?.replace('file://', ''))
-                  : decodeURIComponent(item?.fileCopyUri),
-            });
-            data.append('msg_type', 2);
-            data.append('room_id', idRoomChat);
-            data.append('from_id', user_id);
+  const sendFile = useCallback(
+    async (callChatBot: boolean) => {
+      try {
+        if (chosenFiles.length > 0) {
+          GlobalService.showLoading();
+          // send files
+          for (const item of chosenFiles) {
+            let data = new FormData();
+            if (item?.sourceURL || item?.path) {
+              // in case of image
+              let isHEIC =
+                item?.sourceURL?.endsWith('.heic') ||
+                item?.sourceURL?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC') ||
+                item?.path?.endsWith('.HEIC');
+              data.append('attachment[]', {
+                fileName: item?.path?.replace(/^.*[\\/]/, ''),
+                name: item?.path?.replace(/^.*[\\/]/, ''),
+                width: item?.width,
+                uri: item?.path,
+                path: item?.path,
+                size: item?.size,
+                type:
+                  Platform.OS === 'ios'
+                    ? `image/${
+                        isHEIC
+                          ? item?.path?.split('.')[0] + '.JPG'
+                          : item?.path?.split('.').pop()
+                      }}`
+                    : item?.mime,
+                height: item?.height,
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+            } else {
+              // in case of file
+              data.append('attachment[]', {
+                name: item?.name,
+                type: item?.type,
+                uri:
+                  Platform.OS === 'ios'
+                    ? decodeURIComponent(item?.uri?.replace('file://', ''))
+                    : decodeURIComponent(item?.fileCopyUri),
+              });
+              data.append('msg_type', 2);
+              data.append('room_id', idRoomChat);
+              data.append('from_id', user_id);
+            }
             const res = await sendMessageApi(data);
             socket.emit('message_ind2', {
               user_id: user_id,
@@ -714,20 +754,31 @@ export const useFunction = (props: any) => {
               time: res?.data?.data?.created_at,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+            if (callChatBot) {
+              await callApiChatBotRequest(
+                res?.data?.data?.message,
+                res?.data?.data?.id,
+              );
+            }
+            giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex(
+              {
+                animated: true,
+                index: 0,
+              },
+            );
           }
-
-          giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
-          GlobalService.hideLoading();
+          setChosenFiles([]);
         }
-        setchosenFiles([]);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
+        GlobalService.hideLoading();
       }
-    } catch (error: any) {
-      GlobalService.hideLoading();
-    }
-  }, [chosenFiles, dispatch, idRoomChat, socket, user_id]);
+    },
+    [chosenFiles, dispatch, idRoomChat, socket, user_id, callApiChatBotRequest],
+  );
 
   const sendLabel = async (stamp_no: any) => {
     setShowTag(false);
@@ -758,12 +809,12 @@ export const useFunction = (props: any) => {
         text2: null,
         time: res?.data?.data?.created_at,
       });
-      const joinUsers = listUser.map(el => {
+      const joinUsers = listUserChat?.map(el => {
         return {userId: el.id, userName: el.last_name + el.first_name};
       });
       const toInfo = {
         type: MESSAGE_RANGE_TYPE.USER,
-        ids: listUser.map(el => el.id),
+        ids: listUserChat?.map(el => el.id),
       };
       socket.emit('notification_ind2', {
         user_id: user_id,
@@ -774,18 +825,26 @@ export const useFunction = (props: any) => {
           res?.data?.data?.user_send?.last_name +
           res?.data?.data?.user_send?.first_name,
         user_icon_url: res?.data?.data?.icon_image ?? null,
-        client_name: listUser[0]?.client_name ?? null,
+        client_name: listUserChat[0]?.client_name ?? null,
         message_text: res?.data?.data?.message,
         attachment: null,
         stamp_no: res?.data?.data?.stamp_no,
         to_info: toInfo,
       });
       dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
+      await callApiChatBotRequest(
+        res?.data?.data?.message,
+        res?.data?.data?.id,
+      );
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
         animated: true,
         index: 0,
       });
-    } catch (error: any) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   };
 
   const searchMessage = useCallback(() => {
@@ -801,63 +860,30 @@ export const useFunction = (props: any) => {
       if (!idRoomChat) {
         throw new Error('idRoomChat is undefined.');
       }
-      const result = await getListUser({room_id: idRoomChat, all: 1});
-      setListUser(result?.data?.users?.data);
-      setListUserRoot(result?.data?.users?.data);
+      await dispatch(getListUserChat({room_id: idRoomChat}));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
-  }, [idRoomChat]);
+  }, [idRoomChat, dispatch]);
 
   const bookmarkMessage = useCallback(async (data: any) => {
     try {
       GlobalService.showLoading();
       await addBookmark(data);
-      GlobalService.hideLoading();
       showMessage({
         message: 'ブックマークが正常に追加されました',
         type: 'success',
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
       GlobalService.hideLoading();
     }
   }, []);
-
-  const callApiChatBotRequest = useCallback(
-    async (message: any, messageId: any, useName: any) => {
-      try {
-        const numberOfMember = listUserRoot.length;
-        let listUserRootOnlyOne: {userId: number; userName: string}[] = [];
-        if (numberOfMember < 1) {
-          return null;
-        } else if (numberOfMember === 1) {
-          // in case of only 2 people in room(me and you only),  absolutely send bot notification to other.
-          listUserRootOnlyOne = [
-            {
-              userId: listUserRoot[0].id,
-              userName: listUserRoot[0].last_name + listUserRoot[0].first_name,
-            },
-          ];
-          setListUserSelect(listUserRootOnlyOne);
-        } else if (numberOfMember > 1) {
-          // Nothing Done.
-        }
-        const formData = new FormData();
-        formData.append('from_user_name', useName);
-        formData.append(
-          'mention_members',
-          numberOfMember === 1
-            ? JSON.stringify(convertArrUnique(listUserRootOnlyOne, 'userId'))
-            : JSON.stringify(convertArrUnique(listUserSelect, 'userId')),
-        );
-        formData.append('message', message);
-        formData.append('message_id', messageId);
-        formData.append('room_id', idRoomChat);
-        await callApiChatBot(formData);
-      } catch (error) {}
-    },
-    [idRoomChat, listUserRoot, listUserSelect],
-  );
 
   const sendMessage = useCallback(
     async mes => {
@@ -911,12 +937,12 @@ export const useFunction = (props: any) => {
             text2: null,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -927,7 +953,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -936,7 +962,15 @@ export const useFunction = (props: any) => {
           dispatch(saveMessageReply(null));
           // next show real data
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (message_edit) {
         try {
           const param = {
@@ -962,12 +996,12 @@ export const useFunction = (props: any) => {
             time: res?.data?.data?.created_at,
             time2: res?.data?.data?.updated_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -978,7 +1012,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -988,7 +1022,11 @@ export const useFunction = (props: any) => {
           dispatch(
             editMessageAction({id: res?.data?.data?.id, data: res?.data?.data}),
           );
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else if (messageQuote) {
         try {
           // 現在表示中のルームIDと引用元のルームIDが違う場合はエラー
@@ -1025,12 +1063,12 @@ export const useFunction = (props: any) => {
             text2: messageQuote?.text,
             time: res?.data?.data?.created_at,
           });
-          const joinUsers = listUser.map(el => {
+          const joinUsers = listUserChat?.map(el => {
             return {userId: el.id, userName: el.last_name + el.first_name};
           });
           const toInfo = {
             type: MESSAGE_RANGE_TYPE.USER,
-            ids: listUser.map(el => el.id),
+            ids: listUserChat?.map(el => el.id),
           };
           socket.emit('notification_ind2', {
             user_id: mes[0]?.user?._id,
@@ -1041,7 +1079,7 @@ export const useFunction = (props: any) => {
               res?.data?.data?.user_send?.last_name +
               res?.data?.data?.user_send?.first_name,
             user_icon_url: res?.data?.data?.icon_image ?? null,
-            client_name: listUser[0]?.client_name ?? null,
+            client_name: listUserChat[0]?.client_name ?? null,
             message_text: res?.data?.data?.message,
             attachment: null,
             stamp_no: res?.data?.data?.stamp_no,
@@ -1049,7 +1087,15 @@ export const useFunction = (props: any) => {
           });
           dispatch(saveMessageQuote(null));
           dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-        } catch (error: any) {}
+          await callApiChatBotRequest(
+            res?.data?.data?.message,
+            res?.data?.data?.id,
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       } else {
         try {
           if (mes[0]?.text) {
@@ -1077,12 +1123,12 @@ export const useFunction = (props: any) => {
               text2: null,
               time: res?.data?.data?.created_at,
             });
-            const joinUsers = listUser.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUser.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1093,25 +1139,24 @@ export const useFunction = (props: any) => {
                 res?.data?.data?.user_send?.last_name +
                 res?.data?.data?.user_send?.first_name,
               user_icon_url: res?.data?.data?.icon_image ?? null,
-              client_name: listUser[0]?.client_name ?? null,
+              client_name: listUserChat[0]?.client_name ?? null,
               message_text: res?.data?.data?.message,
               attachment: null,
               stamp_no: res?.data?.data?.stamp_no,
               to_info: toInfo,
             });
             dispatch(getDetailMessageSocketSuccess([res?.data?.data]));
-            callApiChatBotRequest(
+            await callApiChatBotRequest(
               res?.data?.data?.message,
               res?.data?.data?.id,
-              `${res?.data?.data?.user_send?.last_name}${res?.data?.data?.user_send?.first_name}`,
             );
           } else {
-            const joinUsers = listUser.map(el => {
+            const joinUsers = listUserChat?.map(el => {
               return {userId: el.id, userName: el.last_name + el.first_name};
             });
             const toInfo = {
               type: MESSAGE_RANGE_TYPE.USER,
-              ids: listUser.map(el => el.id),
+              ids: listUserChat?.map(el => el.id),
             };
             socket.emit('notification_ind2', {
               user_id: mes[0]?.user?._id,
@@ -1120,18 +1165,22 @@ export const useFunction = (props: any) => {
               join_users: joinUsers,
               user_name: null,
               user_icon_url: null,
-              client_name: listUser[0]?.client_name ?? null,
+              client_name: listUserChat[0]?.client_name ?? null,
               message_text: null,
               attachment: null,
               stamp_no: null,
               to_info: toInfo,
             });
           }
-        } catch (error: any) {}
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
       }
       // send files
-      if (chosenFiles?.length > 0) {
-        await sendFile();
+      if (chosenFiles.length > 0) {
+        await sendFile(mes[0]?.text === '');
       }
       // Khi call api gửi tin nhắn xong sẽ auto scroll xuống tin nhắn cuối cùng
       giftedChatRef.current?._messageContainerRef?.current?.scrollToIndex({
@@ -1147,6 +1196,7 @@ export const useFunction = (props: any) => {
       setFormattedText(formattedText1);
       // メッセージが送信完了の後、メッセージ入力のstateがemptyになる。
       setInputText('');
+      setListUserSelect([]);
       setShowSendMessageButton(true);
     },
     [
@@ -1162,8 +1212,8 @@ export const useFunction = (props: any) => {
       sendFile,
       socket,
       user_id,
-      listUser,
-      dataDetail?.name,
+      listUserChat,
+      dataDetail,
     ],
   );
 
@@ -1262,14 +1312,14 @@ export const useFunction = (props: any) => {
           return item;
         }
       });
-      setchosenFiles(chosenFilesDeleted);
+      setChosenFiles(chosenFilesDeleted);
     },
     [chosenFiles],
   );
 
   const customBack = useCallback(() => {
     navigation.navigate(ROUTE_NAME.LISTCHAT_SCREEN, {
-      idRoomChat: idRoomChat,
+      idRoomChat,
     });
   }, [navigation, idRoomChat]);
 
@@ -1304,7 +1354,7 @@ export const useFunction = (props: any) => {
       if (!paging?.current_page || page !== paging?.current_page) {
         getListChat(page);
         getDetail();
-        if (listUser.length === 0) {
+        if (listUserChat?.length === 0) {
           getUserListChat();
         }
       }
@@ -1322,7 +1372,9 @@ export const useFunction = (props: any) => {
           dispatch(saveIdMessageSearch(0));
           setPageLoading(false);
         } catch (error) {
-          console.log(error);
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
@@ -1339,7 +1391,7 @@ export const useFunction = (props: any) => {
     idMessageSearch,
     listChat,
     paging?.current_page,
-    listUser,
+    listUserChat,
     getUserListChat,
   ]);
 
@@ -1355,8 +1407,7 @@ export const useFunction = (props: any) => {
         setPage(1);
         setTopPage(1);
         setBottomPage(1);
-        setListUser([]);
-        setListUserRoot([]);
+        await dispatch(saveListUserChat([]));
         await dispatch(resetDataChat());
         await dispatch(saveIdRoomChat(idRoomChat));
         getListChat(1);
@@ -1372,7 +1423,7 @@ export const useFunction = (props: any) => {
       setTimeout(() => {
         dispatch(saveIdMessageSearch(idMessageSearchListChat));
         setPageLoading(true);
-      }, 1000);
+      }, 200);
     }
   }, [idMessageSearchListChat, dispatch]);
 
@@ -1417,23 +1468,6 @@ export const useFunction = (props: any) => {
       }
     }
   }, [listChat, pageLoading, dispatch, idMessageSearch, idRoomChat, page]);
-
-  // showTagModal
-  useEffect(() => {
-    if (showTagModal) {
-      getUserListChat();
-    }
-  }, [showTagModal, getUserListChat]);
-
-  // 画面にFocusがあたった/外れた、他依存の際に発火
-  // 必要な処理か不明なので無効化
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (idRoomChat) {
-  //       getDetail();
-  //     }
-  //   }, []),
-  // );
 
   useEffect(() => {
     if (message_edit || messageReply || messageQuote) {
@@ -1513,8 +1547,7 @@ export const useFunction = (props: any) => {
     showHideModalTagName,
     setShowTag,
     showTagModal,
-    listUser,
-    listUserRoot,
+    listUserChat,
     setText,
     bookmarkMessage,
     setIds,

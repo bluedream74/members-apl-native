@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  TextInput,
   RefreshControl,
   ActivityIndicator,
   Image,
@@ -23,21 +22,22 @@ import {
   saveIdRoomChat,
   saveMessageReply,
   resetDataChat,
+  saveListUserChat,
   showHideModalFilterListChat,
   getUnreadMessageCount,
-} from "@redux";
+} from '@redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {ModalSearchMessage} from './component/ModalSearchMessage';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import {AppNotification} from '@util';
 import {colors} from '@stylesCommon';
-import notifee, {EventType} from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 import {FilterListChat} from '../FilterListChat';
 
 const ListChat = (props: any) => {
   const refInput = useRef<any>(null);
-  let {initFB} = AppNotification;
+  const {initFB} = AppNotification;
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
   const listRoom = useSelector((state: any) => state.chat.roomList);
@@ -47,20 +47,20 @@ const ListChat = (props: any) => {
     (state: any) => state.chat.categoryID_Filter,
   );
   const status_Filter = useSelector((state: any) => state.chat.status_Filter);
-
   const showModalFilter = useSelector(
     (state: any) => state.chat.modalFilterChat,
   );
-
   const idCompany = useSelector((state: any) => state.chat.idCompany);
   const user = useSelector((state: any) => state.auth.userInfo);
-  const unReadMessageCount = useSelector((state: any) => state.chat.unReadMessageCount);
-  const [key, setKey] = useState<string>('');
+  const unReadMessageCount = useSelector(
+    (state: any) => state.chat.unReadMessageCount,
+  );
+  const [key, setKey] = useState('');
   const [page, setPage] = useState(1);
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [showSearchMessage, setShowSearchMessage] = useState<boolean>(false);
-  const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  const [filterChat, setFilterChat] = useState<boolean>(false);
+  const [init, setInit] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showSearchMessage, setShowSearchMessage] = useState(false);
+  const [isLoadMore, setIsLoadMore] = useState(false);
   const {route} = props;
 
   //個別チャットから一覧に戻った時に発火
@@ -70,6 +70,7 @@ const ListChat = (props: any) => {
         await dispatch(saveIdRoomChat(null));
         await dispatch(saveMessageReply(null));
         await dispatch(resetDataChat());
+        await dispatch(saveListUserChat([]));
         setPage(1);
         dispatch(
           getRoomList({
@@ -81,7 +82,7 @@ const ListChat = (props: any) => {
           }),
         );
       })();
-    }, [type_Filter, categoryID_Filter]),
+    }, [type_Filter, categoryID_Filter, dispatch, idCompany, key]),
   );
 
   useEffect(() => {
@@ -98,13 +99,17 @@ const ListChat = (props: any) => {
   }, [unReadMessageCount]);
 
   useEffect(() => {
+    if (init) {
+      return;
+    }
+    setInit(true);
     initFB();
     if (user?.id) {
       dispatch(getUserInfo(user?.id));
       dispatch(showHideModalFilterListChat(false));
       dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
     }
-  }, []);
+  }, [dispatch, initFB, user, init]);
 
   useEffect(() => {
     try {
@@ -119,9 +124,10 @@ const ListChat = (props: any) => {
           }),
         );
       }
-    } catch (err) {
-    } finally {
-      // setIsLoadMore(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
   }, [page]);
 
@@ -139,7 +145,7 @@ const ListChat = (props: any) => {
         ),
       500,
     ),
-    [],
+    [categoryID_Filter, dispatch, idCompany, page, type_Filter],
   );
 
   const onRefresh = useCallback(() => {
@@ -154,7 +160,7 @@ const ListChat = (props: any) => {
       }),
     );
     dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
-  }, [key, idCompany, type_Filter, categoryID_Filter, user?.id]);
+  }, [key, idCompany, type_Filter, categoryID_Filter, user, dispatch]);
 
   const onChangeText = (text: any) => {
     setKey(text);
@@ -162,12 +168,14 @@ const ListChat = (props: any) => {
   };
 
   const renderItem = ({item, index}: any) => {
-    return <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />;
+    return (
+      <Item item={item} index={index} idRoomChat={route?.params?.idRoomChat} />
+    );
   };
 
   const onCreate = useCallback(() => {
     navigation.navigate(ROUTE_NAME.CREATE_ROOM_CHAT, {typeScreen: 'CREATE'});
-  }, []);
+  }, [navigation]);
 
   const handleLoadMore = () => {
     if (page === paging?.last_page) {

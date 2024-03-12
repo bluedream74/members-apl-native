@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
-  Text,
+  Keyboard,
 } from 'react-native';
 import {styles} from './styles';
 import {Header} from '@component';
@@ -73,7 +73,7 @@ const DetailChat = (props: any) => {
     text,
     setShowTag,
     showTagModal,
-    listUser,
+    listUserChat,
     bookmarkMessage,
     ids,
     setIds,
@@ -212,7 +212,7 @@ const DetailChat = (props: any) => {
             navigatiteToListReaction={(idMsg: any) => {
               navigatiteToListReaction(idMsg);
             }}
-            listUser={listUser}
+            listUser={listUserChat}
             newIndexArray={newIndexArray}
             me={me}
             showRedLine={showRedLine}
@@ -224,12 +224,14 @@ const DetailChat = (props: any) => {
             indexRedLine={indexRedLine}
             setFormattedText={setFormattedText}
             mentionedUsers={mentionedUsers}
+            setListUserSelect={setListUserSelect}
+            setInputText={setInputText}
           />
         </>
       );
     },
     [
-      listUser,
+      listUserChat,
       newIndexArray,
       bookmarkMessage,
       dataDetail?.is_admin,
@@ -249,6 +251,8 @@ const DetailChat = (props: any) => {
       setFormattedText,
       showRedLine,
       updateGimMessage,
+      setInputText,
+      setListUserSelect,
     ],
   );
 
@@ -413,7 +417,7 @@ const DetailChat = (props: any) => {
                           setShowTag(false);
                           if (id === 'All') {
                             setListUserSelect(
-                              listUser.map(el => {
+                              listUserChat.map(el => {
                                 return {
                                   userId: el.id,
                                   userName: el.last_name + el.first_name,
@@ -499,14 +503,12 @@ const DetailChat = (props: any) => {
           selected={selected}
           setSelected={setSelected}
           showTaskForm={showTaskForm}
-          keyboardHeight={keyboardHeight}
         />
       )}
       {showUserList && (
         <ModalUserList
           visible={showUserList}
           onCancel={() => setShowUserList(false)}
-          idRoomChat={idRoomChat}
           setShowTaskForm={setShowTaskForm}
           setShowUserList={setShowUserList}
           setSelected={setSelected}
@@ -535,21 +537,19 @@ const DetailChat = (props: any) => {
                 start={{x: 1, y: 0}}
                 end={{x: 0, y: 0}}
                 style={styles.containerChat}>
-                {Platform.OS === 'ios' ? (
-                  <TextInput
-                    editable={false}
-                    multiline
-                    scrollEnabled={true}
-                    selectTextOnFocus={true}
-                    showSoftInputOnFocus={false}
-                    style={styles.partCopyText}>
-                    {partCopy.text}
-                  </TextInput>
-                ) : (
-                  <Text selectable={true} style={styles.partCopyText}>
-                    {partCopy.text}
-                  </Text>
-                )}
+                <TextInput
+                  editable={Platform.OS === 'android'}
+                  multiline
+                  scrollEnabled={true}
+                  selectTextOnFocus={true}
+                  showSoftInputOnFocus={false}
+                  style={styles.partCopyText}
+                  value={partCopy.text}
+                  onChangeText={() => {
+                    Keyboard.dismiss();
+                    changePartCopy(partCopy);
+                  }}
+                />
               </LinearGradient>
             </TouchableWithoutFeedback>
           </TouchableOpacity>
