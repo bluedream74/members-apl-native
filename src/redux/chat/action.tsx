@@ -169,7 +169,7 @@ export const logMessage = (payload: any) => ({
   payload,
 });
 
-export const registerNotification = (payload: any) => ({
-  type: typeChat.REGISTER_NOTIFICATION,
+export const registerRoomChat = (payload: any) => ({
+  type: typeChat.REGISTER_ROOMCHAT,
   payload,
 });

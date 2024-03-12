@@ -291,7 +291,7 @@ export function* logMessageSaga(action: any) {
   }
 }
 
-function* registerNotification(action: any) {
+function* registerRoomChatDevice(action: any) {
   const result: ResponseGenerator = yield detailRoomchat(action.payload.connect_room_id);
   const body = {
     id_room: action.payload.connect_room_id,
@@ -328,8 +328,8 @@ export function* chatSaga() {
     getUnreadMessageCountSaga,
   );
   yield takeEvery(
-    typeChat.REGISTER_NOTIFICATION,
-    registerNotification,
+    typeChat.REGISTER_ROOMCHAT,
+    registerRoomChatDevice,
   );
   // deactivate temporally
   // yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);

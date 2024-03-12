@@ -89,7 +89,6 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
       };
 
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
-      console.log("DETAILSUCCESS");
       // delete dummy data id=9999999999
       const filteredStateDetailChat = state.detailChat.filter(function (el) {
         return el.id != 9999999999;
@@ -237,12 +236,6 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         current_room_id: current_room_id,
         irregular_message_ids: irregular_message_ids,
-      };
-
-    case typeChat.REGISTER_NOTIFICATION:
-      return {
-        ...state,
-        connect_room_id: action.payload?.connect_room_id,
       };
 
     default:

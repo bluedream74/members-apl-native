@@ -8,7 +8,6 @@ import {
   RefreshControl,
   ActivityIndicator,
   Image,
-  AppState,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -125,22 +124,6 @@ const ListChat = (props: any) => {
       // setIsLoadMore(false);
     }
   }, [page]);
-
-  useEffect(() => {
-    AppState.addEventListener('change', () => {
-      if (AppState.currentState === 'active') {
-        dispatch(
-          getRoomList({
-            key: key,
-            company_id: idCompany,
-            page: 1,
-            type: type_Filter,
-            category_id: categoryID_Filter,
-          }),
-        );
-      }
-    });
-  }, []);
 
   const debounceText = useCallback(
     debounce(
