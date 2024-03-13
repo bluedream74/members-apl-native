@@ -101,7 +101,9 @@ export default function MessageInfo({
       }
     });
 
-    //@all/@AIを太字にする
+    // @all/@AIを太字にする
+    // RNのバージョンが0.68以下、Hermes無効だと使用できない正規表現
+    // https://github.com/facebook/react-native/issues/29271
     // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
     // replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
     // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
