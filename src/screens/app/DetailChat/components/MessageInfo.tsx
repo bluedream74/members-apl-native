@@ -99,14 +99,27 @@ export default function MessageInfo({
           '<b>$&</b>',
         );
       }
+      //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
+      const matchs = replaceText.match(
+        new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
+      );
+      if (matchs != null) {
+        replaceText = replaceText.replace(
+          new RegExp('^@all|@all$| @all|@all ', 'g'),
+          '<b>@all</b>',
+        );
+      }
+      //@AIをリンク色にする（@AI単独、@AI+半角スペース、@AI+全角スペース、@aAI+改行の場合）
+      const AiMatchs = replaceText.match(
+        new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'g'),
+      );
+      if (AiMatchs != null) {
+        replaceText = replaceText.replace(
+          new RegExp('^@AI|@AI$| @aAI|@AI ', 'g'),
+          '<b>@AI</b>',
+        );
+      }
     });
-
-    //@allをリンク色にする
-    //@AIをリンク色にする
-    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/@AI(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
     return replaceText;
   }, []);
 
