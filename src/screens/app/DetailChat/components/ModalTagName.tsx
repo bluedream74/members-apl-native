@@ -39,14 +39,15 @@ const ModalTagName = React.memo((props: any) => {
   }, [listUserChat]);
 
   const onChoseUser = (item: any) => {
+    const title = 'さん';
     if (item?.id === 'All') {
       const valueName = `${item?.value}`;
       const id = item?.id;
-      choseUser(valueName?.replace(' ', ''), ' ', id, item);
+      choseUser(valueName?.replace(' ', ''), title, id, item);
     } else {
       const valueName = `${item?.last_name}${item?.first_name}`;
       const id = item?.id;
-      choseUser(valueName?.replace(' ', ''), 'さん', id, item);
+      choseUser(valueName?.replace(' ', ''), title, id, item);
     }
   };
 
