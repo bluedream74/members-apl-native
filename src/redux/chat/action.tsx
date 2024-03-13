@@ -151,6 +151,11 @@ export const saveIsGetInfoRoom = (payload: any) => ({
   payload,
 });
 
+export const updateMuteStatusRoom = (payload: any) => ({
+  type: typeChat.UPDATE_MUTE_STATUS_ROOM,
+  payload,
+});
+
 export const updateMessageReaction = (payload: any) => ({
   type: typeChat.EDIT_MESSAGE_REACTION,
   payload,

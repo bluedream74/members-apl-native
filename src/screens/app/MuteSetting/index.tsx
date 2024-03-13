@@ -3,9 +3,11 @@ import {View} from 'react-native';
 import {Header, Toggle} from '@component';
 import {styles} from './styles';
 import {updateMuteFlag} from '@services';
-import {iconClose} from '@images';
+import {useDispatch} from 'react-redux';
+import {updateMuteStatusRoom} from '@redux';
 
 const MuteSetting = (props: any) => {
+  const dispatch = useDispatch();
   const {route} = props;
   const {roomDetail} = route?.params;
 
@@ -18,6 +20,7 @@ const MuteSetting = (props: any) => {
         status: mute ? 0 : 1,
       };
       await updateMuteFlag(body);
+      dispatch(updateMuteStatusRoom(!mute));
       setMute(!mute);
     } catch (error) {
       if (error instanceof Error) {

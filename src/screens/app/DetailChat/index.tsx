@@ -39,6 +39,7 @@ import {ModalPin} from './components/ModalPin';
 import {ModalTagName} from './components/ModalTagName';
 import {ModalTask} from './components/ModalTask';
 import {ModalUserList} from './components/ModalUserList';
+import {useSelector} from 'react-redux';
 
 const DetailChat = (props: any) => {
   // custom hook logic
@@ -114,6 +115,8 @@ const DetailChat = (props: any) => {
     inputIndex,
     showSendMessageButton,
   } = useFunction(props);
+
+  const mute = useSelector((state: any) => state.chat.isMuteStatusRoom);
 
   //Render ra UI chọn ảnh, video, file
   const renderActions = useCallback(
@@ -314,7 +317,7 @@ const DetailChat = (props: any) => {
           }
           onRightSecond={searchMessage}
           customBack={customBack}
-          mute={dataDetail?.mute_flag === 1 ? true : false}
+          mute={mute}
         />
         {/* UI pin message */}
         {message_pinned?.id && (
