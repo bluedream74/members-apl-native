@@ -4,13 +4,11 @@ import {showMessage} from 'react-native-flash-message';
 import {store} from '../redux/store';
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
+import {API_DOMAIN} from '@util';
 
 const apiChatBot = axios.create();
 
-//member chat staging api url
-//export const BASEURL = 'https://stage.mem-bers.jp/';
-//member chat live api url
-export const BASEURL = 'https://mem-bers.jp/';
+export const BASEURL = `https://${API_DOMAIN}/`;
 
 apiChatBot.interceptors.request.use(
   async (config: any) => {
