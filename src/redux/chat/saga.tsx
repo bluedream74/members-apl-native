@@ -96,11 +96,9 @@ export function* getDetailMessageSaga(action: any) {
       id_message: action.payload?.id_message,
     };
     yield put(updateMessageSeen(data));
-    //Check xoá tin nhắn
     if (result?.data?.message?.del_flag === 1) {
       yield put(deleteMessage(result?.data?.message?.id));
     } else {
-      //Chỉnh sửa tin nhắn
       if (result?.data?.message?.medthod === 1) {
         yield put(
           editMessageAction({
@@ -109,7 +107,6 @@ export function* getDetailMessageSaga(action: any) {
           }),
         );
       } else {
-        //Chỉnh sửa tin nhắn
         if (action.payload?.message_type === 3) {
           yield put(
             editMessageAction({
@@ -118,14 +115,12 @@ export function* getDetailMessageSaga(action: any) {
             }),
           );
         }
-        //Check nếu còn trong phòng mà bị remove sẽ bị kích ra ngoài
         if (
           result?.data?.message?.msg_type === 10 &&
           state?.auth?.userInfo?.id === result?.data?.message?.from_id
         ) {
           NavigationUtils.navigate(ROUTE_NAME.LISTCHAT_SCREEN);
         } else {
-          //Hành động nối tin nhắn vào mảng
           yield put(getDetailMessageSocketSuccess([result?.data?.message]));
         }
       }
@@ -338,6 +333,15 @@ export function* logMessageSaga(action: any) {
   }
 }
 
+function* registerRoomChatDevice(action: any) {
+  const result: ResponseGenerator = yield detailRoomchat(action.payload.connect_room_id);
+  const body = {
+    id_room: action.payload.connect_room_id,
+    id_message: result.data.room.lastMessageJoin.id,
+  };
+  yield registerLastMessage(body);
+}
+
 export function* chatSaga() {
   yield takeEvery(typeChat.GET_ROOM_LIST, getRoomListSaga);
   yield takeEvery(typeChat.GET_DETAIL_LIST_CHAT, getDetailChatSaga);
@@ -365,6 +369,10 @@ export function* chatSaga() {
   yield takeEvery(
     typeChat.GET_UNREAD_MESSAGE_COUNT_ALL,
     getUnreadMessageCountSaga,
+  );
+  yield takeEvery(
+    typeChat.REGISTER_ROOMCHAT,
+    registerRoomChatDevice,
   );
   // deactivate temporally
   // yield takeEvery(typeChat.LOG_MESSAGE, logMessageSaga);
