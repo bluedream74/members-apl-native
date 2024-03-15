@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {useWindowDimensions} from 'react-native';
+import {Linking, useWindowDimensions} from 'react-native';
 import RenderHtml, {
   HTMLElementModel,
   HTMLContentModel,
@@ -98,8 +98,10 @@ const onPress = async (event: any, href: string) => {
         idMessageSearchListChat: messageId,
       });
     }
+  } else {
+    Linking.openURL(href);
   }
-}
+};
 
 const renderersProps = {
   a: {
