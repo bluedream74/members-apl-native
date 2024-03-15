@@ -6,6 +6,7 @@ import {
   menuPartCopy,
   menuDelete,
   menuEdit,
+  menuLink,
   menuPinChat,
   menuReply,
   icon1,
@@ -24,13 +25,15 @@ import {useSelector} from 'react-redux';
 
 interface dataFeatureType {
   id: number;
-  sourceImage: number;
+  sourceImage?: number | null;
   name: string;
-  style: {
-    width: number;
-    height: number;
-    tintColor?: string;
-  };
+  style?:
+    | {
+        width: number;
+        height: number;
+        tintColor?: string;
+      }
+    | undefined;
   isShow: boolean;
 }
 
@@ -84,6 +87,18 @@ const MenuFeature = React.memo((props: any) => {
       isShow: true,
     },
     {
+      id: 13,
+      sourceImage: iconQuote,
+      name: '引用',
+      style: {
+        // 他の画像より一回り大きい
+        width: 16, // 96 * (1 / 6)
+        height: 16, // 96 * (1 / 6)
+        tintColor: '#FFFFFF',
+      },
+      isShow: true,
+    },
+    {
       id: 12,
       sourceImage: menuPinChat,
       name: 'ブックマーク',
@@ -91,6 +106,18 @@ const MenuFeature = React.memo((props: any) => {
         // 他の画像より一回り大きい
         width: 14.4, // 72 * (1 / 5)
         height: 14.4, // 72 * (1 / 5)
+        tintColor: '#FFFFFF',
+      },
+      isShow: true,
+    },
+    {
+      id: 15,
+      sourceImage: menuLink,
+      name: 'リンク',
+      style: {
+        // 他の画像より一回り大きい
+        width: 14.4, // 72 * (1 / 5)
+        height: 17.6, // 88 * (1 / 5)
         tintColor: '#FFFFFF',
       },
       isShow: true,
@@ -105,18 +132,6 @@ const MenuFeature = React.memo((props: any) => {
         tintColor: '#FFFFFF',
       },
       isShow: msgType !== 1 ? true : false,
-    },
-    {
-      id: 13,
-      sourceImage: iconQuote,
-      name: '引用',
-      style: {
-        // 他の画像より一回り大きい
-        width: 16, // 96 * (1 / 6)
-        height: 16, // 96 * (1 / 6)
-        tintColor: '#FFFFFF',
-      },
-      isShow: true,
     },
     {
       id: 8,
@@ -141,6 +156,12 @@ const MenuFeature = React.memo((props: any) => {
         tintColor: '#FFFFFF',
       },
       isShow: userId === user_id ? true : false,
+    },
+    {
+      id: 99, // 余白用
+      sourceImage: null,
+      name: '',
+      isShow: true,
     },
   ];
 
