@@ -116,12 +116,13 @@ export const useFunction = (props: any) => {
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
     idMessage => {
-      setTimeout(() => {
+      setTimeout(async () => {
         const body = {
           id_room: idRoomChat,
           id_message: idMessage,
         };
-        dispatch(fetchResultMessageActionListRoom(body));
+        await dispatch(fetchResultMessageActionListRoom(body));
+        setPageLoading(false);
       }, 1000);
     },
     [idRoomChat, dispatch],
