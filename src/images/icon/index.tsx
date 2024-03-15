@@ -21,6 +21,7 @@ const iconBook = require('./IconBook.png');
 const iconAddUser = require('./IconAddUser.png');
 const iconSend = require('./IconSend.png');
 const iconUpload = require('./UpFile.png');
+const iconLink = require('./IconLink.png');
 const iconPlay = require('./IconPlayVideo.png');
 const iconPdf = require('./Iconpdf.png');
 const iconDoc = require('./Icondoc.png');
@@ -74,6 +75,7 @@ export {
   iconAddUser,
   iconSend,
   iconUpload,
+  iconLink,
   iconPlay,
   iconPdf,
   iconDoc,

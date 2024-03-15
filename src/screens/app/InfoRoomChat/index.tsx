@@ -18,7 +18,7 @@ import {
   iconUser,
   iconLogout,
   iconPin,
-  iconUpload,
+  iconLink,
   iconDocument,
   iconTaskCutting,
 } from '@images';
@@ -338,7 +338,7 @@ const InfoRoomChat = (props: any) => {
             />
             {dataDetail?.type === 4 || dataDetail?.is_admin !== 1 ? null : (
               <ViewItem
-                sourceImage={iconUpload}
+                sourceImage={iconLink}
                 content="チャット招待リンク"
                 onClick={() => {
                   onCancelModalLink();
