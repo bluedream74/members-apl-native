@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Image,
   AppState,
+  AppStateStatus,
 } from 'react-native';
 import {styles} from './styles';
 import {Header, AppInput} from '@component';
@@ -62,8 +63,34 @@ const ListChat = (props: any) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showSearchMessage, setShowSearchMessage] = useState(false);
   const [isLoadMore, setIsLoadMore] = useState(false);
-  const [applicationState, setApplicationState] = useState(AppState.currentState);
   const {route} = props;
+
+  useEffect(() => {
+    if (init) {
+      return;
+    }
+    setInit(true);
+    initFB();
+    if (user?.id) {
+      dispatch(getUserInfo(user?.id));
+      dispatch(showHideModalFilterListChat(false));
+      dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
+    }
+  }, [dispatch, initFB, user, init]);
+
+  const onRefresh = useCallback(() => {
+    setPage(1);
+    dispatch(
+      getRoomList({
+        key: key,
+        company_id: idCompany,
+        page: 1,
+        type: type_Filter,
+        category_id: categoryID_Filter,
+      }),
+    );
+    dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
+  }, [key, idCompany, type_Filter, categoryID_Filter, user, dispatch]);
 
   //個別チャットから一覧に戻った時に発火
   useFocusEffect(
@@ -88,6 +115,20 @@ const ListChat = (props: any) => {
   );
 
   useEffect(() => {
+    const subscription = AppState.addEventListener(
+      'change',
+      (newState: AppStateStatus) => {
+        if (newState === 'active') {
+          onRefresh();
+        }
+      },
+    );
+    return () => {
+      subscription.remove();
+    };
+  }, [onRefresh]);
+
+  useEffect(() => {
     setIsLoadMore(false);
   }, [listRoom]);
 
@@ -99,19 +140,6 @@ const ListChat = (props: any) => {
       notifee.setBadgeCount(0);
     }
   }, [unReadMessageCount]);
-
-  useEffect(() => {
-    if (init) {
-      return;
-    }
-    setInit(true);
-    initFB();
-    if (user?.id) {
-      dispatch(getUserInfo(user?.id));
-      dispatch(showHideModalFilterListChat(false));
-      dispatch(getUnreadMessageCount(user?.id)); // 全体未読チャット数取得
-    }
-  }, [dispatch, initFB, user, init]);
 
   useEffect(() => {
     try {
@@ -133,19 +161,6 @@ const ListChat = (props: any) => {
     }
   }, [page]);
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", nextApplicationState => {
-      if(applicationState.match(/inactive|background/) && nextApplicationState === "active") {
-        onRefresh();
-      }
-      setApplicationState(nextApplicationState);
-    });
-
-    return () => {
-      subscription.remove();
-    }
-  }, [applicationState]);
-
   const debounceText = useCallback(
     debounce(
       text =>
@@ -162,18 +177,6 @@ const ListChat = (props: any) => {
     ),
     [categoryID_Filter, dispatch, idCompany, page, type_Filter],
   );
-
-  const onRefresh = useCallback(() => {
-    dispatch(
-      getRoomList({
-        key: key,
-        company_id: idCompany,
-        page: 1,
-        type: type_Filter,
-        category_id: categoryID_Filter,
-      }),
-    );
-  }, [key, idCompany, type_Filter, categoryID_Filter, user, dispatch]);
 
   const onChangeText = (text: any) => {
     setKey(text);
