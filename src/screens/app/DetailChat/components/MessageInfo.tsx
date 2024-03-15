@@ -5,6 +5,11 @@ import RenderHtml, {
   HTMLContentModel,
 } from 'react-native-render-html';
 import {styles} from './stylesItem';
+import {saveIdRoomChat, resetDataChat} from '@redux';
+import {store} from '../../../../redux/store';
+import {ROUTE_NAME} from '@routeName';
+import {NavigationUtils} from '@navigation';
+import {API_DOMAIN} from '@util';
 
 const customHTMLElementModels = {
   'deco-info': HTMLElementModel.fromCustomModel({
@@ -70,6 +75,36 @@ export type MessageInfoProps = {
   text: string;
   joinedUsers?: any;
   textSetting?: any;
+};
+
+const onPress = async (event: any, href: string) => {
+  const parseUrl = String(href).split('/');
+  if (
+    parseUrl[0] === 'https:' &&
+    parseUrl[2] === API_DOMAIN &&
+    parseUrl[3] === 'chat'
+  ) {
+    const parseParams = String(parseUrl[4]).split('?messId=');
+    const roomId = parseParams[0];
+    const messageId = parseParams[1];
+    if (Number(roomId) > 0) {
+      const state = store.getState();
+      if (roomId !== state?.chat?.id_roomChat) {
+        await store.dispatch(resetDataChat());
+        await store.dispatch(saveIdRoomChat(roomId));
+      }
+      NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+        idRoomChat: roomId,
+        idMessageSearchListChat: messageId,
+      });
+    }
+  }
+}
+
+const renderersProps = {
+  a: {
+    onPress: onPress,
+  },
 };
 
 export default function MessageInfo({
@@ -185,6 +220,7 @@ export default function MessageInfo({
     <>
       <RenderHtml
         defaultTextProps={textSetting}
+        renderersProps={renderersProps}
         contentWidth={width}
         source={{
           html: text
