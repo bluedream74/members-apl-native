@@ -97,7 +97,7 @@ const EditRoomChat = (props: any) => {
                 <AppInput
                   placeholder="概要"
                   onChange={onChangeContent}
-                  value={content}
+                  value={content.replace(/<br\s*[\/]?>/gi, '\n')}
                   multiline={true}
                   styleContainer={styles.multiline}
                   styleInput={styles.multiline}
