@@ -9,6 +9,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         idCompany: action.payload,
       };
+  
     case typeChat.GET_ROOM_LIST_SUCCESS:
       let pageList = action.payload.paging?.current_page;
       return {
@@ -19,6 +20,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
             : state.roomList.concat(action.payload.data),
         pagingListRoom: action.payload.paging,
       };
+ 
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
       const currentPage = state.pagingDetail?.current_page ?? 1;
@@ -70,6 +72,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: data,
       };
+ 
     case typeChat.EDIT_MESSAGE:
       const array = [...state.detailChat];
       const indexEdit = array.findIndex(
@@ -82,16 +85,19 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: array,
       };
+
     case typeChat.PIN_MESSAGE:
       return {
         ...state,
         message_pinned: action.payload,
       };
+
     case typeChat.SAVE_ID_ROOMCHAT:
       return {
         ...state,
         id_roomChat: action.payload,
       };
+
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SUCCESS:
       // delete dummy data id=9999999999
       const filteredStateDetailChat = state.detailChat.filter(function (el) {
@@ -110,21 +116,25 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: uniqueDetailChat,
       };
+ 
     case typeChat.SAVE_MESSAGE_REPLY:
       return {
         ...state,
         messageReply: action.payload,
       };
+
     case typeChat.SAVE_MESSAGE_QUOTE:
       return {
         ...state,
         messageQuote: action.payload,
       };
+
     case typeChat.SAVE_MESSAGE_EDIT:
       return {
         ...state,
         messageEdit: action.payload,
       };
+
     case typeChat.RESET_DATA:
       return {
         ...state,
@@ -133,19 +143,21 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         id_messageSearch: null,
         redLineId: null,
       };
+
     case typeChat.RESULT_SEARCH_MESSAGE:
       return {
         ...state,
         detailChat: action.payload.data,
         pagingDetail: action.payload.paging,
       };
+
     case typeChat.SAVE_MESSAGE_SEARCH:
       return {
         ...state,
         id_messageSearch: action.payload,
       };
+
     case typeChat.GET_DETAIL_MESSAGE_SOCKET_SEEN_SUCCESS:
-      //Logic xử lý phần đã xem message
       const arrayListChat = [...state.detailChat];
       let dataNew = arrayListChat?.filter(
         (item: any) => item?.id === action?.payload?.id,
@@ -170,6 +182,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: dataNew?.concat(dataSeen),
       };
+
     case typeChat.DETAIL_ROOM_SOCKET_SUCCESS:
       const dataList = [...state?.roomList];
       const indexListRoom = dataList.findIndex(
@@ -182,6 +195,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         roomList: dataList,
       };
+
     case typeChat.SAVE_IS_GET_INFO_ROOM:
       return {
         ...state,
@@ -197,32 +211,38 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         GetUnreadMessageCount: action.payload,
       };
+
     case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL_SUCCESS:
       let count = action.payload;
       return {
         ...state,
         unReadMessageCount: count,
       };
+
     case typeChat.SHOW_HIDE_MODAL_FILTER_LISTCHAT:
       return {
         ...state,
         modalFilterChat: action.payload,
       };
+
     case typeChat.SAVE_TYPE_FILTER:
       return {
         ...state,
         type_Filter: action.payload,
       };
+
     case typeChat.SAVE_CATEGORY_FILTER:
       return {
         ...state,
         categoryID_Filter: action.payload,
       };
+
     case typeChat.SAVE_STATUS_FILTER:
       return {
         ...state,
         status_Filter: action.payload,
       };
+
     case typeChat.LOG_MESSAGE:
       let current_room_id = action.payload?.current_room_id;
       let irregular_message_ids = action.payload?.irregular_message_ids;
@@ -231,6 +251,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         current_room_id: current_room_id,
         irregular_message_ids: irregular_message_ids,
       };
+
     default:
       return state;
   }

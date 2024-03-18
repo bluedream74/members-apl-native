@@ -7,10 +7,8 @@ import {ROUTE_NAME} from '@routeName';
 
 const apiChatBot = axios.create();
 
-//adamo api url
-//export const BASEURL = 'https://member-chat-api.adamo.tech/';
 //member chat staging api url
-// export const BASEURL = 'https://stage.mem-bers.jp/';
+//export const BASEURL = 'https://stage.mem-bers.jp/';
 //member chat live api url
 export const BASEURL = 'https://mem-bers.jp/';
 
