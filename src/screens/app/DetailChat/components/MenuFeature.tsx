@@ -27,13 +27,11 @@ interface dataFeatureType {
   id: number;
   sourceImage?: number | null;
   name: string;
-  style?:
-    | {
-        width: number;
-        height: number;
-        tintColor?: string;
-      }
-    | undefined;
+  style: {
+    width: number;
+    height: number;
+    tintColor?: string | undefined;
+  };
   isShow: boolean;
 }
 
@@ -43,7 +41,7 @@ interface dataEmojiType {
   style?: {
     width: number;
     height: number;
-    overflow: string;
+    overflow: string | undefined;
   };
 }
 
@@ -157,10 +155,18 @@ const MenuFeature = React.memo((props: any) => {
       },
       isShow: userId === user_id ? true : false,
     },
+  ];
+
+  const dataFeatureDummy = [
     {
       id: 99, // 余白用
       sourceImage: null,
       name: '',
+      style: {
+        width: 14.4, // 72 * (1 / 5)
+        height: 14.4, // 72 * (1 / 5)
+        tintColor: '',
+      },
       isShow: true,
     },
   ];
@@ -248,15 +254,28 @@ const MenuFeature = React.memo((props: any) => {
     if (showDataFeature.length <= 4) {
       return [];
     }
-    return showDataFeature.slice(
-      showDataFeature.length / 2 + (showDataFeature.length % 2),
-      showDataFeature.length,
-    );
+
+    if (showDataFeature.length / 2 === 0) {
+      return showDataFeature.slice(
+        showDataFeature.length / 2 + (showDataFeature.length % 2),
+        showDataFeature.length,
+      );
+    }
+    return showDataFeature
+      .slice(
+        showDataFeature.length / 2 + (showDataFeature.length % 2),
+        showDataFeature.length,
+      )
+      .concat(dataFeatureDummy);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.viewFeature}>
+      <View
+        style={[
+          styles.viewFeature,
+          showDataFeature.length < 9 && {marginHorizontal: 30},
+        ]}>
         {topDataFeature().map((item: dataFeatureType) => {
           return (
             <View key={item?.id}>
@@ -276,7 +295,12 @@ const MenuFeature = React.memo((props: any) => {
         })}
       </View>
       {bottomDataFeature().length > 0 && (
-        <View style={[styles.viewFeature, {marginTop: 10}]}>
+        <View
+          style={[
+            styles.viewFeature,
+            showDataFeature.length < 9 && {marginHorizontal: 30},
+            {marginTop: 10},
+          ]}>
           {bottomDataFeature().map((item: dataFeatureType) => {
             return (
               <View key={item?.id}>
@@ -329,7 +353,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginHorizontal: 30,
   },
   viewReaction: {
     flexDirection: 'row',
