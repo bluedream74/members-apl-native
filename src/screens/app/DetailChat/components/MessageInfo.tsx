@@ -136,27 +136,34 @@ export default function MessageInfo({
           '<b>$&</b>',
         );
       }
-      //@allをリンク色にする（@all単独、@all+半角スペース、@all+全角スペース、@all+改行の場合）
-      const matchs = replaceText.match(
-        new RegExp('@all( |　|<br>)+|^@all$|( |　|<br>)@all$', 'g'),
-      );
-      if (matchs != null) {
-        replaceText = replaceText.replace(
-          new RegExp('^@all|@all$| @all|@all ', 'g'),
-          '<b>@all</b>',
-        );
-      }
-      //@AIをリンク色にする（@AI単独、@AI+半角スペース、@AI+全角スペース、@aAI+改行の場合）
-      const AiMatchs = replaceText.match(
-        new RegExp('@AI( |　|<br>)+|^@AI$|( |　|<br>)@AI$', 'g'),
-      );
-      if (AiMatchs != null) {
-        replaceText = replaceText.replace(
-          new RegExp('^@AI|@AI$| @aAI|@AI ', 'g'),
-          '<b>@AI</b>',
-        );
-      }
     });
+
+    // @all/@AIを太字にする
+    // RNのバージョンが0.68以下、Hermes無効だと使用できない正規表現
+    // https://github.com/facebook/react-native/issues/29271
+    // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/@AI(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+
+    replaceText = replaceText.replace(/ @all/g, ' <b>@all</b>');
+    replaceText = replaceText.replace(/　@all/g, '　<b>@all</b>');
+    replaceText = replaceText.replace(/<br>@all/g, '<br><b>@all</b>');
+    replaceText = replaceText.replace(/;">@all/g, ';"><b>@all</b>');
+    replaceText = replaceText.replace(/@all /g, '<b>@all</b> ');
+    replaceText = replaceText.replace(/@all　/g, '<b>@all</b>　');
+    replaceText = replaceText.replace(/@all<br>/g, '<b>@all</b><br>');
+    replaceText = replaceText.replace(/@all<\/p>/g, '<b>@all</b><\/p>');
+
+    replaceText = replaceText.replace(/ @AI/g, ' <b>@AI</b>');
+    replaceText = replaceText.replace(/　@AI/g, '　<b>@AI</b>');
+    replaceText = replaceText.replace(/<br>@AI/g, '<br><b>@AI</b>');
+    replaceText = replaceText.replace(/;">@AI/g, ';"><b>@AI</b>');
+    replaceText = replaceText.replace(/@AI /g, '<b>@AI</b> ');
+    replaceText = replaceText.replace(/@AI　/g, '<b>@AI</b>　');
+    replaceText = replaceText.replace(/@AI<br>/g, '<b>@AI</b><br>');
+    replaceText = replaceText.replace(/@AI<\/p>/g, '<b>@AI</b><\/p>');
+
     return replaceText;
   }, []);
 
