@@ -101,12 +101,32 @@ export default function MessageInfo({
       }
     });
 
-    //@allをリンク色にする
-    //@AIをリンク色にする
-    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
-    replaceText = replaceText.replace(/@AI(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+    // @all/@AIを太字にする
+    // RNのバージョンが0.68以下、Hermes無効だと使用できない正規表現
+    // https://github.com/facebook/react-native/issues/29271
+    // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@all/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/@all(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/(?<=( |　|<br>|;">))@AI/g, '<b>$&</b>');
+    // replaceText = replaceText.replace(/@AI(?=( |　|<br>|<\/p>))/g, '<b>$&</b>');
+
+    replaceText = replaceText.replace(/ @all/g, ' <b>@all</b>');
+    replaceText = replaceText.replace(/　@all/g, '　<b>@all</b>');
+    replaceText = replaceText.replace(/<br>@all/g, '<br><b>@all</b>');
+    replaceText = replaceText.replace(/;">@all/g, ';"><b>@all</b>');
+    replaceText = replaceText.replace(/@all /g, '<b>@all</b> ');
+    replaceText = replaceText.replace(/@all　/g, '<b>@all</b>　');
+    replaceText = replaceText.replace(/@all<br>/g, '<b>@all</b><br>');
+    replaceText = replaceText.replace(/@all<\/p>/g, '<b>@all</b><\/p>');
+
+    replaceText = replaceText.replace(/ @AI/g, ' <b>@AI</b>');
+    replaceText = replaceText.replace(/　@AI/g, '　<b>@AI</b>');
+    replaceText = replaceText.replace(/<br>@AI/g, '<br><b>@AI</b>');
+    replaceText = replaceText.replace(/;">@AI/g, ';"><b>@AI</b>');
+    replaceText = replaceText.replace(/@AI /g, '<b>@AI</b> ');
+    replaceText = replaceText.replace(/@AI　/g, '<b>@AI</b>　');
+    replaceText = replaceText.replace(/@AI<br>/g, '<b>@AI</b><br>');
+    replaceText = replaceText.replace(/@AI<\/p>/g, '<b>@AI</b><\/p>');
+
     return replaceText;
   }, []);
 
