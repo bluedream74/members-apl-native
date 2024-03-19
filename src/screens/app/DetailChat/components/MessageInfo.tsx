@@ -107,6 +107,12 @@ export default function MessageInfo({
                 await store.dispatch(saveIdMessageSearch(messageId));
                 setPageLoading && setPageLoading(true);
               } else {
+                const subjectRoom = state?.chat?.roomList.filter(el => el.id === Number(roomId));
+                if (subjectRoom.length === 0) {
+                  NavigationUtils.pop(1);
+                  GlobalService.hideLoading();
+                  return;
+                }
                 await store.dispatch(resetDataChat());
                 await store.dispatch(saveIdRoomChat(roomId));
                 NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
