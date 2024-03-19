@@ -262,6 +262,7 @@ export const useFunction = (props: any) => {
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
+        navigation.pop(1);
       }
     }
   }, [idRoomChat, dispatch]);
