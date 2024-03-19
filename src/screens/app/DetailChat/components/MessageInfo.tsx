@@ -10,6 +10,7 @@ import {store} from '../../../../redux/store';
 import {ROUTE_NAME} from '@routeName';
 import {NavigationUtils} from '@navigation';
 import {API_DOMAIN} from '@util';
+import {GlobalService} from '@services';
 
 const customHTMLElementModels = {
   'deco-info': HTMLElementModel.fromCustomModel({
@@ -96,6 +97,7 @@ export default function MessageInfo({
             parseUrl[2] === API_DOMAIN &&
             parseUrl[3] === 'chat'
           ) {
+            GlobalService.showLoading();
             const parseParams = String(parseUrl[4]).split('?messId=');
             const roomId = parseParams[0];
             const messageId = parseParams[1];
@@ -113,6 +115,7 @@ export default function MessageInfo({
                 });
               }
             }
+            GlobalService.hideLoading();
           } else {
             Linking.openURL(href);
           }
