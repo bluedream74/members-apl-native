@@ -9,6 +9,7 @@ import {
   getListUserChat,
   getDetailRoomSocket,
   registerRoomChat,
+  updateRoomList,
 } from '@redux';
 import {store} from '../redux/store';
 import {EVENT_SOCKET} from '@util';
@@ -137,13 +138,23 @@ function createAppSocket() {
             idUser: data?.user_id,
           };
           store.dispatch(getDetailMessageSocketSeen(body));
-        } else {
+        } else if(state.chat.roomList.length > 0) {
+          store.dispatch(updateRoomList({room_id: data.room_id}));
         }
-      } else {
       }
     });
 
     socket.on(EVENT_SOCKET.DISCONNECT, () => {});
+
+    socket.on(EVENT_SOCKET.CHANGE_BROWSER_ICON, (data: any) => {
+      console.log("CHANGE_BROWSER_ICON",data);
+      const state = store.getState();
+
+      console.log("USERID: ", state.auth.userInfo.id);
+      if(data.user_id === state.auth.userInfo.id && state.chat.roomList.length > 0 && data.unread_count > 0) {
+        store.dispatch(updateRoomList({room_id: data.room_id}));
+      }
+    });
   };
 
   const endConnect = () => {

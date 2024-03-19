@@ -35,7 +35,6 @@ export const saveListUserChat = (payload: any) => ({
   payload,
 });
 
-//Action lưu ID của company vào redux
 export const saveIdCompany = (payload: any) => ({
   type: typeChat.SAVE_ID_COMPANY,
   payload,
@@ -187,5 +186,10 @@ export const logMessage = (payload: any) => ({
 
 export const registerRoomChat = (payload: any) => ({
   type: typeChat.REGISTER_ROOMCHAT,
+  payload,
+});
+
+export const updateRoomList = (payload: any) => ({
+  type: typeChat.UPDATE_ROOMLIST,
   payload,
 });

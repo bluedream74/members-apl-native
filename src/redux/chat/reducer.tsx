@@ -248,6 +248,20 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         irregular_message_ids: irregular_message_ids,
       };
 
+    case typeChat.UPDATE_ROOMLIST:
+      const rooms = [...state?.roomList];
+      const roomIndex = rooms.findIndex(
+        (element: any) => element?.id === action.payload?.room_id,
+      );
+      if (roomIndex > -1) {
+        rooms[roomIndex]['message_unread'] = 0;
+        rooms[roomIndex]['message_mention_unread'] = false;
+      }
+      return {
+        ...state,
+        roomList: rooms,
+      };
+  
     default:
       return state;
   }
