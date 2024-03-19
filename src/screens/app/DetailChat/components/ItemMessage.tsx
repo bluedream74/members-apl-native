@@ -65,6 +65,7 @@ const ItemMessage = React.memo((props: any) => {
     mentionedUsers,
     setListUserSelect,
     setInputText,
+    setPageLoading,
   } = props;
   const {
     user,
@@ -550,6 +551,7 @@ const ItemMessage = React.memo((props: any) => {
                                             '',
                                           )}
                                           textSetting={{numberOfLines: 1}}
+                                          setPageLoading={setPageLoading}
                                         />
                                       </TouchableOpacity>
                                     ) : null}
@@ -565,6 +567,7 @@ const ItemMessage = React.memo((props: any) => {
                                             '',
                                           )}
                                           textSetting={{numberOfLines: 1}}
+                                          setPageLoading={setPageLoading}
                                         />
                                       </TouchableOpacity>
                                     ) : null}
@@ -626,6 +629,7 @@ const ItemMessage = React.memo((props: any) => {
                             <MessageInfo
                               text={text}
                               joinedUsers={listUser ? listUser.concat(me) : []}
+                              setPageLoading={setPageLoading}
                             />
                             {attachment_files?.length > 0 ? (
                               <MsgFile data={attachment_files} />

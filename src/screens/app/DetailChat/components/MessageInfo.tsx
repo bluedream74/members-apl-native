@@ -1,11 +1,11 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {Linking, useWindowDimensions} from 'react-native';
 import RenderHtml, {
   HTMLElementModel,
   HTMLContentModel,
 } from 'react-native-render-html';
 import {styles} from './stylesItem';
-import {saveIdRoomChat, resetDataChat} from '@redux';
+import {saveIdMessageSearch, saveIdRoomChat, resetDataChat} from '@redux';
 import {store} from '../../../../redux/store';
 import {ROUTE_NAME} from '@routeName';
 import {NavigationUtils} from '@navigation';
@@ -75,47 +75,52 @@ export type MessageInfoProps = {
   text: string;
   joinedUsers?: any;
   textSetting?: any;
-};
-
-const onPress = async (event: any, href: string) => {
-  const parseUrl = String(href).split('/');
-  if (
-    (parseUrl[0] === 'https:' || parseUrl[0] === 'http:') &&
-    parseUrl[2] === API_DOMAIN &&
-    parseUrl[3] === 'chat'
-  ) {
-    const parseParams = String(parseUrl[4]).split('?messId=');
-    const roomId = parseParams[0];
-    const messageId = parseParams[1];
-    if (Number(roomId) > 0) {
-      const state = store.getState();
-      if (roomId !== state?.chat?.id_roomChat) {
-        await store.dispatch(resetDataChat());
-        await store.dispatch(saveIdRoomChat(roomId));
-      }
-      NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
-        idRoomChat: roomId,
-        idMessageSearchListChat: messageId,
-      });
-    }
-  } else {
-    Linking.openURL(href);
-  }
-};
-
-const renderersProps = {
-  a: {
-    onPress: onPress,
-  },
+  setPageLoading?: (value: React.SetStateAction<boolean>) => void;
 };
 
 export default function MessageInfo({
   text,
   joinedUsers = [],
   textSetting = {},
+  setPageLoading,
 }: MessageInfoProps) {
   const {width} = useWindowDimensions();
 
+  const renderersProps = useMemo(
+    () => ({
+      a: {
+        onPress: async (event: any, href: string) => {
+          const parseUrl = String(href).split('/');
+          if (
+            (parseUrl[0] === 'https:' || parseUrl[0] === 'http:') &&
+            parseUrl[2] === API_DOMAIN &&
+            parseUrl[3] === 'chat'
+          ) {
+            const parseParams = String(parseUrl[4]).split('?messId=');
+            const roomId = parseParams[0];
+            const messageId = parseParams[1];
+            if (Number(roomId) > 0) {
+              const state = store.getState();
+              if (Number(roomId) === state?.chat?.id_roomChat) {
+                await store.dispatch(saveIdMessageSearch(messageId));
+                setPageLoading && setPageLoading(true);
+              } else {
+                await store.dispatch(resetDataChat());
+                await store.dispatch(saveIdRoomChat(roomId));
+                NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+                  idRoomChat: roomId,
+                  idMessageSearchListChat: messageId,
+                });
+              }
+            }
+          } else {
+            Linking.openURL(href);
+          }
+        },
+      },
+    }),
+    [setPageLoading],
+  );
   /**
    * "@xxxxxx"の文字列で実在するユーザーをリンク文字に置き換え
    * @param {string} text テキスト

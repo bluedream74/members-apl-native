@@ -1363,7 +1363,7 @@ export const useFunction = (props: any) => {
       setPageLoading(false);
     } else if (idMessageSearch > 0) {
       const index = listChat.findIndex(
-        (element: any) => element?.id === idMessageSearch,
+        (element: any) => element?.id === Number(idMessageSearch)
       );
       if (index && index >= 0) {
         try {
@@ -1594,5 +1594,6 @@ export const useFunction = (props: any) => {
     setInputIndex,
     inputIndex,
     showSendMessageButton,
+    setPageLoading,
   };
 };
