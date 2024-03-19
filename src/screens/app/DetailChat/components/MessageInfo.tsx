@@ -4,6 +4,7 @@ import RenderHtml, {
   HTMLElementModel,
   HTMLContentModel,
 } from 'react-native-render-html';
+import {showMessage} from 'react-native-flash-message';
 import {styles} from './stylesItem';
 import {saveIdMessageSearch, saveIdRoomChat, resetDataChat} from '@redux';
 import {store} from '../../../../redux/store';
@@ -109,6 +110,10 @@ export default function MessageInfo({
               } else {
                 const subjectRoom = state?.chat?.roomList.filter(el => el.id === Number(roomId));
                 if (subjectRoom.length === 0) {
+                  showMessage({
+                    message: 'チャットルームが見つかりません。',
+                    type: 'danger',
+                  });
                   NavigationUtils.pop(1);
                   GlobalService.hideLoading();
                   return;
