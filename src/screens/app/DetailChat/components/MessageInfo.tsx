@@ -80,7 +80,7 @@ export type MessageInfoProps = {
 const onPress = async (event: any, href: string) => {
   const parseUrl = String(href).split('/');
   if (
-    parseUrl[0] === 'https:' &&
+    (parseUrl[0] === 'https:' || parseUrl[0] === 'http:') &&
     parseUrl[2] === API_DOMAIN &&
     parseUrl[3] === 'chat'
   ) {
