@@ -123,6 +123,7 @@ export const useFunction = (props: any) => {
         };
         await dispatch(fetchResultMessageActionListRoom(body));
         setPageLoading(false);
+        GlobalService.hideLoading();
       }, 1000);
     },
     [idRoomChat, dispatch],
@@ -1361,6 +1362,7 @@ export const useFunction = (props: any) => {
         }
       }
       setPageLoading(false);
+      GlobalService.hideLoading();
     } else if (idMessageSearch > 0) {
       const index = listChat.findIndex(
         (element: any) => element?.id === Number(idMessageSearch)
@@ -1377,6 +1379,8 @@ export const useFunction = (props: any) => {
           if (error instanceof Error) {
             console.error(error.message);
           }
+        } finally {
+          GlobalService.hideLoading();
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
