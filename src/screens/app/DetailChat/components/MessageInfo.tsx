@@ -91,13 +91,13 @@ export default function MessageInfo({
     () => ({
       a: {
         onPress: async (event: any, href: string) => {
+          GlobalService.showLoading();
           const parseUrl = String(href).split('/');
           if (
             (parseUrl[0] === 'https:' || parseUrl[0] === 'http:') &&
             parseUrl[2] === API_DOMAIN &&
             parseUrl[3] === 'chat'
           ) {
-            GlobalService.showLoading();
             const parseParams = String(parseUrl[4]).split('?messId=');
             const roomId = parseParams[0];
             const messageId = parseParams[1];
@@ -115,12 +115,12 @@ export default function MessageInfo({
                 });
               }
             }
-            setTimeout(async () => {
-              GlobalService.hideLoading();
-            }, 1000);
           } else {
             Linking.openURL(href);
           }
+          setTimeout(async () => {
+            GlobalService.hideLoading();
+          }, 1000);
         },
       },
     }),
