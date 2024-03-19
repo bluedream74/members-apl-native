@@ -165,7 +165,7 @@ const MenuFeature = React.memo((props: any) => {
       style: {
         width: 14.4, // 72 * (1 / 5)
         height: 14.4, // 72 * (1 / 5)
-        tintColor: '',
+        tintColor: '#FFFFFF',
       },
       isShow: true,
     },
