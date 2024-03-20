@@ -113,12 +113,16 @@ function createAppSocket() {
           }),
         );
       }
-      const newRoom = state?.chat?.roomList?.filter((el: any) => el.id === data?.room_id);
+      const newRoom = state?.chat?.roomList?.filter(
+        (el: any) => el.id === data?.room_id,
+      );
       if (newRoom.length === 0) {
         // サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
-        store.dispatch(registerRoomChat({
-          connect_room_id: data?.room_id,
-        }));
+        store.dispatch(
+          registerRoomChat({
+            connect_room_id: data?.room_id,
+          }),
+        );
       }
     });
 
