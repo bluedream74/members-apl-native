@@ -132,6 +132,7 @@ export const useFunction = (props: any) => {
   // 返信・引用のオリジナルメッセージのタップ
   const navigateToMessage = useCallback(
     idMessage => {
+      GlobalService.showLoading();
       dispatch(saveIdMessageSearch(idMessage));
       setPageLoading(true);
     },
@@ -1428,6 +1429,7 @@ export const useFunction = (props: any) => {
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
     if (idMessageSearchListChat > 0) {
+      GlobalService.showLoading();
       setTimeout(() => {
         dispatch(saveIdMessageSearch(idMessageSearchListChat));
         setPageLoading(true);
