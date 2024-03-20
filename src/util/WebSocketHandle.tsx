@@ -9,7 +9,7 @@ import {
   registerRoomChat,
 } from '@redux';
 import {store} from '../redux/store';
-import {SOCKETIO_DOMAIN, EVENT_SOCKET} from '@util';
+import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
 
 export const socketURL = `https://${SOCKETIO_DOMAIN}:443`;
 
