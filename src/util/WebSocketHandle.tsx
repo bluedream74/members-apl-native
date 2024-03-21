@@ -146,11 +146,11 @@ function createAppSocket() {
 
     socket.on(EVENT_SOCKET.DISCONNECT, () => {});
 
+    //AHD-11819用修正。
+    //web側から詳細チャットを開いた段階でアプリ側に送信されるのがこれのみのため、暫定的にルームの既読状態を検知するために使用。
     socket.on(EVENT_SOCKET.CHANGE_BROWSER_ICON, (data: any) => {
-      console.log("CHANGE_BROWSER_ICON",data);
       const state = store.getState();
 
-      console.log("USERID: ", state.auth.userInfo.id);
       if(data.user_id === state.auth.userInfo.id && state.chat.roomList.length > 0 && data.unread_count > 0) {
         store.dispatch(updateRoomList({room_id: data.room_id}));
       }
