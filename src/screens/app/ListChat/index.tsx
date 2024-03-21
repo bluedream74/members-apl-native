@@ -120,9 +120,9 @@ const ListChat = (props: any) => {
       const parseUrl = String(url).split('/');
       if (parseUrl[0] === 'mem-bers:' && parseUrl[2] === 'chat') {
         const parseParams = String(parseUrl[3]).split('?messId=');
-        const roomId = parseParams[0];
+        const roomId = Number(parseParams[0]);
         const messageId = parseParams[1];
-        if (Number(roomId) > 0) {
+        if (roomId > 0) {
           await dispatch(resetDataChat());
           await dispatch(saveIdRoomChat(roomId));
           navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
