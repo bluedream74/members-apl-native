@@ -100,11 +100,11 @@ export default function MessageInfo({
           ) {
             GlobalService.showLoading();
             const parseParams = String(parseUrl[4]).split('?messId=');
-            const roomId = parseParams[0];
+            const roomId = Number(parseParams[0]);
             const messageId = parseParams[1];
-            if (Number(roomId) > 0) {
+            if (roomId > 0) {
               const state = store.getState();
-              if (Number(roomId) === state?.chat?.id_roomChat) {
+              if (roomId === state?.chat?.id_roomChat) {
                 await store.dispatch(saveIdMessageSearch(messageId));
                 setPageLoading && setPageLoading(true);
               } else {
