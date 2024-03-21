@@ -119,12 +119,15 @@ function createAppSocket() {
           }),
         );
       }
-      const newRoom = state?.chat?.roomList?.filter((el: any) => el.id === data?.room_id);
-      if (newRoom.length === 0) {
-        // サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
-        store.dispatch(registerRoomChat({
-          connect_room_id: data?.room_id,
-        }));
+      //チャットルームが新規作成かつ自身のユーザIDがmember_infoのidsに含まれているか判定
+      if(data.member_info?.type === 1 && data.member_info?.ids?.findIndex((userId: number) => userId === state?.auth?.userInfo?.id) > -1){
+        const newRoom = state?.chat?.roomList?.filter((el: any) => el.id === data?.room_id);
+        if (newRoom.length === 0) {
+          //サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
+          store.dispatch(registerRoomChat({
+            connect_room_id: data?.room_id,
+          }));
+        }
       }
     });
 
@@ -149,11 +152,14 @@ function createAppSocket() {
     //AHD-11819用修正。
     //web側から詳細チャットを開いた段階でアプリ側に送信されるのがこれのみのため、暫定的にルームの既読状態を検知するために使用。
     socket.on(EVENT_SOCKET.CHANGE_BROWSER_ICON, (data: any) => {
-      console.log("CHANGE_BROWSER_ICON", data);
+      console.log(EVENT_SOCKET.CHANGE_BROWSER_ICON, data);
       const state = store.getState();
 
       if(data.user_id === state.auth.userInfo.id && state.chat.roomList.length > 0) {
-        store.dispatch(updateRoomList({room_id: data.room_id}));
+        store.dispatch(updateRoomList({
+          room_id: data.room_id,
+          unread_count: data.unread_count
+        }));
       }
     });
   };
