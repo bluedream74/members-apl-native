@@ -108,7 +108,9 @@ export default function MessageInfo({
                 await store.dispatch(saveIdMessageSearch(messageId));
                 setPageLoading && setPageLoading(true);
               } else {
-                const subjectRoom = state?.chat?.roomList.filter(el => el.id === Number(roomId));
+                const subjectRoom = state?.chat?.roomList.filter(
+                  el => el.id === roomId,
+                );
                 if (subjectRoom.length === 0) {
                   showMessage({
                     message: 'チャットルームが見つかりません。',
