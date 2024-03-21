@@ -29,6 +29,7 @@ import {MsgFile} from './MsgFile';
 import {ViewUserSeen} from './viewUserSeen';
 import {ViewTask} from './ViewTask';
 import {MenuOption} from './MenuOption';
+import {API_DOMAIN} from '@util';
 
 const colorCurrent = ['#CBEEF0', '#BFD6D8'];
 const color = ['#FDF5E6', '#FDF5E6'];
@@ -64,6 +65,7 @@ const ItemMessage = React.memo((props: any) => {
     mentionedUsers,
     setListUserSelect,
     setInputText,
+    setPageLoading,
   } = props;
   const {
     user,
@@ -259,6 +261,27 @@ const ItemMessage = React.memo((props: any) => {
             text: text.replace(/<br>/g, '\n'),
           };
           changePartCopy(copyData);
+          break;
+        case 15:
+          Clipboard.setString(
+            `https://${API_DOMAIN}/chat/${idRoomChat}?messId=${_id}`,
+          );
+          showMessage({
+            message: 'リンクをコピーしました',
+            backgroundColor: colors.backgroundTab,
+            color: '#FFFFFF',
+            position: {
+              bottom: 0,
+              left: width / 2 - scale(100 + 10),
+              right: width / 2 - scale(100),
+            },
+            duration: 500,
+            style: {
+              width: scale(200),
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          });
           break;
       }
     },
@@ -528,6 +551,7 @@ const ItemMessage = React.memo((props: any) => {
                                             '',
                                           )}
                                           textSetting={{numberOfLines: 1}}
+                                          setPageLoading={setPageLoading}
                                         />
                                       </TouchableOpacity>
                                     ) : null}
@@ -543,6 +567,7 @@ const ItemMessage = React.memo((props: any) => {
                                             '',
                                           )}
                                           textSetting={{numberOfLines: 1}}
+                                          setPageLoading={setPageLoading}
                                         />
                                       </TouchableOpacity>
                                     ) : null}
@@ -604,6 +629,7 @@ const ItemMessage = React.memo((props: any) => {
                             <MessageInfo
                               text={text}
                               joinedUsers={listUser ? listUser.concat(me) : []}
+                              setPageLoading={setPageLoading}
                             />
                             {attachment_files?.length > 0 ? (
                               <MsgFile data={attachment_files} />

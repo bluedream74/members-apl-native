@@ -113,6 +113,7 @@ const DetailChat = (props: any) => {
     setInputIndex,
     inputIndex,
     showSendMessageButton,
+    setPageLoading,
   } = useFunction(props);
 
   //Render ra UI chọn ảnh, video, file
@@ -226,6 +227,7 @@ const DetailChat = (props: any) => {
             mentionedUsers={mentionedUsers}
             setListUserSelect={setListUserSelect}
             setInputText={setInputText}
+            setPageLoading={setPageLoading}
           />
         </>
       );
@@ -253,6 +255,7 @@ const DetailChat = (props: any) => {
       updateGimMessage,
       setInputText,
       setListUserSelect,
+      setPageLoading,
     ],
   );
 

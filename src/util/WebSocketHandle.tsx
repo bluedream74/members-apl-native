@@ -6,17 +6,12 @@ import {
   getDetailMessageSocketSeen,
   updateMessageReaction,
   saveIsGetInfoRoom,
-  getListUserChat,
-  getDetailRoomSocket,
   registerRoomChat,
 } from '@redux';
 import {store} from '../redux/store';
-import {EVENT_SOCKET} from '@util';
+import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
 
-//socket stagging
-//const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
-//socket product
-const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
+export const socketURL = `https://${SOCKETIO_DOMAIN}:443`;
 
 let socketIO = io('', {
   autoConnect: false,
@@ -118,12 +113,16 @@ function createAppSocket() {
           }),
         );
       }
-      const newRoom = state?.chat?.roomList?.filter((el: any) => el.id === data?.room_id);
+      const newRoom = state?.chat?.roomList?.filter(
+        (el: any) => el.id === data?.room_id,
+      );
       if (newRoom.length === 0) {
         // サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
-        store.dispatch(registerRoomChat({
-          connect_room_id: data?.room_id,
-        }));
+        store.dispatch(
+          registerRoomChat({
+            connect_room_id: data?.room_id,
+          }),
+        );
       }
     });
 
