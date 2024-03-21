@@ -127,14 +127,14 @@ export default function MessageInfo({
                   idMessageSearchListChat: messageId,
                 });
               }
+              return;
             }
-          } else {
-            GlobalService.showLoading();
-            Linking.openURL(href);
-            setTimeout(() => {
-              GlobalService.hideLoading();
-            }, 1000);
           }
+          GlobalService.showLoading();
+          Linking.openURL(href);
+          setTimeout(() => {
+            GlobalService.hideLoading();
+          }, 1000);
         },
       },
     }),
