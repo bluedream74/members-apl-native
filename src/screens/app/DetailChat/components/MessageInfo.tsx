@@ -98,13 +98,13 @@ export default function MessageInfo({
             parseUrl[2] === API_DOMAIN &&
             parseUrl[3] === 'chat'
           ) {
-            GlobalService.showLoading();
             const parseParams = String(parseUrl[4]).split('?messId=');
             const roomId = Number(parseParams[0]);
             const messageId = parseParams[1];
             if (roomId > 0) {
               const state = store.getState();
               if (roomId === state?.chat?.id_roomChat) {
+                GlobalService.showLoading();
                 await store.dispatch(saveIdMessageSearch(messageId));
                 setPageLoading && setPageLoading(true);
               } else {
@@ -115,9 +115,9 @@ export default function MessageInfo({
                     type: 'danger',
                   });
                   NavigationUtils.pop(1);
-                  GlobalService.hideLoading();
                   return;
                 }
+                GlobalService.showLoading();
                 await store.dispatch(resetDataChat());
                 await store.dispatch(saveIdRoomChat(roomId));
                 NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
