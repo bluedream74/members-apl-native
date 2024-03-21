@@ -116,12 +116,14 @@ export const useFunction = (props: any) => {
   // メッセージが存在するページをfetch
   const fetchMessageSearch = useCallback(
     idMessage => {
-      setTimeout(() => {
+      setTimeout(async () => {
         const body = {
           id_room: idRoomChat,
           id_message: idMessage,
         };
-        dispatch(fetchResultMessageActionListRoom(body));
+        await dispatch(fetchResultMessageActionListRoom(body));
+        setPageLoading(false);
+        GlobalService.hideLoading();
       }, 1000);
     },
     [idRoomChat, dispatch],
@@ -130,6 +132,7 @@ export const useFunction = (props: any) => {
   // 返信・引用のオリジナルメッセージのタップ
   const navigateToMessage = useCallback(
     idMessage => {
+      GlobalService.showLoading();
       dispatch(saveIdMessageSearch(idMessage));
       setPageLoading(true);
     },
@@ -261,7 +264,10 @@ export const useFunction = (props: any) => {
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
+        navigation.pop(1);
       }
+    } finally {
+      GlobalService.hideLoading();
     }
   }, [idRoomChat, dispatch]);
 
@@ -1359,9 +1365,10 @@ export const useFunction = (props: any) => {
         }
       }
       setPageLoading(false);
+      GlobalService.hideLoading();
     } else if (idMessageSearch > 0) {
       const index = listChat.findIndex(
-        (element: any) => element?.id === idMessageSearch,
+        (element: any) => element?.id === Number(idMessageSearch)
       );
       if (index && index >= 0) {
         try {
@@ -1375,6 +1382,8 @@ export const useFunction = (props: any) => {
           if (error instanceof Error) {
             console.error(error.message);
           }
+        } finally {
+          GlobalService.hideLoading();
         }
       } else {
         // メッセージが存在するページをloadしていない場合、fetch
@@ -1420,6 +1429,7 @@ export const useFunction = (props: any) => {
   // 他画面からの遷移、メッセージへスクロール
   useEffect(() => {
     if (idMessageSearchListChat > 0) {
+      GlobalService.showLoading();
       setTimeout(() => {
         dispatch(saveIdMessageSearch(idMessageSearchListChat));
         setPageLoading(true);
@@ -1592,5 +1602,6 @@ export const useFunction = (props: any) => {
     setInputIndex,
     inputIndex,
     showSendMessageButton,
+    setPageLoading,
   };
 };

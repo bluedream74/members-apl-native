@@ -1,10 +1,17 @@
-import React, {useCallback} from 'react';
-import {useWindowDimensions} from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {Linking, useWindowDimensions} from 'react-native';
 import RenderHtml, {
   HTMLElementModel,
   HTMLContentModel,
 } from 'react-native-render-html';
+import {showMessage} from 'react-native-flash-message';
 import {styles} from './stylesItem';
+import {saveIdMessageSearch, saveIdRoomChat, resetDataChat} from '@redux';
+import {store} from '../../../../redux/store';
+import {ROUTE_NAME} from '@routeName';
+import {NavigationUtils} from '@navigation';
+import {API_DOMAIN} from '@util';
+import {GlobalService} from '@services';
 
 const customHTMLElementModels = {
   'deco-info': HTMLElementModel.fromCustomModel({
@@ -70,15 +77,69 @@ export type MessageInfoProps = {
   text: string;
   joinedUsers?: any;
   textSetting?: any;
+  setPageLoading?: (value: React.SetStateAction<boolean>) => void;
 };
 
 export default function MessageInfo({
   text,
   joinedUsers = [],
   textSetting = {},
+  setPageLoading,
 }: MessageInfoProps) {
   const {width} = useWindowDimensions();
 
+  const renderersProps = useMemo(
+    () => ({
+      a: {
+        onPress: async (event: any, href: string) => {
+          const parseUrl = String(href).split('/');
+          if (
+            (parseUrl[0] === 'https:' || parseUrl[0] === 'http:') &&
+            parseUrl[2] === API_DOMAIN &&
+            parseUrl[3] === 'chat'
+          ) {
+            const parseParams = String(parseUrl[4]).split('?messId=');
+            const roomId = Number(parseParams[0]);
+            const messageId = parseParams[1];
+            if (roomId > 0) {
+              const state = store.getState();
+              if (roomId === state?.chat?.id_roomChat) {
+                GlobalService.showLoading();
+                await store.dispatch(saveIdMessageSearch(messageId));
+                setPageLoading && setPageLoading(true);
+              } else {
+                const subjectRoom = state?.chat?.roomList.filter(
+                  el => el.id === roomId,
+                );
+                if (subjectRoom.length === 0) {
+                  showMessage({
+                    message: 'チャットルームが見つかりません。',
+                    type: 'danger',
+                  });
+                  NavigationUtils.pop(1);
+                  return;
+                }
+                GlobalService.showLoading();
+                await store.dispatch(resetDataChat());
+                await store.dispatch(saveIdRoomChat(roomId));
+                NavigationUtils.navigate(ROUTE_NAME.DETAIL_CHAT, {
+                  idRoomChat: roomId,
+                  idMessageSearchListChat: messageId,
+                });
+              }
+              return;
+            }
+          }
+          GlobalService.showLoading();
+          Linking.openURL(href);
+          setTimeout(() => {
+            GlobalService.hideLoading();
+          }, 1000);
+        },
+      },
+    }),
+    [setPageLoading],
+  );
   /**
    * "@xxxxxx"の文字列で実在するユーザーをリンク文字に置き換え
    * @param {string} text テキスト
@@ -116,7 +177,7 @@ export default function MessageInfo({
     replaceText = replaceText.replace(/@all /g, '<b>@all</b> ');
     replaceText = replaceText.replace(/@all　/g, '<b>@all</b>　');
     replaceText = replaceText.replace(/@all<br>/g, '<b>@all</b><br>');
-    replaceText = replaceText.replace(/@all<\/p>/g, '<b>@all</b><\/p>');
+    replaceText = replaceText.replace(/@all<\/p>/g, '<b>@all</b></p>');
 
     replaceText = replaceText.replace(/ @AI/g, ' <b>@AI</b>');
     replaceText = replaceText.replace(/　@AI/g, '　<b>@AI</b>');
@@ -125,7 +186,7 @@ export default function MessageInfo({
     replaceText = replaceText.replace(/@AI /g, '<b>@AI</b> ');
     replaceText = replaceText.replace(/@AI　/g, '<b>@AI</b>　');
     replaceText = replaceText.replace(/@AI<br>/g, '<b>@AI</b><br>');
-    replaceText = replaceText.replace(/@AI<\/p>/g, '<b>@AI</b><\/p>');
+    replaceText = replaceText.replace(/@AI<\/p>/g, '<b>@AI</b></p>');
 
     return replaceText;
   }, []);
@@ -192,6 +253,7 @@ export default function MessageInfo({
     <>
       <RenderHtml
         defaultTextProps={textSetting}
+        renderersProps={renderersProps}
         contentWidth={width}
         source={{
           html: text

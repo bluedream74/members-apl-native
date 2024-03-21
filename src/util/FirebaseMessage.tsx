@@ -4,7 +4,7 @@ import {Platform} from 'react-native';
 import {getSystemVersion} from 'react-native-device-info';
 import {registerToken} from '@services';
 import {store} from '../redux/store';
-import {convertString} from '@util';
+import {convertString} from './function';
 import notifee, {EventType} from '@notifee/react-native';
 import {
   getRoomList,

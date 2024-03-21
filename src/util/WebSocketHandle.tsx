@@ -6,18 +6,13 @@ import {
   getDetailMessageSocketSeen,
   updateMessageReaction,
   saveIsGetInfoRoom,
-  getListUserChat,
-  getDetailRoomSocket,
   registerRoomChat,
   updateRoomList,
 } from '@redux';
 import {store} from '../redux/store';
-import {EVENT_SOCKET} from '@util';
+import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
 
-//socket stagging
-//const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
-//socket product
-const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
+export const socketURL = `https://${SOCKETIO_DOMAIN}:443`;
 
 let socketIO = io('', {
   autoConnect: false,
