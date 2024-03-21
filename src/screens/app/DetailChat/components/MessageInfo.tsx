@@ -131,7 +131,7 @@ export default function MessageInfo({
           } else {
             GlobalService.showLoading();
             Linking.openURL(href);
-            setTimeout(async () => {
+            setTimeout(() => {
               GlobalService.hideLoading();
             }, 1000);
           }
