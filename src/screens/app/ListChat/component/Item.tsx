@@ -37,7 +37,8 @@ const Item = React.memo((props: any) => {
   const [noIdRoomChatFlg, setNoIdRoomChatFlg] = useState<boolean>(false);
   const listRoom = useSelector((state: any) => state.chat.roomList);
 
-  let count_user = item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
+  let count_user =
+    item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
 
   useEffect(() => {
     if (item?.pin_flag) {
@@ -52,13 +53,13 @@ const Item = React.memo((props: any) => {
   }, [item?.message_unread, idRoomChat]);
 
   useEffect(() => {
-    const roomArray = listRoom.filter((room:any) => room.id === item.id);
+    const roomArray = listRoom.filter((room: any) => room.id === item.id);
     if (roomArray.length > 0) {
       item.message_unread = roomArray[0].message_unread;
     }
   }, [listRoom]);
 
-  const renderNameRoom = (name: any) => {
+  function renderNameRoom(name: any) {
     if (count_user > 0) {
       let dataName = '';
       item?.room_users?.forEach((el: any) => {
@@ -77,7 +78,7 @@ const Item = React.memo((props: any) => {
     } else {
       return name;
     }
-  };
+  }
 
   const navigateDetail = () => {
     try {
