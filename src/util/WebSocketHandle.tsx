@@ -6,16 +6,12 @@ import {
   getDetailMessageSocketSeen,
   updateMessageReaction,
   saveIsGetInfoRoom,
-  getListUserChat,
-  getDetailRoomSocket,
+  registerRoomChat,
 } from '@redux';
 import {store} from '../redux/store';
-import {EVENT_SOCKET} from '@util';
+import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
 
-//socket stagging
-//const socketURL = 'https://stage-v3mbs-msg01.mem-bers.jp:443';
-//socket product
-const socketURL = 'https://v3mbs-msg01.mem-bers.jp:443';
+export const socketURL = `https://${SOCKETIO_DOMAIN}:443`;
 
 let socketIO = io('', {
   autoConnect: false,
@@ -71,7 +67,6 @@ function createAppSocket() {
       const state = store.getState();
       if (data?.user_id !== state?.auth?.userInfo?.id) {
         if (data?.room_id === state?.chat?.id_roomChat) {
-          //Check tin nhắn về là dạng thả reaction
           if (data?.message_type === 3) {
             const value = {
               id_message: data?.relation_message_id,
@@ -79,12 +74,10 @@ function createAppSocket() {
             };
             store.dispatch(updateMessageReaction(value));
           } else {
-            //Dạng message nhận về bình thường
             const value = {
               id_message: data?.message_id,
               message_type: data?.message_type,
             };
-            //Đây là sự kiện action redux khi nhận được 1 tin nhắn từ socket về
             store.dispatch(getDetailMessageSocket(value));
           }
         }
@@ -108,44 +101,28 @@ function createAppSocket() {
     socket.on(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, (data: any) => {
       console.log(EVENT_SOCKET.CHAT_GROUP_UPDATE_IND, data);
       const state = store.getState();
-      if (data?.member_info?.ids?.includes(state?.auth?.userInfo?.id)) {
-        if (data?.room_id === state?.chat?.id_roomChat) {
-          if (data?.member_info?.type === 5) {
-            store?.dispatch(saveIsGetInfoRoom(true));
-          }
-          store?.dispatch(
-            getListUserChat({
-              room_id: state?.chat?.id_roomChat,
-            }),
-          );
-        } else {
-          store.dispatch(
-            getRoomList({
-              company_id: state?.chat?.idCompany,
-              search: null,
-              type: state?.chat?.type_Filter,
-              category_id: state?.chat?.categoryID_Filter,
-            }),
-          );
-        }
+      if (data?.room_id === state?.chat?.id_roomChat) {
+        store.dispatch(saveIsGetInfoRoom(true));
       } else {
-        if (data?.room_id === state?.chat?.id_roomChat) {
-          store?.dispatch(saveIsGetInfoRoom(true));
-          store?.dispatch(
-            getListUserChat({
-              room_id: state?.chat?.id_roomChat,
-            }),
-          );
-        } else {
-          store.dispatch(
-            getRoomList({
-              company_id: state?.chat?.idCompany,
-              search: null,
-              type: state?.chat?.type_Filter,
-              category_id: state?.chat?.categoryID_Filter,
-            }),
-          );
-        }
+        store.dispatch(
+          getRoomList({
+            company_id: state?.chat?.idCompany,
+            search: null,
+            type: state?.chat?.type_Filter,
+            category_id: state?.chat?.categoryID_Filter,
+          }),
+        );
+      }
+      const newRoom = state?.chat?.roomList?.filter(
+        (el: any) => el.id === data?.room_id,
+      );
+      if (newRoom.length === 0) {
+        // サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
+        store.dispatch(
+          registerRoomChat({
+            connect_room_id: data?.room_id,
+          }),
+        );
       }
     });
 
@@ -164,6 +141,7 @@ function createAppSocket() {
       } else {
       }
     });
+
     socket.on(EVENT_SOCKET.DISCONNECT, () => {});
   };
 

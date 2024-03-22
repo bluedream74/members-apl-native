@@ -4,15 +4,11 @@ import {showMessage} from 'react-native-flash-message';
 import {store} from '../redux/store';
 import {NavigationUtils} from '@navigation';
 import {ROUTE_NAME} from '@routeName';
+import {API_DOMAIN} from '@util';
 
 const api = axios.create();
 
-//adamo api url
-// export const BASEURL = 'https://member-chat-api.adamo.tech/mobile';
-//member chat staging api url
-//export const BASEURL = 'https://stage.mem-bers.jp/mobile';
-//member chat live api url
-export const BASEURL = 'https://mem-bers.jp/mobile';
+export const BASEURL = `https://${API_DOMAIN}/mobile`;
 
 api.interceptors.request.use(
   async (config: any) => {
