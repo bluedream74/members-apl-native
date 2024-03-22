@@ -53,7 +53,7 @@ const Item = React.memo((props: any) => {
   }, [item?.message_unread, idRoomChat]);
 
   useEffect(() => {
-    const roomArray = listRoom.filter((room: any) => room.id === item.id);
+    const roomArray = listRoom?.filter((room: any) => room.id === item.id);
     if (roomArray.length > 0) {
       item.message_unread = roomArray[0].message_unread;
     }
