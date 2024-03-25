@@ -327,7 +327,7 @@ const InfoRoomChat = (props: any) => {
             <ViewItem
               sourceImage={iconDetailRow}
               title="概要"
-              content={dataDetail?.summary_column.replace(/<br\s*[\/]?>/gi, '\n')}
+              content={dataDetail?.summary_column?.replace(/<br\s*[\/]?>/gi, '\n')}
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
                   idRoomChat: idRoomChat,
