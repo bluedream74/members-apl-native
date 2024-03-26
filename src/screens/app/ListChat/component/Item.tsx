@@ -57,9 +57,9 @@ const Item = React.memo((props: any) => {
     if (roomArray.length > 0) {
       item.message_unread = roomArray[0].message_unread;
     }
-  }, [listRoom]);
+  }, [listRoom, item]);
 
-  function renderNameRoom(name: any) {
+  const renderNameRoom = (name: any) => {
     if (count_user > 0) {
       let dataName = '';
       item?.room_users?.forEach((el: any) => {

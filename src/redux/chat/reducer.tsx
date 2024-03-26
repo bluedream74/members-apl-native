@@ -94,7 +94,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: data,
       };
- 
+
     case typeChat.EDIT_MESSAGE:
       const array = [...state.detailChat];
       const indexEdit = array.findIndex(
@@ -138,7 +138,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: uniqueDetailChat,
       };
- 
+
     case typeChat.SAVE_MESSAGE_REPLY:
       return {
         ...state,
@@ -269,7 +269,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         current_room_id: current_room_id,
         irregular_message_ids: irregular_message_ids,
       };
-  
+
     default:
       return state;
   }
