@@ -7,6 +7,7 @@ import {
   updateMessageReaction,
   saveIsGetInfoRoom,
   registerRoomChat,
+  updateRoomList,
 } from '@redux';
 import {store} from '../redux/store';
 import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
@@ -145,9 +146,28 @@ function createAppSocket() {
             idUser: data?.user_id,
           };
           store.dispatch(getDetailMessageSocketSeen(body));
-        } else {
+        } else if (state.chat.roomList.length > 0) {
+          store.dispatch(updateRoomList({room_id: data.room_id}));
         }
-      } else {
+      }
+    });
+
+    //AHD-11819用修正。
+    //web側から詳細チャットを開いた段階でアプリ側に送信されるのがこれのみのため、暫定的にルームの既読状態を検知するために使用。
+    socket.on(EVENT_SOCKET.CHANGE_BROWSER_ICON, (data: any) => {
+      console.log(EVENT_SOCKET.CHANGE_BROWSER_ICON, data);
+      const state = store.getState();
+
+      if (
+        data.user_id === state.auth.userInfo.id &&
+        state.chat.roomList.length > 0
+      ) {
+        store.dispatch(
+          updateRoomList({
+            room_id: data.room_id,
+            unread_count: data.unread_count,
+          }),
+        );
       }
     });
 

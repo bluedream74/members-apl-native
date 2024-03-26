@@ -47,6 +47,17 @@ export function* getRoomListSaga(action: any) {
   }
 }
 
+//AHD-11819用修正。
+//チャットルームが新規作成された場合に使用デバイスとしてサーバに登録させるリクエストを送る。
+function* registerRoomChatDevice(action: any) {
+  const result: ResponseGenerator = yield detailRoomchat(action.payload.connect_room_id);
+  const body = {
+    id_room: action.payload.connect_room_id,
+    id_message: result.data.room.lastMessageJoin.id,
+  };
+  yield registerLastMessage(body);
+}
+
 export function* getDetailChatSaga(action: any) {
   try {
     const param = {
@@ -331,15 +342,6 @@ export function* logMessageSaga(action: any) {
       console.error(error.message);
     }
   }
-}
-
-function* registerRoomChatDevice(action: any) {
-  const result: ResponseGenerator = yield detailRoomchat(action.payload.connect_room_id);
-  const body = {
-    id_room: action.payload.connect_room_id,
-    id_message: result.data.room.lastMessageJoin.id,
-  };
-  yield registerLastMessage(body);
 }
 
 export function* chatSaga() {
