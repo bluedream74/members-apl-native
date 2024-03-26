@@ -250,7 +250,7 @@ const Item = React.memo((props: any) => {
                   : convertString(
                       decode(
                         item?.lastMessageJoin?.message
-                          ?.split('<br>')
+                          ?.split(/<br>|<br\/>/)
                           .join('\n'),
                       ),
                     )}
