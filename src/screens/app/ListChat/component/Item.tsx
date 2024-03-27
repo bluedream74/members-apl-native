@@ -79,7 +79,7 @@ const Item = React.memo((props: any) => {
     } else {
       return name;
     }
-  }
+  };
 
   const navigateDetail = () => {
     try {
@@ -270,10 +270,11 @@ const Item = React.memo((props: any) => {
           </>
         </View>
         <View style={styles.viewImageNext}>
-          <Image
-            style={styles.viewBellSlash}
-            source={item?.mute_flag === 1 && iconBellSlash}
-          />
+          {item?.mute_flag === 1 ? (
+            <Image style={styles.viewBellSlash} source={iconBellSlash} />
+          ) : (
+            <View style={styles.viewBellSlash} />
+          )}
           <View
             style={
               unreadMessageCount > 0 ? styles.viewUnread : styles.viewDefault
