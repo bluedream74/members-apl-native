@@ -114,6 +114,7 @@ const DetailChat = (props: any) => {
     setInputIndex,
     inputIndex,
     showSendMessageButton,
+    setPageLoading,
   } = useFunction(props);
 
   const mute = useSelector((state: any) => state.chat.isMuteStatusRoom);
@@ -229,6 +230,7 @@ const DetailChat = (props: any) => {
             mentionedUsers={mentionedUsers}
             setListUserSelect={setListUserSelect}
             setInputText={setInputText}
+            setPageLoading={setPageLoading}
           />
         </>
       );
@@ -256,6 +258,7 @@ const DetailChat = (props: any) => {
       updateGimMessage,
       setInputText,
       setListUserSelect,
+      setPageLoading,
     ],
   );
 

@@ -20,6 +20,16 @@ export const getDetailListChatSuccess = (payload: any) => ({
   payload,
 });
 
+export const registerRoomChat = (payload: any) => ({
+  type: typeChat.REGISTER_ROOMCHAT,
+  payload,
+});
+
+export const updateRoomList = (payload: any) => ({
+  type: typeChat.UPDATE_ROOMLIST,
+  payload,
+});
+
 export const getListUserChat = (payload: any) => ({
   type: typeChat.GET_LIST_USER_CHAT,
   payload,
@@ -35,7 +45,6 @@ export const saveListUserChat = (payload: any) => ({
   payload,
 });
 
-//Action lưu ID của company vào redux
 export const saveIdCompany = (payload: any) => ({
   type: typeChat.SAVE_ID_COMPANY,
   payload,
@@ -187,10 +196,5 @@ export const getUnreadMessageCountSuccess = (payload: any) => ({
 
 export const logMessage = (payload: any) => ({
   type: typeChat.LOG_MESSAGE,
-  payload,
-});
-
-export const registerRoomChat = (payload: any) => ({
-  type: typeChat.REGISTER_ROOMCHAT,
   payload,
 });

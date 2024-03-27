@@ -9,7 +9,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         idCompany: action.payload,
       };
-  
+
     case typeChat.GET_ROOM_LIST_SUCCESS:
       let pageList = action.payload.paging?.current_page;
       return {
@@ -20,7 +20,26 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
             : state.roomList.concat(action.payload.data),
         pagingListRoom: action.payload.paging,
       };
- 
+
+    //AHD-11819用暫定対応。webとアプリで同一ユーザがログインしている状態で、web側の既読状態をルーム一覧の既読状態に反映させる処理
+    //roomListが空でない場合既読状態を0にしてそれをListChatのItemコンポーネントに伝播させる。
+    case typeChat.UPDATE_ROOMLIST:
+      const rooms = [...state?.roomList];
+      const roomIndex = rooms.findIndex(
+        (el: any) => el?.id === action.payload?.room_id,
+      );
+      const unreadRooms = rooms.filter(
+        (el: any) => el?.message_unread > 0,
+      );
+      if (roomIndex > -1 && unreadRooms.length > action.payload?.unread_count) {
+        rooms[roomIndex]['message_unread'] = 0;
+        rooms[roomIndex]['message_mention_unread'] = false;
+      }
+      return {
+        ...state,
+        roomList: rooms,
+      };
+
     case typeChat.GET_DETAIL_LIST_CHAT_SUCCESS:
       let page = action.payload.room_messages.paging?.current_page;
       const currentPage = state.pagingDetail?.current_page ?? 1;
@@ -48,17 +67,20 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         message_pinned: action.payload.message_pinned,
         redLineId: action.payload.redline,
       };
+
     case typeChat.GET_LIST_USER_CHAT_SUCCESS:
       const userList = action.payload.users?.data;
       return {
         ...state,
         listUserChat: userList ?? [],
       };
+
     case typeChat.SAVE_LIST_USER_CHAT:
       return {
         ...state,
         listUserChat: action.payload ?? [],
       };
+
     case typeChat.DELETE_MESSAGE:
       const {detailChat} = state;
       let data = [...detailChat];
@@ -72,7 +94,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: data,
       };
- 
+
     case typeChat.EDIT_MESSAGE:
       const array = [...state.detailChat];
       const indexEdit = array.findIndex(
@@ -116,7 +138,7 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         detailChat: uniqueDetailChat,
       };
- 
+
     case typeChat.SAVE_MESSAGE_REPLY:
       return {
         ...state,
