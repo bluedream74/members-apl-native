@@ -16,6 +16,7 @@ import {
   resetDataChat,
   saveIdRoomChat,
   saveIsGetInfoRoom,
+  updateMuteStatusRoom,
   saveListUserChat,
 } from '@redux';
 import {
@@ -261,6 +262,7 @@ export const useFunction = (props: any) => {
       const response = await detailRoomchat(idRoomChat);
       setData(response?.data?.room);
       dispatch(saveIsGetInfoRoom(false));
+      dispatch(updateMuteStatusRoom(response?.data?.room.mute_flag === 1));
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);

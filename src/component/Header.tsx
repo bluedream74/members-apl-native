@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors, stylesCommon} from '@stylesCommon';
 import {getStatusBarHeight, ifIphoneX} from 'react-native-iphone-x-helper';
 import {verticalScale, scale, moderateScale} from 'react-native-size-matters';
-import {iconBack, logoImage} from '@images';
+import {iconBack, iconBellSlash, logoImage} from '@images';
 import {HITSLOP} from '@util';
 import {useNavigation} from '@react-navigation/native';
 
@@ -20,6 +20,7 @@ interface HeaderProps {
   iconRightSecond?: any;
   styleIconRightSeccond?: any;
   styleIconRightFirst?: any;
+  mute?: boolean;
 }
 
 const Header = React.memo((props: HeaderProps) => {
@@ -36,6 +37,7 @@ const Header = React.memo((props: HeaderProps) => {
     iconRightSecond,
     styleIconRightSeccond,
     styleIconRightFirst,
+    mute,
   } = props;
 
   const onPressBack = useCallback(() => {
@@ -75,6 +77,7 @@ const Header = React.memo((props: HeaderProps) => {
           <Text style={styles.txtTitle} numberOfLines={1}>
             {title}
           </Text>
+          {mute && <Image source={iconBellSlash} style={styles.marginLeft} />}
         </View>
         <View style={styles.viewRight}>
           {onRightSecond && (
@@ -161,6 +164,9 @@ const styles = StyleSheet.create({
   },
   marginRight: {
     marginRight: scale(9),
+  },
+  marginLeft: {
+    marginLeft: scale(5),
   },
 });
 

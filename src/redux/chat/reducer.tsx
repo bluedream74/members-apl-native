@@ -223,7 +223,11 @@ export default function chatReducer(state = INITIAL_STATE_CHAT, action: any) {
         ...state,
         isGetInfoRoom: action.payload,
       };
-
+    case typeChat.UPDATE_MUTE_STATUS_ROOM:
+      return {
+        ...state,
+        isMuteStatusRoom: action.payload,
+      };
     case typeChat.GET_UNREAD_MESSAGE_COUNT_ALL:
       return {
         ...state,

@@ -7,7 +7,6 @@ import {ROUTE_NAME} from './routeName';
 import {useSelector} from 'react-redux';
 import StackTab from './StackTab';
 import {AppSocket} from '@util';
-import { Task } from "../screens/app/Project/Task";
 let {init, endConnect} = AppSocket;
 
 const Stack = createNativeStackNavigator();
@@ -118,6 +117,10 @@ const NavigationApp = React.forwardRef((props: any, ref: any) => {
         <Stack.Screen
           name={ROUTE_NAME.TASK_SCREEN}
           component={screens.Task}
+        />
+        <Stack.Screen
+          name={ROUTE_NAME.MUTE_SETTING}
+          component={screens.MuteSetting}
         />
       </>
     );

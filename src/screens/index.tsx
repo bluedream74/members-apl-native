@@ -26,6 +26,7 @@ import {NetworkErr} from './app/NetworkErr';
 import {ListFileInRoom} from './app/ListFileInRoom';
 import {AddGroupFilterChat} from './app/AddGroupFilterChat';
 import {Task} from './app/Project/Task';
+import {MuteSetting} from './app/MuteSetting';
 
 //Nhóm các màn hình vào 1 file index
 const screens = {
@@ -56,6 +57,7 @@ const screens = {
   ListFileInRoom,
   AddGroupFilterChat,
   Task,
+  MuteSetting,
 };
 
 export {screens};
