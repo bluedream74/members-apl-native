@@ -26,10 +26,17 @@ const ViewFilter = React.memo((props: any) => {
       />
       <ViewItem
         title="メンションがあるチャット"
-        hideBorder={true}
         onPress={() => {
           onClick(1);
           dispatch(saveStatusFilter('メンションがあるチャット'));
+        }}
+      />
+      <ViewItem
+        title="ミュート中のチャット"
+        hideBorder={true}
+        onPress={() => {
+          onClick(3);
+          dispatch(saveStatusFilter('ミュート中のチャット'));
         }}
       />
     </View>
