@@ -100,6 +100,8 @@ const Item = React.memo((props: any) => {
           if(room.message_mention_unread) sock_body.unread_mention++;
         }
       });
+      // change_flag: 0 => ブラウザアイコンを未読なしにする、1 => ブラウザアイコンを未読ありにする 
+      sock_body.change_flag = sock_body.unread_count > 0 ? 1 : 0;
       socket.emit('change_browser_icon2', sock_body);
 
       notifee.getBadgeCount().then(async (count: any) => {
