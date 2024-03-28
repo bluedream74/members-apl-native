@@ -88,7 +88,7 @@ const Item = React.memo((props: any) => {
 
       const sock_body = {
         user_id: user.id,
-        change_flag: 1,
+        change_flag: 0,
         unread_count: 0,
         unread_mention: 0,
         room_id: item.id
