@@ -10,6 +10,7 @@ import {
   iconPdf,
   iconDoc,
   iconXls,
+  iconBellSlash,
 } from '@images';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
@@ -35,6 +36,7 @@ const Item = React.memo((props: any) => {
   const {item, idRoomChat} = props;
   const [pin, setStatusPin] = useState<number | null>(null);
   const [noIdRoomChatFlg, setNoIdRoomChatFlg] = useState<boolean>(false);
+  const listRoom = useSelector((state: any) => state.chat.roomList);
 
   let count_user =
     item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
@@ -50,6 +52,13 @@ const Item = React.memo((props: any) => {
       setNoIdRoomChatFlg(true);
     }
   }, [item?.message_unread, idRoomChat]);
+
+  useEffect(() => {
+    const roomArray = listRoom?.filter((room: any) => room.id === item.id);
+    if (roomArray.length > 0) {
+      item.message_unread = roomArray[0].message_unread;
+    }
+  }, [listRoom, item]);
 
   const renderNameRoom = (name: any) => {
     if (count_user > 0) {
@@ -113,7 +122,7 @@ const Item = React.memo((props: any) => {
     }
   }, []);
 
-  const onGhimRoomChat = async () => {
+  const onPinRoomChat = async () => {
     try {
       GlobalService.showLoading();
       const response = await pinFlag(item?.id, !pin ? 1 : 0);
@@ -138,6 +147,11 @@ const Item = React.memo((props: any) => {
       GlobalService.hideLoading();
     }
   };
+
+  const unreadMessageCount =
+    item?.mute_flag === 1
+      ? item?.message_mention_unread_count
+      : item?.message_unread;
 
   return (
     <TouchableOpacity style={styles.container} onPress={navigateDetail}>
@@ -193,10 +207,10 @@ const Item = React.memo((props: any) => {
                 style={[
                   styles.txtContent,
                   {
-                    fontWeight: item?.message_unread > 0 ? 'bold' : '600',
+                    fontWeight: unreadMessageCount > 0 ? 'bold' : '600',
                     color:
-                      item?.message_unread > 0
-                        ? '#000000'
+                      unreadMessageCount > 0
+                        ? colors.black
                         : colors.backgroundTab,
                   },
                 ]}
@@ -213,9 +227,6 @@ const Item = React.memo((props: any) => {
                         : ''
                     }`}
               </Text>
-              {item?.room_users?.length > 2 ? (
-                <Text> {`(${item?.room_users?.length})`}</Text>
-              ) : null}
             </View>
             {item?.lastMessageJoin?.attachment_files?.length > 0 ? (
               <View style={styles.viewRow}>
@@ -250,7 +261,7 @@ const Item = React.memo((props: any) => {
                   : convertString(
                       decode(
                         item?.lastMessageJoin?.message
-                          ?.split('<br>')
+                          ?.split(/<br>|<br\/>/)
                           .join('\n'),
                       ),
                     )}
@@ -259,41 +270,34 @@ const Item = React.memo((props: any) => {
           </>
         </View>
         <View style={styles.viewImageNext}>
-          <TouchableOpacity hitSlop={HITSLOP} onPress={onGhimRoomChat}>
+          {item?.mute_flag === 1 ? (
+            <Image style={styles.viewBellSlash} source={iconBellSlash} />
+          ) : (
+            <View style={styles.viewBellSlash} />
+          )}
+          <View
+            style={
+              unreadMessageCount > 0 ? styles.viewUnread : styles.viewDefault
+            }>
+            {unreadMessageCount > 0 && (
+              <Text style={styles.txtMessageUnread} numberOfLines={1}>
+                {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+              </Text>
+            )}
+            {item?.message_mention_unread === true && (
+              <View style={styles.viewActiveTag} />
+            )}
+          </View>
+          <TouchableOpacity hitSlop={HITSLOP} onPress={onPinRoomChat}>
             <Image
               source={iconPin}
               style={{
-                tintColor: Number(pin ?? 0) === 1 ? '#EA5A31' : colors.border,
+                tintColor:
+                  Number(pin ?? 0) === 1 ? colors.secondPrimary : colors.border,
               }}
             />
           </TouchableOpacity>
-          {item?.message_unread > 0 && !idRoomChat ? (
-            <View style={styles.viewUnread}>
-              <Text style={styles.txtMessageUnread} numberOfLines={1}>
-                {item?.message_unread > 9 ? '9+' : item?.message_unread}
-              </Text>
-              {item?.message_mention_unread === true ? (
-                <View style={styles.viewActiveTag} />
-              ) : null}
-            </View>
-          ) : item?.message_unread > 0 &&
-            idRoomChat &&
-            (idRoomChat !== item?.id || noIdRoomChatFlg) ? (
-            <View style={styles.viewUnread}>
-              <Text style={styles.txtMessageUnread} numberOfLines={1}>
-                {item?.message_unread > 9 ? '9+' : item?.message_unread}
-              </Text>
-              {item?.message_mention_unread === true ? (
-                <View style={styles.viewActiveTag} />
-              ) : null}
-            </View>
-          ) : item?.message_unread > 0 &&
-            idRoomChat &&
-            idRoomChat === item?.id ? (
-            <Image source={iconNext} />
-          ) : (
-            <Image source={iconNext} />
-          )}
+          <Image source={iconNext} />
         </View>
       </View>
     </TouchableOpacity>
@@ -319,12 +323,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   viewTxt: {
-    width: '65%',
+    width: '50%',
     justifyContent: 'center',
-    paddingRight: scale(10),
   },
   viewImageNext: {
-    width: '15%',
+    width: '30%',
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -336,7 +339,6 @@ const styles = StyleSheet.create({
     marginTop: scale(5),
   },
   txtContent: {
-    // ...stylesCommon.fontWeight600,
     fontSize: moderateScale(14),
     marginTop: verticalScale(3),
     color: colors.backgroundTab,
@@ -387,6 +389,14 @@ const styles = StyleSheet.create({
     width: moderateScale(25),
     height: moderateScale(25),
   },
+  viewBellSlash: {
+    width: moderateScale(15),
+    height: moderateScale(12),
+  },
+  viewDefault: {
+    width: moderateScale(25),
+    height: moderateScale(25),
+  },
   viewUnread: {
     width: moderateScale(25),
     height: moderateScale(25),
@@ -394,7 +404,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: scale(8),
   },
   txtMessageUnread: {
     fontSize: moderateScale(10),

@@ -11,6 +11,7 @@ import {styles} from './styles';
 import {Header, ModalConfirm, ModalLink} from '@component';
 import {
   defaultAvatar,
+  iconBell,
   iconCamera,
   iconDelete,
   iconEdit,
@@ -241,6 +242,7 @@ const InfoRoomChat = (props: any) => {
         }
         back
         imageCenter
+        mute={dataDetail?.mute_flag === 1 ? true : false}
       />
       <View style={styles.container}>
         {dataDetail ? (
@@ -327,7 +329,7 @@ const InfoRoomChat = (props: any) => {
             <ViewItem
               sourceImage={iconDetailRow}
               title="概要"
-              content={dataDetail?.summary_column}
+              content={dataDetail?.summary_column?.replace(/<br\s*[\/]?>/gi, '\n')}
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.EDIT_ROOM_CHAT, {
                   idRoomChat: idRoomChat,
@@ -360,6 +362,15 @@ const InfoRoomChat = (props: any) => {
               onClick={() => {
                 navigation.navigate(ROUTE_NAME.TASK_SCREEN, {
                   idRoom_chat: idRoomChat,
+                });
+              }}
+            />
+            <ViewItem
+              sourceImage={iconBell}
+              content="ミュート設定"
+              onClick={() => {
+                navigation.navigate(ROUTE_NAME.MUTE_SETTING, {
+                  roomDetail: dataDetail,
                 });
               }}
             />
