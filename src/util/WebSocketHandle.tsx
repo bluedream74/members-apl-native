@@ -105,28 +105,54 @@ function createAppSocket() {
       if (data?.room_id === state?.chat?.id_roomChat) {
         store.dispatch(saveIsGetInfoRoom(true));
       } else {
-        store.dispatch(
-          getRoomList({
-            company_id: state?.chat?.idCompany,
-            search: null,
-            type: state?.chat?.type_Filter,
-            category_id: state?.chat?.categoryID_Filter,
-          }),
-        );
+        // リストチャット状態の処理
+        if (data?.method === 11) {
+          // 追加処理の場合
+          // member_info.idsに自身のidが含まれている場合にreloadを行う
+          if (data?.member_info?.ids?.findIndex(
+            (userId: number) => userId === state?.auth?.userInfo?.id,
+          ) > -1) {
+            store.dispatch(
+              getRoomList({
+                company_id: state?.chat?.idCompany,
+                search: null,
+                type: state?.chat?.type_Filter,
+                category_id: state?.chat?.categoryID_Filter,
+              }),
+            );  
+          }
+        } else if (data?.method === 12 || data?.method === 3) {
+          // メンバー追加・削除、ルーム削除の場合
+          // 既存のリストに対象となるルームIDが存在する場合reloadを行う
+          if (state?.chat?.roomList?.findIndex(
+            (el: any) => el.id === data?.room_id,
+          ) > -1) {
+            store.dispatch(
+              getRoomList({
+                company_id: state?.chat?.idCompany,
+                search: null,
+                type: state?.chat?.type_Filter,
+                category_id: state?.chat?.categoryID_Filter,
+              }),
+            );  
+          }
+        }
       }
-      //アプリ用の通知対象デバイスとしての登録処理
-      //サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
+
+      // アプリ用の通知対象デバイスとしての登録処理
+      // サーバサイドにAPIリクエストを送りpush通知を送付するデバイスとして登録させる
+      // ルーム新規作成、メンバー追加の時に発火
+      // 但し自分のみ追加の場合は、Web版の場合メッセージが追加されないこと、
+      // 未読状態を連携しなくても良いので除外（投稿した瞬間必ず既読になるため）
       if (
-        (data.member_info?.type === 1 || data.member_info?.type === 11) &&
-        (data.member_info?.ids?.findIndex(
+        (data.method === 11) &&
+        (data.member_info?.ids?.length > 1 && data.member_info?.ids?.findIndex(
           (userId: number) => userId === state?.auth?.userInfo?.id,
-        ) > -1 ||
-          data.user_id === state?.auth?.userInfo?.id)
+        ) > -1)
       ) {
-        const newRoom = state?.chat?.roomList?.filter(
-          (el: any) => el.id === data?.room_id,
-        );
-        if (newRoom.length === 0) {
+        if (state?.chat?.roomList?.findIndex(
+          (el: any) => el.id === data?.room_id
+        ) === -1) {
           store.dispatch(
             registerRoomChat({
               connect_room_id: data?.room_id,
