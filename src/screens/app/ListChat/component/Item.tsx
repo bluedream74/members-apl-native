@@ -15,7 +15,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {ROUTE_NAME} from '@routeName';
 import FastImage from 'react-native-fast-image';
-import {convertString, HITSLOP} from '@util';
+import {convertString, HITSLOP, AppSocket} from '@util';
 import {pinFlag, GlobalService} from '@services';
 
 import {saveIdRoomChat, getRoomList, resetDataChat} from '@redux';
@@ -37,6 +37,7 @@ const Item = React.memo((props: any) => {
   const [pin, setStatusPin] = useState<number | null>(null);
   const [noIdRoomChatFlg, setNoIdRoomChatFlg] = useState<boolean>(false);
   const listRoom = useSelector((state: any) => state.chat.roomList);
+  const socket = AppSocket.getSocket();
 
   let count_user =
     item?.name?.length > 0 ? (item?.name.match(/、/g) || []).length : 0;
@@ -85,22 +86,34 @@ const Item = React.memo((props: any) => {
     try {
       setNoIdRoomChatFlg(false);
       dispatch(resetDataChat());
-      notifee.getBadgeCount().then(async (count: any) => {
-        if (count > 0) {
-          const countMessage = count - Number(item?.message_unread);
-          await notifee.setBadgeCount(countMessage);
-          await dispatch(saveIdRoomChat(item?.id));
-          navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
-            idRoomChat: item?.id,
-            idMessageSearchListChat: null,
-          });
-        } else {
-          await dispatch(saveIdRoomChat(item?.id));
-          navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
-            idRoomChat: item?.id,
-            idMessageSearchListChat: null,
-          });
+
+      const sock_body = {
+        user_id: user.id,
+        change_flag: 0,
+        unread_count: 0,
+        unread_mention: 0,
+        room_id: item.id
+      };
+      listRoom.forEach((room: any) => {
+        if (room.id !== item.id) {
+          if(room.message_unread) sock_body.unread_count++;
+          if(room.message_mention_unread) sock_body.unread_mention++;
         }
+      });
+      // change_flag: 0 => ブラウザアイコンを未読なしにする、1 => ブラウザアイコンを未読ありにする 
+      sock_body.change_flag = sock_body.unread_count > 0 ? 1 : 0;
+      socket.emit('change_browser_icon2', sock_body);
+
+      notifee.getBadgeCount().then(async (count: any) => {
+        if (count > 0 && item.message_unread > 0) {
+          const countMessage = count - Number(item?.message_unread) > 0 ? count - Number(item?.message_unread) : 0;
+          notifee.setBadgeCount(countMessage);
+        }
+        await dispatch(saveIdRoomChat(item?.id));
+        navigation.navigate(ROUTE_NAME.DETAIL_CHAT, {
+          idRoomChat: item?.id,
+          idMessageSearchListChat: null,
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
