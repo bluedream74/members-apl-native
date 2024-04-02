@@ -20,7 +20,7 @@ export const EVENT_SOCKET = {
   CHAT_GROUP_UPDATE_IND: 'ChatGroup_update_ind',
   //イベント受信メッセージ (ルームに参加したときにのみ聞こえます)
   MESSAGE_IND: 'message_ind',
-  //webで詳細画面を開いた場合、メッセージの既読数変化の際に送られてくる 
+  //webで詳細画面を開いた場合、メッセージの既読数変化の際に送られてくる
   CHANGE_BROWSER_ICON: 'change_browser_icon',
 };
 
@@ -36,4 +36,13 @@ export const MESSAGE_RANGE_TYPE = {
   USER: 1, // ユーザID（複数）
   GROUP: 2, // グループID（複数）
   ALL: 3, // ALL
+};
+
+export const WEBSOCKET_METHOD_TYPE = {
+  CHAT_ROOM_ADD: 1,
+  CHAT_ROOM_EDIT: 2,
+  CHAT_ROOM_DELETE: 3,
+  CHAT_ROOM_MEMBER_ADD: 11,
+  CHAT_ROOM_MEMBER_DELETE: 12,
+  CHAT_ROOM_MEMBER_EDIT: 13,
 };
