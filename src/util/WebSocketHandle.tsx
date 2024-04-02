@@ -10,7 +10,7 @@ import {
   updateRoomList,
 } from '@redux';
 import {store} from '../redux/store';
-import {SOCKETIO_DOMAIN, EVENT_SOCKET} from './constanString';
+import {SOCKETIO_DOMAIN, EVENT_SOCKET, WEBSOCKET_METHOD_TYPE} from './constanString';
 
 export const socketURL = `https://${SOCKETIO_DOMAIN}:443`;
 
@@ -106,7 +106,7 @@ function createAppSocket() {
         store.dispatch(saveIsGetInfoRoom(true));
       } else {
         // リストチャット状態の処理
-        if (data?.method === 11 || data?.method === 2) {
+        if (data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_MEMBER_ADD || data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_EDIT) {
           // 追加処理の場合
           // method 11はwebで新規作成
           // method 2はアプリで新規作成
@@ -123,7 +123,7 @@ function createAppSocket() {
               }),
             );  
           }
-        } else if (data?.method === 12 || data?.method === 3) {
+        } else if (data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_MEMBER_DELETE || data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_DELETE) {
           // メンバー追加・削除、ルーム削除の場合
           // 既存のリストに対象となるルームIDが存在する場合reloadを行う
           if (state?.chat?.roomList?.findIndex(
@@ -149,13 +149,13 @@ function createAppSocket() {
       if (
         (
           // アプリ版の条件
-          data?.method === 2 && (
+          data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_EDIT && (
             data?.member_info?.ids.findIndex((userId: number) => userId === state?.auth?.userInfo?.id) > -1 ||
             data?.user_id === state?.auth?.userInfo?.id
           )
         ) || (
           // web版の条件
-          data?.method === 11 &&
+          data?.method === WEBSOCKET_METHOD_TYPE.CHAT_ROOM_MEMBER_ADD &&
           data?.member_info?.ids?.length > 1 &&
           data?.member_info?.ids?.findIndex((userId: number) => userId === state?.auth?.userInfo?.id) > -1
         )
