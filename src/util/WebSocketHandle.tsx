@@ -106,8 +106,10 @@ function createAppSocket() {
         store.dispatch(saveIsGetInfoRoom(true));
       } else {
         // リストチャット状態の処理
-        if (data?.method === 11) {
+        if (data?.method === 11 || data?.method === 2) {
           // 追加処理の場合
+          // method 11はwebで新規作成
+          // method 2はアプリで新規作成
           // member_info.idsに自身のidが含まれている場合にreloadを行う
           if (data?.member_info?.ids?.findIndex(
             (userId: number) => userId === state?.auth?.userInfo?.id,
@@ -145,10 +147,18 @@ function createAppSocket() {
       // 但し自分のみ追加の場合は、Web版の場合メッセージが追加されないこと、
       // 未読状態を連携しなくても良いので除外（投稿した瞬間必ず既読になるため）
       if (
-        (data.method === 11) &&
-        (data.member_info?.ids?.length > 1 && data.member_info?.ids?.findIndex(
-          (userId: number) => userId === state?.auth?.userInfo?.id,
-        ) > -1)
+        (
+          // アプリ版の条件
+          data?.method === 2 && (
+            data?.member_info?.ids.findIndex((userId: number) => userId === state?.auth?.userInfo?.id) > -1 ||
+            data?.user_id === state?.auth?.userInfo?.id
+          )
+        ) || (
+          // web版の条件
+          data?.method === 11 &&
+          data?.member_info?.ids?.length > 1 &&
+          data?.member_info?.ids?.findIndex((userId: number) => userId === state?.auth?.userInfo?.id) > -1
+        )
       ) {
         if (state?.chat?.roomList?.findIndex(
           (el: any) => el.id === data?.room_id
